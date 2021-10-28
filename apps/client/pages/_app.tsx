@@ -2,10 +2,12 @@ import { AppProps } from 'next/app';
 import { useRouter } from 'next/dist/client/router';
 import Head from 'next/head';
 import { useMemo } from 'react';
+
 import './styles.css';
 
-import enMessages from '../content/locales/en.json';
+import enMessages from 'content/locales/en.json';
 import { IntlProvider } from 'react-intl';
+import { Sidebar } from 'components/Sidebar/Sidebar';
 
 function CustomApp({ Component, pageProps }: AppProps) {
   const { locale } = useRouter();
@@ -33,6 +35,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
           onError={(err) => err.message}
         >
           <main>
+            <Sidebar />
             <Component {...pageProps} />
           </main>
         </IntlProvider>

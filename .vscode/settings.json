@@ -10,5 +10,6 @@
   "search.exclude": {
     "build/": true,
     "dist/": true
-  }
+  },
+  "i18n-ally.keystyle": "nested"
 }
