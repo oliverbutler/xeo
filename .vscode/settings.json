@@ -1,0 +1,14 @@
+{
+  "i18n-ally.localesPaths": ["apps/client/content/locales"],
+  "files.exclude": {
+    "*/**/node_modules/": true,
+    ".vscode/": true,
+    "*/**/cache/": true,
+    "*/**/uploads/": true,
+    "*/**/.github/": true
+  },
+  "search.exclude": {
+    "build/": true,
+    "dist/": true
+  }
+}
