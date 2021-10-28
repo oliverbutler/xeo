@@ -40,7 +40,7 @@ export const Resize: React.FunctionComponent<Props> = ({
       </motion.div>
       <motion.div
         className={classNames(
-          'absolute bg-gray-100 h-full cursor-move',
+          'absolute   h-full cursor-move',
           dragHandleClassName
         )}
         style={{ width: dragHandleWidth, x }}

@@ -3,9 +3,10 @@ import { Resize } from 'components/Resize/Resize';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { useEffect, useState } from 'react';
 import { FiPlusCircle } from 'react-icons/fi';
+import { SidebarItem } from './SidebarItem.tsx/SidebarItem';
+import { UserRow } from './UserRow/UserRow';
 
 export const Sidebar = () => {
-  // Store sidebar width in local storage
   const [defaultWidth, setDefaultWidth] = useLocalStorage('sidebar-width', 192);
 
   return (
@@ -13,14 +14,19 @@ export const Sidebar = () => {
       defaultWindowWidth={defaultWidth}
       onSetWidth={setDefaultWidth}
       minWindowWidth={150}
-      dragHandleWidth={4}
+      dragHandleWidth={3}
       className="bg-gray-100"
-      dragHandleClassName="bg-gray-200"
+      dragHandleClassName="bg-gray-100 hover:bg-gray-200"
     >
       <div className="flex flex-col h-full py-2">
         <div className="overflow-auto h-full">
-          <p>item 1</p>
-          <p>item 2</p>
+          <UserRow />
+          <SidebarItem>
+            <p>Page 1</p>
+          </SidebarItem>
+          <SidebarItem>
+            <p>Page 2</p>
+          </SidebarItem>
         </div>
         <div className="mt-auto">
           <IconButton icon={<FiPlusCircle />} text="Add Page" />
