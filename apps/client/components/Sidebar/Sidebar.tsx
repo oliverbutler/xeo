@@ -7,7 +7,10 @@ import { SidebarItem } from './SidebarItem.tsx/SidebarItem';
 import { UserRow } from './UserRow/UserRow';
 
 export const Sidebar = () => {
-  const [defaultWidth, setDefaultWidth] = useLocalStorage('sidebar-width', 192);
+  const [defaultWidth, setDefaultWidth] = useLocalStorage<number>(
+    'sidebar-width',
+    192
+  );
 
   return (
     <Resize

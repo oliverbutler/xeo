@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 
-export const useLocalStorage = (
+export const useLocalStorage = <T extends number | string | JSON>(
   key: string,
-  initialValue: number | string | JSON
-) => {
+  initialValue: T
+): [T, Dispatch<SetStateAction<T>>] => {
   const [storedValue, setStoredValue] = useState(() => {
     try {
       const item = window.localStorage.getItem(key);
@@ -14,7 +14,7 @@ export const useLocalStorage = (
     }
   });
 
-  const setValue = (value: number | string | JSON) => {
+  const setValue = (value: T) => {
     try {
       const valueToStore = value;
 
