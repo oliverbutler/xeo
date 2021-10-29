@@ -1,8 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AuthResponse } from '../graphql';
+import { AuthResponse, SignUpInput } from '../graphql';
 import { User } from '../user/core/user.entity';
 import { UserService } from '../user/core/user.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -11,11 +12,18 @@ export class AuthService {
     private jwtService: JwtService
   ) {}
 
-  async validateUser(username: User['username'], pass: string): Promise<User> {
+  async validateUser(
+    username: User['username'],
+    password: string
+  ): Promise<User> {
     const user = await this.userService.getByUsername(username);
-    if (user && user.password === pass) {
+
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
+
+    if (user && isMatch) {
       return user;
     }
+
     throw new UnauthorizedException(
       `User ${username} not found, or incorrect password`
     );
@@ -29,5 +37,13 @@ export class AuthService {
       accessToken: this.jwtService.sign(payload),
       user,
     };
+  }
+
+  async registerUser(userInput: SignUpInput): Promise<User> {
+    const passwordHash = await bcrypt.hash(userInput.password, 12);
+
+    const user = await this.userService.create({ ...userInput, passwordHash });
+
+    return user;
   }
 }

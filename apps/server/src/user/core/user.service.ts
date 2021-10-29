@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UserAdapter } from '../infrastructure/user.adapter';
+import { CreateUserDto, UserAdapter } from '../infrastructure/user.adapter';
 import { User } from './user.entity';
 
 @Injectable()
@@ -18,7 +18,7 @@ export class UserService {
     return await this.userAdapter.getByUsername(username);
   }
 
-  public async create(user: Partial<User>): Promise<User> {
-    return await this.userAdapter.create(user);
+  public async create(user: CreateUserDto): Promise<User> {
+    return await this.userAdapter.createUser(user);
   }
 }

@@ -16,7 +16,7 @@ export class User {
   lastName: string;
 
   @Column({ nullable: false })
-  password: string;
+  passwordHash: string;
 
   @OneToMany(() => Block, (block) => block.createdBy)
   blocks: Block[];
