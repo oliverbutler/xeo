@@ -1,10 +1,10 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from '../user/user.module';
-import { BlockAdapter } from './block.adapter';
-import { BlockRepository } from './block.repository';
-import { BlockResolver } from './block.resolver';
-import { BlockService } from './block.service';
+import { BlockAdapter } from './infrastructure/block.adapter';
+import { BlockResolver } from './interface/block.resolver';
+import { BlockService } from './core/block.service';
+import { BlockRepository } from './infrastructure/block.repository';
 
 @Module({
   imports: [

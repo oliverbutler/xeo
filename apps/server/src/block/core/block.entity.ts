@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { BlockType } from '../graphql';
-import { User } from '../user/user.entity';
+import { BlockType } from '../../graphql';
+import { User } from '../../user/core/user.entity';
 
 @Entity()
 export class Block {

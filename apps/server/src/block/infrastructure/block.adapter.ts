@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '../user/user.entity';
-import { Block } from './block.entity';
+import { User } from '../../user/core/user.entity';
+import { Block } from '../core/block.entity';
 import { BlockRepository } from './block.repository';
 
 @Injectable()

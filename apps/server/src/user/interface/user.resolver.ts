@@ -6,9 +6,9 @@ import {
   ResolveField,
   Parent,
 } from '@nestjs/graphql';
-import { BlockService } from '../block/block.service';
-import { CreateUserInput, User } from '../graphql';
-import { UserService } from './user.service';
+import { BlockService } from '../../block/core/block.service';
+import { CreateUserInput, User } from '../../graphql';
+import { UserService } from '../core/user.service';
 
 @Resolver('User')
 export class UserResolver {

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { CreateBlockInput } from '../graphql';
-import { User } from '../user/user.entity';
-import { BlockAdapter } from './block.adapter';
+import { CreateBlockInput } from '../../graphql';
+import { User } from '../../user/core/user.entity';
+import { BlockAdapter } from '../infrastructure/block.adapter';
 import { Block } from './block.entity';
 
 @Injectable()

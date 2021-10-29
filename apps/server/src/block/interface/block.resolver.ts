@@ -6,9 +6,9 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { Block, CreateBlockInput, User } from '../graphql';
-import { UserService } from '../user/user.service';
-import { BlockService } from './block.service';
+import { Block, CreateBlockInput, User } from '../../graphql';
+import { UserService } from '../../user/core/user.service';
+import { BlockService } from '../core/block.service';
 
 @Resolver('Block')
 export class BlockResolver {
