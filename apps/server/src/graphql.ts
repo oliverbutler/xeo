@@ -12,17 +12,28 @@ export enum BlockType {
     TEXT = "TEXT"
 }
 
+export interface SignUpInput {
+    username: string;
+    firstName: string;
+    lastName: string;
+    password: string;
+}
+
 export interface CreateBlockInput {
     type: BlockType;
     createdById: string;
     parentId?: Nullable<string>;
 }
 
-export interface CreateUserInput {
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
+export interface AuthResponse {
+    accessToken: string;
+    user: User;
+}
+
+export interface IMutation {
+    signUp(input: SignUpInput): User | Promise<User>;
+    signIn(username: string, password: string): AuthResponse | Promise<AuthResponse>;
+    createBlock(input: CreateBlockInput): Block | Promise<Block>;
 }
 
 export interface Block {
@@ -40,16 +51,11 @@ export interface IQuery {
     users(): User[] | Promise<User[]>;
 }
 
-export interface IMutation {
-    createBlock(input: CreateBlockInput): Block | Promise<Block>;
-    createUser(input: CreateUserInput): User | Promise<User>;
-}
-
 export interface User {
     id: string;
+    username: string;
     firstName: string;
     lastName: string;
-    email: string;
     blocks: Block[];
 }
 

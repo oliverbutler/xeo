@@ -14,6 +14,10 @@ export class UserService {
     return await this.userAdapter.getById(id);
   }
 
+  public async getByUsername(username: User['username']): Promise<User> {
+    return await this.userAdapter.getByUsername(username);
+  }
+
   public async create(user: Partial<User>): Promise<User> {
     return await this.userAdapter.create(user);
   }

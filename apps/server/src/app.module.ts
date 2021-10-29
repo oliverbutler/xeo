@@ -6,9 +6,12 @@ import { UserModule } from './user/user.module';
 import { BlockModule } from './block/block.module';
 import { Block } from './block/core/block.entity';
 import { User } from './user/core/user.entity';
+import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     GraphQLModule.forRoot({
       typePaths: ['./**/*.graphql'],
       definitions: {
@@ -27,6 +30,7 @@ import { User } from './user/core/user.entity';
     }),
     UserModule,
     BlockModule,
+    AuthModule,
   ],
   providers: [],
 })

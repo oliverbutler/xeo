@@ -1,22 +1,11 @@
 type User {
   id: ID!
+  username: String!
   firstName: String!
   lastName: String!
-  email: String!
   blocks: [Block!]!
-}
-
-input CreateUserInput {
-  firstName: String!
-  lastName: String!
-  email: String!
-  password: String!
 }
 
 type Query {
   users: [User!]!
-}
-
-type Mutation {
-  createUser(input: CreateUserInput!): User!
 }
