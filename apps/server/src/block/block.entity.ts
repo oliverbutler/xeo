@@ -10,9 +10,17 @@ export class Block {
   @Column({ nullable: false, type: 'enum', enum: BlockType })
   type: BlockType;
 
+  @ManyToOne(() => Block, (block) => block.id)
+  parent: Block | undefined;
+
+  @Column({ nullable: true })
+  parentId: string | undefined;
+
   @ManyToOne(() => User, (user) => user.id)
   createdBy: User;
 
   @Column({ nullable: false })
   createdById: string;
+
+  children: Block[] | undefined;
 }

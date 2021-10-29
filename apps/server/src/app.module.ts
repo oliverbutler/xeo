@@ -3,13 +3,9 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { User } from './user/user.entity';
-import { UsersModule } from './user/user.module';
-import { UserRepository } from './user/user.repository';
-import { UserService } from './user/user.service';
+import { UserModule } from './user/user.module';
 import { BlockModule } from './block/block.module';
-import { BlockService } from './block/block.service';
 import { Block } from './block/block.entity';
-import { BlockRepository } from './block/block.repository';
 
 @Module({
   imports: [
@@ -29,10 +25,9 @@ import { BlockRepository } from './block/block.repository';
       entities: [User, Block],
       synchronize: true,
     }),
-    UsersModule,
+    UserModule,
     BlockModule,
   ],
-  controllers: [],
-  providers: [UserService, UserRepository, BlockService, BlockRepository],
+  providers: [],
 })
 export class AppModule {}

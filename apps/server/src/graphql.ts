@@ -15,6 +15,7 @@ export enum BlockType {
 export interface CreateBlockInput {
     type: BlockType;
     createdById: string;
+    parentId?: Nullable<string>;
 }
 
 export interface CreateUserInput {
@@ -29,6 +30,9 @@ export interface Block {
     type: BlockType;
     createdBy: User;
     createdById: string;
+    parent?: Nullable<Block>;
+    parentId?: Nullable<string>;
+    children: Block[];
 }
 
 export interface IQuery {

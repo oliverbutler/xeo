@@ -30,6 +30,11 @@ export class BlockResolver {
     return await this.blockService.createBlock(input);
   }
 
+  @ResolveField('children')
+  async getChildren(@Parent() block: Block): Promise<Block[]> {
+    return await this.blockService.getAllBlocksByParentId(block.id);
+  }
+
   @ResolveField('createdBy')
   async getCreatedBy(@Parent() block: Block): Promise<User> {
     return await this.userService.getById(block.createdById);

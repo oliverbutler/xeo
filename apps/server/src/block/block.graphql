@@ -8,11 +8,15 @@ type Block {
   type: BlockType!
   createdBy: User!
   createdById: ID!
+  parent: Block
+  parentId: ID
+  children: [Block!]!
 }
 
 input CreateBlockInput {
   type: BlockType!
   createdById: ID!
+  parentId: ID
 }
 
 type Query {

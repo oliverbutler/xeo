@@ -1,40 +1,44 @@
 import { Injectable } from '@nestjs/common';
-import { DeleteResult, UpdateResult } from 'typeorm';
 import { CreateBlockInput } from '../graphql';
 import { User } from '../user/user.entity';
+import { BlockAdapter } from './block.adapter';
 import { Block } from './block.entity';
-import { BlockRepository } from './block.repository';
 
 @Injectable()
 export class BlockService {
-  constructor(private readonly blockRepository: BlockRepository) {}
+  constructor(private readonly blockAdapter: BlockAdapter) {}
 
   async createBlock(block: CreateBlockInput): Promise<Block> {
-    return await this.blockRepository.save(block);
-  }
-
-  async getBlockById(id: Block['id']): Promise<Block> {
-    return await this.blockRepository.findOne(id);
-  }
-
-  async getAllBlocksByUser(userId: User['id']): Promise<Block[]> {
-    return await this.blockRepository.find({
-      where: { createdById: userId },
+    return await this.blockAdapter.createBlock({
+      ...block,
+      parentId: block.parentId ?? null,
     });
   }
 
+  async getBlockById(id: Block['id']): Promise<Block> {
+    return await this.blockAdapter.getBlockById(id);
+  }
+
+  async getAllBlocksByParentId(parentId: Block['parentId']): Promise<Block[]> {
+    return await this.blockAdapter.getAllBlocksByParentId(parentId);
+  }
+
+  async getAllBlocksByUser(userId: User['id']): Promise<Block[]> {
+    return await this.blockAdapter.getAllBlocksByUser(userId);
+  }
+
   async getAllBlocks(): Promise<Block[]> {
-    return await this.blockRepository.find();
+    return await this.blockAdapter.getAllBlocks();
   }
 
   async updateBlock(
     id: Block['id'],
     partialBlock: Partial<Block>
-  ): Promise<UpdateResult> {
-    return await this.blockRepository.update(id, partialBlock);
+  ): Promise<void> {
+    return await this.blockAdapter.updateBlock(id, partialBlock);
   }
 
-  async deleteBlock(id: Block['id']): Promise<DeleteResult> {
-    return await this.blockRepository.delete(id);
+  async deleteBlock(id: Block['id']): Promise<void> {
+    return await this.blockAdapter.deleteBlock(id);
   }
 }
