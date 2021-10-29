@@ -6,6 +6,10 @@ import { User } from './user/user.entity';
 import { UsersModule } from './user/user.module';
 import { UserRepository } from './user/user.repository';
 import { UserService } from './user/user.service';
+import { BlockModule } from './block/block.module';
+import { BlockService } from './block/block.service';
+import { Block } from './block/block.entity';
+import { BlockRepository } from './block/block.repository';
 
 @Module({
   imports: [
@@ -22,12 +26,13 @@ import { UserService } from './user/user.service';
       username: 'postgres',
       password: 'postgres',
       database: 'xeo',
-      entities: [User],
+      entities: [User, Block],
       synchronize: true,
     }),
     UsersModule,
+    BlockModule,
   ],
   controllers: [],
-  providers: [UserService, UserRepository],
+  providers: [UserService, UserRepository, BlockService, BlockRepository],
 })
 export class AppModule {}

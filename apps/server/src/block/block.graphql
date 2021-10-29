@@ -1,0 +1,24 @@
+enum BlockType {
+  PAGE
+  TEXT
+}
+
+type Block {
+  id: ID!
+  type: BlockType!
+  createdBy: User!
+  createdById: ID!
+}
+
+input CreateBlockInput {
+  type: BlockType!
+  createdById: ID!
+}
+
+type Query {
+  blocks: [Block!]!
+}
+
+type Mutation {
+  createBlock(input: CreateBlockInput!): Block!
+}
