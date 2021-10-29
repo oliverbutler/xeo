@@ -14,7 +14,12 @@ export class BlockAdapter {
   }
 
   async getBlockById(id: Block['id']): Promise<Block> {
-    return await this.blockRepository.findOne(id);
+    const block = await this.blockRepository.findOne(id);
+
+    if (!block) {
+      throw new Error(`BlockAdapter > Block ${id} not found`);
+    }
+    return block;
   }
 
   async getAllBlocksByParentId(parentId: Block['parentId']): Promise<Block[]> {

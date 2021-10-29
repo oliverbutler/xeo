@@ -1,14 +1,10 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthResponse, SignUpInput, User } from '../../graphql';
-import { UserService } from '../../user/core/user.service';
 import { AuthService } from '../auth.service';
 
 @Resolver('Auth')
 export class AuthResolver {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly userService: UserService
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Mutation('signUp')
   public async signUp(@Args('input') input: SignUpInput): Promise<User> {

@@ -21,7 +21,7 @@ export class UserAdapter {
     const user = await this.userRepository.findOne(id);
 
     if (!user) {
-      throw new BadRequestException(`User  ${id} not found`);
+      throw new BadRequestException(`UserAdapter > User  ${id} not found`);
     }
 
     return user;
@@ -31,7 +31,9 @@ export class UserAdapter {
     const user = await this.userRepository.findOne({ where: { username } });
 
     if (!user) {
-      throw new BadRequestException(`User  ${username} not found`);
+      throw new BadRequestException(
+        `UserAdapter > User  ${username} not found`
+      );
     }
 
     return user;
@@ -43,7 +45,9 @@ export class UserAdapter {
     });
 
     if (existingUser) {
-      throw new BadRequestException(`User ${user.username} already exists`);
+      throw new BadRequestException(
+        `UserAdapter > User ${user.username} already exists`
+      );
     }
 
     return await this.userRepository.save(user);
