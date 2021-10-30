@@ -19,7 +19,7 @@ export const Blocks: React.FunctionComponent<Props> = (props) => {
   return (
     <div>
       <h1>Blocks</h1>
-      {data && data.blocks.map((block) => <p key={block.id}>{block.type}</p>)}
+      {data && data.blocks.map((block) => <p key={block.id}>{block.title}</p>)}
     </div>
   );
 };

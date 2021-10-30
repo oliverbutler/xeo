@@ -30,6 +30,12 @@ export class BlockResolver {
     return await this.blockService.getAllBlocksByUser(user.id);
   }
 
+  @Query('block')
+  @UseGuards(GqlAuthGuard)
+  async getBlock(@Args('id') id: string): Promise<BlockWithoutRelations> {
+    return await this.blockService.getBlockById(id);
+  }
+
   @Mutation('createBlock')
   @UseGuards(GqlAuthGuard)
   async createBlock(

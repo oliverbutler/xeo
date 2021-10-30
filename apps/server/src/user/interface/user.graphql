@@ -3,9 +3,11 @@ type User {
   username: String!
   firstName: String!
   lastName: String!
+  avatar: String
   blocks: [Block!]
 }
 
 type Query {
+  me: User!
   users: [User!]!
 }

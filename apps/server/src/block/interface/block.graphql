@@ -22,6 +22,7 @@ input CreateBlockInput {
 
 type Query {
   blocks: [Block!]!
+  block(id: ID!): Block!
 }
 
 type Mutation {

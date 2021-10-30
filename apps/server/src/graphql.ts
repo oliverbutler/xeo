@@ -48,6 +48,8 @@ export interface Block {
 
 export interface IQuery {
     blocks(): Block[] | Promise<Block[]>;
+    block(id: string): Block | Promise<Block>;
+    me(): User | Promise<User>;
     users(): User[] | Promise<User[]>;
 }
 
@@ -56,6 +58,7 @@ export interface User {
     username: string;
     firstName: string;
     lastName: string;
+    avatar?: Nullable<string>;
     blocks?: Nullable<Block[]>;
 }
 

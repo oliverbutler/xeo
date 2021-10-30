@@ -1,4 +1,7 @@
+import classNames from 'classnames';
 import { Blocks } from 'components/Blocks/Blocks';
+import { Page } from 'components/Page/Page';
+import { Sidebar } from 'components/Sidebar/Sidebar';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { useRouter } from 'next/dist/client/router';
 import { useEffect } from 'react';
@@ -15,11 +18,11 @@ const Index: React.FunctionComponent = () => {
   }, []);
 
   return (
-    <div>
-      <h1 className="text-indigo-500 ">
-        <FormattedMessage id="generic.welcome" />
-        <Blocks />
-      </h1>
+    <div className="flex">
+      <Sidebar />
+      <div className="max-w-xl  w-full mx-auto p-4">
+        <Page blockId="9302528d-a196-4de2-a01e-348835477e4e" />
+      </div>
     </div>
   );
 };

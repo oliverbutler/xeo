@@ -17,6 +17,9 @@ export class User {
   @Column({ nullable: false })
   lastName!: string;
 
+  @Column({ nullable: true })
+  avatar!: string;
+
   @Column({ nullable: false })
   passwordHash!: string;
 

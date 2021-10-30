@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useState } from 'react';
 
-export const useLocalStorage = <T extends number | string | JSON>(
+export const useLocalStorage = <T extends number | string | JSON | undefined>(
   key: string,
   initialValue?: T
 ): [T, Dispatch<SetStateAction<T>>] => {
