@@ -49,6 +49,10 @@ export class BlockService {
     return await this.blockAdapter.getAllBlocksByUser(userId);
   }
 
+  async getAllRootBlocksByUser(userId: User['id']): Promise<Block[]> {
+    return this.blockAdapter.getAllRootBlocksByUser(userId);
+  }
+
   async getAllBlocks(): Promise<Block[]> {
     return await this.blockAdapter.getAllBlocks();
   }

@@ -6,7 +6,9 @@ enum BlockType {
 type Block {
   id: ID!
   type: BlockType!
-  title: String!
+  title: String
+  emoji: String
+  description: String
 
   createdBy: User!
   createdById: ID!

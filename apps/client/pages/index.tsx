@@ -21,7 +21,7 @@ const Index: React.FunctionComponent = () => {
     <div className="flex">
       <Sidebar />
       <div className="max-w-xl  w-full mx-auto p-4">
-        <Page blockId="9302528d-a196-4de2-a01e-348835477e4e" />
+        <h1>Empty Dashboard</h1>
       </div>
     </div>
   );

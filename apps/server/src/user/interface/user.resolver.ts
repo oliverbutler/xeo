@@ -27,6 +27,6 @@ export class UserResolver {
 
   @ResolveField('blocks')
   async getBlocks(@Parent() user: User) {
-    return await this.blockService.getAllBlocksByUser(user.id);
+    return await this.blockService.getAllRootBlocksByUser(user.id);
   }
 }

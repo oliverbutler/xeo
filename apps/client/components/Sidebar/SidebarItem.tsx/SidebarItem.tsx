@@ -13,7 +13,7 @@ export const SidebarItem: React.FunctionComponent<Props> = ({
   return (
     <div
       className={classNames(
-        'hover:bg-gray-200 py-1 px-2 cursor-pointer',
+        'hover:bg-gray-200 py-1 px-2 cursor-pointer ',
         className
       )}
       {...divProps}

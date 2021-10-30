@@ -18,6 +18,12 @@ export class Block {
   @Column({ nullable: true })
   title!: string;
 
+  @Column({ nullable: true })
+  emoji!: string;
+
+  @Column({ nullable: true })
+  description!: string;
+
   @ManyToOne(() => Block, (block) => block.id)
   parent: Block | undefined;
 

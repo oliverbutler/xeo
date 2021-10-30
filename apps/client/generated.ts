@@ -25,10 +25,12 @@ export type Block = {
   children: Array<Block>;
   createdBy: User;
   createdById: Scalars['ID'];
+  description?: Maybe<Scalars['String']>;
+  emoji?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   parent?: Maybe<Block>;
   parentId?: Maybe<Scalars['ID']>;
-  title: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
   type: BlockType;
 };
 
@@ -98,7 +100,7 @@ export type User = {
 export type GetAllBlocksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllBlocksQuery = { __typename?: 'Query', blocks: Array<{ __typename?: 'Block', id: string, type: BlockType, title: string }> };
+export type GetAllBlocksQuery = { __typename?: 'Query', blocks: Array<{ __typename?: 'Block', id: string, type: BlockType, title?: string | null | undefined }> };
 
 export type SignInMutationVariables = Exact<{
   username: Scalars['String'];
@@ -113,12 +115,12 @@ export type GetBlockQueryVariables = Exact<{
 }>;
 
 
-export type GetBlockQuery = { __typename?: 'Query', block: { __typename?: 'Block', id: string, type: BlockType, title: string } };
+export type GetBlockQuery = { __typename?: 'Query', block: { __typename?: 'Block', id: string, type: BlockType, title?: string | null | undefined, emoji?: string | null | undefined, description?: string | null | undefined } };
 
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, username: string, firstName: string, lastName: string, avatar?: string | null | undefined, blocks?: Array<{ __typename?: 'Block', id: string, title: string }> | null | undefined } };
+export type GetMeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, username: string, firstName: string, lastName: string, avatar?: string | null | undefined, blocks?: Array<{ __typename?: 'Block', id: string, type: BlockType, title?: string | null | undefined, emoji?: string | null | undefined }> | null | undefined } };
 
 
 export const GetAllBlocksDocument = gql`
@@ -197,6 +199,8 @@ export const GetBlockDocument = gql`
     id
     type
     title
+    emoji
+    description
   }
 }
     `;
@@ -238,7 +242,9 @@ export const GetMeDocument = gql`
     avatar
     blocks {
       id
+      type
       title
+      emoji
     }
   }
 }

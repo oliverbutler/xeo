@@ -16,6 +16,12 @@ gql`
       firstName
       lastName
       avatar
+      blocks {
+        id
+        type
+        title
+        emoji
+      }
     }
   }
 `;

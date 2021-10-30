@@ -1,16 +1,15 @@
 import { SidebarItem } from '../SidebarItem.tsx/SidebarItem';
 import { FiUser } from 'react-icons/fi';
 import { useCurrentUser } from 'hooks/useCurrentUser';
+import { GetMeQuery } from 'generated';
 
-export const UserRow: React.FunctionComponent = () => {
-  const { user } = useCurrentUser();
+interface Props {
+  user: GetMeQuery['me'];
+}
 
-  if (!user) {
-    return null;
-  }
-
+export const UserRow: React.FunctionComponent<Props> = ({ user }) => {
   return (
-    <SidebarItem className="mb-2 flex items-center py-1">
+    <SidebarItem className="mb-2 flex items-center py-1 ">
       {user.avatar ? (
         <img
           className="w-5 h-5"

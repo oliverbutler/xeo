@@ -12,6 +12,8 @@ export const GET_BLOCK = gql`
       id
       type
       title
+      emoji
+      description
     }
   }
 `;
@@ -28,7 +30,7 @@ export const Page: React.FunctionComponent<Props> = ({ blockId }) => {
   return (
     <div className="page min-h-full flex flex-col">
       <div className="text-7xl mb-6 mt-12 p-2 w-min hover:bg-gray-100 rounded-md cursor-pointer relative select-none">
-        <div className="text-7xl">🚀</div>
+        <div className="text-7xl">{page.emoji}</div>
       </div>
 
       <h1

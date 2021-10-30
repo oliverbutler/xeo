@@ -34,6 +34,12 @@ export class BlockAdapter {
     });
   }
 
+  async getAllRootBlocksByUser(userId: User['id']): Promise<Block[]> {
+    return this.blockRepository.find({
+      where: { createdById: userId, parentId: null },
+    });
+  }
+
   async getAllBlocks(): Promise<Block[]> {
     return await this.blockRepository.find();
   }

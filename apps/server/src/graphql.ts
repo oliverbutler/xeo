@@ -38,7 +38,9 @@ export interface IMutation {
 export interface Block {
     id: string;
     type: BlockType;
-    title: string;
+    title?: Nullable<string>;
+    emoji?: Nullable<string>;
+    description?: Nullable<string>;
     createdBy: User;
     createdById: string;
     parent?: Nullable<Block>;
