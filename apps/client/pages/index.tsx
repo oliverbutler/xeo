@@ -1,11 +1,7 @@
-import classNames from 'classnames';
-import { Blocks } from 'components/Blocks/Blocks';
-import { Page } from 'components/Page/Page';
 import { Sidebar } from 'components/Sidebar/Sidebar';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { useRouter } from 'next/dist/client/router';
 import { useEffect } from 'react';
-import { FormattedMessage } from 'react-intl';
 
 const Index: React.FunctionComponent = () => {
   const router = useRouter();

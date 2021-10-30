@@ -31,8 +31,8 @@ export const Sidebar = () => {
             <>
               <UserRow user={user} />
               {user.blocks?.map((page) => (
-                <Link href={`/page/${page.id}`}>
-                  <SidebarItem className="text-gray-700 text-sm" key={page.id}>
+                <Link href={`/page/${page.id}`} key={page.id}>
+                  <SidebarItem className="text-gray-700 text-sm">
                     {page.emoji} {page.title}
                   </SidebarItem>
                 </Link>

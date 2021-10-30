@@ -1,10 +1,19 @@
 import { gql } from '@apollo/client';
 import classNames from 'classnames';
+import ContentBlockList from 'components/Blocks/ContentBlock/ContentBlockList/ContentBlockList';
 import { useGetBlockQuery } from 'generated';
 
 interface Props {
   blockId: string;
 }
+
+export const pageChildrenFragment = gql`
+  fragment PageChildren on Block {
+    id
+    text
+    type
+  }
+`;
 
 export const GET_BLOCK = gql`
   query GetBlock($blockId: ID!) {
@@ -14,8 +23,12 @@ export const GET_BLOCK = gql`
       title
       emoji
       description
+      children {
+        ...PageChildren
+      }
     }
   }
+  ${pageChildrenFragment}
 `;
 
 export const Page: React.FunctionComponent<Props> = ({ blockId }) => {
@@ -34,14 +47,14 @@ export const Page: React.FunctionComponent<Props> = ({ blockId }) => {
       </div>
 
       <h1
-        className={classNames('text-4xl font-bold text-left', {
+        className={classNames('text-4xl font-bold text-left mb-10', {
           'text-gray-300': !page.title,
         })}
       >
         {page.title}
       </h1>
 
-      {/* <ContentBlockList blocks={page.children} /> */}
+      <ContentBlockList blocks={page.children} />
     </div>
   );
 };

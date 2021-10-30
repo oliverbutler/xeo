@@ -1,11 +1,16 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { BlockType } from '../../graphql';
 import { User } from '../../user/core/user.entity';
 
 export type BlockWithoutRelations = Omit<
   Block,
   'parent' | 'children' | 'createdBy'
 >;
+
+export enum BlockType {
+  PAGE = 'PAGE',
+  TEXT = 'TEXT',
+  HEADING_1 = 'HEADING_1',
+}
 
 @Entity()
 export class Block {
@@ -23,6 +28,10 @@ export class Block {
 
   @Column({ nullable: true })
   description!: string;
+
+  // Text Block
+  @Column({ nullable: true })
+  text!: string;
 
   @ManyToOne(() => Block, (block) => block.id)
   parent: Block | undefined;

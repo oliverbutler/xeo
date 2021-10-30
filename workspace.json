@@ -3,20 +3,6 @@
   "projects": {
     "server": "apps/server",
     "client-e2e": "apps/client-e2e",
-    "client": {
-      "root": "apps/client",
-      "architect": {
-        "generate": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              {
-                "command": "npx graphql-codegen --config apps/client/codegen.yml"
-              }
-            ]
-          }
-        }
-      }
-    }
+    "client": "apps/client"
   }
 }

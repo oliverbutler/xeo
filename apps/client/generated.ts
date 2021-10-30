@@ -30,11 +30,13 @@ export type Block = {
   id: Scalars['ID'];
   parent?: Maybe<Block>;
   parentId?: Maybe<Scalars['ID']>;
+  text?: Maybe<Scalars['String']>;
   title?: Maybe<Scalars['String']>;
   type: BlockType;
 };
 
 export enum BlockType {
+  Heading_1 = 'HEADING_1',
   Page = 'PAGE',
   Text = 'TEXT'
 }
@@ -110,19 +112,27 @@ export type SignInMutationVariables = Exact<{
 
 export type SignInMutation = { __typename?: 'Mutation', signIn: { __typename?: 'AuthResponse', accessToken: string } };
 
+export type PageChildrenFragment = { __typename?: 'Block', id: string, text?: string | null | undefined, type: BlockType };
+
 export type GetBlockQueryVariables = Exact<{
   blockId: Scalars['ID'];
 }>;
 
 
-export type GetBlockQuery = { __typename?: 'Query', block: { __typename?: 'Block', id: string, type: BlockType, title?: string | null | undefined, emoji?: string | null | undefined, description?: string | null | undefined } };
+export type GetBlockQuery = { __typename?: 'Query', block: { __typename?: 'Block', id: string, type: BlockType, title?: string | null | undefined, emoji?: string | null | undefined, description?: string | null | undefined, children: Array<{ __typename?: 'Block', id: string, text?: string | null | undefined, type: BlockType }> } };
 
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetMeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, username: string, firstName: string, lastName: string, avatar?: string | null | undefined, blocks?: Array<{ __typename?: 'Block', id: string, type: BlockType, title?: string | null | undefined, emoji?: string | null | undefined }> | null | undefined } };
 
-
+export const PageChildrenFragmentDoc = gql`
+    fragment PageChildren on Block {
+  id
+  text
+  type
+}
+    `;
 export const GetAllBlocksDocument = gql`
     query GetAllBlocks {
   blocks {
@@ -201,9 +211,12 @@ export const GetBlockDocument = gql`
     title
     emoji
     description
+    children {
+      ...PageChildren
+    }
   }
 }
-    `;
+    ${PageChildrenFragmentDoc}`;
 
 /**
  * __useGetBlockQuery__

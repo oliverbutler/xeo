@@ -9,7 +9,8 @@
 /* eslint-disable */
 export enum BlockType {
     PAGE = "PAGE",
-    TEXT = "TEXT"
+    TEXT = "TEXT",
+    HEADING_1 = "HEADING_1"
 }
 
 export interface SignUpInput {
@@ -41,6 +42,7 @@ export interface Block {
     title?: Nullable<string>;
     emoji?: Nullable<string>;
     description?: Nullable<string>;
+    text?: Nullable<string>;
     createdBy: User;
     createdById: string;
     parent?: Nullable<Block>;
