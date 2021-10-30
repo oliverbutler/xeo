@@ -1,3 +1,4 @@
+import { UseGuards } from '@nestjs/common';
 import {
   Args,
   Mutation,
@@ -6,8 +7,12 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { Block, CreateBlockInput, User } from '../../graphql';
+import { CurrentUser, GqlAuthGuard } from '../../auth/core/auth.guard';
+import { CurrentAuthUser } from '../../auth/strategies/jwt.strategy';
+import { CreateBlockInput } from '../../graphql';
+import { UserWithoutRelations } from '../../user/core/user.entity';
 import { UserService } from '../../user/core/user.service';
+import { BlockWithoutRelations } from '../core/block.entity';
 import { BlockService } from '../core/block.service';
 
 @Resolver('Block')
@@ -18,25 +23,38 @@ export class BlockResolver {
   ) {}
 
   @Query('blocks')
-  async getAllBlocks(): Promise<Block[]> {
-    return await this.blockService.getAllBlocks();
+  @UseGuards(GqlAuthGuard)
+  async getAllBlocks(
+    @CurrentUser() user: CurrentAuthUser
+  ): Promise<BlockWithoutRelations[]> {
+    return await this.blockService.getAllBlocksByUser(user.id);
   }
 
   @Mutation('createBlock')
+  @UseGuards(GqlAuthGuard)
   async createBlock(
     @Args('input')
-    input: CreateBlockInput
-  ): Promise<Block> {
-    return await this.blockService.createBlock(input);
+    input: CreateBlockInput,
+    @CurrentUser() user: CurrentAuthUser
+  ): Promise<BlockWithoutRelations> {
+    return await this.blockService.createBlock({
+      ...input,
+      createdById: user.id,
+      parentId: input.parentId ?? undefined,
+    });
   }
 
   @ResolveField('children')
-  async getChildren(@Parent() block: Block): Promise<Block[]> {
+  async getChildren(
+    @Parent() block: BlockWithoutRelations
+  ): Promise<BlockWithoutRelations[]> {
     return await this.blockService.getAllBlocksByParentId(block.id);
   }
 
   @ResolveField('createdBy')
-  async getCreatedBy(@Parent() block: Block): Promise<User> {
+  async getCreatedBy(
+    @Parent() block: BlockWithoutRelations
+  ): Promise<UserWithoutRelations> {
     return await this.userService.getById(block.createdById);
   }
 }

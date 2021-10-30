@@ -1,5 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { CreateBlockInput } from '../../graphql';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { User } from '../../user/core/user.entity';
 import { BlockAdapter } from '../infrastructure/block.adapter';
 import { Block } from './block.entity';
@@ -8,18 +7,41 @@ import { Block } from './block.entity';
 export class BlockService {
   constructor(private readonly blockAdapter: BlockAdapter) {}
 
-  async createBlock(block: CreateBlockInput): Promise<Block> {
-    return await this.blockAdapter.createBlock({
-      ...block,
-      parentId: block.parentId ?? null,
-    });
+  async createBlock(
+    block: Pick<Block, 'createdById' | 'parentId' | 'type'>
+  ): Promise<Block> {
+    if (block.parentId) {
+      const parentBlock = await this.blockAdapter.getBlockById(block.parentId);
+
+      if (!parentBlock) {
+        throw new BadRequestException(
+          `BlockService > Parent block ${block.parentId} not found`
+        );
+      }
+    }
+
+    return await this.blockAdapter.createBlock(block);
   }
 
   async getBlockById(id: Block['id']): Promise<Block> {
-    return await this.blockAdapter.getBlockById(id);
+    const block = await this.blockAdapter.getBlockById(id);
+
+    if (!block) {
+      throw new BadRequestException(`BlockService > Block ${id} not found`);
+    }
+
+    return block;
   }
 
-  async getAllBlocksByParentId(parentId: Block['parentId']): Promise<Block[]> {
+  async getAllBlocksByParentId(parentId: string): Promise<Block[]> {
+    const parentBlock = this.blockAdapter.getBlockById(parentId);
+
+    if (!parentBlock) {
+      throw new BadRequestException(
+        `BlockService > Parent block ${parentId} not found`
+      );
+    }
+
     return await this.blockAdapter.getAllBlocksByParentId(parentId);
   }
 

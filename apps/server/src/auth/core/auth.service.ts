@@ -1,8 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AuthResponse, SignUpInput } from '../graphql';
-import { User } from '../user/core/user.entity';
-import { UserService } from '../user/core/user.service';
+import { AuthResponse, SignUpInput } from '../../graphql';
+import { User } from '../../user/core/user.entity';
+import { UserService } from '../../user/core/user.service';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()

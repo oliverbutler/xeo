@@ -18,8 +18,8 @@
           "inspect": false,
           "fileReplacements": [
             {
-              "replace": "apps/server/src/environments/environment.ts",
-              "with": "apps/server/src/environments/environment.prod.ts"
+              "replace": "apps/server/src/app/environments/environment.ts",
+              "with": "apps/server/src/app/environments/environment.prod.ts"
             }
           ]
         }

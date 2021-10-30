@@ -21,7 +21,6 @@ export interface SignUpInput {
 
 export interface CreateBlockInput {
     type: BlockType;
-    createdById: string;
     parentId?: Nullable<string>;
 }
 

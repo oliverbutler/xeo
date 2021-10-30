@@ -17,7 +17,7 @@ export class BlockAdapter {
     const block = await this.blockRepository.findOne(id);
 
     if (!block) {
-      throw new Error(`BlockAdapter > Block ${id} not found`);
+      throw new Error(`BlockAdapter > Error getting block ${id}`);
     }
     return block;
   }
