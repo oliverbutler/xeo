@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthResponse, SignUpInput } from '../../graphql';
-import { User } from '../../user/core/user.entity';
+import { User, UserWithoutRelations } from '../../user/core/user.entity';
 import { UserService } from '../../user/core/user.service';
 import * as bcrypt from 'bcrypt';
 
@@ -15,7 +15,7 @@ export class AuthService {
   async validateUser(
     username: User['username'],
     password: string
-  ): Promise<User> {
+  ): Promise<UserWithoutRelations> {
     const user = await this.userService.getByUsername(username);
 
     const isMatch = await bcrypt.compare(password, user.passwordHash);

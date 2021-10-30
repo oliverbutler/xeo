@@ -15,6 +15,9 @@ export class Block {
   @Column({ nullable: false, type: 'enum', enum: BlockType })
   type!: BlockType;
 
+  @Column({ nullable: true })
+  title!: string;
+
   @ManyToOne(() => Block, (block) => block.id)
   parent: Block | undefined;
 

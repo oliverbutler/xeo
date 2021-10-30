@@ -3,7 +3,7 @@ type User {
   username: String!
   firstName: String!
   lastName: String!
-  blocks: [Block!]!
+  blocks: [Block!]
 }
 
 type Query {

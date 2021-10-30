@@ -6,6 +6,8 @@ enum BlockType {
 type Block {
   id: ID!
   type: BlockType!
+  title: String!
+
   createdBy: User!
   createdById: ID!
   parent: Block

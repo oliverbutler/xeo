@@ -38,6 +38,7 @@ export interface IMutation {
 export interface Block {
     id: string;
     type: BlockType;
+    title: string;
     createdBy: User;
     createdById: string;
     parent?: Nullable<Block>;
@@ -55,7 +56,7 @@ export interface User {
     username: string;
     firstName: string;
     lastName: string;
-    blocks: Block[];
+    blocks?: Nullable<Block[]>;
 }
 
 type Nullable<T> = T | null;

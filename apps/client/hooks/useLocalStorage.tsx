@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useState } from 'react';
 
 export const useLocalStorage = <T extends number | string | JSON>(
   key: string,
-  initialValue: T
+  initialValue?: T
 ): [T, Dispatch<SetStateAction<T>>] => {
   const [storedValue, setStoredValue] = useState(() => {
     try {

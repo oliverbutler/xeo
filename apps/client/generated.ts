@@ -86,6 +86,11 @@ export type User = {
   username: Scalars['String'];
 };
 
+export type GetAllBlocksQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllBlocksQuery = { __typename?: 'Query', blocks: Array<{ __typename?: 'Block', id: string, type: BlockType }> };
+
 export type SignInMutationVariables = Exact<{
   username: Scalars['String'];
   password: Scalars['String'];
@@ -95,6 +100,41 @@ export type SignInMutationVariables = Exact<{
 export type SignInMutation = { __typename?: 'Mutation', signIn: { __typename?: 'AuthResponse', accessToken: string } };
 
 
+export const GetAllBlocksDocument = gql`
+    query GetAllBlocks {
+  blocks {
+    id
+    type
+  }
+}
+    `;
+
+/**
+ * __useGetAllBlocksQuery__
+ *
+ * To run a query within a React component, call `useGetAllBlocksQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllBlocksQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllBlocksQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllBlocksQuery(baseOptions?: Apollo.QueryHookOptions<GetAllBlocksQuery, GetAllBlocksQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllBlocksQuery, GetAllBlocksQueryVariables>(GetAllBlocksDocument, options);
+      }
+export function useGetAllBlocksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllBlocksQuery, GetAllBlocksQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllBlocksQuery, GetAllBlocksQueryVariables>(GetAllBlocksDocument, options);
+        }
+export type GetAllBlocksQueryHookResult = ReturnType<typeof useGetAllBlocksQuery>;
+export type GetAllBlocksLazyQueryHookResult = ReturnType<typeof useGetAllBlocksLazyQuery>;
+export type GetAllBlocksQueryResult = Apollo.QueryResult<GetAllBlocksQuery, GetAllBlocksQueryVariables>;
 export const SignInDocument = gql`
     mutation SignIn($username: String!, $password: String!) {
   signIn(username: $username, password: $password) {
