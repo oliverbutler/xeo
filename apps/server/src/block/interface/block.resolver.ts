@@ -1,33 +1,28 @@
 import { UseGuards } from '@nestjs/common';
-import {
-  Args,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CurrentUser, GqlAuthGuard } from '../../auth/core/auth.guard';
 import { CurrentAuthUser } from '../../auth/strategies/jwt.strategy';
-import { CreateBlockInput } from '../../graphql';
-import { UserWithoutRelations } from '../../user/core/user.entity';
-import { UserService } from '../../user/core/user.service';
+import { BlockFilters, CreateBlockInput } from '../../graphql';
 import { BlockWithoutRelations } from '../core/block.entity';
 import { BlockService } from '../core/block.service';
 
-@Resolver('Block')
+@Resolver('PageBlock')
 export class BlockResolver {
-  constructor(
-    private readonly blockService: BlockService,
-    private readonly userService: UserService
-  ) {}
+  constructor(private readonly blockService: BlockService) {}
 
   @Query('blocks')
   @UseGuards(GqlAuthGuard)
   async getAllBlocks(
-    @CurrentUser() user: CurrentAuthUser
+    @CurrentUser() user: CurrentAuthUser,
+    @Args('filters') filters: BlockFilters
   ): Promise<BlockWithoutRelations[]> {
-    return await this.blockService.getAllBlocksByUser(user.id);
+    return await this.blockService.getAllBlocks({
+      createdById: user.id,
+      ...(filters && // TODO clean up this logic
+        filters.type !== undefined && { type: filters.type ?? undefined }),
+      ...(filters &&
+        filters.parentId !== undefined && { parentId: filters.parentId }),
+    });
   }
 
   @Query('block')
@@ -48,19 +43,5 @@ export class BlockResolver {
       createdById: user.id,
       parentId: input.parentId ?? undefined,
     });
-  }
-
-  @ResolveField('children')
-  async getChildren(
-    @Parent() block: BlockWithoutRelations
-  ): Promise<BlockWithoutRelations[]> {
-    return await this.blockService.getAllBlocksByParentId(block.id);
-  }
-
-  @ResolveField('createdBy')
-  async getCreatedBy(
-    @Parent() block: BlockWithoutRelations
-  ): Promise<UserWithoutRelations> {
-    return await this.userService.getById(block.createdById);
   }
 }

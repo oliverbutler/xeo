@@ -1,7 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { FindManyOptions } from 'typeorm';
+import { PageBlock } from '../../graphql';
 import { User } from '../../user/core/user.entity';
-import { BlockAdapter } from '../infrastructure/block.adapter';
-import { Block } from './block.entity';
+import { BlockAdapter, BlockFilters } from '../infrastructure/block.adapter';
+import { Block, BlockType } from './block.entity';
 
 @Injectable()
 export class BlockService {
@@ -42,19 +44,18 @@ export class BlockService {
       );
     }
 
-    return await this.blockAdapter.getAllBlocksByParentId(parentId);
+    return await this.blockAdapter.getAllBlocks({ parentId });
   }
 
-  async getAllBlocksByUser(userId: User['id']): Promise<Block[]> {
-    return await this.blockAdapter.getAllBlocksByUser(userId);
+  async getAllBlocksForUser(
+    userId: string,
+    filters: Omit<BlockFilters, 'createdById'>
+  ): Promise<Block[]> {
+    return this.blockAdapter.getAllBlocks({ createdById: userId, ...filters });
   }
 
-  async getAllRootBlocksByUser(userId: User['id']): Promise<Block[]> {
-    return this.blockAdapter.getAllRootBlocksByUser(userId);
-  }
-
-  async getAllBlocks(): Promise<Block[]> {
-    return await this.blockAdapter.getAllBlocks();
+  async getAllBlocks(filters: BlockFilters): Promise<Block[]> {
+    return await this.blockAdapter.getAllBlocks(filters);
   }
 
   async updateBlock(

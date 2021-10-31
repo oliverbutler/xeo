@@ -7,28 +7,36 @@ interface Props {
   blockId: string;
 }
 
-export const pageChildrenFragment = gql`
-  fragment PageChildren on Block {
-    id
-    text
-    type
-  }
-`;
-
 export const GET_BLOCK = gql`
+  fragment PageChildren on Block {
+    __typename
+    id
+    type
+    ... on PageBlock {
+      title
+      description
+      emoji
+    }
+    ... on TextBlock {
+      text
+    }
+  }
+
   query GetBlock($blockId: ID!) {
     block(id: $blockId) {
+      __typename
       id
       type
-      title
-      emoji
-      description
-      children {
-        ...PageChildren
+      ... on PageBlock {
+        title
+        description
+        emoji
+        children {
+          ...PageChildren
+        }
       }
     }
   }
-  ${pageChildrenFragment}
 `;
 
 export const Page: React.FunctionComponent<Props> = ({ blockId }) => {
@@ -36,7 +44,7 @@ export const Page: React.FunctionComponent<Props> = ({ blockId }) => {
 
   const page = data?.block;
 
-  if (!page) {
+  if (!page || page.__typename !== 'PageBlock') {
     return null;
   }
 
@@ -53,8 +61,7 @@ export const Page: React.FunctionComponent<Props> = ({ blockId }) => {
       >
         {page.title}
       </h1>
-
-      <ContentBlockList blocks={page.children} />
+      {page.children && <ContentBlockList blocks={page.children} />}
     </div>
   );
 };

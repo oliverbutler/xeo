@@ -21,18 +21,18 @@ export type AuthResponse = {
 };
 
 export type Block = {
-  __typename?: 'Block';
-  children: Array<Block>;
+  children?: Maybe<Array<Block>>;
   createdBy: User;
   createdById: Scalars['ID'];
-  description?: Maybe<Scalars['String']>;
-  emoji?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   parent?: Maybe<Block>;
   parentId?: Maybe<Scalars['ID']>;
-  text?: Maybe<Scalars['String']>;
-  title?: Maybe<Scalars['String']>;
   type: BlockType;
+};
+
+export type BlockFilters = {
+  parentId?: Maybe<Scalars['ID']>;
+  type?: Maybe<BlockType>;
 };
 
 export enum BlockType {
@@ -69,6 +69,20 @@ export type MutationSignUpArgs = {
   input: SignUpInput;
 };
 
+export type PageBlock = Block & {
+  __typename?: 'PageBlock';
+  children?: Maybe<Array<Block>>;
+  createdBy: User;
+  createdById: Scalars['ID'];
+  description?: Maybe<Scalars['String']>;
+  emoji?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  parent?: Maybe<Block>;
+  parentId?: Maybe<Scalars['ID']>;
+  title?: Maybe<Scalars['String']>;
+  type: BlockType;
+};
+
 export type Query = {
   __typename?: 'Query';
   block: Block;
@@ -82,11 +96,28 @@ export type QueryBlockArgs = {
   id: Scalars['ID'];
 };
 
+
+export type QueryBlocksArgs = {
+  filters?: Maybe<BlockFilters>;
+};
+
 export type SignUpInput = {
   firstName: Scalars['String'];
   lastName: Scalars['String'];
   password: Scalars['String'];
   username: Scalars['String'];
+};
+
+export type TextBlock = Block & {
+  __typename?: 'TextBlock';
+  children?: Maybe<Array<Block>>;
+  createdBy: User;
+  createdById: Scalars['ID'];
+  id: Scalars['ID'];
+  parent?: Maybe<Block>;
+  parentId?: Maybe<Scalars['ID']>;
+  text?: Maybe<Scalars['String']>;
+  type: BlockType;
 };
 
 export type User = {
@@ -99,10 +130,10 @@ export type User = {
   username: Scalars['String'];
 };
 
-export type GetAllBlocksQueryVariables = Exact<{ [key: string]: never; }>;
 
-
-export type GetAllBlocksQuery = { __typename?: 'Query', blocks: Array<{ __typename?: 'Block', id: string, type: BlockType, title?: string | null | undefined }> };
+export type UserBlocksArgs = {
+  filters?: Maybe<BlockFilters>;
+};
 
 export type SignInMutationVariables = Exact<{
   username: Scalars['String'];
@@ -112,63 +143,39 @@ export type SignInMutationVariables = Exact<{
 
 export type SignInMutation = { __typename?: 'Mutation', signIn: { __typename?: 'AuthResponse', accessToken: string } };
 
-export type PageChildrenFragment = { __typename?: 'Block', id: string, text?: string | null | undefined, type: BlockType };
+export type PageChildren_PageBlock_Fragment = { __typename: 'PageBlock', title?: string | null | undefined, description?: string | null | undefined, emoji?: string | null | undefined, id: string, type: BlockType };
+
+export type PageChildren_TextBlock_Fragment = { __typename: 'TextBlock', text?: string | null | undefined, id: string, type: BlockType };
+
+export type PageChildrenFragment = PageChildren_PageBlock_Fragment | PageChildren_TextBlock_Fragment;
 
 export type GetBlockQueryVariables = Exact<{
   blockId: Scalars['ID'];
 }>;
 
 
-export type GetBlockQuery = { __typename?: 'Query', block: { __typename?: 'Block', id: string, type: BlockType, title?: string | null | undefined, emoji?: string | null | undefined, description?: string | null | undefined, children: Array<{ __typename?: 'Block', id: string, text?: string | null | undefined, type: BlockType }> } };
+export type GetBlockQuery = { __typename?: 'Query', block: { __typename: 'PageBlock', title?: string | null | undefined, description?: string | null | undefined, emoji?: string | null | undefined, id: string, type: BlockType, children?: Array<{ __typename: 'PageBlock', title?: string | null | undefined, description?: string | null | undefined, emoji?: string | null | undefined, id: string, type: BlockType } | { __typename: 'TextBlock', text?: string | null | undefined, id: string, type: BlockType }> | null | undefined } | { __typename: 'TextBlock', id: string, type: BlockType } };
 
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, username: string, firstName: string, lastName: string, avatar?: string | null | undefined, blocks?: Array<{ __typename?: 'Block', id: string, type: BlockType, title?: string | null | undefined, emoji?: string | null | undefined }> | null | undefined } };
+export type GetMeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, username: string, firstName: string, lastName: string, avatar?: string | null | undefined, blocks?: Array<{ __typename: 'PageBlock', title?: string | null | undefined, emoji?: string | null | undefined, description?: string | null | undefined, id: string, type: BlockType } | { __typename: 'TextBlock', id: string, type: BlockType }> | null | undefined } };
 
 export const PageChildrenFragmentDoc = gql`
     fragment PageChildren on Block {
+  __typename
   id
-  text
   type
-}
-    `;
-export const GetAllBlocksDocument = gql`
-    query GetAllBlocks {
-  blocks {
-    id
-    type
+  ... on PageBlock {
     title
+    description
+    emoji
+  }
+  ... on TextBlock {
+    text
   }
 }
     `;
-
-/**
- * __useGetAllBlocksQuery__
- *
- * To run a query within a React component, call `useGetAllBlocksQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllBlocksQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAllBlocksQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetAllBlocksQuery(baseOptions?: Apollo.QueryHookOptions<GetAllBlocksQuery, GetAllBlocksQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAllBlocksQuery, GetAllBlocksQueryVariables>(GetAllBlocksDocument, options);
-      }
-export function useGetAllBlocksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllBlocksQuery, GetAllBlocksQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAllBlocksQuery, GetAllBlocksQueryVariables>(GetAllBlocksDocument, options);
-        }
-export type GetAllBlocksQueryHookResult = ReturnType<typeof useGetAllBlocksQuery>;
-export type GetAllBlocksLazyQueryHookResult = ReturnType<typeof useGetAllBlocksLazyQuery>;
-export type GetAllBlocksQueryResult = Apollo.QueryResult<GetAllBlocksQuery, GetAllBlocksQueryVariables>;
 export const SignInDocument = gql`
     mutation SignIn($username: String!, $password: String!) {
   signIn(username: $username, password: $password) {
@@ -206,13 +213,16 @@ export type SignInMutationOptions = Apollo.BaseMutationOptions<SignInMutation, S
 export const GetBlockDocument = gql`
     query GetBlock($blockId: ID!) {
   block(id: $blockId) {
+    __typename
     id
     type
-    title
-    emoji
-    description
-    children {
-      ...PageChildren
+    ... on PageBlock {
+      title
+      description
+      emoji
+      children {
+        ...PageChildren
+      }
     }
   }
 }
@@ -253,11 +263,15 @@ export const GetMeDocument = gql`
     firstName
     lastName
     avatar
-    blocks {
+    blocks(filters: {type: PAGE, parentId: null}) {
+      __typename
       id
       type
-      title
-      emoji
+      ... on PageBlock {
+        title
+        emoji
+        description
+      }
     }
   }
 }

@@ -32,7 +32,7 @@ const ContentBlockList = ({ blocks }: BlockListProps) => {
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
     const items = reorder(order, result.source.index, result.destination.index);
-    setOrder(items as Block[]);
+    setOrder(items as PageChildrenFragment[]);
   };
 
   // BUG Strange issue where leaving a page and returning to it causes the page to re-render, but the blocks to not re-render as order doesn't update correctly

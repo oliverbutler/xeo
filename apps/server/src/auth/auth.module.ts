@@ -7,8 +7,6 @@ import { AuthResolver } from './interface/auth.resolver';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 
-console.log();
-
 @Module({
   imports: [
     forwardRef(() => UserModule),
@@ -16,7 +14,7 @@ console.log();
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: {
-        expiresIn: 3600,
+        expiresIn: '7d',
       },
     }),
   ],

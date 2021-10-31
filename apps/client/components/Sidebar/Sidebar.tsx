@@ -2,7 +2,6 @@ import { IconButton } from 'components/IconButton/IconButton';
 import { Resize } from 'components/Resize/Resize';
 import { useCurrentUser } from 'hooks/useCurrentUser';
 import { useLocalStorage } from 'hooks/useLocalStorage';
-import { useEffect, useState } from 'react';
 import { FiPlusCircle } from 'react-icons/fi';
 import { SidebarItem } from './SidebarItem.tsx/SidebarItem';
 import { UserRow } from './UserRow/UserRow';

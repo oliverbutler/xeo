@@ -4,7 +4,7 @@ type User {
   firstName: String!
   lastName: String!
   avatar: String
-  blocks: [Block!]
+  blocks(filters: BlockFilters): [Block!]
 }
 
 type Query {

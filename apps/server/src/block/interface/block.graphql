@@ -1,20 +1,43 @@
 enum BlockType {
   PAGE
   TEXT
+  HEADING_1
 }
 
-type Block {
+interface Block {
   id: ID!
   type: BlockType!
-  title: String
-  emoji: String
-  description: String
-
   createdBy: User!
   createdById: ID!
   parent: Block
   parentId: ID
-  children: [Block!]!
+  children: [Block!]
+}
+
+type TextBlock implements Block {
+  id: ID!
+  type: BlockType!
+  createdBy: User!
+  createdById: ID!
+  parent: Block
+  parentId: ID
+  children: [Block!]
+
+  text: String
+}
+
+type PageBlock implements Block {
+  id: ID!
+  type: BlockType!
+  createdBy: User!
+  createdById: ID!
+  parent: Block
+  parentId: ID
+  children: [Block!]
+
+  title: String
+  description: String
+  emoji: String
 }
 
 input CreateBlockInput {
@@ -22,8 +45,13 @@ input CreateBlockInput {
   parentId: ID
 }
 
+input BlockFilters {
+  type: BlockType
+  parentId: ID
+}
+
 type Query {
-  blocks: [Block!]!
+  blocks(filters: BlockFilters): [Block!]!
   block(id: ID!): Block!
 }
 

@@ -3,6 +3,12 @@ import { User } from '../../user/core/user.entity';
 import { Block } from '../core/block.entity';
 import { BlockRepository } from './block.repository';
 
+export type BlockFilters = {
+  type?: Block['type'];
+  parentId?: Block['parentId'] | null;
+  createdById?: Block['createdById'];
+};
+
 @Injectable()
 export class BlockAdapter {
   constructor(private readonly blockRepository: BlockRepository) {}
@@ -22,26 +28,8 @@ export class BlockAdapter {
     return block;
   }
 
-  async getAllBlocksByParentId(parentId: Block['parentId']): Promise<Block[]> {
-    return await this.blockRepository.find({
-      where: { parentId },
-    });
-  }
-
-  async getAllBlocksByUser(userId: User['id']): Promise<Block[]> {
-    return await this.blockRepository.find({
-      where: { createdById: userId },
-    });
-  }
-
-  async getAllRootBlocksByUser(userId: User['id']): Promise<Block[]> {
-    return this.blockRepository.find({
-      where: { createdById: userId, parentId: null },
-    });
-  }
-
-  async getAllBlocks(): Promise<Block[]> {
-    return await this.blockRepository.find();
+  async getAllBlocks(filters: BlockFilters): Promise<Block[]> {
+    return await this.blockRepository.find({ where: filters });
   }
 
   async updateBlock(

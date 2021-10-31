@@ -2,14 +2,16 @@ import { gql } from '@apollo/client';
 import { useSignInMutation } from 'generated';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { useRouter } from 'next/dist/client/router';
-import { useEffect } from 'react';
+import { BaseSyntheticEvent, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { toast } from 'react-toastify';
 import { FormState, useForm, UseFormRegister } from 'react-hook-form';
 
 interface Output {
   loading: boolean;
-  handleSubmit: (e: unknown) => Promise<void>;
+  handleSubmit: (
+    e?: BaseSyntheticEvent<object, any, any> | undefined
+  ) => Promise<void>;
   register: UseFormRegister<LoginForm>;
   formState: FormState<LoginForm>;
 }

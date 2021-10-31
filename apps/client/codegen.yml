@@ -9,3 +9,7 @@ generates:
       - typescript-react-apollo
     config:
       withHooks: true
+      exportFragmentSpreadSubTypes: true
+  apps/client/fragmentTypes.json:
+    plugins:
+      - fragment-matcher

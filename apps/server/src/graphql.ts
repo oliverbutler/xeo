@@ -25,6 +25,21 @@ export interface CreateBlockInput {
     parentId?: Nullable<string>;
 }
 
+export interface BlockFilters {
+    type?: Nullable<BlockType>;
+    parentId?: Nullable<string>;
+}
+
+export interface Block {
+    id: string;
+    type: BlockType;
+    createdBy: User;
+    createdById: string;
+    parent?: Nullable<Block>;
+    parentId?: Nullable<string>;
+    children?: Nullable<Block[]>;
+}
+
 export interface AuthResponse {
     accessToken: string;
     user: User;
@@ -36,22 +51,32 @@ export interface IMutation {
     createBlock(input: CreateBlockInput): Block | Promise<Block>;
 }
 
-export interface Block {
+export interface TextBlock extends Block {
     id: string;
     type: BlockType;
-    title?: Nullable<string>;
-    emoji?: Nullable<string>;
-    description?: Nullable<string>;
-    text?: Nullable<string>;
     createdBy: User;
     createdById: string;
     parent?: Nullable<Block>;
     parentId?: Nullable<string>;
-    children: Block[];
+    children?: Nullable<Block[]>;
+    text?: Nullable<string>;
+}
+
+export interface PageBlock extends Block {
+    id: string;
+    type: BlockType;
+    createdBy: User;
+    createdById: string;
+    parent?: Nullable<Block>;
+    parentId?: Nullable<string>;
+    children?: Nullable<Block[]>;
+    title?: Nullable<string>;
+    description?: Nullable<string>;
+    emoji?: Nullable<string>;
 }
 
 export interface IQuery {
-    blocks(): Block[] | Promise<Block[]>;
+    blocks(filters?: Nullable<BlockFilters>): Block[] | Promise<Block[]>;
     block(id: string): Block | Promise<Block>;
     me(): User | Promise<User>;
     users(): User[] | Promise<User[]>;
