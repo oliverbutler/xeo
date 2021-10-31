@@ -38,8 +38,9 @@ export const useBlock = () => {
   ) => {
     await updateBlock(options);
 
+    // TODO update local cache optimistically - this is a super basic re-fetch as a step in to ensure state is valid everywhere
     await client.refetchQueries({
-      include: ['GetPath', 'GetMe'],
+      include: 'active',
     });
   };
 
