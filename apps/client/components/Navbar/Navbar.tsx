@@ -1,11 +1,13 @@
 import { gql } from '@apollo/client';
 import { Loading } from 'components/Animate/Loading/Loading';
+import { Clickable } from 'components/UI/Clickable/Clickable';
+import { Dropdown } from 'components/UI/Dropdown/Dropdown';
 import { useSyncContext } from 'context/syncContext';
 import { useGetPathQuery } from 'generated';
 import { useRouter } from 'next/dist/client/router';
 import Link from 'next/link';
 import { useContext } from 'react';
-import { FiChevronRight } from 'react-icons/fi';
+import { FiChevronRight, FiMoreHorizontal, FiTrash } from 'react-icons/fi';
 
 gql`
   query GetPath($fromBlockId: ID!) {
@@ -49,10 +51,12 @@ export const Navbar: React.FunctionComponent = () => {
             return (
               <div key={block.id} className="flex flex-row items-center">
                 <Link href={`/page/${block.id}`}>
-                  <p className="mx-0.5 text-gray-700 text-sm cursor-pointer hover:bg-gray-200 py-0.5 p-1">
-                    {block.emoji}
-                    <span className="ml-1">{block.title}</span>
-                  </p>
+                  <Clickable>
+                    <p className="mx-0.5 text-gray-700 text-sm ">
+                      {block.emoji}
+                      <span className="ml-2">{block.title}</span>
+                    </p>
+                  </Clickable>
                 </Link>
                 {index < path.length - 1 && (
                   <div className="text-gray-700 text-sm ">
@@ -64,7 +68,18 @@ export const Navbar: React.FunctionComponent = () => {
           }
         })}
       </div>
-      <div>{isSyncing && <Loading className="text-gray-600 h-4" />}</div>
+      <div className="flex flex-row items-center">
+        {isSyncing && <Loading className="text-gray-600 h-3" />}
+        <Dropdown
+          button={
+            <Clickable>
+              <FiMoreHorizontal />
+            </Clickable>
+          }
+          showDirection="right"
+          items={[[{ text: 'Delete', logo: <FiTrash /> }]]}
+        />
+      </div>
     </nav>
   );
 };

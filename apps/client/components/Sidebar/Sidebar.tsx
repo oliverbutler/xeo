@@ -37,7 +37,7 @@ export const Sidebar = () => {
                   return (
                     <Link href={`/page/${page.id}`} key={page.id}>
                       <SidebarItem className="text-gray-700 text-sm">
-                        {page.emoji} {page.title}
+                        <span className="mr-1">{page.emoji}</span> {page.title}
                       </SidebarItem>
                     </Link>
                   );
