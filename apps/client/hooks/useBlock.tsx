@@ -5,10 +5,12 @@ import {
   MutationFunctionOptions,
 } from '@apollo/client';
 import { client } from 'components/Wrappers/ApolloWrapper';
+import { useSyncContext } from 'context/syncContext';
 import {
   Exact,
   UpdateBlockInput,
   UpdateBlockMutation,
+  UpdateBlockMutationOptions,
   useUpdateBlockMutation,
 } from 'generated';
 
@@ -23,25 +25,18 @@ gql`
 export const useBlock = () => {
   const [updateBlock] = useUpdateBlockMutation();
 
-  const updateBlockHandler = async (
-    options?:
-      | MutationFunctionOptions<
-          UpdateBlockMutation,
-          Exact<{
-            blockId: string;
-            data: UpdateBlockInput;
-          }>,
-          DefaultContext,
-          ApolloCache<any>
-        >
-      | undefined
-  ) => {
+  const { setIsSyncing } = useSyncContext();
+
+  const updateBlockHandler = async (options?: UpdateBlockMutationOptions) => {
+    setIsSyncing(true);
     await updateBlock(options);
 
     // TODO update local cache optimistically - this is a super basic re-fetch as a step in to ensure state is valid everywhere
     await client.refetchQueries({
       include: 'active',
     });
+
+    setIsSyncing(false);
   };
 
   return {
