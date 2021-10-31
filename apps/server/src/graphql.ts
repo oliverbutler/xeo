@@ -33,6 +33,7 @@ export interface BlockFilters {
 export interface UpdateBlockInput {
     text?: Nullable<string>;
     title?: Nullable<string>;
+    favourite?: Nullable<boolean>;
 }
 
 export interface Block {
@@ -76,9 +77,10 @@ export interface PageBlock extends Block {
     parent?: Nullable<Block>;
     parentId?: Nullable<string>;
     children?: Nullable<Block[]>;
-    title?: Nullable<string>;
+    title: string;
     description?: Nullable<string>;
     emoji?: Nullable<string>;
+    favourite: boolean;
 }
 
 export interface IQuery {

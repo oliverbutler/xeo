@@ -65,6 +65,7 @@ export class BlockResolver {
     return await this.blockService.updateBlock(id, {
       ...(input.title && { title: input.title }),
       ...(input.text && { text: input.text }),
+      ...(input.favourite && { favourite: input.favourite }),
     });
   }
 }

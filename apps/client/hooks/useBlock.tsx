@@ -1,18 +1,7 @@
-import {
-  ApolloCache,
-  DefaultContext,
-  gql,
-  MutationFunctionOptions,
-} from '@apollo/client';
+import { gql } from '@apollo/client';
 import { client } from 'components/Wrappers/ApolloWrapper';
-import { useSyncContext } from 'context/syncContext';
-import {
-  Exact,
-  UpdateBlockInput,
-  UpdateBlockMutation,
-  UpdateBlockMutationOptions,
-  useUpdateBlockMutation,
-} from 'generated';
+import { useSyncContext } from 'context/SyncContext';
+import { UpdateBlockMutationOptions, useUpdateBlockMutation } from 'generated';
 
 gql`
   mutation UpdateBlock($blockId: ID!, $data: UpdateBlockInput!) {

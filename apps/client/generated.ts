@@ -83,10 +83,11 @@ export type PageBlock = Block & {
   createdById: Scalars['ID'];
   description?: Maybe<Scalars['String']>;
   emoji?: Maybe<Scalars['String']>;
+  favourite: Scalars['Boolean'];
   id: Scalars['ID'];
   parent?: Maybe<Block>;
   parentId?: Maybe<Scalars['ID']>;
-  title?: Maybe<Scalars['String']>;
+  title: Scalars['String'];
   type: BlockType;
 };
 
@@ -134,6 +135,7 @@ export type TextBlock = Block & {
 };
 
 export type UpdateBlockInput = {
+  favourite?: Maybe<Scalars['Boolean']>;
   text?: Maybe<Scalars['String']>;
   title?: Maybe<Scalars['String']>;
 };
@@ -166,9 +168,9 @@ export type GetPathQueryVariables = Exact<{
 }>;
 
 
-export type GetPathQuery = { __typename?: 'Query', path: Array<{ __typename?: 'PageBlock', title?: string | null | undefined, emoji?: string | null | undefined, description?: string | null | undefined, id: string } | { __typename?: 'TextBlock', id: string }> };
+export type GetPathQuery = { __typename?: 'Query', path: Array<{ __typename?: 'PageBlock', title: string, emoji?: string | null | undefined, description?: string | null | undefined, id: string } | { __typename?: 'TextBlock', id: string }> };
 
-export type PageChildren_PageBlock_Fragment = { __typename: 'PageBlock', title?: string | null | undefined, description?: string | null | undefined, emoji?: string | null | undefined, id: string, type: BlockType };
+export type PageChildren_PageBlock_Fragment = { __typename: 'PageBlock', title: string, description?: string | null | undefined, emoji?: string | null | undefined, favourite: boolean, id: string, type: BlockType };
 
 export type PageChildren_TextBlock_Fragment = { __typename: 'TextBlock', text?: string | null | undefined, id: string, type: BlockType };
 
@@ -179,7 +181,7 @@ export type GetBlockQueryVariables = Exact<{
 }>;
 
 
-export type GetBlockQuery = { __typename?: 'Query', block: { __typename: 'PageBlock', title?: string | null | undefined, description?: string | null | undefined, emoji?: string | null | undefined, id: string, type: BlockType, children?: Array<{ __typename: 'PageBlock', title?: string | null | undefined, description?: string | null | undefined, emoji?: string | null | undefined, id: string, type: BlockType } | { __typename: 'TextBlock', text?: string | null | undefined, id: string, type: BlockType }> | null | undefined } | { __typename: 'TextBlock', id: string, type: BlockType } };
+export type GetBlockQuery = { __typename?: 'Query', block: { __typename: 'PageBlock', title: string, description?: string | null | undefined, emoji?: string | null | undefined, favourite: boolean, id: string, type: BlockType, children?: Array<{ __typename: 'PageBlock', title: string, description?: string | null | undefined, emoji?: string | null | undefined, favourite: boolean, id: string, type: BlockType } | { __typename: 'TextBlock', text?: string | null | undefined, id: string, type: BlockType }> | null | undefined } | { __typename: 'TextBlock', id: string, type: BlockType } };
 
 export type UpdateBlockMutationVariables = Exact<{
   blockId: Scalars['ID'];
@@ -192,7 +194,7 @@ export type UpdateBlockMutation = { __typename?: 'Mutation', updateBlock: { __ty
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, username: string, firstName: string, lastName: string, avatar?: string | null | undefined, blocks?: Array<{ __typename: 'PageBlock', title?: string | null | undefined, emoji?: string | null | undefined, description?: string | null | undefined, id: string, type: BlockType } | { __typename: 'TextBlock', id: string, type: BlockType }> | null | undefined } };
+export type GetMeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, username: string, firstName: string, lastName: string, avatar?: string | null | undefined, blocks?: Array<{ __typename: 'PageBlock', title: string, emoji?: string | null | undefined, description?: string | null | undefined, id: string, type: BlockType } | { __typename: 'TextBlock', id: string, type: BlockType }> | null | undefined } };
 
 export const PageChildrenFragmentDoc = gql`
     fragment PageChildren on Block {
@@ -203,6 +205,7 @@ export const PageChildrenFragmentDoc = gql`
     title
     description
     emoji
+    favourite
   }
   ... on TextBlock {
     text
@@ -293,6 +296,7 @@ export const GetBlockDocument = gql`
       title
       description
       emoji
+      favourite
       children {
         ...PageChildren
       }

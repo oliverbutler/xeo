@@ -20,6 +20,8 @@ export class Block {
   @Column({ nullable: false, type: 'enum', enum: BlockType })
   type!: BlockType;
 
+  // Page Blocks
+
   @Column({ nullable: true })
   title!: string;
 
@@ -29,7 +31,10 @@ export class Block {
   @Column({ nullable: true })
   description!: string;
 
-  // Text Block
+  @Column({ nullable: false, default: false })
+  favourite!: boolean;
+
+  // Text Blocks
   @Column({ nullable: true })
   text!: string;
 

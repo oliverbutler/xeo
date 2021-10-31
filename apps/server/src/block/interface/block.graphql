@@ -35,9 +35,10 @@ type PageBlock implements Block {
   parentId: ID
   children: [Block!]
 
-  title: String
+  title: String!
   description: String
   emoji: String
+  favourite: Boolean!
 }
 
 input CreateBlockInput {
@@ -59,6 +60,7 @@ type Query {
 input UpdateBlockInput {
   text: String
   title: String
+  favourite: Boolean
 }
 
 type Mutation {

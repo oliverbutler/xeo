@@ -21,7 +21,7 @@ export const Dropdown: React.FunctionComponent<Props> = ({
   showDirection,
 }) => {
   return (
-    <Menu as="div">
+    <Menu as="div" className="relative">
       <Menu.Button as="div">{button}</Menu.Button>
       <Transition
         as={Fragment}
@@ -43,15 +43,13 @@ export const Dropdown: React.FunctionComponent<Props> = ({
           {items.map((itemGroup, groupIndex) => (
             <div key={`item-${groupIndex}`}>
               {itemGroup.map((item, index) => (
-                <Menu.Item>
-                  <Clickable key={`item-${groupIndex}-${index}`}>
-                    <button
-                      onClick={item.onClick}
-                      className={`group flex items-center w-full px-1 py-0.5 text-sm text-gray-800`}
-                    >
-                      <span className="mr-2">{item.logo}</span> {item.text}
-                    </button>
-                  </Clickable>
+                <Menu.Item as={Clickable} key={`item-${groupIndex}-${index}`}>
+                  <button
+                    onClick={item.onClick}
+                    className={`group flex items-center w-full px-1 py-0.5 text-sm text-gray-800`}
+                  >
+                    <span className="mr-2">{item.logo}</span> {item.text}
+                  </button>
                 </Menu.Item>
               ))}
             </div>
