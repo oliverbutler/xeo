@@ -2,12 +2,25 @@ import { SidebarItem } from '../SidebarItem.tsx/SidebarItem';
 import { FiUser } from 'react-icons/fi';
 import { GetMeQuery } from 'generated';
 import { Dropdown } from 'components/UI/Dropdown/Dropdown';
+import { useRouter } from 'next/dist/client/router';
+import { toast } from 'react-toastify';
+import { useIntl } from 'react-intl';
 
 interface Props {
   user: GetMeQuery['me'];
 }
 
 export const UserRow: React.FunctionComponent<Props> = ({ user }) => {
+  const router = useRouter();
+
+  const { formatMessage } = useIntl();
+
+  const handleLogOut = () => {
+    localStorage.removeItem('accessToken');
+    router.push('/login');
+    toast.success(formatMessage({ id: 'generic.logout.success' }));
+  };
+
   return (
     <Dropdown
       showDirection="left"
@@ -27,7 +40,7 @@ export const UserRow: React.FunctionComponent<Props> = ({ user }) => {
           </span>
         </SidebarItem>
       }
-      items={[[{ text: 'Log out', logo: <FiUser /> }]]}
+      items={[[{ text: 'Log out', logo: <FiUser />, onClick: handleLogOut }]]}
     />
   );
 };

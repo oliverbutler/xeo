@@ -4,7 +4,7 @@ import { FieldError } from '../../../../../node_modules/react-hook-form/dist';
 
 type Props = {
   label: string;
-  error: FieldError;
+  error: FieldError | undefined;
 } & DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
 
 export const Input = forwardRef<HTMLInputElement, Props>(

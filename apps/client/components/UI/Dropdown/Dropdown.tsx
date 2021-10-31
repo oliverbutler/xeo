@@ -46,6 +46,7 @@ export const Dropdown: React.FunctionComponent<Props> = ({
                 <Menu.Item>
                   <Clickable key={`item-${groupIndex}-${index}`}>
                     <button
+                      onClick={item.onClick}
                       className={`group flex items-center w-full px-1 py-0.5 text-sm text-gray-800`}
                     >
                       <span className="mr-2">{item.logo}</span> {item.text}

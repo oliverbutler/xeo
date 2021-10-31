@@ -7,5 +7,6 @@
   "generic.forgotPassword": "Forgot Password?",
   "generic.about.rights": "©2020 Xeo. All rights reserved.",
   "generic.login.success": "Successfully logged in",
-  "generic.login.error": "Error logging in"
+  "generic.login.error": "Error logging in",
+  "generic.logout.success": "Logged out successfully"
 }

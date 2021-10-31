@@ -53,6 +53,8 @@ export const useLogin = (): Output => {
         variables: { username: data.username, password: data.password },
       });
 
+      console.log(result);
+
       if (result.data && result.data.signIn) {
         setAccessToken(result.data.signIn.accessToken);
         toast(formatMessage({ id: 'generic.login.success' }), {
@@ -62,11 +64,11 @@ export const useLogin = (): Output => {
       }
 
       if (result.errors) {
-        console.log(result.errors);
+        console.error(result.errors);
         toast(formatMessage({ id: 'generic.login.error' }), { type: 'error' });
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast(formatMessage({ id: 'generic.login.error' }), { type: 'error' });
     }
   };

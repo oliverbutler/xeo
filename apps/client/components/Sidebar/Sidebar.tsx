@@ -6,7 +6,6 @@ import { FiPlusCircle } from 'react-icons/fi';
 import { SidebarItem } from './SidebarItem.tsx/SidebarItem';
 import { UserRow } from './UserRow/UserRow';
 import Link from 'next/link';
-import { PageBlock } from 'generated';
 
 export const Sidebar = () => {
   const { user } = useCurrentUser();
