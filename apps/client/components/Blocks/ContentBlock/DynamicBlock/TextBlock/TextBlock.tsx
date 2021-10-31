@@ -6,9 +6,6 @@ interface Props {
   block: PageChildren_TextBlock_Fragment;
 }
 
-/**
- * Takes a ContentBlock and displays the appropriate type of Block
- */
 export const TextBlock: React.FunctionComponent<Props> = ({ block }) => {
   const [text, setText] = React.useState(block.text ?? '');
 
