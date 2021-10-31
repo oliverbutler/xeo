@@ -2,6 +2,7 @@ import { gql } from '@apollo/client';
 import classNames from 'classnames';
 import ContentBlockList from 'components/Blocks/ContentBlock/ContentBlockList/ContentBlockList';
 import { useGetBlockQuery } from 'generated';
+import { PageTitle } from './PageTitle/PageTitle';
 
 interface Props {
   blockId: string;
@@ -54,13 +55,7 @@ export const Page: React.FunctionComponent<Props> = ({ blockId }) => {
         <div className="text-7xl">{page.emoji}</div>
       </div>
 
-      <h1
-        className={classNames('text-4xl font-bold text-left mb-10', {
-          'text-gray-300': !page.title,
-        })}
-      >
-        {page.title}
-      </h1>
+      <PageTitle page={page} />
       {page.children && <ContentBlockList blocks={page.children} />}
     </div>
   );

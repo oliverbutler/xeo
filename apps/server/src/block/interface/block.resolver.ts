@@ -2,7 +2,12 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CurrentUser, GqlAuthGuard } from '../../auth/core/auth.guard';
 import { CurrentAuthUser } from '../../auth/strategies/jwt.strategy';
-import { BlockFilters, CreateBlockInput } from '../../graphql';
+import {
+  Block,
+  BlockFilters,
+  CreateBlockInput,
+  UpdateBlockInput,
+} from '../../graphql';
 import { BlockWithoutRelations } from '../core/block.entity';
 import { BlockService } from '../core/block.service';
 
@@ -31,6 +36,12 @@ export class BlockResolver {
     return await this.blockService.getBlockById(id);
   }
 
+  @Query('path')
+  @UseGuards(GqlAuthGuard)
+  async getPath(@Args('blockId') id: string): Promise<Block[]> {
+    return await this.blockService.getPathToRoot(id);
+  }
+
   @Mutation('createBlock')
   @UseGuards(GqlAuthGuard)
   async createBlock(
@@ -42,6 +53,18 @@ export class BlockResolver {
       ...input,
       createdById: user.id,
       parentId: input.parentId ?? undefined,
+    });
+  }
+
+  @Mutation('updateBlock')
+  @UseGuards(GqlAuthGuard)
+  async updateBlock(
+    @Args('id') id: string,
+    @Args('input') input: UpdateBlockInput
+  ): Promise<Block> {
+    return await this.blockService.updateBlock(id, {
+      ...(input.title && { title: input.title }),
+      ...(input.text && { text: input.text }),
     });
   }
 }

@@ -35,14 +35,13 @@ export class BlockAdapter {
   async updateBlock(
     id: Block['id'],
     partialBlock: Partial<Block>
-  ): Promise<void> {
-    const result = await this.blockRepository.update(id, partialBlock);
+  ): Promise<Block> {
+    const block = await this.getBlockById(id);
 
-    if (result.affected === 0) {
-      throw new Error(
-        `BlockAdapter > Error updating block ${id} with payload ${partialBlock}`
-      );
-    }
+    return await this.blockRepository.save({
+      ...block,
+      ...partialBlock,
+    });
   }
 
   async deleteBlock(id: Block['id']): Promise<void> {

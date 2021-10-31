@@ -1,5 +1,6 @@
 import { BlockType, PageChildren_TextBlock_Fragment } from 'generated';
-import React from 'react';
+import { useBlock } from 'hooks/useBlock';
+import React, { useRef } from 'react';
 import ContentEditable, { ContentEditableEvent } from 'react-contenteditable';
 
 interface Props {
@@ -7,10 +8,20 @@ interface Props {
 }
 
 export const TextBlock: React.FunctionComponent<Props> = ({ block }) => {
-  const [text, setText] = React.useState(block.text ?? '');
+  const textRef = useRef<string>(block.text ?? '');
+
+  const { updateBlock } = useBlock();
 
   const handleChange = (e: ContentEditableEvent) => {
-    setText(e.target.value);
+    textRef.current = e.target.value;
+  };
+
+  const handleBlur = () => {
+    if (textRef.current !== block.text) {
+      updateBlock({
+        variables: { blockId: block.id, data: { text: textRef.current } },
+      });
+    }
   };
 
   switch (block.type) {
@@ -18,8 +29,9 @@ export const TextBlock: React.FunctionComponent<Props> = ({ block }) => {
       return (
         <ContentEditable
           className="text-left px-1 py-0.5"
-          html={text}
+          html={textRef.current}
           onChange={handleChange}
+          onBlur={handleBlur}
         />
       );
     case BlockType.Heading_1:
@@ -27,8 +39,9 @@ export const TextBlock: React.FunctionComponent<Props> = ({ block }) => {
         <ContentEditable
           className="text-left px-1 py-0.5 text-xl font-semibold"
           tagName="h1"
-          html={text}
+          html={textRef.current}
           onChange={handleChange}
+          onBlur={handleBlur}
         />
       );
     default:

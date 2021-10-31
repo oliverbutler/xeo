@@ -53,8 +53,15 @@ input BlockFilters {
 type Query {
   blocks(filters: BlockFilters): [Block!]!
   block(id: ID!): Block!
+  path(blockId: ID!): [Block!]!
+}
+
+input UpdateBlockInput {
+  text: String
+  title: String
 }
 
 type Mutation {
   createBlock(input: CreateBlockInput!): Block!
+  updateBlock(id: ID!, input: UpdateBlockInput!): Block!
 }

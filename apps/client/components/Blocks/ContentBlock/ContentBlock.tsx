@@ -13,10 +13,8 @@ export const ContentBlock: React.FunctionComponent<Props> = ({
   block,
 }) => {
   return (
-    <div>
-      <BlockHandle dragHandleProps={dragHandleProps}>
-        <DynamicBlockRenderer block={block} />
-      </BlockHandle>
-    </div>
+    <BlockHandle dragHandleProps={dragHandleProps}>
+      <DynamicBlockRenderer block={block} />
+    </BlockHandle>
   );
 };

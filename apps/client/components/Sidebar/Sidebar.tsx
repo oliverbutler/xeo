@@ -6,6 +6,7 @@ import { FiPlusCircle } from 'react-icons/fi';
 import { SidebarItem } from './SidebarItem.tsx/SidebarItem';
 import { UserRow } from './UserRow/UserRow';
 import Link from 'next/link';
+import { PageBlock } from 'generated';
 
 export const Sidebar = () => {
   const { user } = useCurrentUser();
@@ -14,6 +15,8 @@ export const Sidebar = () => {
     'sidebar-width',
     192
   );
+
+  const pages = user?.blocks ?? [];
 
   return (
     <Resize
@@ -29,13 +32,17 @@ export const Sidebar = () => {
           {user && (
             <>
               <UserRow user={user} />
-              {user.blocks?.map((page) => (
-                <Link href={`/page/${page.id}`} key={page.id}>
-                  <SidebarItem className="text-gray-700 text-sm">
-                    {page.emoji} {page.title}
-                  </SidebarItem>
-                </Link>
-              ))}
+              {pages.map((page) => {
+                if (page.__typename === 'PageBlock') {
+                  return (
+                    <Link href={`/page/${page.id}`} key={page.id}>
+                      <SidebarItem className="text-gray-700 text-sm">
+                        {page.emoji} {page.title}
+                      </SidebarItem>
+                    </Link>
+                  );
+                }
+              })}
             </>
           )}
         </div>

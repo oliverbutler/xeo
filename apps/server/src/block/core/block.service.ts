@@ -1,7 +1,4 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { FindManyOptions } from 'typeorm';
-import { PageBlock } from '../../graphql';
-import { User } from '../../user/core/user.entity';
 import { BlockAdapter, BlockFilters } from '../infrastructure/block.adapter';
 import { Block, BlockType } from './block.entity';
 
@@ -58,10 +55,24 @@ export class BlockService {
     return await this.blockAdapter.getAllBlocks(filters);
   }
 
+  async getPathToRoot(blockId: string): Promise<Block[]> {
+    let block = await this.getBlockById(blockId);
+    let pathToRoot = [block];
+
+    while (block.parentId) {
+      block = await this.blockAdapter.getBlockById(block.parentId);
+      pathToRoot.push(block);
+    }
+
+    return pathToRoot;
+  }
+
   async updateBlock(
     id: Block['id'],
     partialBlock: Partial<Block>
-  ): Promise<void> {
+  ): Promise<Block> {
+    // TODO ensure the block can edit properties we're setting, for now just allow everything to be updated
+
     return await this.blockAdapter.updateBlock(id, partialBlock);
   }
 

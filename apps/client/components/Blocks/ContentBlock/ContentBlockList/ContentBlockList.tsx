@@ -48,10 +48,14 @@ const ContentBlockList = ({ blocks }: BlockListProps) => {
             className="flex-grow"
           >
             {displayBlocks.map((block, blockIndex) => {
+              // console.log(displayBlocks, block, blockIndex);
+              // https://github.com/atlassian/react-beautiful-dnd/issues/1673#issuecomment-571293508
+              // https://stackoverflow.com/questions/60029734/react-beautiful-dnd-i-get-unable-to-find-draggable-with-id-1
+              const blockId = block.id;
               return (
                 <Draggable
-                  key={block.id}
-                  draggableId={block.id}
+                  key={blockId}
+                  draggableId={blockId}
                   index={blockIndex}
                 >
                   {(dragProvided) => (

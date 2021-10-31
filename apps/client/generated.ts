@@ -51,6 +51,7 @@ export type Mutation = {
   createBlock: Block;
   signIn: AuthResponse;
   signUp: User;
+  updateBlock: Block;
 };
 
 
@@ -67,6 +68,12 @@ export type MutationSignInArgs = {
 
 export type MutationSignUpArgs = {
   input: SignUpInput;
+};
+
+
+export type MutationUpdateBlockArgs = {
+  id: Scalars['ID'];
+  input: UpdateBlockInput;
 };
 
 export type PageBlock = Block & {
@@ -88,6 +95,7 @@ export type Query = {
   block: Block;
   blocks: Array<Block>;
   me: User;
+  path: Array<Block>;
   users: Array<User>;
 };
 
@@ -99,6 +107,11 @@ export type QueryBlockArgs = {
 
 export type QueryBlocksArgs = {
   filters?: Maybe<BlockFilters>;
+};
+
+
+export type QueryPathArgs = {
+  blockId: Scalars['ID'];
 };
 
 export type SignUpInput = {
@@ -118,6 +131,11 @@ export type TextBlock = Block & {
   parentId?: Maybe<Scalars['ID']>;
   text?: Maybe<Scalars['String']>;
   type: BlockType;
+};
+
+export type UpdateBlockInput = {
+  text?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
 };
 
 export type User = {
@@ -143,6 +161,13 @@ export type SignInMutationVariables = Exact<{
 
 export type SignInMutation = { __typename?: 'Mutation', signIn: { __typename?: 'AuthResponse', accessToken: string } };
 
+export type GetPathQueryVariables = Exact<{
+  fromBlockId: Scalars['ID'];
+}>;
+
+
+export type GetPathQuery = { __typename?: 'Query', path: Array<{ __typename?: 'PageBlock', title?: string | null | undefined, emoji?: string | null | undefined, description?: string | null | undefined, id: string } | { __typename?: 'TextBlock', id: string }> };
+
 export type PageChildren_PageBlock_Fragment = { __typename: 'PageBlock', title?: string | null | undefined, description?: string | null | undefined, emoji?: string | null | undefined, id: string, type: BlockType };
 
 export type PageChildren_TextBlock_Fragment = { __typename: 'TextBlock', text?: string | null | undefined, id: string, type: BlockType };
@@ -155,6 +180,14 @@ export type GetBlockQueryVariables = Exact<{
 
 
 export type GetBlockQuery = { __typename?: 'Query', block: { __typename: 'PageBlock', title?: string | null | undefined, description?: string | null | undefined, emoji?: string | null | undefined, id: string, type: BlockType, children?: Array<{ __typename: 'PageBlock', title?: string | null | undefined, description?: string | null | undefined, emoji?: string | null | undefined, id: string, type: BlockType } | { __typename: 'TextBlock', text?: string | null | undefined, id: string, type: BlockType }> | null | undefined } | { __typename: 'TextBlock', id: string, type: BlockType } };
+
+export type UpdateBlockMutationVariables = Exact<{
+  blockId: Scalars['ID'];
+  data: UpdateBlockInput;
+}>;
+
+
+export type UpdateBlockMutation = { __typename?: 'Mutation', updateBlock: { __typename?: 'PageBlock', id: string } | { __typename?: 'TextBlock', id: string } };
 
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -210,6 +243,46 @@ export function useSignInMutation(baseOptions?: Apollo.MutationHookOptions<SignI
 export type SignInMutationHookResult = ReturnType<typeof useSignInMutation>;
 export type SignInMutationResult = Apollo.MutationResult<SignInMutation>;
 export type SignInMutationOptions = Apollo.BaseMutationOptions<SignInMutation, SignInMutationVariables>;
+export const GetPathDocument = gql`
+    query GetPath($fromBlockId: ID!) {
+  path(blockId: $fromBlockId) {
+    id
+    ... on PageBlock {
+      title
+      emoji
+      description
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetPathQuery__
+ *
+ * To run a query within a React component, call `useGetPathQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPathQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPathQuery({
+ *   variables: {
+ *      fromBlockId: // value for 'fromBlockId'
+ *   },
+ * });
+ */
+export function useGetPathQuery(baseOptions: Apollo.QueryHookOptions<GetPathQuery, GetPathQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPathQuery, GetPathQueryVariables>(GetPathDocument, options);
+      }
+export function useGetPathLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPathQuery, GetPathQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPathQuery, GetPathQueryVariables>(GetPathDocument, options);
+        }
+export type GetPathQueryHookResult = ReturnType<typeof useGetPathQuery>;
+export type GetPathLazyQueryHookResult = ReturnType<typeof useGetPathLazyQuery>;
+export type GetPathQueryResult = Apollo.QueryResult<GetPathQuery, GetPathQueryVariables>;
 export const GetBlockDocument = gql`
     query GetBlock($blockId: ID!) {
   block(id: $blockId) {
@@ -255,6 +328,40 @@ export function useGetBlockLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetBlockQueryHookResult = ReturnType<typeof useGetBlockQuery>;
 export type GetBlockLazyQueryHookResult = ReturnType<typeof useGetBlockLazyQuery>;
 export type GetBlockQueryResult = Apollo.QueryResult<GetBlockQuery, GetBlockQueryVariables>;
+export const UpdateBlockDocument = gql`
+    mutation UpdateBlock($blockId: ID!, $data: UpdateBlockInput!) {
+  updateBlock(id: $blockId, input: $data) {
+    id
+  }
+}
+    `;
+export type UpdateBlockMutationFn = Apollo.MutationFunction<UpdateBlockMutation, UpdateBlockMutationVariables>;
+
+/**
+ * __useUpdateBlockMutation__
+ *
+ * To run a mutation, you first call `useUpdateBlockMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateBlockMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateBlockMutation, { data, loading, error }] = useUpdateBlockMutation({
+ *   variables: {
+ *      blockId: // value for 'blockId'
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useUpdateBlockMutation(baseOptions?: Apollo.MutationHookOptions<UpdateBlockMutation, UpdateBlockMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateBlockMutation, UpdateBlockMutationVariables>(UpdateBlockDocument, options);
+      }
+export type UpdateBlockMutationHookResult = ReturnType<typeof useUpdateBlockMutation>;
+export type UpdateBlockMutationResult = Apollo.MutationResult<UpdateBlockMutation>;
+export type UpdateBlockMutationOptions = Apollo.BaseMutationOptions<UpdateBlockMutation, UpdateBlockMutationVariables>;
 export const GetMeDocument = gql`
     query GetMe {
   me {

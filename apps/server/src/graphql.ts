@@ -30,6 +30,11 @@ export interface BlockFilters {
     parentId?: Nullable<string>;
 }
 
+export interface UpdateBlockInput {
+    text?: Nullable<string>;
+    title?: Nullable<string>;
+}
+
 export interface Block {
     id: string;
     type: BlockType;
@@ -49,6 +54,7 @@ export interface IMutation {
     signUp(input: SignUpInput): User | Promise<User>;
     signIn(username: string, password: string): AuthResponse | Promise<AuthResponse>;
     createBlock(input: CreateBlockInput): Block | Promise<Block>;
+    updateBlock(id: string, input: UpdateBlockInput): Block | Promise<Block>;
 }
 
 export interface TextBlock extends Block {
@@ -78,6 +84,7 @@ export interface PageBlock extends Block {
 export interface IQuery {
     blocks(filters?: Nullable<BlockFilters>): Block[] | Promise<Block[]>;
     block(id: string): Block | Promise<Block>;
+    path(blockId: string): Block[] | Promise<Block[]>;
     me(): User | Promise<User>;
     users(): User[] | Promise<User[]>;
 }

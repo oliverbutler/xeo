@@ -24,7 +24,7 @@ const authMiddleware = new ApolloLink((operation, forward) => {
   return forward(operation);
 });
 
-const client = new ApolloClient({
+export const client = new ApolloClient({
   cache: new InMemoryCache({
     // https://www.apollographql.com/docs/react/data/fragments/#defining-possibletypes-manually
     // Implemented as when using a fragment on a Block type, only __typename was resolved, no other fields :(
