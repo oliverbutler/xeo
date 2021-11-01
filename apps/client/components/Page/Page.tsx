@@ -1,10 +1,7 @@
 import { gql } from '@apollo/client';
-import classNames from 'classnames';
 import ContentBlockList from 'components/Blocks/ContentBlock/ContentBlockList/ContentBlockList';
-import { Clickable } from 'components/UI/Clickable/Clickable';
-import { Dropdown } from 'components/UI/Dropdown/Dropdown';
 import { useGetBlockQuery } from 'generated';
-import { FiTrash } from 'react-icons/fi';
+import { PageIcon } from './PageIcon/PageIcon';
 import { PageTitle } from './PageTitle/PageTitle';
 
 interface Props {
@@ -56,15 +53,9 @@ export const Page: React.FunctionComponent<Props> = ({ blockId }) => {
 
   return (
     <div className="page min-h-full flex flex-col">
-      <Dropdown
-        button={
-          <Clickable className="text-7xl mb-6 mt-12 p-2 w-min select-none">
-            <div className="text-7xl">{page.emoji}</div>
-          </Clickable>
-        }
-        items={[[{ text: 'Remove', logo: <FiTrash /> }]]}
-        showDirection="right"
-      />
+      <div className="mb-6 mt-12">
+        <PageIcon page={page} />
+      </div>
 
       <PageTitle page={page} />
       {page.children && <ContentBlockList blocks={page.children} />}
