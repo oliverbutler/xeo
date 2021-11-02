@@ -1,21 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '../../user/core/user.entity';
-import { Block } from '../core/block.entity';
+import { Block, BlockObjectType } from '../core/block.entity';
+import {
+  BlockFilters,
+  ContentBlockCreationInput,
+  PageCreationInput,
+} from './block.interface';
 import { BlockRepository } from './block.repository';
-
-export type BlockFilters = {
-  type?: Block['type'];
-  parentId?: Block['parentId'] | null;
-  createdById?: Block['createdById'];
-};
 
 @Injectable()
 export class BlockAdapter {
   constructor(private readonly blockRepository: BlockRepository) {}
 
-  async createBlock(
-    block: Pick<Block, 'createdById' | 'type' | 'parentId'>
-  ): Promise<Block> {
+  async getAll(filters: BlockFilters): Promise<Block[]> {
+    const blocks = await this.blockRepository.find({ where: filters });
+
+    return blocks;
+  }
+
+  async create(block: Block): Promise<Block> {
     return await this.blockRepository.save(block);
   }
 
@@ -28,8 +30,17 @@ export class BlockAdapter {
     return block;
   }
 
-  async getAllBlocks(filters: BlockFilters): Promise<Block[]> {
-    return await this.blockRepository.find({ where: filters });
+  /**
+   * Partial sub tree stops at pages, returning the whole structure of a document, recursively.
+   * @param id
+   * @returns
+   */
+  async getPartialSubTree(id: Block['id']): Promise<Block[]> {
+    const block = await this.getBlockById(id);
+
+    const blocks = await this.blockRepository.getPartialSubTree(block.id);
+
+    return blocks;
   }
 
   async updateBlock(
@@ -50,5 +61,19 @@ export class BlockAdapter {
     if (result.affected === 0) {
       throw new Error(`BlockAdapter > Error deleting block ${id}`);
     }
+  }
+
+  async createPage(input: PageCreationInput): Promise<Block> {
+    return await this.blockRepository.save({
+      ...input,
+      object: BlockObjectType.PAGE,
+    });
+  }
+
+  async createContentBlock(input: ContentBlockCreationInput): Promise<Block> {
+    return await this.blockRepository.save({
+      ...input,
+      object: BlockObjectType.BLOCK,
+    });
   }
 }

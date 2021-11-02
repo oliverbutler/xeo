@@ -1,60 +1,107 @@
-enum BlockType {
+enum BlockObjectType {
   PAGE
-  TEXT
-  HEADING_1
+  BLOCK
 }
+
+enum HeadingType {
+  H1
+  H2
+  H3
+}
+
+type Emoji {
+  emoji: String!
+}
+
+type Image {
+  image: String!
+}
+
+union EmojiImage = Emoji | Image
+
+type RichText {
+  rawText: String!
+}
+
+input RichTextInput {
+  rawText: String!
+}
+
+type PageProperties {
+  type: String!
+  title: RichText!
+  favourite: Boolean!
+  image: EmojiImage
+  coverImage: Image
+}
+
+input PagePropertiesInput {
+  title: RichTextInput!
+}
+
+type ParagraphProperties {
+  type: String!
+  text: RichText!
+}
+
+input ParagraphPropertiesInput {
+  text: RichTextInput!
+}
+
+type HeadingProperties {
+  type: String!
+  text: RichText!
+  variant: HeadingType!
+}
+
+input HeadingPropertiesInput {
+  text: RichTextInput!
+  variant: HeadingType!
+}
+
+union ContentProperties = ParagraphProperties | HeadingProperties
+union BlockProperties = PageProperties | ParagraphProperties | HeadingProperties
 
 interface Block {
   id: ID!
-  type: BlockType!
+  object: BlockObjectType!
   createdBy: User!
   createdById: ID!
   parent: Block
   parentId: ID
-  children: [Block!]
 }
 
-type TextBlock implements Block {
+type Page implements Block {
   id: ID!
-  type: BlockType!
+  object: BlockObjectType!
   createdBy: User!
   createdById: ID!
   parent: Block
   parentId: ID
-  children: [Block!]
 
-  text: String
+  properties: PageProperties!
+  children: [Block!]!
 }
 
-type PageBlock implements Block {
+type ContentBlock implements Block {
   id: ID!
-  type: BlockType!
+  object: BlockObjectType!
   createdBy: User!
   createdById: ID!
   parent: Block
   parentId: ID
-  children: [Block!]
 
-  title: String!
-  description: String
-  emoji: String
-  favourite: Boolean!
+  properties: ContentProperties!
 }
 
 input CreateBlockInput {
-  type: BlockType!
+  object: BlockObjectType!
   parentId: ID
 }
 
 input BlockFilters {
-  type: BlockType
+  object: BlockObjectType
   parentId: ID
-}
-
-type Query {
-  blocks(filters: BlockFilters): [Block!]!
-  block(id: ID!): Block!
-  path(blockId: ID!): [Block!]!
 }
 
 input UpdateBlockInput {
@@ -63,7 +110,35 @@ input UpdateBlockInput {
   favourite: Boolean
 }
 
+input CreatePageInput {
+  properties: PagePropertiesInput!
+  parentId: ID
+}
+
+input CreateParagraphBlockInput {
+  properties: ParagraphPropertiesInput!
+  parentId: ID
+}
+
+input CreateHeadingBlockInput {
+  properties: HeadingPropertiesInput!
+  parentId: ID
+}
+
+type Query {
+  blocks(filters: BlockFilters): [Block!]!
+  block(id: ID!): Block!
+
+  page(id: ID!, populateSubTree: Boolean): Page!
+  pages(filters: BlockFilters): [Page!]!
+
+  path(id: ID!): [Page!]!
+}
+
 type Mutation {
-  createBlock(input: CreateBlockInput!): Block!
+  createPage(input: CreatePageInput!): Page!
+  createParagraphBlock(input: CreateParagraphBlockInput!): ContentBlock!
+  createHeadingBlock(input: CreateHeadingBlockInput!): ContentBlock!
+
   updateBlock(id: ID!, input: UpdateBlockInput!): Block!
 }

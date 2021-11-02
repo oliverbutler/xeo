@@ -1,26 +1,30 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { BlockAdapter, BlockFilters } from '../infrastructure/block.adapter';
-import { Block, BlockType } from './block.entity';
+import { Page } from '../../graphql';
+import { BlockAdapter } from '../infrastructure/block.adapter';
+import {
+  BlockFilters,
+  ContentBlockCreationInput,
+  PageCreationInput,
+} from '../infrastructure/block.interface';
+import { Block, BlockObjectType, PageProperties } from './block.entity';
 
 @Injectable()
 export class BlockService {
   constructor(private readonly blockAdapter: BlockAdapter) {}
 
-  async createBlock(
-    block: Pick<Block, 'createdById' | 'parentId' | 'type'>
-  ): Promise<Block> {
-    if (block.parentId) {
-      const parentBlock = await this.blockAdapter.getBlockById(block.parentId);
+  // async createBlock(block: Block): Promise<Block> {
+  //   if (block.parentId) {
+  //     const parentBlock = await this.blockAdapter.getBlockById(block.parentId);
 
-      if (!parentBlock) {
-        throw new BadRequestException(
-          `BlockService > Parent block ${block.parentId} not found`
-        );
-      }
-    }
+  //     if (!parentBlock) {
+  //       throw new BadRequestException(
+  //         `BlockService > Parent block ${block.parentId} not found`
+  //       );
+  //     }
+  //   }
 
-    return await this.blockAdapter.createBlock(block);
-  }
+  //   return await this.blockAdapter.create(block);
+  // }
 
   async getBlockById(id: Block['id']): Promise<Block> {
     const block = await this.blockAdapter.getBlockById(id);
@@ -32,6 +36,33 @@ export class BlockService {
     return block;
   }
 
+  async getPageById(
+    id: string,
+    options?: { populateSubTree?: boolean }
+  ): Promise<Page> {
+    const block = await this.getBlockById(id);
+
+    if (block.object !== BlockObjectType.PAGE) {
+      throw new BadRequestException(`BlockService > Block ${id} is not a page`);
+    }
+
+    if (block.properties.type !== 'PAGE') {
+      throw new BadRequestException(
+        `BlockService > Block ${id} properties is not a page`
+      );
+    }
+
+    const children = options?.populateSubTree
+      ? await this.blockAdapter.getPartialSubTree(id)
+      : [];
+
+    return {
+      ...block,
+      properties: block.properties as PageProperties,
+      children,
+    };
+  }
+
   async getAllBlocksByParentId(parentId: string): Promise<Block[]> {
     const parentBlock = this.blockAdapter.getBlockById(parentId);
 
@@ -41,18 +72,38 @@ export class BlockService {
       );
     }
 
-    return await this.blockAdapter.getAllBlocks({ parentId });
+    return await this.blockAdapter.getAll({ parentId });
   }
 
   async getAllBlocksForUser(
     userId: string,
     filters: Omit<BlockFilters, 'createdById'>
   ): Promise<Block[]> {
-    return this.blockAdapter.getAllBlocks({ createdById: userId, ...filters });
+    return this.blockAdapter.getAll({ createdById: userId, ...filters });
   }
 
   async getAllBlocks(filters: BlockFilters): Promise<Block[]> {
-    return await this.blockAdapter.getAllBlocks(filters);
+    return await this.blockAdapter.getAll(filters);
+  }
+
+  async getAllPages(filters: BlockFilters): Promise<Page[]> {
+    const blocks = await this.getAllBlocks({
+      ...filters,
+      object: BlockObjectType.PAGE,
+    });
+
+    return blocks.map((block) => ({
+      ...block,
+      properties: block.properties as PageProperties,
+      children: [],
+    }));
+  }
+
+  async getAllPagesForUser(
+    userId: string,
+    filters: BlockFilters
+  ): Promise<Page[]> {
+    return this.getAllPages({ ...filters, createdById: userId });
   }
 
   async getPathToRoot(blockId: string): Promise<Block[]> {
@@ -71,12 +122,26 @@ export class BlockService {
     id: Block['id'],
     partialBlock: Partial<Block>
   ): Promise<Block> {
-    // TODO ensure the block can edit properties we're setting, for now just allow everything to be updated
-
     return await this.blockAdapter.updateBlock(id, partialBlock);
   }
 
   async deleteBlock(id: Block['id']): Promise<void> {
     return await this.blockAdapter.deleteBlock(id);
+  }
+
+  async createPage(input: PageCreationInput): Promise<Page> {
+    const block = await this.blockAdapter.createPage(input);
+
+    return {
+      ...block,
+      properties: block.properties as PageProperties,
+      children: [],
+    };
+  }
+
+  async createContentBlock(input: ContentBlockCreationInput): Promise<Block> {
+    const block = await this.blockAdapter.createContentBlock(input);
+
+    return block;
   }
 }

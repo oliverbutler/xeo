@@ -5,5 +5,5 @@
     "dist/": true
   },
   "i18n-ally.keystyle": "flat",
-  "cSpell.words": ["toastify"]
+  "cSpell.words": ["jsonb", "toastify"]
 }
