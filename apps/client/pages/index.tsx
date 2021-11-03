@@ -19,9 +19,7 @@ const Index: React.FunctionComponent = () => {
 
   useEffect(() => {
     if (user) {
-      const firstPage = user.blocks?.find(
-        (block) => block.__typename === 'Page'
-      );
+      const firstPage = user.pages?.find(() => true);
       router.push(`/page/${firstPage?.id}`);
     }
   }, [user]);
