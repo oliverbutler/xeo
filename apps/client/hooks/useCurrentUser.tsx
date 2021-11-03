@@ -16,14 +16,21 @@ gql`
       firstName
       lastName
       avatar
-      blocks(filters: { type: PAGE, parentId: null }) {
+      pages(filters: { parentId: null }) {
         __typename
         id
-        type
-        ... on PageBlock {
-          title
-          emoji
-          description
+        properties {
+          title {
+            rawText
+          }
+          image {
+            ... on Image {
+              image
+            }
+            ... on Emoji {
+              emoji
+            }
+          }
         }
       }
     }

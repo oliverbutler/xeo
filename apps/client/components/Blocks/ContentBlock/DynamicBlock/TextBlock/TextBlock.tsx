@@ -1,14 +1,17 @@
-import { BlockType, PageChildren_TextBlock_Fragment } from 'generated';
+import classNames from 'classnames';
+import { HeadingType, PageChildren_ContentBlock_Fragment } from 'generated';
 import { useBlock } from 'hooks/useBlock';
 import React, { useRef } from 'react';
 import ContentEditable, { ContentEditableEvent } from 'react-contenteditable';
 
 interface Props {
-  block: PageChildren_TextBlock_Fragment;
+  block: PageChildren_ContentBlock_Fragment;
 }
 
 export const TextBlock: React.FunctionComponent<Props> = ({ block }) => {
-  const textRef = useRef<string>(block.text ?? '');
+  const blockText = block.properties.text.rawText;
+
+  const textRef = useRef<string>(blockText ?? '');
 
   const { updateBlock } = useBlock();
 
@@ -17,15 +20,22 @@ export const TextBlock: React.FunctionComponent<Props> = ({ block }) => {
   };
 
   const handleBlur = () => {
-    if (textRef.current !== block.text) {
+    if (textRef.current !== blockText) {
       updateBlock({
-        variables: { blockId: block.id, data: { text: textRef.current } },
+        variables: {
+          id: block.id,
+          input: {
+            text: {
+              rawText: textRef.current,
+            },
+          },
+        },
       });
     }
   };
 
-  switch (block.type) {
-    case BlockType.Text:
+  switch (block.properties.__typename) {
+    case 'ParagraphProperties':
       return (
         <ContentEditable
           className="text-left px-1 py-0.5"
@@ -34,11 +44,15 @@ export const TextBlock: React.FunctionComponent<Props> = ({ block }) => {
           onBlur={handleBlur}
         />
       );
-    case BlockType.Heading_1:
+    case 'HeadingProperties':
       return (
         <ContentEditable
-          className="text-left px-1 py-0.5 text-xl font-semibold"
-          tagName="h1"
+          className={classNames('text-left px-1 py-0.5 font-semibold', {
+            'text-3xl': block.properties.variant === HeadingType.H1,
+            'text-2xl': block.properties.variant === HeadingType.H2,
+            'text-lg': block.properties.variant === HeadingType.H3,
+          })}
+          tagName={block.properties.variant.toLowerCase()}
           html={textRef.current}
           onChange={handleChange}
           onBlur={handleBlur}

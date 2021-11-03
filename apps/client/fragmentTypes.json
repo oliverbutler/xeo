@@ -1,8 +1,21 @@
 {
   "possibleTypes": {
     "Block": [
-      "PageBlock",
-      "TextBlock"
+      "ContentBlock",
+      "Page"
+    ],
+    "BlockProperties": [
+      "HeadingProperties",
+      "PageProperties",
+      "ParagraphProperties"
+    ],
+    "ContentProperties": [
+      "HeadingProperties",
+      "ParagraphProperties"
+    ],
+    "EmojiImage": [
+      "Emoji",
+      "Image"
     ]
   }
 }

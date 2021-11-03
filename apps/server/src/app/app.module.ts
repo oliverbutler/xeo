@@ -8,6 +8,7 @@ import { Block } from '../block/core/block.entity';
 import { User } from '../user/core/user.entity';
 import { AuthModule } from '../auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { ContentProperties } from '../graphql';
 
 @Module({
   imports: [
@@ -16,6 +17,27 @@ import { ConfigModule } from '@nestjs/config';
       typePaths: ['./**/*.graphql'],
       definitions: {
         path: join(process.cwd(), 'apps/server/src/graphql.ts'),
+      },
+      resolvers: {
+        EmojiImage: {
+          __resolveType(obj: any) {
+            if (obj.emoji) {
+              return 'Emoji';
+            }
+            return 'Image';
+          },
+        },
+        ContentProperties: {
+          __resolveType(obj: ContentProperties) {
+            if (obj.type === 'paragraph') {
+              return 'ParagraphProperties';
+            }
+            if (obj.type === 'heading') {
+              return 'HeadingProperties';
+            }
+            return null;
+          },
+        },
       },
     }),
     TypeOrmModule.forRoot({

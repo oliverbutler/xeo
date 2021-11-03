@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { Clickable } from 'components/UI/Clickable/Clickable';
-import { useGetBlockQuery } from 'generated';
+import { useGetPageQuery } from 'generated';
 import { useBlock } from 'hooks/useBlock';
 import { useEffect, useState } from 'react';
 import { FiStar } from 'react-icons/fi';
@@ -10,15 +10,17 @@ interface Props {
 }
 
 export const FavouriteButton: React.FunctionComponent<Props> = ({ pageId }) => {
-  const { data } = useGetBlockQuery({ variables: { blockId: pageId } });
+  const { data } = useGetPageQuery({
+    variables: { id: pageId, populateSubTree: false },
+  });
 
   const [isFavourite, setIsFavourite] = useState<boolean | null>(null);
 
   const { updateBlock } = useBlock();
 
   useEffect(() => {
-    if (data && data.block && data.block.__typename === 'PageBlock') {
-      setIsFavourite(data.block.favourite);
+    if (data?.page?.__typename === 'Page') {
+      setIsFavourite(data.page.properties.favourite);
     }
   }, [data]);
 

@@ -1,21 +1,32 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '../../user/core/user.entity';
-import { Block } from '../core/block.entity';
+import {
+  Block,
+  BlockObjectType,
+  ContentBlockProperties,
+  HeadingProperties,
+  PageProperties,
+  ParagraphProperties,
+} from '../core/block.entity';
+import {
+  BlockFilters,
+  ContentBlockCreationInput,
+  ContentBlockUpdateInput,
+  PageCreationInput,
+  PageUpdateInput,
+} from './block.interface';
 import { BlockRepository } from './block.repository';
-
-export type BlockFilters = {
-  type?: Block['type'];
-  parentId?: Block['parentId'] | null;
-  createdById?: Block['createdById'];
-};
 
 @Injectable()
 export class BlockAdapter {
   constructor(private readonly blockRepository: BlockRepository) {}
 
-  async createBlock(
-    block: Pick<Block, 'createdById' | 'type' | 'parentId'>
-  ): Promise<Block> {
+  async getAll(filters: BlockFilters): Promise<Block[]> {
+    const blocks = await this.blockRepository.find({ where: filters });
+
+    return blocks;
+  }
+
+  async create(block: Block): Promise<Block> {
     return await this.blockRepository.save(block);
   }
 
@@ -28,20 +39,17 @@ export class BlockAdapter {
     return block;
   }
 
-  async getAllBlocks(filters: BlockFilters): Promise<Block[]> {
-    return await this.blockRepository.find({ where: filters });
-  }
-
-  async updateBlock(
-    id: Block['id'],
-    partialBlock: Partial<Block>
-  ): Promise<Block> {
+  /**
+   * Partial sub tree stops at pages, returning the whole structure of a document, recursively.
+   * @param id
+   * @returns
+   */
+  async getPartialSubTree(id: Block['id']): Promise<Block[]> {
     const block = await this.getBlockById(id);
 
-    return await this.blockRepository.save({
-      ...block,
-      ...partialBlock,
-    });
+    const blocks = await this.blockRepository.getPartialSubTree(block.id);
+
+    return blocks;
   }
 
   async deleteBlock(id: Block['id']): Promise<void> {
@@ -49,6 +57,80 @@ export class BlockAdapter {
 
     if (result.affected === 0) {
       throw new Error(`BlockAdapter > Error deleting block ${id}`);
+    }
+  }
+
+  async createPage(input: PageCreationInput): Promise<Block> {
+    return await this.blockRepository.save({
+      ...input,
+      object: BlockObjectType.PAGE,
+    });
+  }
+
+  async createContentBlock(input: ContentBlockCreationInput): Promise<Block> {
+    return await this.blockRepository.save({
+      ...input,
+      object: BlockObjectType.BLOCK,
+    });
+  }
+
+  async updatePage(id: string, input: PageUpdateInput): Promise<Block> {
+    const block = await this.getBlockById(id);
+
+    if (block.object !== BlockObjectType.PAGE) {
+      throw new Error(`BlockAdapter > Block ${id} is not a page`);
+    }
+
+    if (block.properties.type !== 'page') {
+      throw new Error(`BlockAdapter > Block ${id} properties is not a page`);
+    }
+
+    return await this.blockRepository.save({
+      ...block,
+      properties: {
+        ...(block.properties as PageProperties),
+        ...input.properties,
+      },
+    });
+  }
+
+  async updateContentBlock(
+    id: string,
+    input: ContentBlockUpdateInput
+  ): Promise<Block> {
+    const block = await this.getBlockById(id);
+
+    if (block.object !== BlockObjectType.BLOCK) {
+      throw new Error(`BlockAdapter > Block ${id} is not a content block`);
+    }
+
+    if (block.properties.type === 'page') {
+      throw new Error(
+        `BlockAdapter > Block ${id} properties is not a content block`
+      );
+    }
+
+    switch (input.properties.type) {
+      case 'paragraph':
+        return await this.blockRepository.save({
+          ...block,
+          properties: {
+            ...(block.properties as ParagraphProperties),
+            ...input.properties,
+          },
+        });
+      case 'heading':
+        return await this.blockRepository.save({
+          ...block,
+          properties: {
+            ...(block.properties as HeadingProperties),
+            ...input.properties,
+          },
+        });
+      default:
+        throw new Error(
+          `BlockAdapter > Block ${id} input.properties.type is undefined`
+        );
     }
   }
 }
