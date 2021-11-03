@@ -11,7 +11,7 @@ interface Props {
 
 export const FavouriteButton: React.FunctionComponent<Props> = ({ pageId }) => {
   const { data } = useGetPageQuery({
-    variables: { id: pageId, populateSubTree: false },
+    variables: { id: pageId, populateSubTree: true },
   });
 
   const [isFavourite, setIsFavourite] = useState<boolean | null>(null);

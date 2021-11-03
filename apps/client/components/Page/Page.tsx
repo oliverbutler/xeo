@@ -1,7 +1,9 @@
 import { gql } from '@apollo/client';
 import { Loading } from 'components/Animate/Loading/Loading';
+import { ContentBlock } from 'components/Blocks/ContentBlock/ContentBlock';
 import ContentBlockList from 'components/Blocks/ContentBlock/ContentBlockList/ContentBlockList';
 import { PageChildrenFragment, useGetPageQuery } from 'generated';
+import { useEffect, useState } from 'react';
 import { PageIcon } from './PageIcon/PageIcon';
 import { PageTitle } from './PageTitle/PageTitle';
 
@@ -106,6 +108,14 @@ export const Page: React.FunctionComponent<Props> = ({ id }) => {
       </div>
 
       <PageTitle page={page} />
+      {/* <div className="shadow-md p-2 bg-yellow-50">
+        <p className="text-xl font-bold">Block Debug Menu</p>
+
+        {orderedChildren &&
+          orderedChildren.map((child) => (
+            <p className="mb-6">{JSON.stringify(child.properties)}</p>
+          ))}
+      </div> */}
       {orderedChildren && (
         <ContentBlockList blocks={orderedChildren} parentId={page.id} />
       )}

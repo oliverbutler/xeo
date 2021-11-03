@@ -2,11 +2,8 @@ import { gql } from '@apollo/client';
 import { client } from 'components/Wrappers/ApolloWrapper';
 import { useSyncContext } from 'context/SyncContext';
 import {
-  CreateHeadingBlockMutationOptions,
   CreateHeadingBlockMutationVariables,
-  CreateParagraphBlockMutationOptions,
   CreateParagraphBlockMutationVariables,
-  DeleteBlockMutationOptions,
   UpdateBlockLocationMutationOptions,
   UpdateContentBlockMutationOptions,
   UpdatePageMutationOptions,
@@ -90,16 +87,24 @@ export const useBlock = () => {
     options: UpdateBlockLocationMutationOptions
   ) => {
     setIsSyncing(true);
-    await updateBlockLocation(options);
+    await updateBlockLocation({ ...options, refetchQueries: ['GetPage'] });
     setIsSyncing(false);
   };
 
   const deleteBlockHandler = async (id: string) => {
     setIsSyncing(true);
-    await deleteBlock({ variables: { id } });
-    await client.refetchQueries({
-      include: 'active',
+    await deleteBlock({
+      variables: { id },
+      // update: (cache) => {
+      //   const cacheId = cache.identify({ id, __typename: 'ContentBlock' });
+
+      //   console.log(cache, cacheId);
+      //   cacheId && cache.removeOptimistic(cacheId);
+      //   console.log(cache);
+      // },
+      refetchQueries: ['GetPage'],
     });
+
     setIsSyncing(false);
   };
 
@@ -107,7 +112,10 @@ export const useBlock = () => {
     input: CreateParagraphBlockMutationVariables['input']
   ) => {
     setIsSyncing(true);
-    await createParagraphBlock({ variables: { input } });
+    await createParagraphBlock({
+      variables: { input },
+      refetchQueries: ['GetPage'],
+    });
     setIsSyncing(false);
   };
 
@@ -115,7 +123,10 @@ export const useBlock = () => {
     input: CreateHeadingBlockMutationVariables['input']
   ) => {
     setIsSyncing(true);
-    await createHeadingBlock({ variables: { input } });
+    await createHeadingBlock({
+      variables: { input },
+      refetchQueries: ['GetPage'],
+    });
     setIsSyncing(false);
   };
 

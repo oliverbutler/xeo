@@ -1,6 +1,6 @@
 import { Block, PageChildrenFragment } from 'generated';
 import { useBlock } from 'hooks/useBlock';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   DragDropContext,
   Droppable,
@@ -19,6 +19,11 @@ interface BlockListProps {
  */
 const ContentBlockList = ({ blocks, parentId }: BlockListProps) => {
   const [order, setOrder] = useState<PageChildrenFragment[]>(blocks);
+
+  // When the state updates, update the blocks
+  useEffect(() => {
+    setOrder(blocks);
+  }, [blocks]);
 
   const { updateBlockLocation } = useBlock();
 
