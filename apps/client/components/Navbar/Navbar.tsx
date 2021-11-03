@@ -90,7 +90,7 @@ export const Navbar: React.FunctionComponent = () => {
         })}
       </div>
       <div className="flex flex-row items-center">
-        {isSyncing && <Loading className="text-gray-300 h-3" />}
+        {isSyncing && <Loading className="text-gray-400 h-3" />}
         <FavouriteButton pageId={pageId} />
         <Dropdown
           button={

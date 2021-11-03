@@ -52,6 +52,7 @@ export class BlockResolver {
         title: input.properties.title,
         favourite: false,
         properties: {},
+        childrenOrder: [],
       },
       parentId: input.parentId ?? null,
       createdById: user.id,
@@ -138,5 +139,18 @@ export class BlockResolver {
     });
 
     return block;
+  }
+
+  @Mutation('updateBlockLocation')
+  @UseGuards(GqlAuthGuard)
+  async updateBlockLocation(
+    @CurrentUser() user: CurrentAuthUser, // TODO check if user is owner
+    @Args('id') id: string,
+    @Args('parentId') parentId: string,
+    @Args('afterId') afterId?: string
+  ): Promise<boolean> {
+    await this.blockService.updateBlockLocation(id, parentId, afterId ?? null);
+
+    return true;
   }
 }

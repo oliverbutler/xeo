@@ -1,4 +1,5 @@
 import { Block, PageChildrenFragment } from 'generated';
+import { useBlock } from 'hooks/useBlock';
 import React, { useState } from 'react';
 import {
   DragDropContext,
@@ -10,13 +11,16 @@ import { ContentBlock } from '../ContentBlock';
 
 interface BlockListProps {
   blocks: PageChildrenFragment[];
+  parentId: string;
 }
 
 /**
  * Render a list of Content Blocks (sub class of Block), each ContentBlock has a different rendering method, so BlockRenderer will be used
  */
-const ContentBlockList = ({ blocks }: BlockListProps) => {
+const ContentBlockList = ({ blocks, parentId }: BlockListProps) => {
   const [order, setOrder] = useState<PageChildrenFragment[]>(blocks);
+
+  const { updateBlockLocation } = useBlock();
 
   /**
    * Shift an array to fit an element in at a give index, simulates dragging and dropping a component
@@ -29,10 +33,25 @@ const ContentBlockList = ({ blocks }: BlockListProps) => {
     return result;
   };
 
-  const onDragEnd = (result: DropResult) => {
+  const onDragEnd = async (result: DropResult) => {
     if (!result.destination) return;
+    if (result.destination.index === result.source.index) return;
+
     const items = reorder(order, result.source.index, result.destination.index);
     setOrder(items as PageChildrenFragment[]);
+
+    const blockBeforeNewPosition =
+      result.destination.index === 0
+        ? parentId
+        : (items[result.destination.index - 1] as Block).id;
+
+    await updateBlockLocation({
+      variables: {
+        id: result.draggableId,
+        afterId: blockBeforeNewPosition,
+        parentId,
+      },
+    });
   };
 
   // BUG Strange issue where leaving a page and returning to it causes the page to re-render, but the blocks to not re-render as order doesn't update correctly
@@ -40,7 +59,7 @@ const ContentBlockList = ({ blocks }: BlockListProps) => {
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="droppable">
+      <Droppable droppableId={parentId}>
         {(provided) => (
           <div
             {...provided.droppableProps}

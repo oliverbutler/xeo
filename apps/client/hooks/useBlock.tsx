@@ -2,8 +2,10 @@ import { gql } from '@apollo/client';
 import { client } from 'components/Wrappers/ApolloWrapper';
 import { useSyncContext } from 'context/SyncContext';
 import {
+  UpdateBlockLocationMutationOptions,
   UpdateContentBlockMutationOptions,
   UpdatePageMutationOptions,
+  useUpdateBlockLocationMutation,
   useUpdateContentBlockMutation,
   useUpdatePageMutation,
 } from 'generated';
@@ -20,11 +22,16 @@ gql`
       id
     }
   }
+
+  mutation UpdateBlockLocation($id: ID!, $parentId: ID!, $afterId: ID) {
+    updateBlockLocation(id: $id, parentId: $parentId, afterId: $afterId)
+  }
 `;
 
 export const useBlock = () => {
   const [updateBlock] = useUpdateContentBlockMutation();
   const [updatePage] = useUpdatePageMutation();
+  const [updateBlockLocation] = useUpdateBlockLocationMutation();
 
   const { setIsSyncing } = useSyncContext();
 
@@ -56,8 +63,19 @@ export const useBlock = () => {
     setIsSyncing(false);
   };
 
+  const updateBlockLocationHandler = async (
+    options: UpdateBlockLocationMutationOptions
+  ) => {
+    setIsSyncing(true);
+
+    await updateBlockLocation(options);
+
+    setIsSyncing(false);
+  };
+
   return {
     updateBlock: updateBlockHandler,
     updatePage: updatePageHandler,
+    updateBlockLocation: updateBlockLocationHandler,
   };
 };

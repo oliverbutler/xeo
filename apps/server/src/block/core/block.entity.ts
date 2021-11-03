@@ -34,6 +34,7 @@ export type PageProperties = {
   image?: EmojiImage;
   coverImage?: Image;
   properties: Record<string, any>;
+  childrenOrder: string[];
 };
 
 export type ParagraphProperties = {

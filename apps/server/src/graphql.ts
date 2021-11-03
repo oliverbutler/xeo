@@ -99,6 +99,7 @@ export interface IMutation {
     createHeadingBlock(input: CreateHeadingBlockInput): ContentBlock | Promise<ContentBlock>;
     updatePage(id: string, input: UpdatePageInput): Page | Promise<Page>;
     updateContentBlock(id: string, input: UpdateContentBlockInput): ContentBlock | Promise<ContentBlock>;
+    updateBlockLocation(id: string, parentId: string, afterId?: Nullable<string>): boolean | Promise<boolean>;
 }
 
 export interface Emoji {
@@ -119,6 +120,7 @@ export interface PageProperties {
     favourite: boolean;
     image?: Nullable<EmojiImage>;
     coverImage?: Nullable<Image>;
+    childrenOrder: string[];
 }
 
 export interface ParagraphProperties {

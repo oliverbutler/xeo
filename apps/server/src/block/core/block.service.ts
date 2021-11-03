@@ -149,4 +149,15 @@ export class BlockService {
 
     return block;
   }
+
+  async updateBlockLocation(
+    id: string,
+    parentId: string,
+    afterId: string | null
+  ): Promise<void> {
+    await this.getBlockById(id);
+    await this.getBlockById(parentId);
+
+    return await this.blockAdapter.updateBlockPosition(id, parentId, afterId);
+  }
 }

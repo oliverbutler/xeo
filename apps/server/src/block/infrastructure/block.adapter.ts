@@ -68,9 +68,72 @@ export class BlockAdapter {
   }
 
   async createContentBlock(input: ContentBlockCreationInput): Promise<Block> {
-    return await this.blockRepository.save({
+    const newBlock = await this.blockRepository.save({
       ...input,
       object: BlockObjectType.BLOCK,
+    });
+
+    // Update the parent childrenOrder
+    if (input.parentId) {
+      await this.updateBlockPosition(newBlock.id, input.parentId, null);
+    }
+
+    return newBlock;
+  }
+
+  /**
+   * Updates the position of a block in its parent.
+   *
+   * ⚠️ doesn't check id validity
+   *
+   */
+  async updateBlockPosition(
+    id: string,
+    parentId: string,
+    afterId: string | null
+  ): Promise<void> {
+    const parent = await this.getBlockById(parentId);
+
+    if (parent.properties.type !== 'page') {
+      throw new Error(
+        `BlockAdapter > Block ${parentId} is not a page, currently only pages can have children`
+      );
+    }
+
+    // BUG current placeholder, create the childrenOrder array if it doesn't exist
+    const parentOrderArray = parent.properties.childrenOrder ?? [];
+
+    const existingItemIndex = parentOrderArray.indexOf(id);
+
+    // Remove it if it exists already
+    if (existingItemIndex !== -1) {
+      parentOrderArray.splice(existingItemIndex, 1);
+    }
+
+    if (afterId === parentId) {
+      // Insert the item at the beginning
+      parentOrderArray.unshift(id);
+    } else if (afterId) {
+      const afterBlockIndex = parentOrderArray.indexOf(afterId);
+
+      if (afterBlockIndex === -1) {
+        throw new Error(
+          `BlockAdapter > Block ${parentId} doesn't have child ${afterId} in the childrenOrder`
+        );
+      }
+
+      // add to the right index
+      parentOrderArray.splice(afterBlockIndex + 1, 0, id);
+    } else {
+      parentOrderArray.push(id);
+    }
+
+    this.blockRepository.update(parentId, {
+      ...parent,
+      properties: {
+        ...parent.properties,
+        childrenOrder: parentOrderArray,
+      },
     });
   }
 

@@ -33,6 +33,7 @@ type PageProperties {
   favourite: Boolean!
   image: EmojiImage
   coverImage: Image
+  childrenOrder: [String!]!
 }
 
 input PagePropertiesInput {
@@ -146,4 +147,5 @@ type Mutation {
 
   updatePage(id: ID!, input: UpdatePageInput!): Page!
   updateContentBlock(id: ID!, input: UpdateContentBlockInput!): ContentBlock!
+  updateBlockLocation(id: ID!, parentId: ID!, afterId: ID): Boolean!
 }

@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 import { Loading } from 'components/Animate/Loading/Loading';
 import ContentBlockList from 'components/Blocks/ContentBlock/ContentBlockList/ContentBlockList';
-import { useGetPageQuery } from 'generated';
+import { PageChildrenFragment, useGetPageQuery } from 'generated';
 import { PageIcon } from './PageIcon/PageIcon';
 import { PageTitle } from './PageTitle/PageTitle';
 
@@ -68,6 +68,7 @@ gql`
           rawText
         }
         favourite
+        childrenOrder
       }
       children {
         ...PageChildren
@@ -87,6 +88,16 @@ export const Page: React.FunctionComponent<Props> = ({ id }) => {
     return <Loading />;
   }
 
+  const orderedChildren: PageChildrenFragment[] = page.properties.childrenOrder
+    .map((id) => {
+      const child = page.children.find((child) => child.id === id);
+      if (!child) {
+        return null;
+      }
+      return child;
+    })
+    .filter((child) => child !== null) as PageChildrenFragment[];
+
   return (
     <div className="page min-h-full flex flex-col">
       <div className="mb-6 mt-12">
@@ -94,7 +105,9 @@ export const Page: React.FunctionComponent<Props> = ({ id }) => {
       </div>
 
       <PageTitle page={page} />
-      {page.children && <ContentBlockList blocks={page.children} />}
+      {orderedChildren && (
+        <ContentBlockList blocks={orderedChildren} parentId={page.id} />
+      )}
     </div>
   );
 };
