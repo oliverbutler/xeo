@@ -123,11 +123,20 @@ export class BlockAdapter {
     afterId: string | null
   ): Promise<void> {
     const parent = await this.getBlockById(parentId);
+    const block = await this.getBlockById(id);
 
     if (parent.properties.type !== 'page') {
       throw new Error(
         `BlockAdapter > Block ${parentId} is not a page, currently only pages can have children`
       );
+    }
+
+    // If we're MOVING the block to a new parent, we need to remove it from the old parent
+    if (block.parentId !== parentId) {
+      await this.removeBlockPosition(id);
+
+      // Change the blocks parentId
+      await this.blockRepository.save({ ...block, parentId });
     }
 
     // BUG current placeholder, create the childrenOrder array if it doesn't exist
