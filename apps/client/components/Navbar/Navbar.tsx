@@ -1,5 +1,6 @@
 import { gql } from '@apollo/client';
 import { Loading } from 'components/Animate/Loading/Loading';
+import { ImageRenderer } from 'components/Image/ImageRenderer';
 import { Clickable } from 'components/UI/Clickable/Clickable';
 import { Dropdown } from 'components/UI/Dropdown/Dropdown';
 import { useSyncContext } from 'context/SyncContext';
@@ -16,13 +17,23 @@ import {
 import { FavouriteButton } from './FavouriteButton/FavouriteButton';
 
 gql`
-  query GetPath($fromBlockId: ID!) {
-    path(blockId: $fromBlockId) {
+  query GetPath($id: ID!) {
+    path(id: $id) {
       id
-      ... on PageBlock {
-        title
-        emoji
-        description
+      ... on Page {
+        properties {
+          title {
+            rawText
+          }
+          image {
+            ... on Image {
+              image
+            }
+            ... on Emoji {
+              emoji
+            }
+          }
+        }
       }
     }
   }
@@ -33,6 +44,8 @@ export const Navbar: React.FunctionComponent = () => {
     query: { page },
   } = useRouter();
 
+  const pageId = page as string;
+
   const { isSyncing } = useSyncContext();
 
   if (!page) {
@@ -40,14 +53,12 @@ export const Navbar: React.FunctionComponent = () => {
   }
 
   const { data, loading } = useGetPathQuery({
-    variables: { fromBlockId: page as string },
+    variables: { id: pageId },
   });
 
   if (loading || !data) {
     return null;
   }
-
-  const pageId = page as string;
 
   const path = data.path.slice().reverse();
 
@@ -55,14 +66,16 @@ export const Navbar: React.FunctionComponent = () => {
     <nav id="navbar" className="p-2 flex flex-row  justify-between ">
       <div className="flex flex-row items-center">
         {path.map((block, index) => {
-          if (block.__typename === 'PageBlock') {
+          if (block.__typename === 'Page') {
             return (
               <div key={block.id} className="flex flex-row items-center">
                 <Clickable>
                   <Link href={`/page/${block.id}`}>
-                    <a className="mx-0.5 text-gray-700 text-sm ">
-                      {block.emoji}
-                      <span className="ml-2">{block.title}</span>
+                    <a className="mx-0.5 text-gray-700 text-sm flex items-center ">
+                      <ImageRenderer image={block.properties.image} />
+                      <span className="ml-2">
+                        {block.properties.title.rawText}
+                      </span>
                     </a>
                   </Link>
                 </Clickable>

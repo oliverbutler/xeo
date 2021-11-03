@@ -1,6 +1,5 @@
 import { Loading } from 'components/Animate/Loading/Loading';
 import { Sidebar } from 'components/Sidebar/Sidebar';
-import { BlockType } from 'generated';
 import { useCurrentUser } from 'hooks/useCurrentUser';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { useRouter } from 'next/dist/client/router';
@@ -21,7 +20,7 @@ const Index: React.FunctionComponent = () => {
   useEffect(() => {
     if (user) {
       const firstPage = user.blocks?.find(
-        (block) => block.type === BlockType.Page
+        (block) => block.__typename === 'Page'
       );
       router.push(`/page/${firstPage?.id}`);
     }

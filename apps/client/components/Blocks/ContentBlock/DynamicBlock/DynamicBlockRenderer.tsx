@@ -11,9 +11,9 @@ export const DynamicBlockRenderer: React.FunctionComponent<Props> = ({
   block,
 }) => {
   switch (block.__typename) {
-    case 'TextBlock':
+    case 'ContentBlock':
       return <TextBlock block={block} />;
-    case 'PageBlock':
+    case 'Page':
       return <PageBlock block={block} />;
   }
 };

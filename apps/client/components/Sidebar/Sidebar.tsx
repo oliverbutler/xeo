@@ -6,6 +6,7 @@ import { FiPlusCircle } from 'react-icons/fi';
 import { SidebarItem } from './SidebarItem.tsx/SidebarItem';
 import { UserRow } from './UserRow/UserRow';
 import Link from 'next/link';
+import { ImageRenderer } from 'components/Image/ImageRenderer';
 
 export const Sidebar = () => {
   const { user } = useCurrentUser();
@@ -15,7 +16,7 @@ export const Sidebar = () => {
     192
   );
 
-  const pages = user?.blocks ?? [];
+  const rootPages = user?.pages ?? [];
 
   return (
     <Resize
@@ -23,24 +24,25 @@ export const Sidebar = () => {
       onSetWidth={setDefaultWidth}
       minWindowWidth={150}
       dragHandleWidth={3}
-      className="bg-gray-100"
-      dragHandleClassName="bg-gray-100 hover:bg-gray-200"
+      className="bg-gray-50"
+      dragHandleClassName="bg-gray-50 hover:bg-gray-200"
     >
       <div className="flex flex-col h-full py-2">
         <div className="overflow-auto h-full">
           {user && (
             <>
               <UserRow user={user} />
-              {pages.map((page) => {
-                if (page.__typename === 'PageBlock') {
-                  return (
-                    <Link href={`/page/${page.id}`} key={page.id}>
-                      <SidebarItem className="text-gray-700 text-sm">
-                        <span className="mr-1">{page.emoji}</span> {page.title}
-                      </SidebarItem>
-                    </Link>
-                  );
-                }
+              {rootPages.map((page) => {
+                return (
+                  <Link href={`/page/${page.id}`} key={page.id}>
+                    <SidebarItem className="text-gray-700 text-sm flex items-center">
+                      <ImageRenderer image={page.properties.image} />
+                      <span className="ml-2">
+                        {page.properties.title.rawText}
+                      </span>
+                    </SidebarItem>
+                  </Link>
+                );
               })}
             </>
           )}

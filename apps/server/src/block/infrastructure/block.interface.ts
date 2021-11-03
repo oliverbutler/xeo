@@ -21,3 +21,13 @@ export type ContentBlockCreationInput = {
   parentId: Block['parentId'] | null;
   createdById: Block['createdById'];
 };
+
+export type PageUpdateInput = {
+  properties: Partial<PageProperties>;
+};
+
+export type ContentBlockUpdateInput = {
+  properties: Partial<ContentBlockProperties> & {
+    type: 'paragraph' | 'heading';
+  };
+};

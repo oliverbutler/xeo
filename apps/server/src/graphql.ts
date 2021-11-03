@@ -52,12 +52,6 @@ export interface BlockFilters {
     parentId?: Nullable<string>;
 }
 
-export interface UpdateBlockInput {
-    text?: Nullable<string>;
-    title?: Nullable<string>;
-    favourite?: Nullable<boolean>;
-}
-
 export interface CreatePageInput {
     properties: PagePropertiesInput;
     parentId?: Nullable<string>;
@@ -71,6 +65,16 @@ export interface CreateParagraphBlockInput {
 export interface CreateHeadingBlockInput {
     properties: HeadingPropertiesInput;
     parentId?: Nullable<string>;
+}
+
+export interface UpdatePageInput {
+    title?: Nullable<RichTextInput>;
+    image?: Nullable<string>;
+    emoji?: Nullable<string>;
+}
+
+export interface UpdateContentBlockInput {
+    text?: Nullable<RichTextInput>;
 }
 
 export interface Block {
@@ -93,7 +97,8 @@ export interface IMutation {
     createPage(input: CreatePageInput): Page | Promise<Page>;
     createParagraphBlock(input: CreateParagraphBlockInput): ContentBlock | Promise<ContentBlock>;
     createHeadingBlock(input: CreateHeadingBlockInput): ContentBlock | Promise<ContentBlock>;
-    updateBlock(id: string, input: UpdateBlockInput): Block | Promise<Block>;
+    updatePage(id: string, input: UpdatePageInput): Page | Promise<Page>;
+    updateContentBlock(id: string, input: UpdateContentBlockInput): ContentBlock | Promise<ContentBlock>;
 }
 
 export interface Emoji {
@@ -164,7 +169,7 @@ export interface User {
     firstName: string;
     lastName: string;
     avatar?: Nullable<string>;
-    blocks?: Nullable<Block[]>;
+    pages?: Nullable<Page[]>;
 }
 
 export type EmojiImage = Emoji | Image;

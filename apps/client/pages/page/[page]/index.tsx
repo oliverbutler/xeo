@@ -20,7 +20,7 @@ const Page: React.FunctionComponent = () => {
       <div className="w-full">
         <Navbar />
         <div className="max-w-xl  w-full mx-auto p-4">
-          <PageComponent blockId={pageId} key={pageId} />
+          <PageComponent id={pageId} key={pageId} />
         </div>
       </div>
     </div>

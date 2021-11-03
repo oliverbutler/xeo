@@ -9,6 +9,8 @@ import {
   CreatePageInput,
   CreateParagraphBlockInput,
   Page,
+  UpdateContentBlockInput,
+  UpdatePageInput,
 } from '../../graphql';
 import { BlockObjectType } from '../core/block.entity';
 import { BlockService } from '../core/block.service';
@@ -16,25 +18,6 @@ import { BlockService } from '../core/block.service';
 @Resolver('Block')
 export class BlockResolver {
   constructor(private readonly blockService: BlockService) {}
-
-  // @Query('blocks')
-  // @UseGuards(GqlAuthGuard)
-  // async getAllBlocks(
-  //   @CurrentUser() user: CurrentAuthUser,
-  //   @Args('filters') filters: BlockFilters
-  // ): Promise<Block[]> {
-  //   // return await this.blockService.getAllBlocks({
-  //   //   createdById: user.id,
-  //   //   ...(filters && // TODO clean up this logic
-  //   //     filters.type !== undefined && { type: filters.type ?? undefined }),
-  //   //   ...(filters &&
-  //   //     filters.parentId !== undefined && { parentId: filters.parentId }),
-  //   // });
-
-  //   return this.blockService.getAllBlocks({
-  //     createdById: user.id,
-  //   });
-  // }
 
   @Query('page')
   @UseGuards(GqlAuthGuard)
@@ -65,7 +48,7 @@ export class BlockResolver {
   ): Promise<Page> {
     return await this.blockService.createPage({
       properties: {
-        type: BlockObjectType.PAGE,
+        type: 'page',
         title: input.properties.title,
         favourite: false,
         properties: {},
@@ -108,44 +91,52 @@ export class BlockResolver {
     });
   }
 
-  // @Query('block')
-  // @UseGuards(GqlAuthGuard)
-  // async getBlock(@Args('id') id: string): Promise<Block> {
-  //   // return await this.blockService.getBlockById(id);
-  // }
+  @Query('path')
+  @UseGuards(GqlAuthGuard)
+  async getPath(@Args('id') id: string): Promise<Page[]> {
+    return await this.blockService.getPathToRoot(id);
+  }
 
-  // @Query('path')
-  // @UseGuards(GqlAuthGuard)
-  // async getPath(@Args('blockId') id: string): Promise<Block[]> {
-  //   return await this.blockService.getPathToRoot(id);
-  // }
+  @Mutation('updatePage')
+  @UseGuards(GqlAuthGuard)
+  async updatePage(
+    @CurrentUser() user: CurrentAuthUser, // TODO check if user is owner
+    @Args('id') id: string,
+    @Args('input') input: UpdatePageInput
+  ): Promise<Page> {
+    const block = await this.blockService.updatePage(id, {
+      properties: {
+        ...(input.title && { title: input.title }),
+        ...(input.image && { image: { image: input.image } }),
+        ...(input.emoji && { image: { emoji: input.emoji } }),
+      },
+    });
 
-  // @Mutation('createBlock')
-  // @UseGuards(GqlAuthGuard)
-  // async createBlock(
-  //   @Args('input')
-  //   input: CreateBlockInput,
-  //   @CurrentUser() user: CurrentAuthUser
-  // ): Promise<Block> {
-  //   return await this.blockService.createBlock({
-  //     ...input,
-  //     createdById: user.id,
-  //     parentId: input.parentId ?? null,
-  //   });
-  // }
+    return block;
+  }
 
-  // @Mutation('updateBlock')
-  // @UseGuards(GqlAuthGuard)
-  // async updateBlock(
-  //   @Args('id') id: string,
-  //   @Args('input') input: UpdateBlockInput
-  // ): Promise<Block> {
-  //   // return await this.blockService.updateBlock(id, {
-  //   //   ...(input.title && { title: input.title }),
-  //   //   ...(input.text && { text: input.text }),
-  //   //   ...(input.favourite !== undefined && {
-  //   //     favourite: input.favourite ?? false,
-  //   //   }),
-  //   // });
-  // }
+  @Mutation('updateContentBlock')
+  @UseGuards(GqlAuthGuard)
+  async updateContentBlock(
+    @CurrentUser() user: CurrentAuthUser, // TODO check if user is owner
+    @Args('id') id: string,
+    @Args('input') input: UpdateContentBlockInput
+  ): Promise<Block> {
+    const currentBlock = await this.blockService.getBlockById(id);
+
+    if (currentBlock.properties.type === 'page') {
+      throw new BadRequestException(
+        "Cann't update a page with the updateContentBlock mutation"
+      );
+    }
+
+    const block = await this.blockService.updateContentBlock(id, {
+      properties: {
+        type: currentBlock.properties.type,
+        ...(input.text && { text: input.text }),
+      },
+    });
+
+    return block;
+  }
 }

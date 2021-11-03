@@ -19,6 +19,14 @@ import { ContentProperties } from '../graphql';
         path: join(process.cwd(), 'apps/server/src/graphql.ts'),
       },
       resolvers: {
+        EmojiImage: {
+          __resolveType(obj: any) {
+            if (obj.emoji) {
+              return 'Emoji';
+            }
+            return 'Image';
+          },
+        },
         ContentProperties: {
           __resolveType(obj: ContentProperties) {
             if (obj.type === 'paragraph') {

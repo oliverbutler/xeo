@@ -28,7 +28,7 @@ type Image = {
 type EmojiImage = Emoji | Image;
 
 export type PageProperties = {
-  type: BlockObjectType.PAGE;
+  type: 'page';
   title: RichText;
   favourite: boolean;
   image?: EmojiImage;
@@ -36,7 +36,7 @@ export type PageProperties = {
   properties: Record<string, any>;
 };
 
-type ParagraphProperties = {
+export type ParagraphProperties = {
   type: 'paragraph';
   text: RichText;
 };
@@ -47,7 +47,7 @@ export enum HeadingType {
   H3 = 'H3',
 }
 
-type HeadingProperties = {
+export type HeadingProperties = {
   type: 'heading';
   text: RichText;
   variant: HeadingType;

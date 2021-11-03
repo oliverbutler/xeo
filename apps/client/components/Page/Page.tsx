@@ -1,54 +1,90 @@
 import { gql } from '@apollo/client';
+import { Loading } from 'components/Animate/Loading/Loading';
 import ContentBlockList from 'components/Blocks/ContentBlock/ContentBlockList/ContentBlockList';
-import { useGetBlockQuery } from 'generated';
+import { useGetPageQuery } from 'generated';
 import { PageIcon } from './PageIcon/PageIcon';
 import { PageTitle } from './PageTitle/PageTitle';
 
 interface Props {
-  blockId: string;
+  id: string;
 }
 
-export const GET_BLOCK = gql`
-  fragment PageChildren on Block {
-    __typename
-    id
-    type
-    ... on PageBlock {
-      title
-      description
-      emoji
-      favourite
+gql`
+  fragment PageProperties on PageProperties {
+    image {
+      __typename
+      ... on Emoji {
+        emoji
+      }
+      ... on Image {
+        image
+      }
     }
-    ... on TextBlock {
-      text
+    title {
+      rawText
+    }
+    favourite
+  }
+
+  fragment PageChildren on Block {
+    id
+    __typename
+    ... on Page {
+      properties {
+        ...PageProperties
+      }
+    }
+    ... on ContentBlock {
+      properties {
+        ... on ParagraphProperties {
+          text {
+            rawText
+          }
+        }
+        ... on HeadingProperties {
+          text {
+            rawText
+          }
+          variant
+        }
+      }
     }
   }
 
-  query GetBlock($blockId: ID!) {
-    block(id: $blockId) {
-      __typename
+  query GetPage($id: ID!, $populateSubTree: Boolean!) {
+    page(id: $id, populateSubTree: $populateSubTree) {
       id
-      type
-      ... on PageBlock {
-        title
-        description
-        emoji
-        favourite
-        children {
-          ...PageChildren
+      properties {
+        image {
+          __typename
+          ... on Emoji {
+            emoji
+          }
+          ... on Image {
+            image
+          }
         }
+        title {
+          rawText
+        }
+        favourite
+      }
+      children {
+        ...PageChildren
       }
     }
   }
 `;
 
-export const Page: React.FunctionComponent<Props> = ({ blockId }) => {
-  const { data } = useGetBlockQuery({ variables: { blockId } });
+export const Page: React.FunctionComponent<Props> = ({ id }) => {
+  const { data } = useGetPageQuery({
+    variables: { id, populateSubTree: true },
+  });
 
-  const page = data?.block;
+  const page = data?.page;
 
-  if (!page || page.__typename !== 'PageBlock') {
-    return null;
+  if (!page) {
+    return <Loading />;
   }
 
   return (

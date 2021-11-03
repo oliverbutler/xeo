@@ -14,7 +14,7 @@ export class AuthResolver {
       username: user.username,
       firstName: user.firstName,
       lastName: user.lastName,
-      blocks: [],
+      pages: [],
     };
   }
 

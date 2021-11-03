@@ -4,28 +4,15 @@ import { BlockAdapter } from '../infrastructure/block.adapter';
 import {
   BlockFilters,
   ContentBlockCreationInput,
+  ContentBlockUpdateInput,
   PageCreationInput,
+  PageUpdateInput,
 } from '../infrastructure/block.interface';
 import { Block, BlockObjectType, PageProperties } from './block.entity';
 
 @Injectable()
 export class BlockService {
   constructor(private readonly blockAdapter: BlockAdapter) {}
-
-  // async createBlock(block: Block): Promise<Block> {
-  //   if (block.parentId) {
-  //     const parentBlock = await this.blockAdapter.getBlockById(block.parentId);
-
-  //     if (!parentBlock) {
-  //       throw new BadRequestException(
-  //         `BlockService > Parent block ${block.parentId} not found`
-  //       );
-  //     }
-  //   }
-
-  //   return await this.blockAdapter.create(block);
-  // }
-
   async getBlockById(id: Block['id']): Promise<Block> {
     const block = await this.blockAdapter.getBlockById(id);
 
@@ -46,7 +33,7 @@ export class BlockService {
       throw new BadRequestException(`BlockService > Block ${id} is not a page`);
     }
 
-    if (block.properties.type !== 'PAGE') {
+    if (block.properties.type !== 'page') {
       throw new BadRequestException(
         `BlockService > Block ${id} properties is not a page`
       );
@@ -106,23 +93,41 @@ export class BlockService {
     return this.getAllPages({ ...filters, createdById: userId });
   }
 
-  async getPathToRoot(blockId: string): Promise<Block[]> {
-    let block = await this.getBlockById(blockId);
-    let pathToRoot = [block];
+  async getPathToRoot(blockId: string): Promise<Page[]> {
+    let block = await this.getPageById(blockId);
 
+    const pathToRoot = [block];
+
+    // TODO start computing this with a recursive SQL function
     while (block.parentId) {
-      block = await this.blockAdapter.getBlockById(block.parentId);
+      block = await this.getPageById(block.parentId);
       pathToRoot.push(block);
     }
 
-    return pathToRoot;
+    return pathToRoot.map((block) => {
+      return {
+        ...block,
+        properties: block.properties as PageProperties,
+        children: [],
+      };
+    });
   }
 
-  async updateBlock(
-    id: Block['id'],
-    partialBlock: Partial<Block>
+  async updatePage(id: string, input: PageUpdateInput): Promise<Page> {
+    const updated = await this.blockAdapter.updatePage(id, input);
+
+    return {
+      ...updated,
+      properties: updated.properties as PageProperties,
+      children: [],
+    };
+  }
+
+  async updateContentBlock(
+    id: string,
+    input: ContentBlockUpdateInput
   ): Promise<Block> {
-    return await this.blockAdapter.updateBlock(id, partialBlock);
+    return this.blockAdapter.updateContentBlock(id, input);
   }
 
   async deleteBlock(id: Block['id']): Promise<void> {

@@ -104,12 +104,6 @@ input BlockFilters {
   parentId: ID
 }
 
-input UpdateBlockInput {
-  text: String
-  title: String
-  favourite: Boolean
-}
-
 input CreatePageInput {
   properties: PagePropertiesInput!
   parentId: ID
@@ -135,10 +129,21 @@ type Query {
   path(id: ID!): [Page!]!
 }
 
+input UpdatePageInput {
+  title: RichTextInput
+  image: String
+  emoji: String
+}
+
+input UpdateContentBlockInput {
+  text: RichTextInput
+}
+
 type Mutation {
   createPage(input: CreatePageInput!): Page!
   createParagraphBlock(input: CreateParagraphBlockInput!): ContentBlock!
   createHeadingBlock(input: CreateHeadingBlockInput!): ContentBlock!
 
-  updateBlock(id: ID!, input: UpdateBlockInput!): Block!
+  updatePage(id: ID!, input: UpdatePageInput!): Page!
+  updateContentBlock(id: ID!, input: UpdateContentBlockInput!): ContentBlock!
 }
