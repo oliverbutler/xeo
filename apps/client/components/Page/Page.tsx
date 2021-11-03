@@ -29,6 +29,7 @@ gql`
   fragment PageChildren on Block {
     id
     __typename
+    parentId
     ... on Page {
       properties {
         ...PageProperties

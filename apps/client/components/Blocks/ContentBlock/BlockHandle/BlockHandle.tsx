@@ -39,7 +39,7 @@ export const BlockHandle = ({
         variants={variants}
       >
         <div className="flex flex-col">
-          <AddButton />
+          <AddButton block={block} />
         </div>
         <div className="flex flex-col" {...dragHandleProps}>
           <HandleButton block={block} />

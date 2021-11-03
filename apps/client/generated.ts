@@ -299,9 +299,9 @@ export type GetPathQuery = { __typename?: 'Query', path: Array<{ __typename?: 'P
 
 export type PagePropertiesFragment = { __typename?: 'PageProperties', favourite: boolean, image?: { __typename: 'Emoji', emoji: string } | { __typename: 'Image', image: string } | null | undefined, title: { __typename?: 'RichText', rawText: string } };
 
-export type PageChildren_ContentBlock_Fragment = { __typename: 'ContentBlock', id: string, properties: { __typename?: 'HeadingProperties', variant: HeadingType, text: { __typename?: 'RichText', rawText: string } } | { __typename?: 'ParagraphProperties', text: { __typename?: 'RichText', rawText: string } } };
+export type PageChildren_ContentBlock_Fragment = { __typename: 'ContentBlock', id: string, parentId?: string | null | undefined, properties: { __typename?: 'HeadingProperties', variant: HeadingType, text: { __typename?: 'RichText', rawText: string } } | { __typename?: 'ParagraphProperties', text: { __typename?: 'RichText', rawText: string } } };
 
-export type PageChildren_Page_Fragment = { __typename: 'Page', id: string, properties: { __typename?: 'PageProperties', favourite: boolean, image?: { __typename: 'Emoji', emoji: string } | { __typename: 'Image', image: string } | null | undefined, title: { __typename?: 'RichText', rawText: string } } };
+export type PageChildren_Page_Fragment = { __typename: 'Page', id: string, parentId?: string | null | undefined, properties: { __typename?: 'PageProperties', favourite: boolean, image?: { __typename: 'Emoji', emoji: string } | { __typename: 'Image', image: string } | null | undefined, title: { __typename?: 'RichText', rawText: string } } };
 
 export type PageChildrenFragment = PageChildren_ContentBlock_Fragment | PageChildren_Page_Fragment;
 
@@ -311,7 +311,7 @@ export type GetPageQueryVariables = Exact<{
 }>;
 
 
-export type GetPageQuery = { __typename?: 'Query', page: { __typename?: 'Page', id: string, properties: { __typename?: 'PageProperties', favourite: boolean, childrenOrder: Array<string>, image?: { __typename: 'Emoji', emoji: string } | { __typename: 'Image', image: string } | null | undefined, title: { __typename?: 'RichText', rawText: string } }, children: Array<{ __typename: 'ContentBlock', id: string, properties: { __typename?: 'HeadingProperties', variant: HeadingType, text: { __typename?: 'RichText', rawText: string } } | { __typename?: 'ParagraphProperties', text: { __typename?: 'RichText', rawText: string } } } | { __typename: 'Page', id: string, properties: { __typename?: 'PageProperties', favourite: boolean, image?: { __typename: 'Emoji', emoji: string } | { __typename: 'Image', image: string } | null | undefined, title: { __typename?: 'RichText', rawText: string } } }> } };
+export type GetPageQuery = { __typename?: 'Query', page: { __typename?: 'Page', id: string, properties: { __typename?: 'PageProperties', favourite: boolean, childrenOrder: Array<string>, image?: { __typename: 'Emoji', emoji: string } | { __typename: 'Image', image: string } | null | undefined, title: { __typename?: 'RichText', rawText: string } }, children: Array<{ __typename: 'ContentBlock', id: string, parentId?: string | null | undefined, properties: { __typename?: 'HeadingProperties', variant: HeadingType, text: { __typename?: 'RichText', rawText: string } } | { __typename?: 'ParagraphProperties', text: { __typename?: 'RichText', rawText: string } } } | { __typename: 'Page', id: string, parentId?: string | null | undefined, properties: { __typename?: 'PageProperties', favourite: boolean, image?: { __typename: 'Emoji', emoji: string } | { __typename: 'Image', image: string } | null | undefined, title: { __typename?: 'RichText', rawText: string } } }> } };
 
 export type UpdateContentBlockMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -345,6 +345,20 @@ export type DeleteBlockMutationVariables = Exact<{
 
 export type DeleteBlockMutation = { __typename?: 'Mutation', deleteBlock: boolean };
 
+export type CreateParagraphBlockMutationVariables = Exact<{
+  input: CreateParagraphBlockInput;
+}>;
+
+
+export type CreateParagraphBlockMutation = { __typename?: 'Mutation', createParagraphBlock: { __typename?: 'ContentBlock', id: string } };
+
+export type CreateHeadingBlockMutationVariables = Exact<{
+  input: CreateHeadingBlockInput;
+}>;
+
+
+export type CreateHeadingBlockMutation = { __typename?: 'Mutation', createHeadingBlock: { __typename?: 'ContentBlock', id: string } };
+
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -371,6 +385,7 @@ export const PageChildrenFragmentDoc = gql`
     fragment PageChildren on Block {
   id
   __typename
+  parentId
   ... on Page {
     properties {
       ...PageProperties
@@ -664,6 +679,72 @@ export function useDeleteBlockMutation(baseOptions?: Apollo.MutationHookOptions<
 export type DeleteBlockMutationHookResult = ReturnType<typeof useDeleteBlockMutation>;
 export type DeleteBlockMutationResult = Apollo.MutationResult<DeleteBlockMutation>;
 export type DeleteBlockMutationOptions = Apollo.BaseMutationOptions<DeleteBlockMutation, DeleteBlockMutationVariables>;
+export const CreateParagraphBlockDocument = gql`
+    mutation CreateParagraphBlock($input: CreateParagraphBlockInput!) {
+  createParagraphBlock(input: $input) {
+    id
+  }
+}
+    `;
+export type CreateParagraphBlockMutationFn = Apollo.MutationFunction<CreateParagraphBlockMutation, CreateParagraphBlockMutationVariables>;
+
+/**
+ * __useCreateParagraphBlockMutation__
+ *
+ * To run a mutation, you first call `useCreateParagraphBlockMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateParagraphBlockMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createParagraphBlockMutation, { data, loading, error }] = useCreateParagraphBlockMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateParagraphBlockMutation(baseOptions?: Apollo.MutationHookOptions<CreateParagraphBlockMutation, CreateParagraphBlockMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateParagraphBlockMutation, CreateParagraphBlockMutationVariables>(CreateParagraphBlockDocument, options);
+      }
+export type CreateParagraphBlockMutationHookResult = ReturnType<typeof useCreateParagraphBlockMutation>;
+export type CreateParagraphBlockMutationResult = Apollo.MutationResult<CreateParagraphBlockMutation>;
+export type CreateParagraphBlockMutationOptions = Apollo.BaseMutationOptions<CreateParagraphBlockMutation, CreateParagraphBlockMutationVariables>;
+export const CreateHeadingBlockDocument = gql`
+    mutation CreateHeadingBlock($input: CreateHeadingBlockInput!) {
+  createHeadingBlock(input: $input) {
+    id
+  }
+}
+    `;
+export type CreateHeadingBlockMutationFn = Apollo.MutationFunction<CreateHeadingBlockMutation, CreateHeadingBlockMutationVariables>;
+
+/**
+ * __useCreateHeadingBlockMutation__
+ *
+ * To run a mutation, you first call `useCreateHeadingBlockMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateHeadingBlockMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createHeadingBlockMutation, { data, loading, error }] = useCreateHeadingBlockMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateHeadingBlockMutation(baseOptions?: Apollo.MutationHookOptions<CreateHeadingBlockMutation, CreateHeadingBlockMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateHeadingBlockMutation, CreateHeadingBlockMutationVariables>(CreateHeadingBlockDocument, options);
+      }
+export type CreateHeadingBlockMutationHookResult = ReturnType<typeof useCreateHeadingBlockMutation>;
+export type CreateHeadingBlockMutationResult = Apollo.MutationResult<CreateHeadingBlockMutation>;
+export type CreateHeadingBlockMutationOptions = Apollo.BaseMutationOptions<CreateHeadingBlockMutation, CreateHeadingBlockMutationVariables>;
 export const GetMeDocument = gql`
     query GetMe {
   me {

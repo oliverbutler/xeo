@@ -1,10 +1,16 @@
 import { Dropdown } from 'components/UI/Dropdown/Dropdown';
 import { FiPlus } from 'react-icons/fi';
 import { motion } from 'framer-motion';
+import { HeadingType, PageChildrenFragment } from 'generated';
+import { useBlock } from 'hooks/useBlock';
 
-interface Props {}
+interface Props {
+  block: PageChildrenFragment;
+}
 
-export const AddButton: React.FunctionComponent<Props> = (props) => {
+export const AddButton: React.FunctionComponent<Props> = ({ block }) => {
+  const { createHeadingBlock, createParagraphBlock } = useBlock();
+
   return (
     <Dropdown
       button={
@@ -23,18 +29,38 @@ export const AddButton: React.FunctionComponent<Props> = (props) => {
           {
             text: 'Paragraph',
             logo: null,
+            onClick: () =>
+              createParagraphBlock({
+                parentId: block.parentId,
+                properties: { text: { rawText: '' } },
+              }),
           },
           {
             text: 'Heading 1',
             logo: null,
+            onClick: () =>
+              createHeadingBlock({
+                parentId: block.parentId,
+                properties: { text: { rawText: '' }, variant: HeadingType.H1 },
+              }),
           },
           {
             text: 'Heading 2',
             logo: null,
+            onClick: () =>
+              createHeadingBlock({
+                parentId: block.parentId,
+                properties: { text: { rawText: '' }, variant: HeadingType.H2 },
+              }),
           },
           {
             text: 'Heading 3',
             logo: null,
+            onClick: () =>
+              createHeadingBlock({
+                parentId: block.parentId,
+                properties: { text: { rawText: '' }, variant: HeadingType.H3 },
+              }),
           },
         ],
       ]}
