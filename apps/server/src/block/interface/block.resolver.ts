@@ -110,6 +110,7 @@ export class BlockResolver {
         ...(input.title && { title: input.title }),
         ...(input.image && { image: { image: input.image } }),
         ...(input.emoji && { image: { emoji: input.emoji } }),
+        ...(input.favourite && { favourite: input.favourite }),
       },
     });
 
@@ -150,6 +151,17 @@ export class BlockResolver {
     @Args('afterId') afterId?: string
   ): Promise<boolean> {
     await this.blockService.updateBlockLocation(id, parentId, afterId ?? null);
+
+    return true;
+  }
+
+  @Mutation('deleteBlock')
+  @UseGuards(GqlAuthGuard)
+  async deleteBlock(
+    @CurrentUser() user: CurrentAuthUser, // TODO check if user is owner
+    @Args('id') id: string
+  ): Promise<boolean> {
+    await this.blockService.deleteBlock(id);
 
     return true;
   }

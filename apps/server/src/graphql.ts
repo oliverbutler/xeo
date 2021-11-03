@@ -71,6 +71,7 @@ export interface UpdatePageInput {
     title?: Nullable<RichTextInput>;
     image?: Nullable<string>;
     emoji?: Nullable<string>;
+    favourite?: Nullable<boolean>;
 }
 
 export interface UpdateContentBlockInput {
@@ -100,6 +101,7 @@ export interface IMutation {
     updatePage(id: string, input: UpdatePageInput): Page | Promise<Page>;
     updateContentBlock(id: string, input: UpdateContentBlockInput): ContentBlock | Promise<ContentBlock>;
     updateBlockLocation(id: string, parentId: string, afterId?: Nullable<string>): boolean | Promise<boolean>;
+    deleteBlock(id: string): boolean | Promise<boolean>;
 }
 
 export interface Emoji {

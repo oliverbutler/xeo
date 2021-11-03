@@ -2,14 +2,22 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { DraggableProvidedDragHandleProps } from 'react-beautiful-dnd';
 import classNames from 'classnames';
-import { FiMoreHorizontal, FiPlus } from 'react-icons/fi';
+
+import { AddButton } from './AddButton/AddButton';
+import { HandleButton } from './HandleButton/HandleButton';
+import { PageChildrenFragment } from 'generated';
 
 interface BlockProps {
   children?: JSX.Element;
   dragHandleProps?: DraggableProvidedDragHandleProps;
+  block: PageChildrenFragment;
 }
 
-export const BlockHandle = ({ children, dragHandleProps }: BlockProps) => {
+export const BlockHandle = ({
+  children,
+  dragHandleProps,
+  block,
+}: BlockProps) => {
   const [isHover, setHover] = useState(false);
 
   const variants = {
@@ -31,24 +39,10 @@ export const BlockHandle = ({ children, dragHandleProps }: BlockProps) => {
         variants={variants}
       >
         <div className="flex flex-col">
-          <motion.div
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.8 }}
-            transition={{ duration: 0.3 }}
-            className="my-auto select-none hover:bg-gray-100 rounded-md opacity-0 group-hover:opacity-100 p-0.5 cursor-pointer text-gray-400 stroke-current"
-          >
-            <FiPlus />
-          </motion.div>
+          <AddButton />
         </div>
         <div className="flex flex-col" {...dragHandleProps}>
-          <motion.div
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            transition={{ duration: 0.3 }}
-            className="my-auto mr-1 hover:bg-gray-100 select-none rounded-md opacity-0 group-hover:opacity-100 p-0.5 cursor-pointer text-gray-400 stroke-current"
-          >
-            <FiMoreHorizontal />
-          </motion.div>
+          <HandleButton block={block} />
         </div>
       </motion.div>
       <div className="flex-grow py-0.5">{children}</div>

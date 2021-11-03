@@ -109,6 +109,7 @@ export type Mutation = {
   createHeadingBlock: ContentBlock;
   createPage: Page;
   createParagraphBlock: ContentBlock;
+  deleteBlock: Scalars['Boolean'];
   signIn: AuthResponse;
   signUp: User;
   updateBlockLocation: Scalars['Boolean'];
@@ -129,6 +130,11 @@ export type MutationCreatePageArgs = {
 
 export type MutationCreateParagraphBlockArgs = {
   input: CreateParagraphBlockInput;
+};
+
+
+export type MutationDeleteBlockArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -256,6 +262,7 @@ export type UpdateContentBlockInput = {
 
 export type UpdatePageInput = {
   emoji?: Maybe<Scalars['String']>;
+  favourite?: Maybe<Scalars['Boolean']>;
   image?: Maybe<Scalars['String']>;
   title?: Maybe<RichTextInput>;
 };
@@ -330,6 +337,13 @@ export type UpdateBlockLocationMutationVariables = Exact<{
 
 
 export type UpdateBlockLocationMutation = { __typename?: 'Mutation', updateBlockLocation: boolean };
+
+export type DeleteBlockMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type DeleteBlockMutation = { __typename?: 'Mutation', deleteBlock: boolean };
 
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -619,6 +633,37 @@ export function useUpdateBlockLocationMutation(baseOptions?: Apollo.MutationHook
 export type UpdateBlockLocationMutationHookResult = ReturnType<typeof useUpdateBlockLocationMutation>;
 export type UpdateBlockLocationMutationResult = Apollo.MutationResult<UpdateBlockLocationMutation>;
 export type UpdateBlockLocationMutationOptions = Apollo.BaseMutationOptions<UpdateBlockLocationMutation, UpdateBlockLocationMutationVariables>;
+export const DeleteBlockDocument = gql`
+    mutation DeleteBlock($id: ID!) {
+  deleteBlock(id: $id)
+}
+    `;
+export type DeleteBlockMutationFn = Apollo.MutationFunction<DeleteBlockMutation, DeleteBlockMutationVariables>;
+
+/**
+ * __useDeleteBlockMutation__
+ *
+ * To run a mutation, you first call `useDeleteBlockMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteBlockMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteBlockMutation, { data, loading, error }] = useDeleteBlockMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteBlockMutation(baseOptions?: Apollo.MutationHookOptions<DeleteBlockMutation, DeleteBlockMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteBlockMutation, DeleteBlockMutationVariables>(DeleteBlockDocument, options);
+      }
+export type DeleteBlockMutationHookResult = ReturnType<typeof useDeleteBlockMutation>;
+export type DeleteBlockMutationResult = Apollo.MutationResult<DeleteBlockMutation>;
+export type DeleteBlockMutationOptions = Apollo.BaseMutationOptions<DeleteBlockMutation, DeleteBlockMutationVariables>;
 export const GetMeDocument = gql`
     query GetMe {
   me {

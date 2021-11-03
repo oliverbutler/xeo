@@ -53,6 +53,8 @@ export class BlockAdapter {
   }
 
   async deleteBlock(id: Block['id']): Promise<void> {
+    await this.removeBlockPosition(id);
+
     const result = await this.blockRepository.delete(id);
 
     if (result.affected === 0) {
@@ -79,6 +81,34 @@ export class BlockAdapter {
     }
 
     return newBlock;
+  }
+
+  /**
+   * Removes the block from parent childrenOrder
+   *
+   * ⚠️ doesn't check id validity
+   *
+   */
+  async removeBlockPosition(id: string): Promise<void> {
+    const block = await this.getBlockById(id);
+
+    if (!block.parentId) {
+      return;
+    }
+
+    const parent = await this.getBlockById(block.parentId);
+
+    if (parent.properties.type === 'page') {
+      const parentChildrenOrder = parent.properties.childrenOrder.filter(
+        (childId) => childId !== id
+      );
+
+      await this.updatePage(parent.id, {
+        properties: {
+          childrenOrder: parentChildrenOrder,
+        },
+      });
+    }
   }
 
   /**

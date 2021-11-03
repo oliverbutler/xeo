@@ -134,6 +134,7 @@ input UpdatePageInput {
   title: RichTextInput
   image: String
   emoji: String
+  favourite: Boolean
 }
 
 input UpdateContentBlockInput {
@@ -148,4 +149,5 @@ type Mutation {
   updatePage(id: ID!, input: UpdatePageInput!): Page!
   updateContentBlock(id: ID!, input: UpdateContentBlockInput!): ContentBlock!
   updateBlockLocation(id: ID!, parentId: ID!, afterId: ID): Boolean!
+  deleteBlock(id: ID!): Boolean!
 }

@@ -16,12 +16,10 @@ export const FavouriteButton: React.FunctionComponent<Props> = ({ pageId }) => {
 
   const [isFavourite, setIsFavourite] = useState<boolean | null>(null);
 
-  const { updateBlock } = useBlock();
+  const { updatePage } = useBlock();
 
   useEffect(() => {
-    if (data?.page?.__typename === 'Page') {
-      setIsFavourite(data.page.properties.favourite);
-    }
+    if (data) setIsFavourite(data.page.properties.favourite);
   }, [data]);
 
   const handleClick = () => {
@@ -31,10 +29,10 @@ export const FavouriteButton: React.FunctionComponent<Props> = ({ pageId }) => {
 
     setIsFavourite(!isFavourite);
 
-    updateBlock({
+    updatePage({
       variables: {
-        blockId: pageId,
-        data: {
+        id: pageId,
+        input: {
           favourite: !isFavourite,
         },
       },
