@@ -35,7 +35,7 @@ export const TextBlock: React.FunctionComponent<Props> = ({ block }) => {
     case 'ParagraphProperties':
       return (
         <Editable
-          className="text-left px-1 py-0.5"
+          className=" px-1 py-0.5"
           html={text}
           onChange={(e) => setText(e.target.value)}
         />
@@ -43,7 +43,7 @@ export const TextBlock: React.FunctionComponent<Props> = ({ block }) => {
     case 'HeadingProperties':
       return (
         <Editable
-          className={classNames('text-left px-1 py-0.5 font-semibold', {
+          className={classNames(' px-1 py-0.5 font-semibold', {
             'text-3xl': block.properties.variant === HeadingType.H1,
             'text-2xl': block.properties.variant === HeadingType.H2,
             'text-lg': block.properties.variant === HeadingType.H3,

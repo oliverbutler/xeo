@@ -8,5 +8,7 @@
   "generic.about.rights": "©2020 Xeo. All rights reserved.",
   "generic.login.success": "Successfully logged in",
   "generic.login.error": "Error logging in",
-  "generic.logout.success": "Logged out successfully"
+  "generic.logout.success": "Logged out successfully",
+  "generic.form.emoji": "Pick an Emoji",
+  "generic.form.cover_image": "Pick a cover image"
 }

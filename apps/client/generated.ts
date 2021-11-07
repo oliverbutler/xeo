@@ -54,6 +54,15 @@ export type ContentBlock = Block & {
 
 export type ContentProperties = HeadingProperties | ParagraphProperties;
 
+export type CoverImage = {
+  __typename?: 'CoverImage';
+  gradient?: Maybe<Scalars['String']>;
+};
+
+export type CoverImageInput = {
+  gradient: Scalars['String'];
+};
+
 export type CreateBlockInput = {
   object: BlockObjectType;
   parentId?: Maybe<Scalars['ID']>;
@@ -182,7 +191,7 @@ export type Page = Block & {
 export type PageProperties = {
   __typename?: 'PageProperties';
   childrenOrder: Array<Scalars['String']>;
-  coverImage?: Maybe<Image>;
+  coverImage?: Maybe<CoverImage>;
   favourite: Scalars['Boolean'];
   image?: Maybe<EmojiImage>;
   title: RichText;
@@ -261,6 +270,7 @@ export type UpdateContentBlockInput = {
 };
 
 export type UpdatePageInput = {
+  coverImage?: Maybe<CoverImageInput>;
   emoji?: Maybe<Scalars['String']>;
   favourite?: Maybe<Scalars['Boolean']>;
   image?: Maybe<Scalars['String']>;
@@ -311,7 +321,7 @@ export type GetPageQueryVariables = Exact<{
 }>;
 
 
-export type GetPageQuery = { __typename?: 'Query', page: { __typename?: 'Page', id: string, properties: { __typename?: 'PageProperties', favourite: boolean, childrenOrder: Array<string>, image?: { __typename: 'Emoji', emoji: string } | { __typename: 'Image', image: string } | null | undefined, title: { __typename?: 'RichText', rawText: string } }, children: Array<{ __typename: 'ContentBlock', id: string, parentId?: string | null | undefined, properties: { __typename?: 'HeadingProperties', variant: HeadingType, text: { __typename?: 'RichText', rawText: string } } | { __typename?: 'ParagraphProperties', text: { __typename?: 'RichText', rawText: string } } } | { __typename: 'Page', id: string, parentId?: string | null | undefined, properties: { __typename?: 'PageProperties', favourite: boolean, image?: { __typename: 'Emoji', emoji: string } | { __typename: 'Image', image: string } | null | undefined, title: { __typename?: 'RichText', rawText: string } } }> } };
+export type GetPageQuery = { __typename?: 'Query', page: { __typename?: 'Page', id: string, properties: { __typename?: 'PageProperties', favourite: boolean, childrenOrder: Array<string>, image?: { __typename: 'Emoji', emoji: string } | { __typename: 'Image', image: string } | null | undefined, title: { __typename?: 'RichText', rawText: string }, coverImage?: { __typename?: 'CoverImage', gradient?: string | null | undefined } | null | undefined }, children: Array<{ __typename: 'ContentBlock', id: string, parentId?: string | null | undefined, properties: { __typename?: 'HeadingProperties', variant: HeadingType, text: { __typename?: 'RichText', rawText: string } } | { __typename?: 'ParagraphProperties', text: { __typename?: 'RichText', rawText: string } } } | { __typename: 'Page', id: string, parentId?: string | null | undefined, properties: { __typename?: 'PageProperties', favourite: boolean, image?: { __typename: 'Emoji', emoji: string } | { __typename: 'Image', image: string } | null | undefined, title: { __typename?: 'RichText', rawText: string } } }> } };
 
 export type UpdateContentBlockMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -511,6 +521,9 @@ export const GetPageDocument = gql`
       }
       favourite
       childrenOrder
+      coverImage {
+        gradient
+      }
     }
     children {
       ...PageChildren

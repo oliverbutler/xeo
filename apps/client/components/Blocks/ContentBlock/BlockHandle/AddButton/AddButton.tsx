@@ -27,6 +27,7 @@ export const AddButton: React.FunctionComponent<Props> = ({ block }) => {
       items={[
         [
           {
+            type: 'text',
             text: 'Paragraph',
             logo: null,
             onClick: () =>
@@ -36,6 +37,7 @@ export const AddButton: React.FunctionComponent<Props> = ({ block }) => {
               }),
           },
           {
+            type: 'text',
             text: 'Heading 1',
             logo: null,
             onClick: () =>
@@ -45,6 +47,7 @@ export const AddButton: React.FunctionComponent<Props> = ({ block }) => {
               }),
           },
           {
+            type: 'text',
             text: 'Heading 2',
             logo: null,
             onClick: () =>
@@ -54,6 +57,7 @@ export const AddButton: React.FunctionComponent<Props> = ({ block }) => {
               }),
           },
           {
+            type: 'text',
             text: 'Heading 3',
             logo: null,
             onClick: () =>

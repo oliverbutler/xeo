@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Show placeholder on contenteditable components */
+[contenteditable='true']:empty:before {
+  content: attr(placeholder);
+  display: block;
+}

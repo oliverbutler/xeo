@@ -1,27 +1,64 @@
 import { Clickable } from 'components/UI/Clickable/Clickable';
 import { Dropdown } from 'components/UI/Dropdown/Dropdown';
+import { Popover } from 'components/UI/Popover/Popover';
 import { GetPageQuery } from 'generated';
-import { FiTrash, FiFileText } from 'react-icons/fi';
+import { useBlock } from 'hooks/useBlock';
+import { useDebounce } from 'hooks/useDebounce';
+import { useEffect, useState } from 'react';
+import { FiFileText } from 'react-icons/fi';
+import { useIntl } from 'react-intl';
 
 interface Props {
   page: GetPageQuery['page'];
 }
 
 export const PageIcon: React.FunctionComponent<Props> = ({ page }) => {
+  const { formatMessage } = useIntl();
+
+  const currentEmoji =
+    page.properties.image?.__typename === 'Emoji'
+      ? page.properties.image.emoji
+      : '';
+
+  const [pageIcon, setPageIcon] = useState<string>(currentEmoji);
+
+  const debouncedPageIcon = useDebounce(pageIcon, 500);
+
+  const { updatePage } = useBlock();
+
+  useEffect(() => {
+    if (debouncedPageIcon !== currentEmoji) {
+      updatePage({
+        variables: {
+          id: page.id,
+          input: {
+            emoji: debouncedPageIcon,
+          },
+        },
+      });
+    }
+  }, [debouncedPageIcon]);
+
   return (
-    <Dropdown
+    <Popover
       button={
-        <Clickable className=" p-2 w-min select-none text-7xl">
+        <Clickable className="p-2 w-min select-none text-7xl outline-none">
           {page.properties.image?.__typename === 'Emoji' ? (
             page.properties.image.emoji
           ) : (
-            <FiFileText className="text-gray-400 stroke-current" />
+            <FiFileText className="text-gray-400 stroke-current select-none" />
           )}
         </Clickable>
       }
-      className="mt-2"
-      items={[[{ text: 'Remove', logo: <FiTrash /> }]]}
-      showDirection="left"
+      input={{
+        'aria-label': formatMessage({ id: 'generic.form.emoji' }),
+        placeholder: formatMessage({ id: 'generic.form.emoji' }),
+        value: pageIcon,
+        onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+          setPageIcon(e.target.value);
+        },
+      }}
+      direction="right"
     />
   );
 };

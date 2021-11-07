@@ -17,11 +17,9 @@ const Page: React.FunctionComponent = () => {
   return (
     <div className="flex">
       <Sidebar />
-      <div className="w-full">
+      <div className="w-full relative">
         <Navbar />
-        <div className="max-w-xl  w-full mx-auto p-4">
-          <PageComponent id={pageId} key={pageId} />
-        </div>
+        <PageComponent id={pageId} key={pageId} />
       </div>
     </div>
   );

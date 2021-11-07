@@ -33,7 +33,7 @@ export const BlockHandle = ({
       onMouseLeave={() => setHover(false)}
     >
       <motion.div
-        className="flex flex-row select-none absolute -left-12 bottom-2"
+        className="flex flex-row select-none absolute -left-12 top-2"
         animate={isHover ? 'hover' : 'noHover'}
         transition={{ duration: 0.3 }}
         variants={variants}

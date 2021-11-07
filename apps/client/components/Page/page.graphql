@@ -1,0 +1,69 @@
+fragment PageProperties on PageProperties {
+  image {
+    __typename
+    ... on Emoji {
+      emoji
+    }
+    ... on Image {
+      image
+    }
+  }
+  title {
+    rawText
+  }
+  favourite
+}
+
+fragment PageChildren on Block {
+  id
+  __typename
+  parentId
+  ... on Page {
+    properties {
+      ...PageProperties
+    }
+  }
+  ... on ContentBlock {
+    properties {
+      ... on ParagraphProperties {
+        text {
+          rawText
+        }
+      }
+      ... on HeadingProperties {
+        text {
+          rawText
+        }
+        variant
+      }
+    }
+  }
+}
+
+query GetPage($id: ID!, $populateSubTree: Boolean!) {
+  page(id: $id, populateSubTree: $populateSubTree) {
+    id
+    properties {
+      image {
+        __typename
+        ... on Emoji {
+          emoji
+        }
+        ... on Image {
+          image
+        }
+      }
+      title {
+        rawText
+      }
+      favourite
+      childrenOrder
+      coverImage {
+        gradient
+      }
+    }
+    children {
+      ...PageChildren
+    }
+  }
+}

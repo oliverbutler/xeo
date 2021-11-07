@@ -1,9 +1,11 @@
+import classNames from 'classnames';
 import React, { useEffect, useRef } from 'react';
 import ReactContentEditable, {
   ContentEditableEvent,
+  Props,
 } from 'react-contenteditable';
 
-interface ContentEditableProps {
+type ContentEditableProps = {
   onChange?: (event: ContentEditableEvent) => void;
   onBlur?: (event: React.FormEvent<HTMLDivElement>) => void;
   onInput?: (event: React.FormEvent<HTMLDivElement>) => void;
@@ -12,16 +14,18 @@ interface ContentEditableProps {
   html: string;
   tagName?: string;
   className?: string;
-}
+} & Props;
 
 // Component by EduardoAraujoB https://github.com/lovasoa/react-contenteditable/issues/161#issuecomment-912581676
 // ContentEditable component with hook support
-export const Editable: React.FC<ContentEditableProps> = ({
+export const Editable: React.FunctionComponent<ContentEditableProps> = ({
   onChange,
   onInput,
   onBlur,
   onKeyPress,
   onKeyDown,
+  className,
+  ref,
   ...props
 }) => {
   const onChangeRef = useRef(onChange);
@@ -48,16 +52,16 @@ export const Editable: React.FC<ContentEditableProps> = ({
 
   return (
     <ReactContentEditable
+      className={classNames(
+        'outline-none text-left placeholder-slate-600',
+        className
+      )}
       {...props}
-      onChange={
-        onChange
-          ? (...args) => {
-              if (onChangeRef.current) {
-                onChangeRef.current(...args);
-              }
-            }
-          : () => {}
-      }
+      onChange={(...args) => {
+        if (onChangeRef.current) {
+          onChangeRef.current(...args);
+        }
+      }}
       onInput={
         onInput
           ? (...args) => {

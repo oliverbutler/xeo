@@ -33,25 +33,15 @@ export const HandleButton: React.FunctionComponent<Props> = ({ block }) => {
       items={[
         [
           {
+            type: 'text',
             text: 'Delete',
             logo: <FiTrash />,
             onClick: () => deleteBlock(block.id),
           },
-          {
-            text: 'Duplicate',
-            logo: <FiCopy />,
-          },
-          {
-            text: 'Turn Into',
-            logo: <FiRepeat />,
-          },
+          { type: 'text', text: 'Duplicate', logo: <FiCopy /> },
+          { type: 'text', text: 'Turn Into', logo: <FiRepeat /> },
         ],
-        [
-          {
-            text: 'Colour',
-            logo: <FiEdit />,
-          },
-        ],
+        [{ type: 'text', text: 'Colour', logo: <FiEdit /> }],
       ]}
     />
   );

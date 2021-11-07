@@ -1,84 +1,15 @@
-import { gql } from '@apollo/client';
 import { Loading } from 'components/Animate/Loading/Loading';
-import { ContentBlock } from 'components/Blocks/ContentBlock/ContentBlock';
 import ContentBlockList from 'components/Blocks/ContentBlock/ContentBlockList/ContentBlockList';
+import { Clickable } from 'components/UI/Clickable/Clickable';
 import { PageChildrenFragment, useGetPageQuery } from 'generated';
-import { useEffect, useState } from 'react';
+import { FiMoreHorizontal } from 'react-icons/fi';
+import { PageCover } from './PageCover/PageCover';
 import { PageIcon } from './PageIcon/PageIcon';
 import { PageTitle } from './PageTitle/PageTitle';
 
 interface Props {
   id: string;
 }
-
-gql`
-  fragment PageProperties on PageProperties {
-    image {
-      __typename
-      ... on Emoji {
-        emoji
-      }
-      ... on Image {
-        image
-      }
-    }
-    title {
-      rawText
-    }
-    favourite
-  }
-
-  fragment PageChildren on Block {
-    id
-    __typename
-    parentId
-    ... on Page {
-      properties {
-        ...PageProperties
-      }
-    }
-    ... on ContentBlock {
-      properties {
-        ... on ParagraphProperties {
-          text {
-            rawText
-          }
-        }
-        ... on HeadingProperties {
-          text {
-            rawText
-          }
-          variant
-        }
-      }
-    }
-  }
-
-  query GetPage($id: ID!, $populateSubTree: Boolean!) {
-    page(id: $id, populateSubTree: $populateSubTree) {
-      id
-      properties {
-        image {
-          __typename
-          ... on Emoji {
-            emoji
-          }
-          ... on Image {
-            image
-          }
-        }
-        title {
-          rawText
-        }
-        favourite
-        childrenOrder
-      }
-      children {
-        ...PageChildren
-      }
-    }
-  }
-`;
 
 export const Page: React.FunctionComponent<Props> = ({ id }) => {
   const { data } = useGetPageQuery({
@@ -102,23 +33,21 @@ export const Page: React.FunctionComponent<Props> = ({ id }) => {
     .filter((child) => child !== null) as PageChildrenFragment[];
 
   return (
-    <div className="page min-h-full flex flex-col">
-      <div className="mb-6 mt-12">
-        <PageIcon page={page} />
+    <div>
+      <PageCover page={page} />
+      <div className="max-w-xl mx-auto ">
+        <div className="page min-h-full flex flex-col px-4">
+          <div className="mb-6 -mt-12">
+            <PageIcon page={page} />
+          </div>
+
+          <PageTitle page={page} />
+
+          {orderedChildren && (
+            <ContentBlockList blocks={orderedChildren} parentId={page.id} />
+          )}
+        </div>
       </div>
-
-      <PageTitle page={page} />
-      {/* <div className="shadow-md p-2 bg-yellow-50">
-        <p className="text-xl font-bold">Block Debug Menu</p>
-
-        {orderedChildren &&
-          orderedChildren.map((child) => (
-            <p className="mb-6">{JSON.stringify(child.properties)}</p>
-          ))}
-      </div> */}
-      {orderedChildren && (
-        <ContentBlockList blocks={orderedChildren} parentId={page.id} />
-      )}
     </div>
   );
 };

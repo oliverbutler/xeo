@@ -31,6 +31,7 @@ export const PageTitle: React.FunctionComponent<Props> = ({ page }) => {
     <Editable
       tagName="h1"
       html={text}
+      placeholder="Untitled"
       className={classNames('text-4xl font-bold text-left mb-10', {
         'text-gray-300': !text,
       })}

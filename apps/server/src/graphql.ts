@@ -42,6 +42,10 @@ export interface HeadingPropertiesInput {
     variant: HeadingType;
 }
 
+export interface CoverImageInput {
+    gradient: string;
+}
+
 export interface CreateBlockInput {
     object: BlockObjectType;
     parentId?: Nullable<string>;
@@ -71,6 +75,7 @@ export interface UpdatePageInput {
     title?: Nullable<RichTextInput>;
     image?: Nullable<string>;
     emoji?: Nullable<string>;
+    coverImage?: Nullable<CoverImageInput>;
     favourite?: Nullable<boolean>;
 }
 
@@ -121,7 +126,7 @@ export interface PageProperties {
     title: RichText;
     favourite: boolean;
     image?: Nullable<EmojiImage>;
-    coverImage?: Nullable<Image>;
+    coverImage?: Nullable<CoverImage>;
     childrenOrder: string[];
 }
 
@@ -134,6 +139,10 @@ export interface HeadingProperties {
     type: string;
     text: RichText;
     variant: HeadingType;
+}
+
+export interface CoverImage {
+    gradient?: Nullable<string>;
 }
 
 export interface Page extends Block {

@@ -12,7 +12,6 @@ import {
   UpdateContentBlockInput,
   UpdatePageInput,
 } from '../../graphql';
-import { BlockObjectType } from '../core/block.entity';
 import { BlockService } from '../core/block.service';
 
 @Resolver('Block')
@@ -111,6 +110,7 @@ export class BlockResolver {
         ...(input.image && { image: { image: input.image } }),
         ...(input.emoji && { image: { emoji: input.emoji } }),
         ...(input.favourite && { favourite: input.favourite }),
+        ...(input.coverImage && { coverImage: input.coverImage }),
       },
     });
 

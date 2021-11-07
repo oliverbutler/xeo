@@ -1,17 +1,18 @@
 import { Menu, Transition } from '@headlessui/react';
 import classNames from 'classnames';
 import { Fragment } from 'react';
-import { Clickable } from '../Clickable/Clickable';
+
+type DropdownItem = {
+  text: string;
+  logo?: React.ReactNode;
+  onClick?: () => void;
+};
 
 interface Props {
   button: React.ReactNode;
   showDirection: 'left' | 'right';
   className?: string;
-  items: {
-    logo: React.ReactNode;
-    text: string;
-    onClick?: () => void;
-  }[][];
+  items: DropdownItem[][];
 }
 
 export const Dropdown: React.FunctionComponent<Props> = ({
@@ -43,13 +44,20 @@ export const Dropdown: React.FunctionComponent<Props> = ({
           {items.map((itemGroup, groupIndex) => (
             <div key={`item-${groupIndex}`}>
               {itemGroup.map((item, index) => (
-                <Menu.Item as={Clickable} key={`item-${groupIndex}-${index}`}>
-                  <button
-                    onClick={item.onClick}
-                    className={`group flex items-center w-full px-1 py-0.5 text-sm text-gray-800`}
-                  >
-                    <span className="mr-2">{item.logo}</span> {item.text}
-                  </button>
+                <Menu.Item
+                  key={`item-${groupIndex}-${index}`}
+                  onClick={item.onClick}
+                >
+                  {({ active }) => (
+                    <a
+                      className={classNames(
+                        'cursor-pointer hover:bg-gray-100rounded-sm flex items-center w-full px-2 py-1 text-sm text-gray-800',
+                        { 'bg-gray-100': active }
+                      )}
+                    >
+                      <span className="mr-2">{item.logo}</span> {item.text}
+                    </a>
+                  )}
                 </Menu.Item>
               ))}
             </div>

@@ -25,6 +25,10 @@ type Image = {
   image: string;
 };
 
+type CoverImage = {
+  gradient?: string;
+};
+
 type EmojiImage = Emoji | Image;
 
 export type PageProperties = {
@@ -32,7 +36,7 @@ export type PageProperties = {
   title: RichText;
   favourite: boolean;
   image?: EmojiImage;
-  coverImage?: Image;
+  coverImage?: CoverImage;
   properties: Record<string, any>;
   childrenOrder: string[];
 };

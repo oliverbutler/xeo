@@ -1,12 +1,11 @@
-import { IconButton } from 'components/IconButton/IconButton';
 import { Resize } from 'components/Resize/Resize';
 import { useCurrentUser } from 'hooks/useCurrentUser';
 import { useLocalStorage } from 'hooks/useLocalStorage';
-import { FiPlusCircle } from 'react-icons/fi';
 import { SidebarItem } from './SidebarItem.tsx/SidebarItem';
 import { UserRow } from './UserRow/UserRow';
 import Link from 'next/link';
 import { ImageRenderer } from 'components/Image/ImageRenderer';
+import classNames from 'classnames';
 
 export const Sidebar = () => {
   const { user } = useCurrentUser();
@@ -37,8 +36,12 @@ export const Sidebar = () => {
                   <Link href={`/page/${page.id}`} key={page.id}>
                     <SidebarItem className="text-gray-700 text-sm flex items-center">
                       <ImageRenderer image={page.properties.image} />
-                      <span className="ml-2">
-                        {page.properties.title.rawText}
+                      <span
+                        className={classNames('ml-2', {
+                          'text-gray-300': !page.properties.title.rawText,
+                        })}
+                      >
+                        {page.properties.title.rawText || 'Untitled'}
                       </span>
                     </SidebarItem>
                   </Link>
@@ -46,9 +49,6 @@ export const Sidebar = () => {
               })}
             </>
           )}
-        </div>
-        <div className="mt-auto">
-          <IconButton icon={<FiPlusCircle />} text="Add Page" />
         </div>
       </div>
     </Resize>
