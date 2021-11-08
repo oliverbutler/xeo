@@ -15,7 +15,7 @@ const Page: React.FunctionComponent = () => {
   const pageId = page as string;
 
   return (
-    <div className="flex">
+    <div className="flex xeo-main">
       <Sidebar />
       <div className="w-full relative">
         <Navbar />
