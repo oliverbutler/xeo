@@ -3,7 +3,8 @@ import { Editable } from 'components/Editable/Editable';
 import { HeadingType, PageChildren_ContentBlock_Fragment } from 'generated';
 import { useBlock } from 'hooks/useBlock';
 import { useDebounce } from 'hooks/useDebounce';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { moveFocusToBlock, moveFocusToPreviousBlock } from '../helpers/block';
 
 interface Props {
   block: PageChildren_ContentBlock_Fragment;
@@ -49,13 +50,7 @@ export const TextBlock: React.FunctionComponent<Props> = ({ block }) => {
 
       if (!paragraph) return;
 
-      const insertedRow = (
-        await waitForElm(`[data-rbd-draggable-id="${paragraph.id}"]`)
-      )?.querySelector('.editable-block') as HTMLInputElement;
-
-      if (!insertedRow) return;
-
-      insertedRow.focus();
+      await moveFocusToBlock(paragraph.id);
     }
 
     if (event.key === 'Backspace' && text === '') {
@@ -63,54 +58,9 @@ export const TextBlock: React.FunctionComponent<Props> = ({ block }) => {
 
       await deleteBlock(block.id);
 
-      const currentBlockContainer = (await waitForElm(
-        `[data-rbd-draggable-id="${block.id}"]`
-      )) as HTMLInputElement;
-
-      if (!currentBlockContainer) return;
-
-      const previousBlock =
-        currentBlockContainer.previousElementSibling?.querySelector(
-          '.editable-block'
-        ) as HTMLInputElement;
-
-      if (!previousBlock) return;
-
-      setCaretToEnd(previousBlock);
+      await moveFocusToPreviousBlock(block.id);
     }
   };
-
-  const setCaretToEnd = (element: HTMLInputElement) => {
-    const range = document.createRange();
-    const selection = window.getSelection();
-    range.selectNodeContents(element);
-    range.collapse(false);
-    if (selection) {
-      selection.removeAllRanges();
-      selection.addRange(range);
-      element.focus();
-    }
-  };
-
-  function waitForElm(selector: any): Promise<HTMLInputElement | null> {
-    return new Promise((resolve) => {
-      if (document.querySelector(selector)) {
-        return resolve(document.querySelector(selector));
-      }
-
-      const observer = new MutationObserver((mutations) => {
-        if (document.querySelector(selector)) {
-          resolve(document.querySelector(selector));
-          observer.disconnect();
-        }
-      });
-
-      observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-      });
-    });
-  }
 
   switch (block.properties.__typename) {
     case 'ParagraphProperties':
