@@ -9,6 +9,7 @@ import {
 import { motion } from 'framer-motion';
 import { PageChildrenFragment } from 'generated';
 import { useBlock } from 'hooks/useBlock';
+import { moveFocusToPreviousBlock } from '../../DynamicBlock/helpers/block';
 
 interface Props {
   block: PageChildrenFragment;
@@ -16,6 +17,12 @@ interface Props {
 
 export const HandleButton: React.FunctionComponent<Props> = ({ block }) => {
   const { deleteBlock } = useBlock();
+
+  const handleDeleteBlock = async () => {
+    await deleteBlock(block.id);
+
+    await moveFocusToPreviousBlock(block.id);
+  };
 
   return (
     <Dropdown
@@ -35,7 +42,7 @@ export const HandleButton: React.FunctionComponent<Props> = ({ block }) => {
           {
             text: 'Delete',
             logo: <FiTrash />,
-            onClick: () => deleteBlock(block.id),
+            onClick: handleDeleteBlock,
           },
           { text: 'Duplicate', logo: <FiCopy /> },
           { text: 'Turn Into', logo: <FiRepeat /> },

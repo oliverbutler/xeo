@@ -3,6 +3,7 @@ import { FiPlus } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 import { HeadingType, PageChildrenFragment } from 'generated';
 import { useBlock } from 'hooks/useBlock';
+import { moveFocusToBlock } from '../../DynamicBlock/helpers/block';
 
 interface Props {
   block: PageChildrenFragment;
@@ -10,6 +11,27 @@ interface Props {
 
 export const AddButton: React.FunctionComponent<Props> = ({ block }) => {
   const { createHeadingBlock, createParagraphBlock } = useBlock();
+
+  const handleAddParagraphBlock = async () => {
+    const result = await createParagraphBlock({
+      parentId: block.parentId,
+      properties: { text: { rawText: '' } },
+    });
+
+    if (result.data?.createParagraphBlock) {
+      moveFocusToBlock(result.data.createParagraphBlock.id);
+    }
+  };
+
+  const handleAddHeadingBlock = async (type: HeadingType) => {
+    const result = await createHeadingBlock({
+      parentId: block.parentId,
+      properties: { text: { rawText: '' }, variant: type },
+    });
+    if (result.data) {
+      moveFocusToBlock(result.data.createHeadingBlock.id);
+    }
+  };
 
   return (
     <Dropdown
@@ -29,40 +51,24 @@ export const AddButton: React.FunctionComponent<Props> = ({ block }) => {
           {
             text: 'Paragraph',
             logo: null,
-            onClick: () =>
-              createParagraphBlock({
-                parentId: block.parentId,
-                properties: { text: { rawText: '' } },
-              }),
+            onClick: () => handleAddParagraphBlock(),
           },
         ],
         [
           {
             text: 'Heading 1',
             logo: null,
-            onClick: () =>
-              createHeadingBlock({
-                parentId: block.parentId,
-                properties: { text: { rawText: '' }, variant: HeadingType.H1 },
-              }),
+            onClick: () => handleAddHeadingBlock(HeadingType.H1),
           },
           {
             text: 'Heading 2',
             logo: null,
-            onClick: () =>
-              createHeadingBlock({
-                parentId: block.parentId,
-                properties: { text: { rawText: '' }, variant: HeadingType.H2 },
-              }),
+            onClick: () => handleAddHeadingBlock(HeadingType.H2),
           },
           {
             text: 'Heading 3',
             logo: null,
-            onClick: () =>
-              createHeadingBlock({
-                parentId: block.parentId,
-                properties: { text: { rawText: '' }, variant: HeadingType.H3 },
-              }),
+            onClick: () => handleAddHeadingBlock(HeadingType.H3),
           },
         ],
       ]}
