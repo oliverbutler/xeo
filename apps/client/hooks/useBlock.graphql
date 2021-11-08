@@ -1,0 +1,54 @@
+mutation UpdateContentBlock($id: ID!, $input: UpdateContentBlockInput!) {
+  updateContentBlock(id: $id, input: $input) {
+    id
+  }
+}
+
+mutation UpdatePage($id: ID!, $input: UpdatePageInput!) {
+  updatePage(id: $id, input: $input) {
+    id
+  }
+}
+
+mutation UpdateBlockLocation($id: ID!, $parentId: ID!, $afterId: ID) {
+  updateBlockLocation(id: $id, parentId: $parentId, afterId: $afterId)
+}
+
+mutation DeleteBlock($id: ID!) {
+  deleteBlock(id: $id)
+}
+
+mutation CreateParagraphBlock($input: CreateParagraphBlockInput!) {
+  createParagraphBlock(input: $input) {
+    id
+    __typename
+    parentId
+    ... on ContentBlock {
+      properties {
+        ... on ParagraphProperties {
+          text {
+            rawText
+          }
+        }
+      }
+    }
+  }
+}
+
+mutation CreateHeadingBlock($input: CreateHeadingBlockInput!) {
+  createHeadingBlock(input: $input) {
+    id
+    __typename
+    parentId
+    ... on ContentBlock {
+      properties {
+        ... on HeadingProperties {
+          text {
+            rawText
+          }
+          variant
+        }
+      }
+    }
+  }
+}

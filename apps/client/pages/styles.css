@@ -7,3 +7,14 @@
   content: attr(placeholder);
   display: block;
 }
+
+/* Make inputs full height when empty (to make them easily clickable) */
+.editable-block:empty::after {
+  content: '.';
+  visibility: hidden;
+}
+
+/* Remove MacOS/iOS scroll bouncing */
+body {
+  overscroll-behavior: none;
+}

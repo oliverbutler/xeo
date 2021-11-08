@@ -62,11 +62,13 @@ export interface CreatePageInput {
 }
 
 export interface CreateParagraphBlockInput {
+    id?: Nullable<string>;
     properties: ParagraphPropertiesInput;
     parentId?: Nullable<string>;
 }
 
 export interface CreateHeadingBlockInput {
+    id?: Nullable<string>;
     properties: HeadingPropertiesInput;
     parentId?: Nullable<string>;
 }

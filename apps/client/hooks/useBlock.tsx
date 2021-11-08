@@ -1,6 +1,6 @@
-import { gql } from '@apollo/client';
 import { client } from 'components/Wrappers/ApolloWrapper';
 import { useSyncContext } from 'context/SyncContext';
+import { v4 } from 'uuid';
 import {
   CreateHeadingBlockMutationVariables,
   CreateParagraphBlockMutationVariables,
@@ -14,40 +14,6 @@ import {
   useUpdateContentBlockMutation,
   useUpdatePageMutation,
 } from 'generated';
-
-gql`
-  mutation UpdateContentBlock($id: ID!, $input: UpdateContentBlockInput!) {
-    updateContentBlock(id: $id, input: $input) {
-      id
-    }
-  }
-
-  mutation UpdatePage($id: ID!, $input: UpdatePageInput!) {
-    updatePage(id: $id, input: $input) {
-      id
-    }
-  }
-
-  mutation UpdateBlockLocation($id: ID!, $parentId: ID!, $afterId: ID) {
-    updateBlockLocation(id: $id, parentId: $parentId, afterId: $afterId)
-  }
-
-  mutation DeleteBlock($id: ID!) {
-    deleteBlock(id: $id)
-  }
-
-  mutation CreateParagraphBlock($input: CreateParagraphBlockInput!) {
-    createParagraphBlock(input: $input) {
-      id
-    }
-  }
-
-  mutation CreateHeadingBlock($input: CreateHeadingBlockInput!) {
-    createHeadingBlock(input: $input) {
-      id
-    }
-  }
-`;
 
 export const useBlock = () => {
   const [updateBlock] = useUpdateContentBlockMutation();
@@ -112,22 +78,41 @@ export const useBlock = () => {
     input: CreateParagraphBlockMutationVariables['input']
   ) => {
     setIsSyncing(true);
-    await createParagraphBlock({
-      variables: { input },
+
+    const id = v4();
+
+    const result = await createParagraphBlock({
+      variables: { input: { id, ...input } },
       refetchQueries: ['GetPage'],
+      optimisticResponse: {
+        createParagraphBlock: {
+          __typename: 'ContentBlock',
+          id: id,
+          parentId: input.parentId,
+          properties: {
+            __typename: 'ParagraphProperties',
+            ...input.properties,
+          },
+        },
+      },
     });
     setIsSyncing(false);
+    return result;
   };
 
   const createHeadingBlockHandler = async (
     input: CreateHeadingBlockMutationVariables['input']
   ) => {
     setIsSyncing(true);
-    await createHeadingBlock({
-      variables: { input },
+
+    const id = v4();
+
+    const result = await createHeadingBlock({
+      variables: { input: { id, ...input } },
       refetchQueries: ['GetPage'],
     });
     setIsSyncing(false);
+    return result;
   };
 
   return {

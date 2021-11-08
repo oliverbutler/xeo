@@ -69,6 +69,7 @@ export type CreateBlockInput = {
 };
 
 export type CreateHeadingBlockInput = {
+  id?: Maybe<Scalars['ID']>;
   parentId?: Maybe<Scalars['ID']>;
   properties: HeadingPropertiesInput;
 };
@@ -79,6 +80,7 @@ export type CreatePageInput = {
 };
 
 export type CreateParagraphBlockInput = {
+  id?: Maybe<Scalars['ID']>;
   parentId?: Maybe<Scalars['ID']>;
   properties: ParagraphPropertiesInput;
 };
@@ -360,14 +362,14 @@ export type CreateParagraphBlockMutationVariables = Exact<{
 }>;
 
 
-export type CreateParagraphBlockMutation = { __typename?: 'Mutation', createParagraphBlock: { __typename?: 'ContentBlock', id: string } };
+export type CreateParagraphBlockMutation = { __typename?: 'Mutation', createParagraphBlock: { __typename: 'ContentBlock', id: string, parentId?: string | null | undefined, properties: { __typename?: 'HeadingProperties' } | { __typename?: 'ParagraphProperties', text: { __typename?: 'RichText', rawText: string } } } };
 
 export type CreateHeadingBlockMutationVariables = Exact<{
   input: CreateHeadingBlockInput;
 }>;
 
 
-export type CreateHeadingBlockMutation = { __typename?: 'Mutation', createHeadingBlock: { __typename?: 'ContentBlock', id: string } };
+export type CreateHeadingBlockMutation = { __typename?: 'Mutation', createHeadingBlock: { __typename: 'ContentBlock', id: string, parentId?: string | null | undefined, properties: { __typename?: 'HeadingProperties', variant: HeadingType, text: { __typename?: 'RichText', rawText: string } } | { __typename?: 'ParagraphProperties' } } };
 
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -696,6 +698,17 @@ export const CreateParagraphBlockDocument = gql`
     mutation CreateParagraphBlock($input: CreateParagraphBlockInput!) {
   createParagraphBlock(input: $input) {
     id
+    __typename
+    parentId
+    ... on ContentBlock {
+      properties {
+        ... on ParagraphProperties {
+          text {
+            rawText
+          }
+        }
+      }
+    }
   }
 }
     `;
@@ -729,6 +742,18 @@ export const CreateHeadingBlockDocument = gql`
     mutation CreateHeadingBlock($input: CreateHeadingBlockInput!) {
   createHeadingBlock(input: $input) {
     id
+    __typename
+    parentId
+    ... on ContentBlock {
+      properties {
+        ... on HeadingProperties {
+          text {
+            rawText
+          }
+          variant
+        }
+      }
+    }
   }
 }
     `;

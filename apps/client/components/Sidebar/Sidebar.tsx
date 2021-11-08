@@ -24,7 +24,7 @@ export const Sidebar = () => {
       minWindowWidth={150}
       dragHandleWidth={3}
       className="bg-gray-50"
-      dragHandleClassName="bg-gray-50 hover:bg-gray-200"
+      dragHandleClassName="bg-gray-50 hover:bg-gray-200 "
     >
       <div className="flex flex-col h-full py-2">
         <div className="overflow-auto h-full">

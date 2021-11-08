@@ -53,7 +53,7 @@ export const Editable: React.FunctionComponent<ContentEditableProps> = ({
   return (
     <ReactContentEditable
       className={classNames(
-        'outline-none text-left placeholder-slate-600',
+        'editable-block outline-none text-left placeholder-slate-600',
         className
       )}
       {...props}

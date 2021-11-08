@@ -33,10 +33,10 @@ export const Page: React.FunctionComponent<Props> = ({ id }) => {
     .filter((child) => child !== null) as PageChildrenFragment[];
 
   return (
-    <div>
+    <div className="overflow-auto h-screen">
       <PageCover page={page} />
       <div className="max-w-xl mx-auto ">
-        <div className="page min-h-full flex flex-col px-4">
+        <div className="page min-h-full flex flex-col px-4 mb-96">
           <div className="mb-6 -mt-12">
             <PageIcon page={page} />
           </div>

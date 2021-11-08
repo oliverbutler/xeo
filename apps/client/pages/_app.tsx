@@ -12,6 +12,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <title>Xeo</title>
+        <link rel="icon" href="/xeo.ico" />
       </Head>
       <div className="app">
         <IntlWrapper>

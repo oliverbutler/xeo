@@ -119,11 +119,13 @@ input CreatePageInput {
 }
 
 input CreateParagraphBlockInput {
+  id: ID
   properties: ParagraphPropertiesInput!
   parentId: ID
 }
 
 input CreateHeadingBlockInput {
+  id: ID
   properties: HeadingPropertiesInput!
   parentId: ID
 }

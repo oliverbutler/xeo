@@ -65,6 +65,7 @@ export class BlockResolver {
     @Args('input') input: CreateParagraphBlockInput
   ): Promise<Block> {
     return await this.blockService.createContentBlock({
+      id: input.id ?? undefined,
       createdById: user.id,
       parentId: input.parentId ?? null,
       properties: {
@@ -81,6 +82,7 @@ export class BlockResolver {
     @Args('input') input: CreateHeadingBlockInput
   ): Promise<Block> {
     return await this.blockService.createContentBlock({
+      id: input.id ?? undefined,
       createdById: user.id,
       parentId: input.parentId ?? null,
       properties: {

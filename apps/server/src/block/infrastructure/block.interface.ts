@@ -11,12 +11,14 @@ export type BlockFilters = {
 };
 
 export type PageCreationInput = {
+  id?: string;
   properties: PageProperties;
   parentId: Block['parentId'] | null;
   createdById: Block['createdById'];
 };
 
 export type ContentBlockCreationInput = {
+  id?: string;
   properties: ContentBlockProperties;
   parentId: Block['parentId'] | null;
   createdById: Block['createdById'];
