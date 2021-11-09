@@ -35,7 +35,7 @@ export const Dropdown: React.FunctionComponent<Props> = ({
       >
         <Menu.Items
           className={classNames(
-            'w-44 bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none py-1 z-50',
+            'w-44 bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none py-1 ',
             { 'absolute left-1': showDirection === 'left' },
             { 'absolute right-1': showDirection === 'right' },
             className

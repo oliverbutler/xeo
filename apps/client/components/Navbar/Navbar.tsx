@@ -5,6 +5,7 @@ import { Clickable } from 'components/UI/Clickable/Clickable';
 import { Dropdown } from 'components/UI/Dropdown/Dropdown';
 import { useSyncContext } from 'context/SyncContext';
 import { useGetPathQuery } from 'generated';
+import { useBlock } from 'hooks/useBlock';
 import { useRouter } from 'next/dist/client/router';
 import Link from 'next/link';
 import { FiChevronRight, FiMoreHorizontal, FiTrash } from 'react-icons/fi';
@@ -15,23 +16,27 @@ export const Navbar: React.FunctionComponent = () => {
     query: { page },
   } = useRouter();
 
+  const { deleteBlock } = useBlock();
+  const router = useRouter();
+
   const pageId = page as string;
 
   const { isSyncing } = useSyncContext();
-
-  if (!page) {
-    return null;
-  }
 
   const { data, loading } = useGetPathQuery({
     variables: { id: pageId },
   });
 
-  if (loading || !data) {
+  if (!page || loading || !data) {
     return null;
   }
 
   const path = data.path.slice().reverse();
+
+  const handleDeleteBlock = async () => {
+    router.push('/');
+    await deleteBlock(pageId);
+  };
 
   return (
     <nav
@@ -77,7 +82,15 @@ export const Navbar: React.FunctionComponent = () => {
             </Clickable>
           }
           showDirection="right"
-          items={[[{ text: 'Delete', logo: <FiTrash /> }]]}
+          items={[
+            [
+              {
+                text: 'Delete',
+                logo: <FiTrash />,
+                onClick: handleDeleteBlock,
+              },
+            ],
+          ]}
         />
       </div>
     </nav>

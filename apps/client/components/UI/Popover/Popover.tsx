@@ -40,7 +40,7 @@ export const Popover: React.FunctionComponent<Props> = ({
           >
             <PopoverComponent.Panel
               className={classNames(
-                ' bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none py-1 z-50 ',
+                ' bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none py-1  ',
                 { 'absolute left-1': direction === 'right' },
                 { 'absolute right-1': direction === 'left' }
               )}

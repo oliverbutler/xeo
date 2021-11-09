@@ -1,9 +1,8 @@
 import { Loading } from 'components/Animate/Loading/Loading';
 import ContentBlockList from 'components/Blocks/ContentBlock/ContentBlockList/ContentBlockList';
-import { Clickable } from 'components/UI/Clickable/Clickable';
 import { PageChildrenFragment, useGetPageQuery } from 'generated';
-import { FiMoreHorizontal } from 'react-icons/fi';
 import { PageCover } from './PageCover/PageCover';
+import { PageEmpty } from './PageEmpty/PageEmpty';
 import { PageIcon } from './PageIcon/PageIcon';
 import { PageTitle } from './PageTitle/PageTitle';
 
@@ -43,8 +42,10 @@ export const Page: React.FunctionComponent<Props> = ({ id }) => {
 
           <PageTitle page={page} />
 
-          {orderedChildren && (
+          {orderedChildren?.length > 0 ? (
             <ContentBlockList blocks={orderedChildren} parentId={page.id} />
+          ) : (
+            <PageEmpty page={page} />
           )}
         </div>
       </div>
