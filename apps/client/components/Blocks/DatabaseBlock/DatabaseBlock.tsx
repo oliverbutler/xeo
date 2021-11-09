@@ -1,3 +1,4 @@
+import { Button } from 'components/Button/Button';
 import { PageChildren_Database_Fragment } from 'generated';
 
 interface Props {
@@ -7,7 +8,10 @@ interface Props {
 export const DatabaseBlock: React.FunctionComponent<Props> = ({ database }) => {
   return (
     <div>
-      <p>{database.id}</p>
+      <div className="flex flex-row justify-between">
+        <p className="text-xl font-bold">{database.properties.title.rawText}</p>
+        <Button>New</Button>
+      </div>
     </div>
   );
 };
