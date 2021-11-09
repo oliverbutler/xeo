@@ -1,5 +1,5 @@
 import { Dropdown } from 'components/UI/Dropdown/Dropdown';
-import { FiPlus } from 'react-icons/fi';
+import { FiFile, FiPlus } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 import { HeadingType, PageChildrenFragment } from 'generated';
 import { useBlock } from 'hooks/useBlock';
@@ -10,11 +10,12 @@ interface Props {
 }
 
 export const AddButton: React.FunctionComponent<Props> = ({ block }) => {
-  const { createHeadingBlock, createParagraphBlock } = useBlock();
+  const { createHeadingBlock, createParagraphBlock, createPage } = useBlock();
 
   const handleAddParagraphBlock = async () => {
     const result = await createParagraphBlock({
       parentId: block.parentId,
+      afterId: block.id,
       properties: { text: { rawText: '' } },
     });
 
@@ -26,10 +27,23 @@ export const AddButton: React.FunctionComponent<Props> = ({ block }) => {
   const handleAddHeadingBlock = async (type: HeadingType) => {
     const result = await createHeadingBlock({
       parentId: block.parentId,
+      afterId: block.id,
       properties: { text: { rawText: '' }, variant: type },
     });
     if (result.data) {
       moveFocusToBlock(result.data.createHeadingBlock.id);
+    }
+  };
+
+  const handleAddPage = async () => {
+    const result = await createPage({
+      parentId: block.parentId,
+      afterId: block.id,
+      properties: { title: { rawText: '' } },
+    });
+
+    if (result.data) {
+      moveFocusToBlock(result.data.createPage.id);
     }
   };
 
@@ -69,6 +83,13 @@ export const AddButton: React.FunctionComponent<Props> = ({ block }) => {
             text: 'Heading 3',
             logo: null,
             onClick: () => handleAddHeadingBlock(HeadingType.H3),
+          },
+        ],
+        [
+          {
+            text: 'Page',
+            logo: <FiFile />,
+            onClick: () => handleAddPage(),
           },
         ],
       ]}

@@ -43,6 +43,7 @@ export const TextBlock: React.FunctionComponent<Props> = ({ block }) => {
       event.preventDefault();
       const result = await createParagraphBlock({
         parentId: block.parentId,
+        afterId: block.id,
         properties: { text: { rawText: '' } },
       });
 
