@@ -1,5 +1,5 @@
 import { Dropdown } from 'components/UI/Dropdown/Dropdown';
-import { FiFile, FiPlus } from 'react-icons/fi';
+import { FiAlignLeft, FiFile, FiPlus, FiType } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 import { HeadingType, PageChildrenFragment } from 'generated';
 import { useBlock } from 'hooks/useBlock';
@@ -64,24 +64,24 @@ export const AddButton: React.FunctionComponent<Props> = ({ block }) => {
         [
           {
             text: 'Paragraph',
-            logo: null,
+            logo: <FiAlignLeft />,
             onClick: () => handleAddParagraphBlock(),
           },
         ],
         [
           {
             text: 'Heading 1',
-            logo: null,
+            logo: <FiType />,
             onClick: () => handleAddHeadingBlock(HeadingType.H1),
           },
           {
             text: 'Heading 2',
-            logo: null,
+            logo: <FiType />,
             onClick: () => handleAddHeadingBlock(HeadingType.H2),
           },
           {
             text: 'Heading 3',
-            logo: null,
+            logo: <FiType />,
             onClick: () => handleAddHeadingBlock(HeadingType.H3),
           },
         ],
