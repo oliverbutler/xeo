@@ -16,5 +16,5 @@
 
 /* Remove MacOS/iOS scroll bouncing */
 body {
-  overscroll-behavior: none;
+  overscroll-behavior-y: none;
 }
