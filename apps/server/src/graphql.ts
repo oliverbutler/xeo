@@ -9,7 +9,8 @@
 /* eslint-disable */
 export enum BlockObjectType {
     PAGE = "PAGE",
-    BLOCK = "BLOCK"
+    BLOCK = "BLOCK",
+    DATABASE = "DATABASE"
 }
 
 export enum HeadingType {
@@ -89,6 +90,23 @@ export interface UpdateContentBlockInput {
     text?: Nullable<RichTextInput>;
 }
 
+export interface DatabaseSchemaInput {
+    type: string;
+    name: string;
+}
+
+export interface DatabasePropertiesInput {
+    title: RichTextInput;
+    schema?: Nullable<DatabaseSchemaInput[]>;
+}
+
+export interface CreateDatabaseInput {
+    id?: Nullable<string>;
+    properties: DatabasePropertiesInput;
+    parentId?: Nullable<string>;
+    afterId?: Nullable<string>;
+}
+
 export interface Block {
     id: string;
     object: BlockObjectType;
@@ -107,9 +125,10 @@ export interface IMutation {
     signUp(input: SignUpInput): User | Promise<User>;
     signIn(username: string, password: string): AuthResponse | Promise<AuthResponse>;
     createPage(input: CreatePageInput): Page | Promise<Page>;
+    updatePage(id: string, input: UpdatePageInput): Page | Promise<Page>;
     createParagraphBlock(input: CreateParagraphBlockInput): ContentBlock | Promise<ContentBlock>;
     createHeadingBlock(input: CreateHeadingBlockInput): ContentBlock | Promise<ContentBlock>;
-    updatePage(id: string, input: UpdatePageInput): Page | Promise<Page>;
+    createDatabase(input: CreateDatabaseInput): Database | Promise<Database>;
     updateContentBlock(id: string, input: UpdateContentBlockInput): ContentBlock | Promise<ContentBlock>;
     updateBlockLocation(id: string, parentId: string, afterId?: Nullable<string>): boolean | Promise<boolean>;
     deleteBlock(id: string): boolean | Promise<boolean>;
@@ -136,6 +155,22 @@ export interface PageProperties {
     childrenOrder: string[];
 }
 
+export interface DatabaseSchema_String {
+    type: string;
+    name: string;
+}
+
+export interface DatabaseSchema_Number {
+    type: string;
+    name: string;
+}
+
+export interface DatabaseProperties {
+    type: string;
+    title: RichText;
+    schema: DatabaseSchema[];
+}
+
 export interface ParagraphProperties {
     type: string;
     text: RichText;
@@ -149,6 +184,17 @@ export interface HeadingProperties {
 
 export interface CoverImage {
     gradient?: Nullable<string>;
+}
+
+export interface Database extends Block {
+    id: string;
+    object: BlockObjectType;
+    createdBy: User;
+    createdById: string;
+    parent?: Nullable<Block>;
+    parentId?: Nullable<string>;
+    properties: DatabaseProperties;
+    children: Page[];
 }
 
 export interface Page extends Block {
@@ -192,6 +238,7 @@ export interface User {
 }
 
 export type EmojiImage = Emoji | Image;
+export type DatabaseSchema = DatabaseSchema_String | DatabaseSchema_Number;
 export type ContentProperties = ParagraphProperties | HeadingProperties;
-export type BlockProperties = PageProperties | ParagraphProperties | HeadingProperties;
+export type BlockProperties = DatabaseProperties | PageProperties | ParagraphProperties | HeadingProperties;
 type Nullable<T> = T | null;

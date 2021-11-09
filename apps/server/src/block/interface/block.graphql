@@ -1,6 +1,7 @@
 enum BlockObjectType {
   PAGE
   BLOCK
+  DATABASE
 }
 
 enum HeadingType {
@@ -36,6 +37,24 @@ type PageProperties {
   childrenOrder: [String!]!
 }
 
+type DatabaseSchema_String {
+  type: String!
+  name: String!
+}
+
+type DatabaseSchema_Number {
+  type: String!
+  name: String!
+}
+
+union DatabaseSchema = DatabaseSchema_String | DatabaseSchema_Number
+
+type DatabaseProperties {
+  type: String!
+  title: RichText!
+  schema: [DatabaseSchema!]!
+}
+
 input PagePropertiesInput {
   title: RichTextInput!
 }
@@ -69,7 +88,11 @@ input CoverImageInput {
 }
 
 union ContentProperties = ParagraphProperties | HeadingProperties
-union BlockProperties = PageProperties | ParagraphProperties | HeadingProperties
+union BlockProperties =
+    DatabaseProperties
+  | PageProperties
+  | ParagraphProperties
+  | HeadingProperties
 
 interface Block {
   id: ID!
@@ -78,6 +101,18 @@ interface Block {
   createdById: ID!
   parent: Block
   parentId: ID
+}
+
+type Database implements Block {
+  id: ID!
+  object: BlockObjectType!
+  createdBy: User!
+  createdById: ID!
+  parent: Block
+  parentId: ID
+
+  properties: DatabaseProperties!
+  children: [Page!]!
 }
 
 type Page implements Block {
@@ -156,12 +191,34 @@ input UpdateContentBlockInput {
   text: RichTextInput
 }
 
+# TODO make this a JSON maybe, as we cant UNION this :(
+input DatabaseSchemaInput {
+  type: String!
+  name: String!
+}
+
+input DatabasePropertiesInput {
+  title: RichTextInput!
+  schema: [DatabaseSchemaInput!]
+}
+
+input CreateDatabaseInput {
+  id: ID
+  properties: DatabasePropertiesInput!
+  parentId: ID
+  afterId: ID
+}
+
 type Mutation {
   createPage(input: CreatePageInput!): Page!
+  updatePage(id: ID!, input: UpdatePageInput!): Page!
+
   createParagraphBlock(input: CreateParagraphBlockInput!): ContentBlock!
+
   createHeadingBlock(input: CreateHeadingBlockInput!): ContentBlock!
 
-  updatePage(id: ID!, input: UpdatePageInput!): Page!
+  createDatabase(input: CreateDatabaseInput!): Database!
+
   updateContentBlock(id: ID!, input: UpdateContentBlockInput!): ContentBlock!
   updateBlockLocation(id: ID!, parentId: ID!, afterId: ID): Boolean!
   deleteBlock(id: ID!): Boolean!

@@ -4,9 +4,13 @@ import { ResolveField, Resolver } from '@nestjs/graphql';
 export class BlockTypeResolver {
   @ResolveField('__resolveType')
   __resolveType(obj: any) {
-    if (obj.properties.type === 'page') {
-      return 'Page';
+    switch (obj.properties.type) {
+      case 'page':
+        return 'Page';
+      case 'database':
+        return 'Database';
+      default:
+        return 'ContentBlock';
     }
-    return 'ContentBlock';
   }
 }

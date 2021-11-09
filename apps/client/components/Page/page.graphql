@@ -23,6 +23,13 @@ fragment PageChildren on Block {
       ...PageProperties
     }
   }
+  ... on Database {
+    properties {
+      title {
+        rawText
+      }
+    }
+  }
   ... on ContentBlock {
     properties {
       ... on ParagraphProperties {

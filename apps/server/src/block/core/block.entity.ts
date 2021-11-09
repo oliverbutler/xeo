@@ -11,6 +11,7 @@ import { User } from '../../user/core/user.entity';
 export enum BlockObjectType {
   PAGE = 'PAGE',
   BLOCK = 'BLOCK',
+  DATABASE = 'DATABASE',
 }
 
 type RichText = {
@@ -46,6 +47,23 @@ export type ParagraphProperties = {
   text: RichText;
 };
 
+export type DatabaseSchema =
+  | {
+      name: string;
+      type: 'string';
+    }
+  | {
+      name: string;
+      type: 'number';
+    };
+
+export type DatabaseProperties = {
+  type: 'database';
+  title: RichText;
+  schema: DatabaseSchema[];
+  childrenOrder: string[];
+};
+
 export enum HeadingType {
   H1 = 'H1',
   H2 = 'H2',
@@ -58,7 +76,10 @@ export type HeadingProperties = {
   variant: HeadingType;
 };
 
-export type BlockProperties = PageProperties | ContentBlockProperties;
+export type BlockProperties =
+  | PageProperties
+  | ContentBlockProperties
+  | DatabaseProperties;
 export type ContentBlockProperties = ParagraphProperties | HeadingProperties;
 
 @Entity()

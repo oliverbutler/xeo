@@ -17,7 +17,7 @@ interface BlockListProps {
 /**
  * Render a list of Content Blocks (sub class of Block), each ContentBlock has a different rendering method, so BlockRenderer will be used
  */
-const ContentBlockList = ({ blocks, parentId }: BlockListProps) => {
+export const ContentBlockList = ({ blocks, parentId }: BlockListProps) => {
   const [order, setOrder] = useState<PageChildrenFragment[]>(blocks);
 
   // When the state updates, update the blocks
@@ -103,5 +103,3 @@ const ContentBlockList = ({ blocks, parentId }: BlockListProps) => {
     </DragDropContext>
   );
 };
-
-export default ContentBlockList;

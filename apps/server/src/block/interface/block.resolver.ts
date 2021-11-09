@@ -8,6 +8,7 @@ import {
   CreateHeadingBlockInput,
   CreatePageInput,
   CreateParagraphBlockInput,
+  Database,
   Page,
   UpdateContentBlockInput,
   UpdatePageInput,
@@ -55,6 +56,26 @@ export class BlockResolver {
         title: input.properties.title,
         favourite: false,
         properties: {},
+        childrenOrder: [],
+      },
+    });
+  }
+
+  @Mutation('createDatabase')
+  @UseGuards(GqlAuthGuard)
+  async createDatabase(
+    @CurrentUser() user: CurrentAuthUser,
+    @Args('input') input: CreatePageInput
+  ): Promise<Database> {
+    return await this.blockService.createDatabase({
+      id: input.id ?? undefined,
+      afterId: input.afterId ?? null,
+      parentId: input.parentId ?? null,
+      createdById: user.id,
+      properties: {
+        type: 'database',
+        title: input.properties.title,
+        schema: [],
         childrenOrder: [],
       },
     });
@@ -135,6 +156,12 @@ export class BlockResolver {
     if (currentBlock.properties.type === 'page') {
       throw new BadRequestException(
         "Cann't update a page with the updateContentBlock mutation"
+      );
+    }
+
+    if (currentBlock.properties.type === 'database') {
+      throw new BadRequestException(
+        "Cann't update a database with the updateContentBlock mutation"
       );
     }
 

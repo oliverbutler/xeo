@@ -11,6 +11,7 @@ import {
   BlockFilters,
   ContentBlockCreationInput,
   ContentBlockUpdateInput,
+  DatabaseCreationInput,
   PageCreationInput,
   PageUpdateInput,
 } from './block.interface';
@@ -73,6 +74,23 @@ export class BlockAdapter {
     }
 
     return newPage;
+  }
+
+  async createDatabase(input: DatabaseCreationInput): Promise<Block> {
+    const newDatabase = await this.blockRepository.save({
+      ...input,
+      object: BlockObjectType.DATABASE,
+    });
+
+    if (input.parentId) {
+      await this.updateBlockPosition(
+        newDatabase.id,
+        input.parentId,
+        input.afterId
+      );
+    }
+
+    return newDatabase;
   }
 
   async createContentBlock(input: ContentBlockCreationInput): Promise<Block> {

@@ -1,14 +1,20 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Page } from '../../graphql';
+import { Database, Page } from '../../graphql';
 import { BlockAdapter } from '../infrastructure/block.adapter';
 import {
   BlockFilters,
   ContentBlockCreationInput,
   ContentBlockUpdateInput,
+  DatabaseCreationInput,
   PageCreationInput,
   PageUpdateInput,
 } from '../infrastructure/block.interface';
-import { Block, BlockObjectType, PageProperties } from './block.entity';
+import {
+  Block,
+  BlockObjectType,
+  DatabaseProperties,
+  PageProperties,
+} from './block.entity';
 
 @Injectable()
 export class BlockService {
@@ -140,6 +146,16 @@ export class BlockService {
     return {
       ...block,
       properties: block.properties as PageProperties,
+      children: [],
+    };
+  }
+
+  async createDatabase(input: DatabaseCreationInput): Promise<Database> {
+    const block = await this.blockAdapter.createDatabase(input);
+
+    return {
+      ...block,
+      properties: block.properties as DatabaseProperties,
       children: [],
     };
   }

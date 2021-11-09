@@ -1,6 +1,7 @@
 import {
   Block,
   ContentBlockProperties,
+  DatabaseProperties,
   PageProperties,
 } from '../core/block.entity';
 
@@ -13,6 +14,14 @@ export type BlockFilters = {
 export type PageCreationInput = {
   id?: string;
   properties: PageProperties;
+  parentId: Block['parentId'] | null;
+  afterId: Block['id'] | null;
+  createdById: Block['createdById'];
+};
+
+export type DatabaseCreationInput = {
+  id?: string;
+  properties: DatabaseProperties;
   parentId: Block['parentId'] | null;
   afterId: Block['id'] | null;
   createdById: Block['createdById'];

@@ -1,5 +1,5 @@
 import { Loading } from 'components/Animate/Loading/Loading';
-import ContentBlockList from 'components/Blocks/ContentBlock/ContentBlockList/ContentBlockList';
+import { ContentBlockList } from 'components/Blocks/ContentBlockList/ContentBlockList';
 import { PageChildrenFragment, useGetPageQuery } from 'generated';
 import { PageCover } from './PageCover/PageCover';
 import { PageEmpty } from './PageEmpty/PageEmpty';

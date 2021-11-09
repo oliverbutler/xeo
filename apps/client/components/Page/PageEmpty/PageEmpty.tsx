@@ -1,4 +1,4 @@
-import { moveFocusToBlock } from 'components/Blocks/ContentBlock/DynamicBlock/helpers/block';
+import { moveFocusToBlock } from 'components/Blocks/DynamicBlock/helpers/block';
 import { Clickable } from 'components/UI/Clickable/Clickable';
 import { GetPageQuery } from 'generated';
 import { useBlock } from 'hooks/useBlock';

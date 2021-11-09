@@ -4,7 +4,10 @@ import { HeadingType, PageChildren_ContentBlock_Fragment } from 'generated';
 import { useBlock } from 'hooks/useBlock';
 import { useDebounce } from 'hooks/useDebounce';
 import React, { useEffect, useState } from 'react';
-import { moveFocusToBlock, moveFocusToPreviousBlock } from '../helpers/block';
+import {
+  moveFocusToBlock,
+  moveFocusToPreviousBlock,
+} from '../DynamicBlock/helpers/block';
 
 interface Props {
   block: PageChildren_ContentBlock_Fragment;
