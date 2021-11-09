@@ -10,6 +10,12 @@ mutation UpdatePage($id: ID!, $input: UpdatePageInput!) {
   }
 }
 
+mutation CreatePage($input: CreatePageInput!) {
+  createPage(input: $input) {
+    id
+  }
+}
+
 mutation UpdateBlockLocation($id: ID!, $parentId: ID!, $afterId: ID) {
   updateBlockLocation(id: $id, parentId: $parentId, afterId: $afterId)
 }

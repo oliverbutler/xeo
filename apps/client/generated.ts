@@ -69,17 +69,21 @@ export type CreateBlockInput = {
 };
 
 export type CreateHeadingBlockInput = {
+  afterId?: Maybe<Scalars['ID']>;
   id?: Maybe<Scalars['ID']>;
   parentId?: Maybe<Scalars['ID']>;
   properties: HeadingPropertiesInput;
 };
 
 export type CreatePageInput = {
+  afterId?: Maybe<Scalars['ID']>;
+  id?: Maybe<Scalars['ID']>;
   parentId?: Maybe<Scalars['ID']>;
   properties: PagePropertiesInput;
 };
 
 export type CreateParagraphBlockInput = {
+  afterId?: Maybe<Scalars['ID']>;
   id?: Maybe<Scalars['ID']>;
   parentId?: Maybe<Scalars['ID']>;
   properties: ParagraphPropertiesInput;
@@ -340,6 +344,13 @@ export type UpdatePageMutationVariables = Exact<{
 
 
 export type UpdatePageMutation = { __typename?: 'Mutation', updatePage: { __typename?: 'Page', id: string } };
+
+export type CreatePageMutationVariables = Exact<{
+  input: CreatePageInput;
+}>;
+
+
+export type CreatePageMutation = { __typename?: 'Mutation', createPage: { __typename?: 'Page', id: string } };
 
 export type UpdateBlockLocationMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -630,6 +641,39 @@ export function useUpdatePageMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdatePageMutationHookResult = ReturnType<typeof useUpdatePageMutation>;
 export type UpdatePageMutationResult = Apollo.MutationResult<UpdatePageMutation>;
 export type UpdatePageMutationOptions = Apollo.BaseMutationOptions<UpdatePageMutation, UpdatePageMutationVariables>;
+export const CreatePageDocument = gql`
+    mutation CreatePage($input: CreatePageInput!) {
+  createPage(input: $input) {
+    id
+  }
+}
+    `;
+export type CreatePageMutationFn = Apollo.MutationFunction<CreatePageMutation, CreatePageMutationVariables>;
+
+/**
+ * __useCreatePageMutation__
+ *
+ * To run a mutation, you first call `useCreatePageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreatePageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createPageMutation, { data, loading, error }] = useCreatePageMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreatePageMutation(baseOptions?: Apollo.MutationHookOptions<CreatePageMutation, CreatePageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreatePageMutation, CreatePageMutationVariables>(CreatePageDocument, options);
+      }
+export type CreatePageMutationHookResult = ReturnType<typeof useCreatePageMutation>;
+export type CreatePageMutationResult = Apollo.MutationResult<CreatePageMutation>;
+export type CreatePageMutationOptions = Apollo.BaseMutationOptions<CreatePageMutation, CreatePageMutationVariables>;
 export const UpdateBlockLocationDocument = gql`
     mutation UpdateBlockLocation($id: ID!, $parentId: ID!, $afterId: ID) {
   updateBlockLocation(id: $id, parentId: $parentId, afterId: $afterId)

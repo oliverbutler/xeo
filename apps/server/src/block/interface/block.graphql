@@ -114,20 +114,24 @@ input BlockFilters {
 }
 
 input CreatePageInput {
+  id: ID
   properties: PagePropertiesInput!
   parentId: ID
+  afterId: ID
 }
 
 input CreateParagraphBlockInput {
   id: ID
   properties: ParagraphPropertiesInput!
   parentId: ID
+  afterId: ID
 }
 
 input CreateHeadingBlockInput {
   id: ID
   properties: HeadingPropertiesInput!
   parentId: ID
+  afterId: ID
 }
 
 type Query {

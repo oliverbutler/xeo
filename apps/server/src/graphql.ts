@@ -57,20 +57,24 @@ export interface BlockFilters {
 }
 
 export interface CreatePageInput {
+    id?: Nullable<string>;
     properties: PagePropertiesInput;
     parentId?: Nullable<string>;
+    afterId?: Nullable<string>;
 }
 
 export interface CreateParagraphBlockInput {
     id?: Nullable<string>;
     properties: ParagraphPropertiesInput;
     parentId?: Nullable<string>;
+    afterId?: Nullable<string>;
 }
 
 export interface CreateHeadingBlockInput {
     id?: Nullable<string>;
     properties: HeadingPropertiesInput;
     parentId?: Nullable<string>;
+    afterId?: Nullable<string>;
 }
 
 export interface UpdatePageInput {

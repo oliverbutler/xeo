@@ -14,6 +14,7 @@ export type PageCreationInput = {
   id?: string;
   properties: PageProperties;
   parentId: Block['parentId'] | null;
+  afterId: Block['id'] | null;
   createdById: Block['createdById'];
 };
 
@@ -21,6 +22,7 @@ export type ContentBlockCreationInput = {
   id?: string;
   properties: ContentBlockProperties;
   parentId: Block['parentId'] | null;
+  afterId: Block['id'] | null;
   createdById: Block['createdById'];
 };
 

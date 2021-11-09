@@ -3,11 +3,13 @@ import { useSyncContext } from 'context/SyncContext';
 import { v4 } from 'uuid';
 import {
   CreateHeadingBlockMutationVariables,
+  CreatePageMutationVariables,
   CreateParagraphBlockMutationVariables,
   UpdateBlockLocationMutationOptions,
   UpdateContentBlockMutationOptions,
   UpdatePageMutationOptions,
   useCreateHeadingBlockMutation,
+  useCreatePageMutation,
   useCreateParagraphBlockMutation,
   useDeleteBlockMutation,
   useUpdateBlockLocationMutation,
@@ -22,6 +24,7 @@ export const useBlock = () => {
   const [deleteBlock] = useDeleteBlockMutation();
   const [createParagraphBlock] = useCreateParagraphBlockMutation();
   const [createHeadingBlock] = useCreateHeadingBlockMutation();
+  const [createPage] = useCreatePageMutation();
 
   const { setIsSyncing } = useSyncContext();
 
@@ -61,17 +64,31 @@ export const useBlock = () => {
     setIsSyncing(true);
     await deleteBlock({
       variables: { id },
-      // update: (cache) => {
-      //   const cacheId = cache.identify({ id, __typename: 'ContentBlock' });
-
-      //   console.log(cache, cacheId);
-      //   cacheId && cache.removeOptimistic(cacheId);
-      //   console.log(cache);
-      // },
       refetchQueries: ['GetPage'],
     });
 
     setIsSyncing(false);
+  };
+
+  const createPageHandler = async (
+    input: CreatePageMutationVariables['input']
+  ) => {
+    setIsSyncing(true);
+
+    const id = v4();
+
+    const result = await createPage({
+      variables: {
+        input: {
+          id,
+          ...input,
+        },
+      },
+      refetchQueries: ['GetPage'],
+    });
+
+    setIsSyncing(false);
+    return result;
   };
 
   const createParagraphBlockHandler = async (
@@ -122,5 +139,6 @@ export const useBlock = () => {
     deleteBlock: deleteBlockHandler,
     createParagraphBlock: createParagraphBlockHandler,
     createHeadingBlock: createHeadingBlockHandler,
+    createPage: createPageHandler,
   };
 };

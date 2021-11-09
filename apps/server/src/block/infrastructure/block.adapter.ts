@@ -63,10 +63,16 @@ export class BlockAdapter {
   }
 
   async createPage(input: PageCreationInput): Promise<Block> {
-    return await this.blockRepository.save({
+    const newPage = await this.blockRepository.save({
       ...input,
       object: BlockObjectType.PAGE,
     });
+
+    if (input.parentId) {
+      await this.updateBlockPosition(newPage.id, input.parentId, input.afterId);
+    }
+
+    return newPage;
   }
 
   async createContentBlock(input: ContentBlockCreationInput): Promise<Block> {
@@ -77,7 +83,11 @@ export class BlockAdapter {
 
     // Update the parent childrenOrder
     if (input.parentId) {
-      await this.updateBlockPosition(newBlock.id, input.parentId, null);
+      await this.updateBlockPosition(
+        newBlock.id,
+        input.parentId,
+        input.afterId
+      );
     }
 
     return newBlock;

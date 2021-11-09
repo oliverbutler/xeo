@@ -46,6 +46,10 @@ export class BlockResolver {
     @Args('input') input: CreatePageInput
   ): Promise<Page> {
     return await this.blockService.createPage({
+      id: input.id ?? undefined,
+      afterId: input.afterId ?? null,
+      parentId: input.parentId ?? null,
+      createdById: user.id,
       properties: {
         type: 'page',
         title: input.properties.title,
@@ -53,8 +57,6 @@ export class BlockResolver {
         properties: {},
         childrenOrder: [],
       },
-      parentId: input.parentId ?? null,
-      createdById: user.id,
     });
   }
 
@@ -68,6 +70,7 @@ export class BlockResolver {
       id: input.id ?? undefined,
       createdById: user.id,
       parentId: input.parentId ?? null,
+      afterId: input.afterId ?? null,
       properties: {
         type: 'paragraph',
         text: input.properties.text,
@@ -85,6 +88,7 @@ export class BlockResolver {
       id: input.id ?? undefined,
       createdById: user.id,
       parentId: input.parentId ?? null,
+      afterId: input.afterId ?? null,
       properties: {
         type: 'heading',
         text: input.properties.text,
