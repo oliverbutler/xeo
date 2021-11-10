@@ -1,0 +1,5 @@
+mutation UpdateDatabase($id: ID!, $input: UpdateDatabaseInput!) {
+  updateDatabase(id: $id, input: $input) {
+    id
+  }
+}

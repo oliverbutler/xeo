@@ -181,6 +181,7 @@ export type Mutation = {
   signUp: User;
   updateBlockLocation: Scalars['Boolean'];
   updateContentBlock: ContentBlock;
+  updateDatabase: Database;
   updatePage: Page;
 };
 
@@ -231,6 +232,12 @@ export type MutationUpdateBlockLocationArgs = {
 export type MutationUpdateContentBlockArgs = {
   id: Scalars['ID'];
   input: UpdateContentBlockInput;
+};
+
+
+export type MutationUpdateDatabaseArgs = {
+  id: Scalars['ID'];
+  input: UpdateDatabaseInput;
 };
 
 
@@ -332,6 +339,10 @@ export type UpdateContentBlockInput = {
   text?: Maybe<RichTextInput>;
 };
 
+export type UpdateDatabaseInput = {
+  title?: Maybe<RichTextInput>;
+};
+
 export type UpdatePageInput = {
   coverImage?: Maybe<CoverImageInput>;
   emoji?: Maybe<Scalars['String']>;
@@ -411,6 +422,13 @@ export type CreatePageMutationVariables = Exact<{
 
 export type CreatePageMutation = { __typename?: 'Mutation', createPage: { __typename?: 'Page', id: string } };
 
+export type CreateDatabaseMutationVariables = Exact<{
+  input: CreateDatabaseInput;
+}>;
+
+
+export type CreateDatabaseMutation = { __typename?: 'Mutation', createDatabase: { __typename?: 'Database', id: string } };
+
 export type UpdateBlockLocationMutationVariables = Exact<{
   id: Scalars['ID'];
   parentId: Scalars['ID'];
@@ -445,6 +463,14 @@ export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetMeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, username: string, firstName: string, lastName: string, avatar?: string | null | undefined, pages?: Array<{ __typename: 'Page', id: string, properties: { __typename?: 'PageProperties', title: { __typename?: 'RichText', rawText: string }, image?: { __typename?: 'Emoji', emoji: string } | { __typename?: 'Image', image: string } | null | undefined } }> | null | undefined } };
+
+export type UpdateDatabaseMutationVariables = Exact<{
+  id: Scalars['ID'];
+  input: UpdateDatabaseInput;
+}>;
+
+
+export type UpdateDatabaseMutation = { __typename?: 'Mutation', updateDatabase: { __typename?: 'Database', id: string } };
 
 export const PagePropertiesFragmentDoc = gql`
     fragment PageProperties on PageProperties {
@@ -740,6 +766,39 @@ export function useCreatePageMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreatePageMutationHookResult = ReturnType<typeof useCreatePageMutation>;
 export type CreatePageMutationResult = Apollo.MutationResult<CreatePageMutation>;
 export type CreatePageMutationOptions = Apollo.BaseMutationOptions<CreatePageMutation, CreatePageMutationVariables>;
+export const CreateDatabaseDocument = gql`
+    mutation CreateDatabase($input: CreateDatabaseInput!) {
+  createDatabase(input: $input) {
+    id
+  }
+}
+    `;
+export type CreateDatabaseMutationFn = Apollo.MutationFunction<CreateDatabaseMutation, CreateDatabaseMutationVariables>;
+
+/**
+ * __useCreateDatabaseMutation__
+ *
+ * To run a mutation, you first call `useCreateDatabaseMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDatabaseMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createDatabaseMutation, { data, loading, error }] = useCreateDatabaseMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateDatabaseMutation(baseOptions?: Apollo.MutationHookOptions<CreateDatabaseMutation, CreateDatabaseMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateDatabaseMutation, CreateDatabaseMutationVariables>(CreateDatabaseDocument, options);
+      }
+export type CreateDatabaseMutationHookResult = ReturnType<typeof useCreateDatabaseMutation>;
+export type CreateDatabaseMutationResult = Apollo.MutationResult<CreateDatabaseMutation>;
+export type CreateDatabaseMutationOptions = Apollo.BaseMutationOptions<CreateDatabaseMutation, CreateDatabaseMutationVariables>;
 export const UpdateBlockLocationDocument = gql`
     mutation UpdateBlockLocation($id: ID!, $parentId: ID!, $afterId: ID) {
   updateBlockLocation(id: $id, parentId: $parentId, afterId: $afterId)
@@ -948,3 +1007,37 @@ export function useGetMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetM
 export type GetMeQueryHookResult = ReturnType<typeof useGetMeQuery>;
 export type GetMeLazyQueryHookResult = ReturnType<typeof useGetMeLazyQuery>;
 export type GetMeQueryResult = Apollo.QueryResult<GetMeQuery, GetMeQueryVariables>;
+export const UpdateDatabaseDocument = gql`
+    mutation UpdateDatabase($id: ID!, $input: UpdateDatabaseInput!) {
+  updateDatabase(id: $id, input: $input) {
+    id
+  }
+}
+    `;
+export type UpdateDatabaseMutationFn = Apollo.MutationFunction<UpdateDatabaseMutation, UpdateDatabaseMutationVariables>;
+
+/**
+ * __useUpdateDatabaseMutation__
+ *
+ * To run a mutation, you first call `useUpdateDatabaseMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateDatabaseMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateDatabaseMutation, { data, loading, error }] = useUpdateDatabaseMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateDatabaseMutation(baseOptions?: Apollo.MutationHookOptions<UpdateDatabaseMutation, UpdateDatabaseMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateDatabaseMutation, UpdateDatabaseMutationVariables>(UpdateDatabaseDocument, options);
+      }
+export type UpdateDatabaseMutationHookResult = ReturnType<typeof useUpdateDatabaseMutation>;
+export type UpdateDatabaseMutationResult = Apollo.MutationResult<UpdateDatabaseMutation>;
+export type UpdateDatabaseMutationOptions = Apollo.BaseMutationOptions<UpdateDatabaseMutation, UpdateDatabaseMutationVariables>;

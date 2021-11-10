@@ -3,6 +3,7 @@ import {
   Block,
   BlockObjectType,
   ContentBlockProperties,
+  DatabaseProperties,
   HeadingProperties,
   PageProperties,
   ParagraphProperties,
@@ -12,6 +13,7 @@ import {
   ContentBlockCreationInput,
   ContentBlockUpdateInput,
   DatabaseCreationInput,
+  DatabaseUpdateInput,
   PageCreationInput,
   PageUpdateInput,
 } from './block.interface';
@@ -219,6 +221,28 @@ export class BlockAdapter {
       ...block,
       properties: {
         ...(block.properties as PageProperties),
+        ...input.properties,
+      },
+    });
+  }
+
+  async updateDatabase(id: string, input: DatabaseUpdateInput): Promise<Block> {
+    const block = await this.getBlockById(id);
+
+    if (block.object !== BlockObjectType.DATABASE) {
+      throw new Error(`BlockAdapter > Block ${id} is not a database`);
+    }
+
+    if (block.properties.type !== 'database') {
+      throw new Error(
+        `BlockAdapter > Block ${id} properties is not a database`
+      );
+    }
+
+    return await this.blockRepository.save({
+      ...block,
+      properties: {
+        ...(block.properties as DatabaseProperties),
         ...input.properties,
       },
     });

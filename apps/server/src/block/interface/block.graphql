@@ -202,6 +202,10 @@ input DatabasePropertiesInput {
   schema: [DatabaseSchemaInput!]
 }
 
+input UpdateDatabaseInput {
+  title: RichTextInput
+}
+
 input CreateDatabaseInput {
   id: ID
   properties: DatabasePropertiesInput!
@@ -218,6 +222,7 @@ type Mutation {
   createHeadingBlock(input: CreateHeadingBlockInput!): ContentBlock!
 
   createDatabase(input: CreateDatabaseInput!): Database!
+  updateDatabase(id: ID!, input: UpdateDatabaseInput!): Database!
 
   updateContentBlock(id: ID!, input: UpdateContentBlockInput!): ContentBlock!
   updateBlockLocation(id: ID!, parentId: ID!, afterId: ID): Boolean!

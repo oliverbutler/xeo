@@ -16,6 +16,12 @@ mutation CreatePage($input: CreatePageInput!) {
   }
 }
 
+mutation CreateDatabase($input: CreateDatabaseInput!) {
+  createDatabase(input: $input) {
+    id
+  }
+}
+
 mutation UpdateBlockLocation($id: ID!, $parentId: ID!, $afterId: ID) {
   updateBlockLocation(id: $id, parentId: $parentId, afterId: $afterId)
 }

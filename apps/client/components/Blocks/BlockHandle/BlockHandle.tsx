@@ -28,7 +28,10 @@ export const BlockHandle = ({
   // py-0.5 on outside and py-1 on the inside due to a bug with margin collapse https://github.com/atlassian/react-beautiful-dnd/issues/953
   return (
     <div
-      className={classNames('flex flex-row group text-center relative py-0.5')}
+      className={classNames(
+        'flex flex-row group text-center relative py-0.5',
+        {}
+      )}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
@@ -41,7 +44,7 @@ export const BlockHandle = ({
         <div className="flex flex-col">
           <AddButton block={block} />
         </div>
-        <div className="flex flex-col" {...dragHandleProps}>
+        <div className="flex flex-col" {...dragHandleProps} tabIndex={-1}>
           <HandleButton block={block} />
         </div>
       </motion.div>

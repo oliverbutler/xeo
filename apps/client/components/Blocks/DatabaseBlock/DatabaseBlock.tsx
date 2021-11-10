@@ -1,17 +1,14 @@
-import { Button } from 'components/Button/Button';
+import classNames from 'classnames';
+import { Database } from 'components/Database/Database';
+import { Clickable } from 'components/UI/Clickable/Clickable';
 import { PageChildren_Database_Fragment } from 'generated';
+import React from 'react';
+import { FiMoreHorizontal, FiPlus } from 'react-icons/fi';
 
 interface Props {
   database: PageChildren_Database_Fragment;
 }
 
 export const DatabaseBlock: React.FunctionComponent<Props> = ({ database }) => {
-  return (
-    <div>
-      <div className="flex flex-row justify-between">
-        <p className="text-xl font-bold">{database.properties.title.rawText}</p>
-        <Button>New</Button>
-      </div>
-    </div>
-  );
+  return <Database database={database} />;
 };

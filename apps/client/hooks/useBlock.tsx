@@ -2,12 +2,14 @@ import { client } from 'components/Wrappers/ApolloWrapper';
 import { useSyncContext } from 'context/SyncContext';
 import { v4 } from 'uuid';
 import {
+  CreateDatabaseMutationVariables,
   CreateHeadingBlockMutationVariables,
   CreatePageMutationVariables,
   CreateParagraphBlockMutationVariables,
   UpdateBlockLocationMutationOptions,
   UpdateContentBlockMutationOptions,
   UpdatePageMutationOptions,
+  useCreateDatabaseMutation,
   useCreateHeadingBlockMutation,
   useCreatePageMutation,
   useCreateParagraphBlockMutation,
@@ -25,6 +27,7 @@ export const useBlock = () => {
   const [createParagraphBlock] = useCreateParagraphBlockMutation();
   const [createHeadingBlock] = useCreateHeadingBlockMutation();
   const [createPage] = useCreatePageMutation();
+  const [createDatabase] = useCreateDatabaseMutation();
 
   const { setIsSyncing } = useSyncContext();
 
@@ -91,6 +94,27 @@ export const useBlock = () => {
     return result;
   };
 
+  const createDatabaseHandler = async (
+    input: CreateDatabaseMutationVariables['input']
+  ) => {
+    setIsSyncing(true);
+
+    const id = v4();
+
+    const result = await createDatabase({
+      variables: {
+        input: {
+          id,
+          ...input,
+        },
+      },
+      refetchQueries: ['GetPage'],
+    });
+
+    setIsSyncing(false);
+    return result;
+  };
+
   const createParagraphBlockHandler = async (
     input: CreateParagraphBlockMutationVariables['input']
   ) => {
@@ -140,5 +164,6 @@ export const useBlock = () => {
     createParagraphBlock: createParagraphBlockHandler,
     createHeadingBlock: createHeadingBlockHandler,
     createPage: createPageHandler,
+    createDatabase: createDatabaseHandler,
   };
 };

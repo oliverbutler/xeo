@@ -35,6 +35,10 @@ export type ContentBlockCreationInput = {
   createdById: Block['createdById'];
 };
 
+export type DatabaseUpdateInput = {
+  properties: Partial<DatabaseProperties>;
+};
+
 export type PageUpdateInput = {
   properties: Partial<PageProperties>;
 };

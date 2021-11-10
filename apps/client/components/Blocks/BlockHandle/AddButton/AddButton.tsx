@@ -1,5 +1,11 @@
 import { Dropdown } from 'components/UI/Dropdown/Dropdown';
-import { FiAlignLeft, FiFile, FiPlus, FiType } from 'react-icons/fi';
+import {
+  FiAlignLeft,
+  FiDatabase,
+  FiFile,
+  FiPlus,
+  FiType,
+} from 'react-icons/fi';
 import { motion } from 'framer-motion';
 import { HeadingType, PageChildrenFragment } from 'generated';
 import { useBlock } from 'hooks/useBlock';
@@ -10,7 +16,12 @@ interface Props {
 }
 
 export const AddButton: React.FunctionComponent<Props> = ({ block }) => {
-  const { createHeadingBlock, createParagraphBlock, createPage } = useBlock();
+  const {
+    createHeadingBlock,
+    createParagraphBlock,
+    createPage,
+    createDatabase,
+  } = useBlock();
 
   const handleAddParagraphBlock = async () => {
     const result = await createParagraphBlock({
@@ -44,6 +55,18 @@ export const AddButton: React.FunctionComponent<Props> = ({ block }) => {
 
     if (result.data) {
       moveFocusToBlock(result.data.createPage.id);
+    }
+  };
+
+  const handleAddDatabase = async () => {
+    const result = await createDatabase({
+      parentId: block.parentId,
+      afterId: block.id,
+      properties: { title: { rawText: '' } },
+    });
+
+    if (result.data) {
+      moveFocusToBlock(result.data.createDatabase.id);
     }
   };
 
@@ -90,6 +113,11 @@ export const AddButton: React.FunctionComponent<Props> = ({ block }) => {
             text: 'Page',
             logo: <FiFile />,
             onClick: () => handleAddPage(),
+          },
+          {
+            text: 'Database',
+            logo: <FiDatabase />,
+            onClick: () => handleAddDatabase(),
           },
         ],
       ]}

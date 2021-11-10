@@ -11,6 +11,7 @@ import {
   Database,
   Page,
   UpdateContentBlockInput,
+  UpdateDatabaseInput,
   UpdatePageInput,
 } from '../../graphql';
 import { BlockService } from '../core/block.service';
@@ -141,6 +142,21 @@ export class BlockResolver {
       },
     });
 
+    return block;
+  }
+
+  @Mutation('updateDatabase')
+  @UseGuards(GqlAuthGuard)
+  async updateDatabase(
+    @CurrentUser() user: CurrentAuthUser, // TODO check if user is owner
+    @Args('id') id: string,
+    @Args('input') input: UpdateDatabaseInput
+  ): Promise<Database> {
+    const block = await this.blockService.updateDatabase(id, {
+      properties: {
+        ...(input.title && { title: input.title }),
+      },
+    });
     return block;
   }
 

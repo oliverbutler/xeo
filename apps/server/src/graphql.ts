@@ -100,6 +100,10 @@ export interface DatabasePropertiesInput {
     schema?: Nullable<DatabaseSchemaInput[]>;
 }
 
+export interface UpdateDatabaseInput {
+    title?: Nullable<RichTextInput>;
+}
+
 export interface CreateDatabaseInput {
     id?: Nullable<string>;
     properties: DatabasePropertiesInput;
@@ -129,6 +133,7 @@ export interface IMutation {
     createParagraphBlock(input: CreateParagraphBlockInput): ContentBlock | Promise<ContentBlock>;
     createHeadingBlock(input: CreateHeadingBlockInput): ContentBlock | Promise<ContentBlock>;
     createDatabase(input: CreateDatabaseInput): Database | Promise<Database>;
+    updateDatabase(id: string, input: UpdateDatabaseInput): Database | Promise<Database>;
     updateContentBlock(id: string, input: UpdateContentBlockInput): ContentBlock | Promise<ContentBlock>;
     updateBlockLocation(id: string, parentId: string, afterId?: Nullable<string>): boolean | Promise<boolean>;
     deleteBlock(id: string): boolean | Promise<boolean>;

@@ -6,6 +6,7 @@ import {
   ContentBlockCreationInput,
   ContentBlockUpdateInput,
   DatabaseCreationInput,
+  DatabaseUpdateInput,
   PageCreationInput,
   PageUpdateInput,
 } from '../infrastructure/block.interface';
@@ -125,6 +126,19 @@ export class BlockService {
     return {
       ...updated,
       properties: updated.properties as PageProperties,
+      children: [],
+    };
+  }
+
+  async updateDatabase(
+    id: string,
+    input: DatabaseUpdateInput
+  ): Promise<Database> {
+    const updated = await this.blockAdapter.updateDatabase(id, input);
+
+    return {
+      ...updated,
+      properties: updated.properties as DatabaseProperties,
       children: [],
     };
   }
