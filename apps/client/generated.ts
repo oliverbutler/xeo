@@ -399,6 +399,11 @@ export type GetPageQueryVariables = Exact<{
 
 export type GetPageQuery = { __typename?: 'Query', page: { __typename?: 'Page', id: string, properties: { __typename?: 'PageProperties', favourite: boolean, childrenOrder: Array<string>, image?: { __typename: 'Emoji', emoji: string } | { __typename: 'Image', image: string } | null | undefined, title: { __typename?: 'RichText', rawText: string }, coverImage?: { __typename?: 'CoverImage', gradient?: string | null | undefined } | null | undefined }, children: Array<{ __typename: 'ContentBlock', id: string, parentId?: string | null | undefined, properties: { __typename?: 'HeadingProperties', variant: HeadingType, text: { __typename?: 'RichText', rawText: string } } | { __typename?: 'ParagraphProperties', text: { __typename?: 'RichText', rawText: string } } } | { __typename: 'Database', id: string, parentId?: string | null | undefined, properties: { __typename?: 'DatabaseProperties', title: { __typename?: 'RichText', rawText: string } } } | { __typename: 'Page', id: string, parentId?: string | null | undefined, properties: { __typename?: 'PageProperties', favourite: boolean, image?: { __typename: 'Emoji', emoji: string } | { __typename: 'Image', image: string } | null | undefined, title: { __typename?: 'RichText', rawText: string } } }> } };
 
+export type GetPageGraphQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetPageGraphQuery = { __typename?: 'Query', pages: Array<{ __typename?: 'Page', id: string, parentId?: string | null | undefined, properties: { __typename?: 'PageProperties', image?: { __typename?: 'Emoji', emoji: string } | { __typename?: 'Image' } | null | undefined, title: { __typename?: 'RichText', rawText: string } } }> };
+
 export type UpdateContentBlockMutationVariables = Exact<{
   id: Scalars['ID'];
   input: UpdateContentBlockInput;
@@ -665,6 +670,51 @@ export function useGetPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Ge
 export type GetPageQueryHookResult = ReturnType<typeof useGetPageQuery>;
 export type GetPageLazyQueryHookResult = ReturnType<typeof useGetPageLazyQuery>;
 export type GetPageQueryResult = Apollo.QueryResult<GetPageQuery, GetPageQueryVariables>;
+export const GetPageGraphDocument = gql`
+    query GetPageGraph {
+  pages(filters: {object: PAGE}) {
+    id
+    parentId
+    properties {
+      image {
+        ... on Emoji {
+          emoji
+        }
+      }
+      title {
+        rawText
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetPageGraphQuery__
+ *
+ * To run a query within a React component, call `useGetPageGraphQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPageGraphQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPageGraphQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetPageGraphQuery(baseOptions?: Apollo.QueryHookOptions<GetPageGraphQuery, GetPageGraphQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPageGraphQuery, GetPageGraphQueryVariables>(GetPageGraphDocument, options);
+      }
+export function useGetPageGraphLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPageGraphQuery, GetPageGraphQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPageGraphQuery, GetPageGraphQueryVariables>(GetPageGraphDocument, options);
+        }
+export type GetPageGraphQueryHookResult = ReturnType<typeof useGetPageGraphQuery>;
+export type GetPageGraphLazyQueryHookResult = ReturnType<typeof useGetPageGraphLazyQuery>;
+export type GetPageGraphQueryResult = Apollo.QueryResult<GetPageGraphQuery, GetPageGraphQueryVariables>;
 export const UpdateContentBlockDocument = gql`
     mutation UpdateContentBlock($id: ID!, $input: UpdateContentBlockInput!) {
   updateContentBlock(id: $id, input: $input) {
