@@ -1,9 +1,7 @@
 import { GetPageGraphQuery } from 'generated';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import * as d3 from 'd3';
-import { SimulationNodeDatum } from 'd3';
 import Link from 'next/link';
-import { useBlock } from 'hooks/useBlock';
 import { useRouter } from 'next/dist/client/router';
 
 interface Props {
@@ -13,7 +11,7 @@ interface Props {
 type Node = {
   id: string;
   radius: number;
-} & SimulationNodeDatum;
+} & d3.SimulationNodeDatum;
 
 type Link = {
   source: number;
@@ -22,6 +20,7 @@ type Link = {
 
 export const ForceGraph: React.FunctionComponent<Props> = ({ pages }) => {
   const [animatedNodes, setAnimatedNodes] = useState<Node[]>([]);
+  const [pageLinks, setPageLinks] = useState<Link[]>([]);
 
   const ref = useRef<HTMLDivElement>(null);
 
@@ -31,61 +30,55 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pages }) => {
 
   const currentPageId = page as string;
 
-  const originalPageNodes: Node[] = useMemo(
-    () =>
-      pages.map((page, index) => ({
-        id: page.id,
-        index: index,
-        radius: 5,
-      })),
-    [pages, currentPageId]
-  );
-
-  const originalPageLinks: Link[] = pages.map((page, index) => {
-    const parent = pages.find((p) => p.id === page.parentId);
-
-    return {
-      source: index,
-      target: parent ? pages.indexOf(parent) : index,
-    };
-  });
-
   const width = ref.current?.offsetWidth ?? 0;
   const height = ref.current?.offsetHeight ?? 0;
 
+  useEffect(() => {
+    const nodes = pages.map((page) => ({
+      id: page.id,
+      radius: 5,
+    }));
+
+    const links = pages.map((page) => ({
+      source: nodes.findIndex((node) => node.id === page.id),
+      target: page.parentId
+        ? nodes.findIndex((node) => node.id === page.parentId)
+        : nodes.findIndex((node) => node.id === page.id),
+    }));
+
+    setAnimatedNodes(nodes);
+    setPageLinks(links);
+  }, [pages]);
+
   // @ts-ignore
   useEffect(() => {
-    const linksClone = [...originalPageLinks];
+    const deepCopyAnimatedNodes = JSON.parse(JSON.stringify(animatedNodes));
+    const deepCopyPageLinks = JSON.parse(JSON.stringify(pageLinks));
 
     const simulation = d3
-      .forceSimulation<Node>(originalPageNodes)
-      .force('link', d3.forceLink().links(linksClone).distance(50))
+      .forceSimulation<Node>(deepCopyAnimatedNodes)
       .force('x', d3.forceX(width / 2))
       .force('y', d3.forceY(height / 2))
       .force('charge', d3.forceManyBody().strength(-500))
       .force(
         'collision',
         d3.forceCollide<Node>().radius((node) => node.radius)
-      );
+      )
+      .force('link', d3.forceLink().links(deepCopyPageLinks).distance(50));
 
-    // update state on every frame
     simulation.on('tick', () => {
       setAnimatedNodes([...simulation.nodes()]);
     });
 
-    // copy nodes into simulation
-    simulation.nodes([...originalPageNodes]);
-
     simulation.alpha(0.5).restart();
 
-    // stop simulation on unmount
     return () => simulation.stop();
-  }, [originalPageLinks, originalPageLinks, width, height]);
+  }, [pages, width, height]);
 
   return (
     <div ref={ref} className="h-full w-full">
       <svg className="w-full h-full">
-        {originalPageLinks.map((link) => {
+        {pageLinks.map((link) => {
           const source = animatedNodes[link.source];
           const target = animatedNodes[link.target];
 
