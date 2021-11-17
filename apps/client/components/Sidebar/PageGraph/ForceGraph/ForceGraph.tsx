@@ -25,26 +25,31 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pages }) => {
   const ref = useRef<HTMLDivElement>(null);
 
   const {
-    query: { page },
+    query: { page: pageId },
   } = useRouter();
 
-  const currentPageId = page as string;
+  const currentPageId = pageId as string;
 
   const width = ref.current?.offsetWidth ?? 0;
   const height = ref.current?.offsetHeight ?? 0;
 
   useEffect(() => {
-    const nodes = pages.map((page) => ({
+    const nodes: Node[] = pages.map((page) => ({
       id: page.id,
       radius: 5,
+      x: width / 2,
+      y: height / 2,
     }));
 
-    const links = pages.map((page) => ({
-      source: nodes.findIndex((node) => node.id === page.id),
-      target: page.parentId
-        ? nodes.findIndex((node) => node.id === page.parentId)
-        : nodes.findIndex((node) => node.id === page.id),
-    }));
+    const links = pages.map((page) => {
+      const source = nodes.findIndex((node) => node.id === page.id);
+      const target = nodes.findIndex((node) => node.id === page.parentId);
+
+      return {
+        source,
+        target: target === -1 ? source : target,
+      };
+    });
 
     setAnimatedNodes(nodes);
     setPageLinks(links);
@@ -70,7 +75,7 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pages }) => {
       setAnimatedNodes([...simulation.nodes()]);
     });
 
-    simulation.alpha(0.5).restart();
+    simulation.alpha(0.5).alphaMin(0.05).restart();
 
     return () => simulation.stop();
   }, [pages, width, height]);
@@ -91,6 +96,7 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pages }) => {
                 y2={target.y}
                 stroke="gray"
                 opacity={0.4}
+                key={`link-${link.source}-${link.target}`}
               />
             );
           }
@@ -98,20 +104,20 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pages }) => {
         {animatedNodes.map((node) => {
           const page = pages.find((page) => page.id === node.id);
 
-          return (
-            <Link href={`/page/${page?.id}`}>
-              <g className="cursor-pointer">
-                <circle
-                  cx={node.x}
-                  cy={node.y}
-                  r={node.radius}
-                  key={node.index}
-                  stroke="black"
-                  fill={page?.id === currentPageId ? 'yellow' : 'white'}
-                />
-                {page && (
+          if (node.x && node.y && page) {
+            return (
+              <Link href={`/page/${page?.id}`} key={node.id}>
+                <g className="cursor-pointer">
+                  <circle
+                    cx={node.x}
+                    cy={node.y}
+                    r={node.radius}
+                    stroke="black"
+                    fill={page?.id === currentPageId ? 'yellow' : 'white'}
+                  />
+
                   <text
-                    text-anchor="middle"
+                    textAnchor="middle"
                     className="text-xs"
                     x={node.x}
                     y={Number(node.y) + 25}
@@ -121,10 +127,10 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pages }) => {
                       : ''}{' '}
                     {page.properties.title.rawText}
                   </text>
-                )}
-              </g>
-            </Link>
-          );
+                </g>
+              </Link>
+            );
+          }
         })}
       </svg>
     </div>

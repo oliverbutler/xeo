@@ -6,6 +6,7 @@ module.exports = {
     join(__dirname, './components/**/*.{js,ts,jsx,tsx}'),
   ],
   darkMode: 'class',
+  mode: 'jit',
   theme: {
     extend: {},
   },
