@@ -19,8 +19,8 @@ type Link = {
 };
 
 export const ForceGraph: React.FunctionComponent<Props> = ({ pages }) => {
-  const [animatedNodes, setAnimatedNodes] = useState<Node[]>([]);
-  const [pageLinks, setPageLinks] = useState<Link[]>([]);
+  const [links, setLinks] = useState<Link[]>([]);
+  const [simulatedNodes, setSimulatedNodes] = useState<Node[]>([]);
 
   const ref = useRef<HTMLDivElement>(null);
 
@@ -33,46 +33,60 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pages }) => {
   const width = ref.current?.offsetWidth ?? 0;
   const height = ref.current?.offsetHeight ?? 0;
 
-  useEffect(() => {
-    const nodes: Node[] = pages.map((page) => ({
-      id: page.id,
-      radius: 5,
-      x: width / 2,
-      y: height / 2,
-    }));
-
-    const links = pages.map((page) => {
-      const source = nodes.findIndex((node) => node.id === page.id);
-      const target = nodes.findIndex((node) => node.id === page.parentId);
-
-      return {
-        source,
-        target: target === -1 ? source : target,
-      };
-    });
-
-    setAnimatedNodes(nodes);
-    setPageLinks(links);
-  }, [pages]);
-
   // @ts-ignore
   useEffect(() => {
-    const deepCopyAnimatedNodes = JSON.parse(JSON.stringify(animatedNodes));
-    const deepCopyPageLinks = JSON.parse(JSON.stringify(pageLinks));
+    const formattedPages: Node[] = pages.map((page) => ({
+      id: page.id,
+      radius: 5,
+    }));
+
+    const newNodes = new Set(formattedPages);
+
+    // remove newNodes that are no longer in the set
+    const existingNodesThatAreInNewNodes = simulatedNodes.filter((node) =>
+      newNodes.has(node)
+    );
+
+    const existingNodesThatStillExist = new Set(existingNodesThatAreInNewNodes);
+
+    // stitch together the newNodes and the existingNodes
+    const newNodesAndExistingNodes = [
+      ...newNodes,
+      ...existingNodesThatStillExist,
+    ];
+
+    console.log(
+      'combined',
+      newNodesAndExistingNodes,
+      newNodes,
+      existingNodesThatStillExist
+    );
+
+    // const formattedLinks = pages.map((page) => {
+    //   const source = simulatedNodes.findIndex((node) => node.id === page.id);
+    //   const target = simulatedNodes.findIndex(
+    //     (node) => node.id === page.parentId
+    //   );
+
+    //   return {
+    //     source,
+    //     target: target === -1 ? source : target,
+    //   };
+    // });
 
     const simulation = d3
-      .forceSimulation<Node>(deepCopyAnimatedNodes)
+      .forceSimulation<Node>(newNodesAndExistingNodes)
       .force('x', d3.forceX(width / 2))
       .force('y', d3.forceY(height / 2))
       .force('charge', d3.forceManyBody().strength(-500))
       .force(
         'collision',
         d3.forceCollide<Node>().radius((node) => node.radius)
-      )
-      .force('link', d3.forceLink().links(deepCopyPageLinks).distance(50));
+      );
+    // .force('link', d3.forceLink().links(formattedLinks).distance(50));
 
     simulation.on('tick', () => {
-      setAnimatedNodes([...simulation.nodes()]);
+      setSimulatedNodes([...simulation.nodes()]);
     });
 
     simulation.alpha(0.5).alphaMin(0.05).restart();
@@ -83,9 +97,9 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pages }) => {
   return (
     <div ref={ref} className="h-full w-full">
       <svg className="w-full h-full">
-        {pageLinks.map((link) => {
-          const source = animatedNodes[link.source];
-          const target = animatedNodes[link.target];
+        {links.map((link) => {
+          const source = simulatedNodes[link.source];
+          const target = simulatedNodes[link.target];
 
           if (source && target) {
             return (
@@ -101,7 +115,7 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pages }) => {
             );
           }
         })}
-        {animatedNodes.map((node) => {
+        {simulatedNodes.map((node) => {
           const page = pages.find((page) => page.id === node.id);
 
           if (node.x && node.y && page) {

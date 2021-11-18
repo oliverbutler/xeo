@@ -54,12 +54,9 @@ export const Sidebar = () => {
               </AnimateSharedLayout>
             </Tab.List>
             <Tab.Panels className="h-full">
-              <Tab.Panel className="h-full">
-                <PageGraph localGraph={false} />
-              </Tab.Panel>
-              <Tab.Panel className="h-full">
-                <PageGraph localGraph={true} />
-              </Tab.Panel>
+              {({ selectedIndex }) => (
+                <PageGraph localGraph={selectedIndex === 0 ? false : true} />
+              )}
             </Tab.Panels>
           </Tab.Group>
         </div>
