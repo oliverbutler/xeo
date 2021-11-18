@@ -23,10 +23,19 @@ export const UserRow: React.FunctionComponent<Props> = ({ user }) => {
   };
 
   return (
-    <div className="flex flex-row items-center w-full justify-between p-2">
-      <p>
+    <div className="flex flex-row items-center w-full justify-between p-2 mb-4 border-b-gray-200 border-2">
+      {user.avatar ? (
+        <img
+          className="w-5 h-5"
+          src={user.avatar}
+          alt={`${user.firstName} ${user.lastName}`}
+        />
+      ) : (
+        <FiUser className="w-5 h-5 mr-3" />
+      )}
+      <span className="ml-2">
         {user.firstName} {user.lastName}
-      </p>
+      </span>
       <Dropdown
         showDirection="left"
         button={

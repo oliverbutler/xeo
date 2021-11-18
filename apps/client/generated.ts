@@ -467,7 +467,7 @@ export type CreateHeadingBlockMutation = { __typename?: 'Mutation', createHeadin
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, username: string, firstName: string, lastName: string, avatar?: string | null | undefined, pages?: Array<{ __typename: 'Page', id: string, properties: { __typename?: 'PageProperties', title: { __typename?: 'RichText', rawText: string }, image?: { __typename?: 'Emoji', emoji: string } | { __typename?: 'Image', image: string } | null | undefined } }> | null | undefined } };
+export type GetMeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, username: string, firstName: string, lastName: string, avatar?: string | null | undefined, pages?: Array<{ __typename: 'Page', id: string, properties: { __typename?: 'PageProperties', favourite: boolean, title: { __typename?: 'RichText', rawText: string }, image?: { __typename?: 'Emoji', emoji: string } | { __typename?: 'Image', image: string } | null | undefined } }> | null | undefined } };
 
 export type UpdateDatabaseMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -1010,10 +1010,11 @@ export const GetMeDocument = gql`
     firstName
     lastName
     avatar
-    pages(filters: {parentId: null}) {
+    pages {
       __typename
       id
       properties {
+        favourite
         title {
           rawText
         }

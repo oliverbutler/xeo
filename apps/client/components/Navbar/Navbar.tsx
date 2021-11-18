@@ -3,6 +3,7 @@ import { Loading } from 'components/Animate/Loading/Loading';
 import { ImageRenderer } from 'components/Image/ImageRenderer';
 import { Clickable } from 'components/UI/Clickable/Clickable';
 import { Dropdown } from 'components/UI/Dropdown/Dropdown';
+import { usePageContext } from 'context/PageContext';
 import { useSyncContext } from 'context/SyncContext';
 import { useGetPathQuery } from 'generated';
 import { useBlock } from 'hooks/useBlock';
@@ -12,22 +13,19 @@ import { FiChevronRight, FiMoreHorizontal, FiTrash } from 'react-icons/fi';
 import { FavouriteButton } from './FavouriteButton/FavouriteButton';
 
 export const Navbar: React.FunctionComponent = () => {
-  const {
-    query: { page },
-  } = useRouter();
-
   const { deleteBlock } = useBlock();
   const router = useRouter();
 
-  const pageId = page as string;
+  const { currentPageId } = usePageContext();
 
   const { isSyncing } = useSyncContext();
 
   const { data, loading } = useGetPathQuery({
-    variables: { id: pageId },
+    variables: { id: currentPageId! },
+    skip: !currentPageId,
   });
 
-  if (!page || loading || !data) {
+  if (!currentPageId || loading || !data) {
     return null;
   }
 
@@ -35,7 +33,7 @@ export const Navbar: React.FunctionComponent = () => {
 
   const handleDeleteBlock = async () => {
     router.push('/');
-    await deleteBlock(pageId);
+    await deleteBlock(currentPageId);
   };
 
   return (
@@ -74,7 +72,7 @@ export const Navbar: React.FunctionComponent = () => {
       </div>
       <div className="flex flex-row items-center">
         {isSyncing && <Loading className="text-gray-400 h-3" />}
-        <FavouriteButton pageId={pageId} />
+        <FavouriteButton pageId={currentPageId} />
         <Dropdown
           button={
             <Clickable>

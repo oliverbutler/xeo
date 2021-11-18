@@ -35,6 +35,12 @@ export class UserResolver {
         filters.object !== undefined && { type: filters.object ?? undefined }),
       ...(filters &&
         filters.parentId !== undefined && { parentId: filters.parentId }),
+      ...(filters &&
+        filters.favourite !== undefined && {
+          properties: {
+            favourite: filters.favourite ?? false,
+          },
+        }),
     });
   }
 }

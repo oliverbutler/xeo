@@ -1,5 +1,4 @@
-import { gql } from '@apollo/client';
-import { GetMeQuery, useGetMeQuery, User } from 'generated';
+import { GetMeQuery, useGetMeQuery } from 'generated';
 import { useLocalStorage } from './useLocalStorage';
 
 interface Output {
@@ -7,35 +6,6 @@ interface Output {
   loading: boolean;
   hasAccessToken: boolean;
 }
-
-gql`
-  query GetMe {
-    me {
-      id
-      username
-      firstName
-      lastName
-      avatar
-      pages(filters: { parentId: null }) {
-        __typename
-        id
-        properties {
-          title {
-            rawText
-          }
-          image {
-            ... on Image {
-              image
-            }
-            ... on Emoji {
-              emoji
-            }
-          }
-        }
-      }
-    }
-  }
-`;
 
 export const useCurrentUser = (): Output => {
   const [accessToken] = useLocalStorage<string | undefined>('accessToken');
