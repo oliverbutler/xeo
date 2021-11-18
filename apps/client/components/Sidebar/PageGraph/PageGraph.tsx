@@ -1,5 +1,6 @@
-import { useGetPageGraphQuery } from 'generated';
-import { useRouter } from 'next/dist/client/router';
+import { usePageContext } from 'context/PageContext';
+import { GetPageGraphQuery, useGetPageGraphQuery } from 'generated';
+import { useEffect, useState } from 'react';
 import { ForceGraph } from './ForceGraph/ForceGraph';
 
 interface Props {
@@ -9,21 +10,34 @@ interface Props {
 export const PageGraph: React.FunctionComponent<Props> = ({ localGraph }) => {
   const { data } = useGetPageGraphQuery();
 
-  if (!data) {
-    return null;
-  }
+  const [pages, setPages] = useState<GetPageGraphQuery['pages']>([]);
 
-  const {
-    query: { page },
-  } = useRouter();
+  const { currentPageId } = usePageContext();
 
-  const currentPageId = page as string;
+  // @ts-ignore
+  useEffect(() => {
+    if (data?.pages) {
+      const currentPage = data.pages.find((page) => page.id === currentPageId);
 
-  const pages = localGraph
-    ? data.pages
-    : data.pages.filter(
-        (page) => page.parentId === currentPageId || page.id === currentPageId
-      );
+      if (currentPage) {
+        if (!localGraph) {
+          setPages(data.pages);
+        } else {
+          const pageChildren = data.pages.filter(
+            (page) => page.parentId === currentPageId
+          );
+
+          const pageParents = data.pages.filter(
+            (page) => page.id === currentPage.parentId
+          );
+
+          const localPages = [currentPage, ...pageParents, ...pageChildren];
+
+          setPages(localPages);
+        }
+      }
+    }
+  }, [data, localGraph, currentPageId]);
 
   return <ForceGraph pages={pages} />;
 };

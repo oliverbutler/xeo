@@ -23,7 +23,7 @@ export const UserRow: React.FunctionComponent<Props> = ({ user }) => {
   };
 
   return (
-    <div className="flex flex-row items-center w-full justify-between px-2">
+    <div className="flex flex-row items-center w-full justify-between p-2">
       <p>
         {user.firstName} {user.lastName}
       </p>

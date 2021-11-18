@@ -1,6 +1,8 @@
 import { Loading } from 'components/Animate/Loading/Loading';
 import { ContentBlockList } from 'components/Blocks/ContentBlockList/ContentBlockList';
+import { usePageContext } from 'context/PageContext';
 import { PageChildrenFragment, useGetPageQuery } from 'generated';
+import { useEffect } from 'react';
 import { PageCover } from './PageCover/PageCover';
 import { PageEmpty } from './PageEmpty/PageEmpty';
 import { PageIcon } from './PageIcon/PageIcon';

@@ -1,28 +1,20 @@
-import { Navbar } from 'components/Navbar/Navbar';
-import { Page as PageComponent } from 'components/Page/Page';
-import { Sidebar } from 'components/Sidebar/Sidebar';
+import { PageLayout } from 'components/Page/PageLayout/PageLayout';
+import { usePageContext } from 'context/PageContext';
 import { useRouter } from 'next/dist/client/router';
+import { useEffect } from 'react';
 
 const Page: React.FunctionComponent = () => {
-  const {
-    query: { page },
-  } = useRouter();
+  const { query } = useRouter();
 
-  if (!page) {
-    return <div>404</div>;
-  }
+  const { currentPageId, setCurrentPageId } = usePageContext();
 
-  const pageId = page as string;
+  useEffect(() => {
+    if (query.page) {
+      setCurrentPageId(query.page as string);
+    }
+  }, [query]);
 
-  return (
-    <div className="flex xeo-main">
-      <Sidebar />
-      <div className="w-full relative">
-        <Navbar />
-        <PageComponent id={pageId} key={pageId} />
-      </div>
-    </div>
-  );
+  return <PageLayout currentPageId={currentPageId} />;
 };
 
 export default Page;

@@ -1,5 +1,4 @@
-import { Loading } from 'components/Animate/Loading/Loading';
-import { Sidebar } from 'components/Sidebar/Sidebar';
+import { PageLayout } from 'components/Page/PageLayout/PageLayout';
 import { useCurrentUser } from 'hooks/useCurrentUser';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { useRouter } from 'next/dist/client/router';
@@ -23,14 +22,8 @@ const Index: React.FunctionComponent = () => {
       router.push(`/page/${firstPage?.id}`);
     }
   }, [user]);
-  return (
-    <div className="flex">
-      <Sidebar />
-      <div className="w-full flex justify-center items-center flex-col">
-        <Loading className="text-gray-300 h-12 w-12" />
-      </div>
-    </div>
-  );
+
+  return <PageLayout currentPageId={null} />;
 };
 
 export default Index;

@@ -6,7 +6,7 @@ import { PageGraph } from './PageGraph/PageGraph';
 import { UserRow } from './UserRow/UserRow';
 import { MdOutlineAccountTree } from 'react-icons/md';
 import { RiNodeTree } from 'react-icons/ri';
-import { AnimateSharedLayout, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 export const Sidebar = () => {
   const { user } = useCurrentUser();
@@ -23,14 +23,14 @@ export const Sidebar = () => {
       minWindowWidth={150}
       dragHandleWidth={3}
       className="bg-gray-50 h-full"
-      dragHandleClassName="bg-gray-50 hover:bg-gray-200 "
+      dragHandleClassName="bg-gray-50 hover:bg-gray-200"
     >
-      <div className="flex flex-col h-full py-2 ">
-        <div className="overflow-auto h-full">
-          {user && <UserRow user={user} />}
+      <div className="bg-gray-50 flex flex-col justify-between h-full">
+        <div>{user ? <UserRow user={user} /> : <p>Not logged in</p>}</div>
+        <div>
           <Tab.Group>
             <Tab.List className="flex flex-row">
-              <AnimateSharedLayout>
+              <AnimatePresence>
                 {[<MdOutlineAccountTree />, <RiNodeTree />].map(
                   (item, index) => (
                     <Tab
@@ -51,9 +51,10 @@ export const Sidebar = () => {
                     </Tab>
                   )
                 )}
-              </AnimateSharedLayout>
+              </AnimatePresence>
             </Tab.List>
-            <Tab.Panels className="h-full">
+
+            <Tab.Panels className="h-96">
               {({ selectedIndex }) => (
                 <PageGraph localGraph={selectedIndex === 0 ? false : true} />
               )}

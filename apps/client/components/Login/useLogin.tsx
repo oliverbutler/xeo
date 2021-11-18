@@ -53,8 +53,6 @@ export const useLogin = (): Output => {
         variables: { username: data.username, password: data.password },
       });
 
-      console.log(result);
-
       if (result.data && result.data.signIn) {
         setAccessToken(result.data.signIn.accessToken);
         toast(formatMessage({ id: 'generic.login.success' }), {
