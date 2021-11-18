@@ -32,6 +32,10 @@ Xeo (_zee-oh_) is a Notion, Obsidian, and Trello alternative with a key focus on
 
 Currently this is a WIP, either build the develop branch or hang on a bit longer for V0.1.
 
+
+https://user-images.githubusercontent.com/47489826/142513447-af336402-d9f6-4f5b-9f07-648af43d534f.mov
+
+
 ## Contributions
 
 We are always open to contributions and PR, however as we are currently in early alpha there is no licence or Contribution guidance.

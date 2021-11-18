@@ -137,7 +137,9 @@ export class BlockResolver {
         ...(input.title && { title: input.title }),
         ...(input.image && { image: { image: input.image } }),
         ...(input.emoji && { image: { emoji: input.emoji } }),
-        ...(input.favourite && { favourite: input.favourite }),
+        ...(input.favourite !== undefined && {
+          favourite: input.favourite ?? false,
+        }),
         ...(input.coverImage && { coverImage: input.coverImage }),
       },
     });

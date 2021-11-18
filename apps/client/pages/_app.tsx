@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ApolloWrapper } from 'components/Wrappers/ApolloWrapper';
 import { IntlWrapper } from 'components/Wrappers/IntlWrapper';
 import { SyncContextProvider } from 'context/SyncContext';
+import { PageContextProvider } from 'context/PageContext';
 
 function CustomApp({ Component, pageProps }: AppProps) {
   return (
@@ -18,9 +19,11 @@ function CustomApp({ Component, pageProps }: AppProps) {
         <IntlWrapper>
           <ApolloWrapper>
             <SyncContextProvider>
-              <main>
-                <Component {...pageProps} />
-              </main>
+              <PageContextProvider>
+                <main>
+                  <Component {...pageProps} />
+                </main>
+              </PageContextProvider>
             </SyncContextProvider>
           </ApolloWrapper>
           <ToastContainer autoClose={3000} />

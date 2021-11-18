@@ -1,5 +1,10 @@
 import classNames from 'classnames';
-import { motion, useMotionValue, useTransform } from 'framer-motion';
+import {
+  AnimatePresence,
+  motion,
+  useMotionValue,
+  useTransform,
+} from 'framer-motion';
 
 // For left hand side resizeable https://codesandbox.io/s/icy-architecture-1qtbz?file=/src/index.tsx
 
@@ -35,6 +40,7 @@ export const Resize: React.FunctionComponent<Props> = ({
       <motion.div
         className={classNames('h-screen', className)}
         style={{ width }}
+        animate={false}
       >
         {children}
       </motion.div>
