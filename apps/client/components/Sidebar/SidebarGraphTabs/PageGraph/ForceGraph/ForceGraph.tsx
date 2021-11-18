@@ -104,13 +104,13 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pages }) => {
 
           return (
             <line
+              key={`link-${source.id}-${target.id}`}
               x1={source.x}
               y1={source.y}
               x2={target.x}
               y2={target.y}
               stroke="gray"
               opacity={0.4}
-              key={`link-${link.source}-${link.target}`}
             />
           );
         })}
@@ -127,7 +127,6 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pages }) => {
                     r={node.radius}
                     stroke="black"
                     fill={page?.id === currentPageId ? 'pink' : 'white'}
-                    key={`circle-${node.id}`}
                   />
 
                   <text
@@ -135,7 +134,6 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pages }) => {
                     className="text-xs"
                     x={node.x}
                     y={Number(node.y) + 25}
-                    key={`text-${node.id}`}
                   >
                     {page?.properties.image?.__typename === 'Emoji'
                       ? page.properties.image.emoji
