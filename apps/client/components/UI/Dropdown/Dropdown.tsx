@@ -35,7 +35,7 @@ export const Dropdown: React.FunctionComponent<Props> = ({
       >
         <Menu.Items
           className={classNames(
-            'w-44 bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none py-1 z-50 ',
+            'w-44 bg-white dark:bg-neutral-900 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none py-1 z-50 ',
             { 'absolute left-1': showDirection === 'left' },
             { 'absolute right-1': showDirection === 'right' },
             className
@@ -51,7 +51,7 @@ export const Dropdown: React.FunctionComponent<Props> = ({
                   {({ active }) => (
                     <a
                       className={classNames(
-                        'cursor-pointer hover:bg-gray-100rounded-sm flex items-center w-full px-2 py-1 text-sm text-gray-800',
+                        'cursor-pointer hover:bg-gray-100rounded-sm flex items-center w-full px-2 py-1 text-sm text-gray-800 dark:text-white',
                         { 'bg-gray-100': active }
                       )}
                     >

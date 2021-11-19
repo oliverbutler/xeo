@@ -40,7 +40,7 @@ export const Resize: React.FunctionComponent<Props> = ({
       <motion.div
         className={classNames('h-screen', className)}
         style={{ width }}
-        animate={false}
+        transition={{ duration: 1 }}
       >
         {children}
       </motion.div>

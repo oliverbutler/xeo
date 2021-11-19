@@ -30,15 +30,15 @@ export const Sidebar = () => {
       onSetWidth={setDefaultWidth}
       minWindowWidth={150}
       dragHandleWidth={3}
-      className="bg-gray-50 h-full"
-      dragHandleClassName="bg-gray-50 hover:bg-gray-200"
+      className="bg-gray-50 dark:bg-transparent h-full"
+      dragHandleClassName="bg-gray-50 dark:bg-black hover:bg-gray-200"
     >
-      <div className="bg-gray-50 flex flex-col justify-between h-full">
+      <div className="dark:bg-transparent flex flex-col justify-between h-full">
         <div>
           {user ? <UserRow user={user} /> : <p>Not logged in</p>}
           {favourites.map((page) => (
             <Link href={`/page/${page.id}`} key={page.id}>
-              <SidebarItem className="text-gray-700 text-sm flex items-center">
+              <SidebarItem className="text-gray-700 dark:text-white text-sm flex items-center">
                 <ImageRenderer image={page.properties.image} />
                 <span
                   className={classNames('ml-2', {

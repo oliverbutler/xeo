@@ -10,7 +10,7 @@ interface Props {
 export const PageBlock: React.FunctionComponent<Props> = ({ block }) => {
   return (
     <Link href={`/page/${block.id}`}>
-      <div className="text-left cursor-pointer hover:bg-gray-100 py-0.5 px-1 flex items-center">
+      <div className="text-left cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 py-0.5 px-1 flex items-center">
         <div className="mr-1.5">
           <ImageRenderer image={block.properties.image} />
         </div>

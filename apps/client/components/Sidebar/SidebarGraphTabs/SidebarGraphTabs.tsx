@@ -13,7 +13,7 @@ export const SidebarGraphTabs: React.FunctionComponent = () => {
 
   return (
     <Tab.Group defaultIndex={defaultIndex} onChange={(x) => setDefaultIndex(x)}>
-      <Tab.List className="flex flex-row border-b-gray-200 border-b-2">
+      <Tab.List className="flex flex-row border-b-gray-200 border-b-2 dark:border-gray-800">
         <AnimatePresence>
           {[<MdOutlineAccountTree />, <RiNodeTree />].map((item, index) => (
             <Tab

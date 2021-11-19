@@ -7,6 +7,7 @@ import { ApolloWrapper } from 'components/Wrappers/ApolloWrapper';
 import { IntlWrapper } from 'components/Wrappers/IntlWrapper';
 import { SyncContextProvider } from 'context/SyncContext';
 import { PageContextProvider } from 'context/PageContext';
+import { ThemeProvider } from 'next-themes';
 
 function CustomApp({ Component, pageProps }: AppProps) {
   return (
@@ -17,15 +18,17 @@ function CustomApp({ Component, pageProps }: AppProps) {
       </Head>
       <div className="app">
         <IntlWrapper>
-          <ApolloWrapper>
-            <SyncContextProvider>
-              <PageContextProvider>
-                <main>
-                  <Component {...pageProps} />
-                </main>
-              </PageContextProvider>
-            </SyncContextProvider>
-          </ApolloWrapper>
+          <ThemeProvider attribute="class">
+            <ApolloWrapper>
+              <SyncContextProvider>
+                <PageContextProvider>
+                  <main>
+                    <Component {...pageProps} />
+                  </main>
+                </PageContextProvider>
+              </SyncContextProvider>
+            </ApolloWrapper>
+          </ThemeProvider>
           <ToastContainer autoClose={3000} />
         </IntlWrapper>
       </div>

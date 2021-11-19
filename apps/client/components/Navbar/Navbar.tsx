@@ -10,6 +10,7 @@ import { useBlock } from 'hooks/useBlock';
 import { useRouter } from 'next/dist/client/router';
 import Link from 'next/link';
 import { FiChevronRight, FiMoreHorizontal, FiTrash } from 'react-icons/fi';
+import { DarkModeButton } from './DarkModeButton/DarkModeButton';
 import { FavouriteButton } from './FavouriteButton/FavouriteButton';
 
 export const Navbar: React.FunctionComponent = () => {
@@ -39,7 +40,7 @@ export const Navbar: React.FunctionComponent = () => {
   return (
     <nav
       id="navbar"
-      className="p-2 flex flex-row  justify-between bg-opacity-50 bg-white absolute w-full z-50 backdrop-blur-sm filter"
+      className="p-2 flex flex-row  justify-between bg-opacity-50 bg-white dark:bg-black dark:bg-opacity-50 absolute w-full z-50 backdrop-blur-sm filter"
     >
       <div className="flex flex-row items-center">
         {path.map((block, index) => {
@@ -48,11 +49,12 @@ export const Navbar: React.FunctionComponent = () => {
               <div key={block.id} className="flex flex-row items-center">
                 <Clickable>
                   <Link href={`/page/${block.id}`}>
-                    <a className="mx-0.5 text-gray-700 text-sm flex items-center ">
+                    <a className="mx-0.5 text-gray-700 dark:text-white text-sm flex items-center ">
                       <ImageRenderer image={block.properties.image} />
                       <span
                         className={classNames('ml-2', {
-                          'text-gray-300': !block.properties.title.rawText,
+                          'text-gray-300 dark:text-white':
+                            !block.properties.title.rawText,
                         })}
                       >
                         {block.properties.title.rawText || 'Untitled'}
@@ -61,7 +63,7 @@ export const Navbar: React.FunctionComponent = () => {
                   </Link>
                 </Clickable>
                 {index < path.length - 1 && (
-                  <div className="text-gray-700 text-sm ">
+                  <div className="text-gray-700 dark:text-white text-sm ">
                     <FiChevronRight />
                   </div>
                 )}
@@ -72,6 +74,7 @@ export const Navbar: React.FunctionComponent = () => {
       </div>
       <div className="flex flex-row items-center">
         {isSyncing && <Loading className="text-gray-400 h-3" />}
+        <DarkModeButton />
         <FavouriteButton pageId={currentPageId} />
         <Dropdown
           button={

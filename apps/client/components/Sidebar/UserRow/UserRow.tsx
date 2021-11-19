@@ -23,7 +23,7 @@ export const UserRow: React.FunctionComponent<Props> = ({ user }) => {
   };
 
   return (
-    <div className="flex flex-row items-center w-full justify-between p-2 mb-4 border-b-gray-200 border-2">
+    <div className="flex flex-row items-center w-full justify-between p-2 mb-4 dark:border-gray-800  border-b-2">
       {user.avatar ? (
         <img
           className="w-5 h-5"

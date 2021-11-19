@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import Link from 'next/link';
 import { usePageContext } from 'context/PageContext';
+import { useTheme } from 'next-themes';
 
 interface Props {
   pages: GetPageGraphQuery['pages'];
@@ -25,6 +26,8 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pages }) => {
   const ref = useRef<HTMLDivElement>(null);
 
   const { currentPageId } = usePageContext();
+
+  const { theme } = useTheme();
 
   const width = ref.current?.offsetWidth ?? 0;
   const height = ref.current?.offsetHeight ?? 0;
@@ -120,7 +123,7 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pages }) => {
           if (node.x && node.y) {
             return (
               <Link href={`/page/${page?.id}`} key={node.id}>
-                <g className="cursor-pointer">
+                <g className="cursor-pointer ">
                   <circle
                     cx={node.x}
                     cy={node.y}
@@ -131,7 +134,8 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pages }) => {
 
                   <text
                     textAnchor="middle"
-                    className="text-xs"
+                    className="text-xs text-white"
+                    fill={theme === 'dark' ? 'white' : undefined}
                     x={node.x}
                     y={Number(node.y) + 25}
                   >
