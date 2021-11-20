@@ -11,7 +11,7 @@ export const PageLayout: React.FunctionComponent<Props> = ({
   currentPageId,
 }) => {
   return (
-    <div className="flex xeo-main">
+    <div className="flex xeo-main min-h-screen">
       <Sidebar />
       <div className="w-full relative">
         <Navbar />
