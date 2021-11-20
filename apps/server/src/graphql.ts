@@ -28,6 +28,7 @@ export interface SignUpInput {
 
 export interface RichTextInput {
     rawText: string;
+    content: string;
 }
 
 export interface PagePropertiesInput {
@@ -149,6 +150,7 @@ export interface Image {
 
 export interface RichText {
     rawText: string;
+    content: string;
 }
 
 export interface PageProperties {

@@ -16,6 +16,7 @@ export enum BlockObjectType {
 
 type RichText = {
   rawText: string; // temporarily just dumb text
+  content: string; // draftjs content state stringified FOR NOW
 };
 
 type Emoji = {

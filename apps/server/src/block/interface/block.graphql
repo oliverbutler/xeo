@@ -22,10 +22,12 @@ union EmojiImage = Emoji | Image
 
 type RichText {
   rawText: String!
+  content: String!
 }
 
 input RichTextInput {
   rawText: String!
+  content: String!
 }
 
 type PageProperties {

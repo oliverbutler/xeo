@@ -10,6 +10,8 @@ import { motion } from 'framer-motion';
 import { HeadingType, PageChildrenFragment } from 'generated';
 import { useBlock } from 'hooks/useBlock';
 import { moveFocusToBlock } from '../../DynamicBlock/helpers/block';
+import { convertToRaw, EditorState } from 'draft-js';
+import { emptyContentStateString, emptyRichTextInput } from 'utils/draft';
 
 interface Props {
   block: PageChildrenFragment;
@@ -27,7 +29,9 @@ export const AddButton: React.FunctionComponent<Props> = ({ block }) => {
     const result = await createParagraphBlock({
       parentId: block.parentId,
       afterId: block.id,
-      properties: { text: { rawText: '' } },
+      properties: {
+        text: emptyRichTextInput,
+      },
     });
 
     if (result.data?.createParagraphBlock) {
@@ -39,7 +43,10 @@ export const AddButton: React.FunctionComponent<Props> = ({ block }) => {
     const result = await createHeadingBlock({
       parentId: block.parentId,
       afterId: block.id,
-      properties: { text: { rawText: '' }, variant: type },
+      properties: {
+        text: emptyRichTextInput,
+        variant: type,
+      },
     });
     if (result.data) {
       moveFocusToBlock(result.data.createHeadingBlock.id);
@@ -50,7 +57,7 @@ export const AddButton: React.FunctionComponent<Props> = ({ block }) => {
     const result = await createPage({
       parentId: block.parentId,
       afterId: block.id,
-      properties: { title: { rawText: '' } },
+      properties: { title: emptyRichTextInput },
     });
 
     if (result.data) {
@@ -62,7 +69,7 @@ export const AddButton: React.FunctionComponent<Props> = ({ block }) => {
     const result = await createDatabase({
       parentId: block.parentId,
       afterId: block.id,
-      properties: { title: { rawText: '' } },
+      properties: { title: emptyRichTextInput },
     });
 
     if (result.data) {

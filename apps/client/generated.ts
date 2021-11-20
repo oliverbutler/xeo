@@ -321,10 +321,12 @@ export type QueryPathArgs = {
 
 export type RichText = {
   __typename?: 'RichText';
+  content: Scalars['String'];
   rawText: Scalars['String'];
 };
 
 export type RichTextInput = {
+  content: Scalars['String'];
   rawText: Scalars['String'];
 };
 
@@ -381,13 +383,13 @@ export type GetPathQueryVariables = Exact<{
 
 export type GetPathQuery = { __typename?: 'Query', path: Array<{ __typename?: 'Page', id: string, properties: { __typename?: 'PageProperties', title: { __typename?: 'RichText', rawText: string }, image?: { __typename?: 'Emoji', emoji: string } | { __typename?: 'Image', image: string } | null | undefined } }> };
 
-export type PagePropertiesFragment = { __typename?: 'PageProperties', favourite: boolean, image?: { __typename: 'Emoji', emoji: string } | { __typename: 'Image', image: string } | null | undefined, title: { __typename?: 'RichText', rawText: string } };
+export type PagePropertiesFragment = { __typename?: 'PageProperties', favourite: boolean, image?: { __typename: 'Emoji', emoji: string } | { __typename: 'Image', image: string } | null | undefined, title: { __typename?: 'RichText', rawText: string, content: string } };
 
-export type PageChildren_ContentBlock_Fragment = { __typename: 'ContentBlock', id: string, parentId?: string | null | undefined, properties: { __typename?: 'HeadingProperties', variant: HeadingType, text: { __typename?: 'RichText', rawText: string } } | { __typename?: 'ParagraphProperties', text: { __typename?: 'RichText', rawText: string } } };
+export type PageChildren_ContentBlock_Fragment = { __typename: 'ContentBlock', id: string, parentId?: string | null | undefined, properties: { __typename?: 'HeadingProperties', variant: HeadingType, text: { __typename?: 'RichText', rawText: string, content: string } } | { __typename?: 'ParagraphProperties', text: { __typename?: 'RichText', rawText: string, content: string } } };
 
-export type PageChildren_Database_Fragment = { __typename: 'Database', id: string, parentId?: string | null | undefined, properties: { __typename?: 'DatabaseProperties', title: { __typename?: 'RichText', rawText: string } } };
+export type PageChildren_Database_Fragment = { __typename: 'Database', id: string, parentId?: string | null | undefined, properties: { __typename?: 'DatabaseProperties', title: { __typename?: 'RichText', rawText: string, content: string } } };
 
-export type PageChildren_Page_Fragment = { __typename: 'Page', id: string, parentId?: string | null | undefined, properties: { __typename?: 'PageProperties', favourite: boolean, image?: { __typename: 'Emoji', emoji: string } | { __typename: 'Image', image: string } | null | undefined, title: { __typename?: 'RichText', rawText: string } } };
+export type PageChildren_Page_Fragment = { __typename: 'Page', id: string, parentId?: string | null | undefined, properties: { __typename?: 'PageProperties', favourite: boolean, image?: { __typename: 'Emoji', emoji: string } | { __typename: 'Image', image: string } | null | undefined, title: { __typename?: 'RichText', rawText: string, content: string } } };
 
 export type PageChildrenFragment = PageChildren_ContentBlock_Fragment | PageChildren_Database_Fragment | PageChildren_Page_Fragment;
 
@@ -397,7 +399,7 @@ export type GetPageQueryVariables = Exact<{
 }>;
 
 
-export type GetPageQuery = { __typename?: 'Query', page: { __typename?: 'Page', id: string, properties: { __typename?: 'PageProperties', favourite: boolean, childrenOrder: Array<string>, image?: { __typename: 'Emoji', emoji: string } | { __typename: 'Image', image: string } | null | undefined, title: { __typename?: 'RichText', rawText: string }, coverImage?: { __typename?: 'CoverImage', gradient?: string | null | undefined } | null | undefined }, children: Array<{ __typename: 'ContentBlock', id: string, parentId?: string | null | undefined, properties: { __typename?: 'HeadingProperties', variant: HeadingType, text: { __typename?: 'RichText', rawText: string } } | { __typename?: 'ParagraphProperties', text: { __typename?: 'RichText', rawText: string } } } | { __typename: 'Database', id: string, parentId?: string | null | undefined, properties: { __typename?: 'DatabaseProperties', title: { __typename?: 'RichText', rawText: string } } } | { __typename: 'Page', id: string, parentId?: string | null | undefined, properties: { __typename?: 'PageProperties', favourite: boolean, image?: { __typename: 'Emoji', emoji: string } | { __typename: 'Image', image: string } | null | undefined, title: { __typename?: 'RichText', rawText: string } } }> } };
+export type GetPageQuery = { __typename?: 'Query', page: { __typename?: 'Page', id: string, properties: { __typename?: 'PageProperties', favourite: boolean, childrenOrder: Array<string>, image?: { __typename: 'Emoji', emoji: string } | { __typename: 'Image', image: string } | null | undefined, title: { __typename?: 'RichText', rawText: string }, coverImage?: { __typename?: 'CoverImage', gradient?: string | null | undefined } | null | undefined }, children: Array<{ __typename: 'ContentBlock', id: string, parentId?: string | null | undefined, properties: { __typename?: 'HeadingProperties', variant: HeadingType, text: { __typename?: 'RichText', rawText: string, content: string } } | { __typename?: 'ParagraphProperties', text: { __typename?: 'RichText', rawText: string, content: string } } } | { __typename: 'Database', id: string, parentId?: string | null | undefined, properties: { __typename?: 'DatabaseProperties', title: { __typename?: 'RichText', rawText: string, content: string } } } | { __typename: 'Page', id: string, parentId?: string | null | undefined, properties: { __typename?: 'PageProperties', favourite: boolean, image?: { __typename: 'Emoji', emoji: string } | { __typename: 'Image', image: string } | null | undefined, title: { __typename?: 'RichText', rawText: string, content: string } } }> } };
 
 export type GetPageGraphQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -467,7 +469,7 @@ export type CreateHeadingBlockMutation = { __typename?: 'Mutation', createHeadin
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, username: string, firstName: string, lastName: string, avatar?: string | null | undefined, pages?: Array<{ __typename: 'Page', id: string, properties: { __typename?: 'PageProperties', favourite: boolean, title: { __typename?: 'RichText', rawText: string }, image?: { __typename?: 'Emoji', emoji: string } | { __typename?: 'Image', image: string } | null | undefined } }> | null | undefined } };
+export type GetMeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, username: string, firstName: string, lastName: string, avatar?: string | null | undefined, pages?: Array<{ __typename: 'Page', id: string, properties: { __typename?: 'PageProperties', favourite: boolean, title: { __typename?: 'RichText', rawText: string, content: string }, image?: { __typename?: 'Emoji', emoji: string } | { __typename?: 'Image', image: string } | null | undefined } }> | null | undefined } };
 
 export type UpdateDatabaseMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -490,6 +492,7 @@ export const PagePropertiesFragmentDoc = gql`
   }
   title {
     rawText
+    content
   }
   favourite
 }
@@ -508,6 +511,7 @@ export const PageChildrenFragmentDoc = gql`
     properties {
       title {
         rawText
+        content
       }
     }
   }
@@ -516,11 +520,13 @@ export const PageChildrenFragmentDoc = gql`
       ... on ParagraphProperties {
         text {
           rawText
+          content
         }
       }
       ... on HeadingProperties {
         text {
           rawText
+          content
         }
         variant
       }
@@ -1017,6 +1023,7 @@ export const GetMeDocument = gql`
         favourite
         title {
           rawText
+          content
         }
         image {
           ... on Image {

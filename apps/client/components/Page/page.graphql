@@ -10,6 +10,7 @@ fragment PageProperties on PageProperties {
   }
   title {
     rawText
+    content
   }
   favourite
 }
@@ -27,6 +28,7 @@ fragment PageChildren on Block {
     properties {
       title {
         rawText
+        content
       }
     }
   }
@@ -35,11 +37,13 @@ fragment PageChildren on Block {
       ... on ParagraphProperties {
         text {
           rawText
+          content
         }
       }
       ... on HeadingProperties {
         text {
           rawText
+          content
         }
         variant
       }

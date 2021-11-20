@@ -12,6 +12,7 @@ query GetMe {
         favourite
         title {
           rawText
+          content
         }
         image {
           ... on Image {

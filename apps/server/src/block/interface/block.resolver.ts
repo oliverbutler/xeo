@@ -29,6 +29,12 @@ export class BlockResolver {
     return await this.blockService.getPageById(id, { populateSubTree });
   }
 
+  @Query('block')
+  @UseGuards(GqlAuthGuard)
+  async getBlock(@Args('id') id: string): Promise<Block> {
+    return await this.blockService.getBlockById(id);
+  }
+
   @Query('pages')
   @UseGuards(GqlAuthGuard)
   async getPages(

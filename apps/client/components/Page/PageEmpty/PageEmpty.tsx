@@ -3,6 +3,7 @@ import { Clickable } from 'components/UI/Clickable/Clickable';
 import { GetPageQuery } from 'generated';
 import { useBlock } from 'hooks/useBlock';
 import { FiPlus } from 'react-icons/fi';
+import { emptyRichTextInput } from 'utils/draft';
 
 interface Props {
   page: GetPageQuery['page'];
@@ -14,7 +15,7 @@ export const PageEmpty: React.FunctionComponent<Props> = ({ page }) => {
   const handleAddFirstBlock = async () => {
     const result = await createParagraphBlock({
       parentId: page.id,
-      properties: { text: { rawText: '' } },
+      properties: { text: emptyRichTextInput },
     });
     if (result.data) {
       await moveFocusToBlock(result.data.createParagraphBlock.id);
