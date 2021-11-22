@@ -69,4 +69,16 @@ export class PageService {
 
     return page;
   }
+
+  async update(
+    id: Page['id'],
+    input: Prisma.PageUncheckedUpdateInput
+  ): Promise<Page> {
+    const page = await this.prisma.page.update({
+      where: { id },
+      data: input,
+    });
+
+    return page;
+  }
 }

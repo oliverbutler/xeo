@@ -41,6 +41,13 @@ export interface CreateTextBlockInput {
     parentPageId: string;
 }
 
+export interface UpdateTextBlockInput {
+    richText?: Nullable<string>;
+    rawText?: Nullable<string>;
+    variant?: Nullable<BlockVariant>;
+    parentPageId?: Nullable<string>;
+}
+
 export interface CreateDatabaseInput {
     id?: Nullable<string>;
     schema: string;
@@ -81,8 +88,9 @@ export interface IMutation {
     signUp(input: SignUpInput): User | Promise<User>;
     signIn(username: string, password: string): AuthResponse | Promise<AuthResponse>;
     createTextBlock(input: CreateTextBlockInput): Block | Promise<Block>;
-    updateBlockLocation(id: string, parentId: string, afterId?: Nullable<string>): boolean | Promise<boolean>;
+    updateBlockLocation(id: string, parentId: string, afterId?: Nullable<string>): Block | Promise<Block>;
     deleteBlock(id: string): boolean | Promise<boolean>;
+    updateTextBlock(id: string, input?: Nullable<UpdateTextBlockInput>): Block | Promise<Block>;
     createDatabase(input: CreateDatabaseInput): Database | Promise<Database>;
     linkPage(fromId: string, toId: string): PageLink | Promise<PageLink>;
     createPage(input: CreatePageInput): Page | Promise<Page>;

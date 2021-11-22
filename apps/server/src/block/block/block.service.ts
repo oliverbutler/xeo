@@ -44,7 +44,10 @@ export class BlockService {
     return await this.prisma.block.findMany({ where: filters });
   }
 
-  async update(id: string, input: Prisma.BlockUpdateInput): Promise<Block> {
+  async update(
+    id: string,
+    input: Prisma.BlockUncheckedUpdateInput
+  ): Promise<Block> {
     return this.prisma.block.update({ where: { id }, data: input });
   }
 

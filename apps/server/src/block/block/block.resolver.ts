@@ -9,6 +9,7 @@ import {
   BlockType,
   BlockVariant,
   CreateTextBlockInput,
+  UpdateTextBlockInput,
 } from '../../graphql';
 import { BlockService } from './block.service';
 
@@ -75,9 +76,28 @@ export class BlockResolver {
   async deleteBlock(
     @CurrentUser() user: CurrentAuthUser,
     @Args('id') id: string
-  ): Promise<boolean> {
-    await this.blockService.delete(id);
+  ): Promise<BlockWithoutRelations> {
+    const deletedBlock = await this.blockService.delete(id);
 
-    return true;
+    return mapBlockToGraphQL(deletedBlock);
+  }
+
+  @Mutation('updateTextBlock')
+  @UseGuards(GqlAuthGuard)
+  async updateTextBlock(
+    @CurrentUser() user: CurrentAuthUser,
+    @Args('id') id: string,
+    @Args('input') input: UpdateTextBlockInput
+  ): Promise<BlockWithoutRelations> {
+    const block = await this.blockService.update(id, {
+      richText: input.richText ?? undefined,
+      rawText: input.rawText ?? undefined,
+      variant: input.variant ?? undefined,
+      parentPageId: input.parentPageId ?? undefined,
+      updatedAt: new Date(),
+      updatedById: user.id,
+    });
+
+    return mapBlockToGraphQL(block);
   }
 }

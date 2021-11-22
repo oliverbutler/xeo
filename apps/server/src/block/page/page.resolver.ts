@@ -7,7 +7,7 @@ import {
   Resolver,
   Parent,
 } from '@nestjs/graphql';
-import { Page, PageLink } from '@prisma/client';
+import { Page } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import { CurrentUser, GqlAuthGuard } from '../../auth/auth.guard';
 import { CurrentAuthUser } from '../../auth/strategies/jwt.strategy';
@@ -15,8 +15,8 @@ import {
   PageFilters,
   Page as PageGraphQL,
   CreatePageInput,
-  PageLink as PageLinkGraphQL,
   User,
+  UpdatePageInput,
 } from '../../graphql';
 import { UserService } from '../../user/user.service';
 import { BlockService } from '../block/block.service';
@@ -142,6 +142,26 @@ export class PageResolver {
     @Args('id') id: string
   ): Promise<PageGraphQlWithoutRelations> {
     const page = await this.pageService.delete(id);
+
+    return mapPageToGraphQL(page);
+  }
+
+  @Mutation('updatePage')
+  @UseGuards(GqlAuthGuard)
+  async updatePage(
+    @CurrentUser() user: CurrentAuthUser,
+    @Args('id') id: string,
+    @Args('input') input: UpdatePageInput
+  ): Promise<PageGraphQlWithoutRelations> {
+    const page = await this.pageService.update(id, {
+      richText: input.richText ?? undefined,
+      rawText: input.rawText ?? undefined,
+      coverGradient: input.coverGradient ?? undefined,
+      emoji: input.emoji ?? undefined,
+      favourite: input.favourite ?? undefined,
+      updatedAt: new Date(),
+      updatedById: user.id,
+    });
 
     return mapPageToGraphQL(page);
   }
