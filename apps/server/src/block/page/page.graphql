@@ -1,0 +1,64 @@
+type Page {
+  id: ID!
+  blocks: [Block!]!
+  emoji: String
+  coverGradient: String
+  richText: String! # TODO make scalar
+  rawText: String!
+  # fields: String!
+  createdAt: String!
+  updatedAt: String!
+  softDeletedAt: String
+  createdBy: User!
+  createdById: ID!
+  updatedBy: User!
+  updatedById: ID!
+  backLinks: [Page!]!
+  links: [Page!]!
+  database: Database
+  databaseId: ID
+  favourite: Boolean!
+}
+
+input PageFilters {
+  favourite: Boolean
+}
+
+input CreatePageInput {
+  id: ID
+  emoji: String
+  richText: String!
+  rawText: String!
+}
+
+input UpdatePageInput {
+  richText: String
+  rawText: String
+  coverGradient: String
+  emoji: String
+  favourite: Boolean
+}
+
+type PageLink {
+  from: Page!
+  fromId: ID!
+  to: Page!
+  toId: ID!
+  createdBy: User!
+  createdById: ID!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type Query {
+  page(id: ID!): Page!
+  pages(filters: PageFilters): [Page!]!
+  path(id: ID!): [Page!]!
+  pageLinks: [PageLink!]!
+}
+
+type Mutation {
+  createPage(input: CreatePageInput!): Page!
+  updatePage(id: ID!, input: UpdatePageInput!): Page!
+  linkPage(fromId: ID!, toId: ID!): PageLink!
+}

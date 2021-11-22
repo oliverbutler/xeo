@@ -1,0 +1,58 @@
+type Block {
+  id: ID!
+  # type: BlockType!
+  richText: String! # TODO make scalar
+  rawText: String!
+  variant: BlockVariant!
+  rank: Int!
+  parentPage: Page!
+  parentPageId: ID!
+  parentBlock: Block
+  parentBlockId: ID
+  children: [Block!]!
+  createdAt: String!
+  updatedAt: String!
+  softDeletedAt: String
+  createdBy: User!
+  createdById: ID!
+  updatedBy: User!
+  updatedById: ID!
+}
+
+enum BlockType {
+  TEXT
+  PAGE_LINK
+  LIST
+  LIST_ITEM
+}
+
+enum BlockVariant {
+  PARAGRAPH
+  HEADING_1
+  HEADING_2
+  HEADING_3
+}
+
+input BlockFilters {
+  type: BlockType
+  parentPageId: ID
+}
+
+input CreateTextBlockInput {
+  id: ID
+  richText: String!
+  rawText: String!
+  variant: BlockVariant!
+  parentPageId: ID!
+}
+
+type Query {
+  blocks(filters: BlockFilters): [Block!]!
+  block(id: ID!): Block!
+}
+
+type Mutation {
+  createTextBlock(input: CreateTextBlockInput!): Block!
+  updateBlockLocation(id: ID!, parentId: ID!, afterId: ID): Boolean!
+  deleteBlock(id: ID!): Boolean!
+}
