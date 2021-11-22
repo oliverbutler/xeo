@@ -61,22 +61,4 @@ export class PageService {
   async create(input: Prisma.PageUncheckedCreateInput): Promise<Page> {
     return await this.prisma.page.create({ data: input });
   }
-
-  async getAllLinks(where?: Prisma.PageLinkWhereInput): Promise<PageLink[]> {
-    return await this.prisma.pageLink.findMany({ where });
-  }
-
-  async createPageLink(
-    sourcePageId: Page['id'],
-    targetPageId: Page['id'],
-    userId: User['id']
-  ): Promise<PageLink> {
-    return await this.prisma.pageLink.create({
-      data: {
-        linkFromId: sourcePageId,
-        linkToId: targetPageId,
-        createdById: userId,
-      },
-    });
-  }
 }

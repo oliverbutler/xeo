@@ -39,26 +39,13 @@ input UpdatePageInput {
   favourite: Boolean
 }
 
-type PageLink {
-  from: Page!
-  fromId: ID!
-  to: Page!
-  toId: ID!
-  createdBy: User!
-  createdById: ID!
-  createdAt: String!
-  updatedAt: String!
-}
-
 type Query {
   page(id: ID!): Page!
   pages(filters: PageFilters): [Page!]!
   path(id: ID!): [Page!]!
-  pageLinks: [PageLink!]!
 }
 
 type Mutation {
   createPage(input: CreatePageInput!): Page!
   updatePage(id: ID!, input: UpdatePageInput!): Page!
-  linkPage(fromId: ID!, toId: ID!): PageLink!
 }
