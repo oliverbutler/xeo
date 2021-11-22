@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-import { Editable } from 'components/Editable/Editable';
 import { HeadingType, PageChildren_ContentBlock_Fragment } from 'generated';
 import { useBlock } from 'hooks/useBlock';
 import { useDebounce } from 'hooks/useDebounce';
@@ -25,7 +24,7 @@ interface Props {
 }
 
 export const TextBlock: React.FunctionComponent<Props> = ({ block }) => {
-  const [editorState, setEditorState] = React.useState<EditorState>(() =>
+  const [editorState, setEditorState] = useState<EditorState>(() =>
     EditorState.createWithContent(
       convertFromRaw(JSON.parse(block.properties.text.content))
     )
@@ -87,15 +86,15 @@ export const TextBlock: React.FunctionComponent<Props> = ({ block }) => {
     const newState = RichUtils.handleKeyCommand(editorState, command);
 
     // Handle block deletion
-    if (
-      command === 'backspace' &&
-      editorState.getCurrentContent().getPlainText() === ''
-    ) {
-      deleteBlock(block.id).then(() => {
-        moveFocusToPreviousBlock(block.id);
-      });
-      return 'handled';
-    }
+    // if (
+    //   command === 'backspace' &&
+    //   editorState.getCurrentContent().getPlainText() === ''
+    // ) {
+    //   deleteBlock(block.id).then(() => {
+    //     moveFocusToPreviousBlock(block.id);
+    //   });
+    //   return 'handled';
+    // }
 
     // Handle block creation
     if (command === 'split-block') {
