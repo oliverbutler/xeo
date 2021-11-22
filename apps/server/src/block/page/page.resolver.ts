@@ -121,4 +121,15 @@ export class PageResolver {
 
     return mapPageToGraphQL(page);
   }
+
+  @Mutation('deletePage')
+  @UseGuards(GqlAuthGuard)
+  async deletePage(
+    @CurrentUser() user: CurrentAuthUser,
+    @Args('id') id: string
+  ): Promise<PageGraphQlWithoutRelations> {
+    const page = await this.pageService.delete(id);
+
+    return mapPageToGraphQL(page);
+  }
 }

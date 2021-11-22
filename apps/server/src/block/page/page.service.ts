@@ -61,4 +61,12 @@ export class PageService {
   async create(input: Prisma.PageUncheckedCreateInput): Promise<Page> {
     return await this.prisma.page.create({ data: input });
   }
+
+  async delete(id: Page['id']): Promise<Page> {
+    const page = await this.prisma.page.delete({
+      where: { id },
+    });
+
+    return page;
+  }
 }

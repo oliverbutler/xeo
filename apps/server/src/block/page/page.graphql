@@ -42,10 +42,10 @@ input UpdatePageInput {
 type Query {
   page(id: ID!): Page!
   pages(filters: PageFilters): [Page!]!
-  path(id: ID!): [Page!]!
 }
 
 type Mutation {
   createPage(input: CreatePageInput!): Page!
   updatePage(id: ID!, input: UpdatePageInput!): Page!
+  deletePage(id: ID!): Page!
 }

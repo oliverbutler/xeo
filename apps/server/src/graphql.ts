@@ -86,6 +86,7 @@ export interface IMutation {
     linkPage(fromId: string, toId: string): PageLink | Promise<PageLink>;
     createPage(input: CreatePageInput): Page | Promise<Page>;
     updatePage(id: string, input: UpdatePageInput): Page | Promise<Page>;
+    deletePage(id: string): Page | Promise<Page>;
 }
 
 export interface Block {
