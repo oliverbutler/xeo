@@ -1,9 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AuthResponse, SignUpInput } from '../../graphql';
-import { User, UserWithoutRelations } from '../../user/core/user.entity';
-import { UserService } from '../../user/core/user.service';
+import { AuthResponse, SignUpInput } from '../graphql';
+import { UserService } from '../user/user.service';
 import * as bcrypt from 'bcrypt';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +15,7 @@ export class AuthService {
   async validateUser(
     username: User['username'],
     password: string
-  ): Promise<UserWithoutRelations> {
+  ): Promise<User> {
     const user = await this.userService.getByUsername(username);
 
     const isMatch = await bcrypt.compare(password, user.passwordHash);
@@ -42,7 +42,12 @@ export class AuthService {
   async registerUser(userInput: SignUpInput): Promise<User> {
     const passwordHash = await bcrypt.hash(userInput.password, 12);
 
-    const user = await this.userService.create({ ...userInput, passwordHash });
+    const user = await this.userService.create({
+      firstName: userInput.firstName,
+      lastName: userInput.lastName,
+      username: userInput.username,
+      passwordHash,
+    });
 
     return user;
   }
