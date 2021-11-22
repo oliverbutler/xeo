@@ -1,8 +1,8 @@
 type User {
   id: ID!
-  username: String!
   firstName: String!
   lastName: String!
+  username: String!
   avatar: String
   pages(filters: BlockFilters): [Page!]
 }

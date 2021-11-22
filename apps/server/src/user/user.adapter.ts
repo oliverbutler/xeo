@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { User } from '../core/user.entity';
-import { UserRepository } from './user.repository';
+import { User } from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
 
 export interface CreateUserDto {
   username: string;
@@ -11,14 +11,14 @@ export interface CreateUserDto {
 
 @Injectable()
 export class UserAdapter {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   public async getAll(): Promise<User[]> {
-    return await this.userRepository.find();
+    return await this.prismaService.user.findMany();
   }
 
   public async getById(id: User['id']): Promise<User> {
-    const user = await this.userRepository.findOne(id);
+    const user = await this.prismaService.user.findUnique({ where: { id } });
 
     if (!user) {
       throw new BadRequestException(`UserAdapter > User  ${id} not found`);
@@ -28,7 +28,9 @@ export class UserAdapter {
   }
 
   public async getByUsername(username: User['username']): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { username } });
+    const user = await this.prismaService.user.findUnique({
+      where: { username },
+    });
 
     if (!user) {
       throw new BadRequestException(
@@ -40,7 +42,7 @@ export class UserAdapter {
   }
 
   public async createUser(user: CreateUserDto): Promise<User> {
-    const existingUser = await this.userRepository.findOne({
+    const existingUser = await this.prismaService.user.findUnique({
       where: { username: user.username },
     });
 
@@ -50,6 +52,6 @@ export class UserAdapter {
       );
     }
 
-    return await this.userRepository.save(user);
+    return await this.prismaService.user.create({ data: user });
   }
 }

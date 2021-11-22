@@ -1,16 +1,12 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserService } from './core/user.service';
-import { UserRepository } from './infrastructure/user.repository';
+import { UserService } from './user.service';
 import { BlockModule } from '../block/block.module';
-import { UserResolver } from './interface/user.resolver';
-import { UserAdapter } from './infrastructure/user.adapter';
+import { UserResolver } from './user.resolver';
+import { UserAdapter } from './user.adapter';
+import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([UserRepository]),
-    forwardRef(() => BlockModule),
-  ],
+  imports: [forwardRef(() => BlockModule), PrismaModule],
   providers: [UserService, UserResolver, UserAdapter],
   exports: [UserService],
 })
