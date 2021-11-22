@@ -61,6 +61,7 @@ export interface CreatePageInput {
     emoji?: Nullable<string>;
     richText: string;
     rawText: string;
+    linkedFromPageId?: Nullable<string>;
 }
 
 export interface UpdatePageInput {
@@ -117,7 +118,6 @@ export interface IQuery {
     pageLinks(): PageLink[] | Promise<PageLink[]>;
     page(id: string): Page | Promise<Page>;
     pages(filters?: Nullable<PageFilters>): Page[] | Promise<Page[]>;
-    path(id: string): Page[] | Promise<Page[]>;
     me(): User | Promise<User>;
     users(): User[] | Promise<User[]>;
 }

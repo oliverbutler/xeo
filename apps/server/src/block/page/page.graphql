@@ -29,6 +29,7 @@ input CreatePageInput {
   emoji: String
   richText: String!
   rawText: String!
+  linkedFromPageId: ID
 }
 
 input UpdatePageInput {

@@ -8,6 +8,7 @@ import {
   Parent,
 } from '@nestjs/graphql';
 import { Page, PageLink } from '@prisma/client';
+import { randomUUID } from 'crypto';
 import { CurrentUser, GqlAuthGuard } from '../../auth/auth.guard';
 import { CurrentAuthUser } from '../../auth/strategies/jwt.strategy';
 import {
@@ -19,6 +20,7 @@ import {
 } from '../../graphql';
 import { UserService } from '../../user/user.service';
 import { BlockService } from '../block/block.service';
+import { PageLinkService } from '../page-link/page-link.service';
 
 import { PageService } from './page.service';
 
@@ -41,6 +43,7 @@ const mapPageToGraphQL = (page: Page): PageGraphQlWithoutRelations => {
 export class PageResolver {
   constructor(
     private readonly pageService: PageService,
+    private readonly pageLinkService: PageLinkService,
     private readonly blockService: BlockService,
     private readonly userService: UserService
   ) {}
@@ -109,8 +112,10 @@ export class PageResolver {
     @CurrentUser() user: CurrentAuthUser,
     @Args('input') input: CreatePageInput
   ): Promise<PageGraphQlWithoutRelations> {
+    const id = input.id ?? randomUUID();
+
     const page = await this.pageService.create({
-      id: input.id ?? undefined,
+      id,
       emoji: input.emoji,
       richText: JSON.parse(input.richText),
       rawText: input.rawText,
@@ -118,6 +123,14 @@ export class PageResolver {
       updatedById: user.id,
       fields: {},
     });
+
+    if (input.linkedFromPageId) {
+      this.pageLinkService.createPageLink(
+        input.linkedFromPageId,
+        page.id,
+        user.id
+      );
+    }
 
     return mapPageToGraphQL(page);
   }
