@@ -1,11 +1,12 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { Block } from '@prisma/client';
+import { Block, block_type_enum } from '@prisma/client';
 import { CurrentUser, GqlAuthGuard } from '../../auth/auth.guard';
 import { CurrentAuthUser } from '../../auth/strategies/jwt.strategy';
 import {
   Block as BlockGraphQL,
   BlockFilters,
+  BlockType,
   BlockVariant,
   CreateTextBlockInput,
 } from '../../graphql';
@@ -20,6 +21,7 @@ const mapBlockToGraphQL = (block: Block): BlockWithoutRelations => {
   return {
     ...block,
     richText: JSON.stringify(block.richText),
+    type: block.type as BlockType,
     variant: block.variant as BlockVariant,
     createdAt: block.createdAt.toISOString(),
     updatedAt: block.updatedAt.toISOString(),
@@ -56,7 +58,7 @@ export class BlockResolver {
     @Args('input') input: CreateTextBlockInput
   ): Promise<BlockWithoutRelations> {
     const block = await this.blockService.createTextBlock({
-      type: 'TEXT',
+      type: block_type_enum.TEXT,
       richText: input.richText,
       rawText: input.rawText,
       rank: 0,

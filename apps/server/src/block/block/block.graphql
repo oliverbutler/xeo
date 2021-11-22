@@ -1,6 +1,6 @@
 type Block {
   id: ID!
-  # type: BlockType!
+  type: BlockType!
   richText: String! # TODO make scalar
   rawText: String!
   variant: BlockVariant!

@@ -90,6 +90,7 @@ export interface IMutation {
 
 export interface Block {
     id: string;
+    type: BlockType;
     richText: string;
     rawText: string;
     variant: BlockVariant;
