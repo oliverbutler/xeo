@@ -83,9 +83,9 @@ export interface IMutation {
     updateBlockLocation(id: string, parentId: string, afterId?: Nullable<string>): boolean | Promise<boolean>;
     deleteBlock(id: string): boolean | Promise<boolean>;
     createDatabase(input: CreateDatabaseInput): Database | Promise<Database>;
+    linkPage(fromId: string, toId: string): PageLink | Promise<PageLink>;
     createPage(input: CreatePageInput): Page | Promise<Page>;
     updatePage(id: string, input: UpdatePageInput): Page | Promise<Page>;
-    linkPage(fromId: string, toId: string): PageLink | Promise<PageLink>;
 }
 
 export interface Block {
@@ -112,10 +112,10 @@ export interface IQuery {
     blocks(filters?: Nullable<BlockFilters>): Block[] | Promise<Block[]>;
     block(id: string): Block | Promise<Block>;
     databases(input: DatabaseFilters): Database[] | Promise<Database[]>;
+    pageLinks(): PageLink[] | Promise<PageLink[]>;
     page(id: string): Page | Promise<Page>;
     pages(filters?: Nullable<PageFilters>): Page[] | Promise<Page[]>;
     path(id: string): Page[] | Promise<Page[]>;
-    pageLinks(): PageLink[] | Promise<PageLink[]>;
     me(): User | Promise<User>;
     users(): User[] | Promise<User[]>;
 }
@@ -132,6 +132,17 @@ export interface Database {
     softDeletedAt?: Nullable<string>;
     createdBy: User;
     createdById: string;
+}
+
+export interface PageLink {
+    from: Page;
+    fromId: string;
+    to: Page;
+    toId: string;
+    createdBy: User;
+    createdById: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface Page {
@@ -153,17 +164,6 @@ export interface Page {
     database?: Nullable<Database>;
     databaseId?: Nullable<string>;
     favourite: boolean;
-}
-
-export interface PageLink {
-    from: Page;
-    fromId: string;
-    to: Page;
-    toId: string;
-    createdBy: User;
-    createdById: string;
-    createdAt: string;
-    updatedAt: string;
 }
 
 export interface User {

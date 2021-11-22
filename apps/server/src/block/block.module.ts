@@ -8,6 +8,7 @@ import { DatabaseService } from './database/database.service';
 import { PageResolver } from './page/page.resolver';
 import { BlockResolver } from './block/block.resolver';
 import { PrismaModule } from '../prisma/prisma.module';
+import { PageLinkService } from './page-link/page-link.service';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { PrismaModule } from '../prisma/prisma.module';
     PageService,
     BlockService,
     DatabaseService,
+    PageLinkService,
   ],
   exports: [BlockService, PageService, DatabaseService],
 })
