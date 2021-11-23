@@ -113,6 +113,7 @@ export type Mutation = {
   linkPage: PageLink;
   signIn: AuthResponse;
   signUp: User;
+  unlinkPage: PageLink;
   updateBlockLocation: Block;
   updatePage: Page;
   updateTextBlock: Block;
@@ -158,6 +159,12 @@ export type MutationSignInArgs = {
 
 export type MutationSignUpArgs = {
   input: SignUpInput;
+};
+
+
+export type MutationUnlinkPageArgs = {
+  fromId: Scalars['ID'];
+  toId: Scalars['ID'];
 };
 
 
@@ -293,7 +300,7 @@ export type User = {
 
 
 export type UserPagesArgs = {
-  filters?: Maybe<BlockFilters>;
+  filters?: Maybe<PageFilters>;
 };
 
 export type SignInMutationVariables = Exact<{
@@ -324,6 +331,13 @@ export type UpdateTextBlockMutationVariables = Exact<{
 
 
 export type UpdateTextBlockMutation = { __typename?: 'Mutation', updateTextBlock: { __typename?: 'Block', id: string } };
+
+export type CreateTextBlockMutationVariables = Exact<{
+  input: CreateTextBlockInput;
+}>;
+
+
+export type CreateTextBlockMutation = { __typename?: 'Mutation', createTextBlock: { __typename?: 'Block', id: string } };
 
 export type UpdatePageMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -365,7 +379,7 @@ export type DeleteBlockMutation = { __typename?: 'Mutation', deleteBlock: boolea
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, username: string, firstName: string, lastName: string, avatar?: string | null | undefined } };
+export type GetMeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, username: string, firstName: string, lastName: string, avatar?: string | null | undefined, pages?: Array<{ __typename?: 'Page', id: string, rawText: string, emoji?: string | null | undefined }> | null | undefined } };
 
 
 export const SignInDocument = gql`
@@ -525,6 +539,39 @@ export function useUpdateTextBlockMutation(baseOptions?: Apollo.MutationHookOpti
 export type UpdateTextBlockMutationHookResult = ReturnType<typeof useUpdateTextBlockMutation>;
 export type UpdateTextBlockMutationResult = Apollo.MutationResult<UpdateTextBlockMutation>;
 export type UpdateTextBlockMutationOptions = Apollo.BaseMutationOptions<UpdateTextBlockMutation, UpdateTextBlockMutationVariables>;
+export const CreateTextBlockDocument = gql`
+    mutation CreateTextBlock($input: CreateTextBlockInput!) {
+  createTextBlock(input: $input) {
+    id
+  }
+}
+    `;
+export type CreateTextBlockMutationFn = Apollo.MutationFunction<CreateTextBlockMutation, CreateTextBlockMutationVariables>;
+
+/**
+ * __useCreateTextBlockMutation__
+ *
+ * To run a mutation, you first call `useCreateTextBlockMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTextBlockMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTextBlockMutation, { data, loading, error }] = useCreateTextBlockMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateTextBlockMutation(baseOptions?: Apollo.MutationHookOptions<CreateTextBlockMutation, CreateTextBlockMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateTextBlockMutation, CreateTextBlockMutationVariables>(CreateTextBlockDocument, options);
+      }
+export type CreateTextBlockMutationHookResult = ReturnType<typeof useCreateTextBlockMutation>;
+export type CreateTextBlockMutationResult = Apollo.MutationResult<CreateTextBlockMutation>;
+export type CreateTextBlockMutationOptions = Apollo.BaseMutationOptions<CreateTextBlockMutation, CreateTextBlockMutationVariables>;
 export const UpdatePageDocument = gql`
     mutation UpdatePage($id: ID!, $input: UpdatePageInput!) {
   updatePage(id: $id, input: $input) {
@@ -698,6 +745,11 @@ export const GetMeDocument = gql`
     firstName
     lastName
     avatar
+    pages(filters: {favourite: true}) {
+      id
+      rawText
+      emoji
+    }
   }
 }
     `;

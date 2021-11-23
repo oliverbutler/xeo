@@ -4,7 +4,7 @@ import { CurrentUser, GqlAuthGuard } from '../auth/auth.guard';
 import { CurrentAuthUser } from '../auth/strategies/jwt.strategy';
 import { BlockService } from '../block/block/block.service';
 import { UserService } from './user.service';
-import { User } from '../graphql';
+import { PageFilters, User } from '../graphql';
 import { PageService } from '../block/page/page.service';
 
 @Resolver('User')
@@ -27,7 +27,9 @@ export class UserResolver {
   }
 
   @ResolveField('pages')
-  async getBlocks(@Parent() user: User) {
-    return await this.pageService.getAllForUser(user.id, {});
+  async getBlocks(@Parent() user: User, @Args('filters') filters: PageFilters) {
+    return await this.pageService.getAllForUser(user.id, {
+      favourite: filters.favourite ?? undefined,
+    });
   }
 }

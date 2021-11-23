@@ -99,6 +99,7 @@ export interface IMutation {
     updateTextBlock(id: string, input?: Nullable<UpdateTextBlockInput>): Block | Promise<Block>;
     createDatabase(input: CreateDatabaseInput): Database | Promise<Database>;
     linkPage(fromId: string, toId: string): PageLink | Promise<PageLink>;
+    unlinkPage(fromId: string, toId: string): PageLink | Promise<PageLink>;
     createPage(input: CreatePageInput): Page | Promise<Page>;
     updatePage(id: string, input: UpdatePageInput): Page | Promise<Page>;
     deletePage(id: string): Page | Promise<Page>;

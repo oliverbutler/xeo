@@ -6,7 +6,7 @@ import { usePageContext } from 'context/PageContext';
 import { useTheme } from 'next-themes';
 
 interface Props {
-  pages: GetPageGraphQuery['pages'];
+  pageGraph: GetPageGraphQuery;
 }
 
 type Node = {
@@ -19,7 +19,7 @@ type Link = {
   target: number;
 };
 
-export const ForceGraph: React.FunctionComponent<Props> = ({ pages }) => {
+export const ForceGraph: React.FunctionComponent<Props> = ({ pageGraph }) => {
   const [links, setLinks] = useState<d3.SimulationLinkDatum<Node>[]>([]);
   const [simulatedNodes, setSimulatedNodes] = useState<Node[]>([]);
 
@@ -34,20 +34,12 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pages }) => {
 
   // @ts-ignore
   useEffect(() => {
-    const formattedPages: Node[] = pages.map((page) => ({
+    const formattedPages: Node[] = pageGraph.pages.map((page) => ({
       id: page.id,
       radius: 5,
       x: width / 2,
       y: height / 2,
     }));
-
-    // // if pages didn't change then don't do anything
-    // if (
-    //   simulatedNodes.map((page) => page.id).join(',') ===
-    //   formattedPages.map((page) => page.id).join(',')
-    // ) {
-    //   return;
-    // }
 
     const newNodes = Object.fromEntries(
       new Map(formattedPages.map((page) => [page.id, page]))
@@ -65,9 +57,9 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pages }) => {
 
     const nodes = Object.values(nodesObject);
 
-    const newLinks = pages.map((page) => {
-      const source = nodes.findIndex((node) => node.id === page.id);
-      const target = nodes.findIndex((node) => node.id === page.parentId);
+    const newLinks = pageGraph.pageLinks.map((link) => {
+      const source = nodes.findIndex((node) => node.id === link.fromId);
+      const target = nodes.findIndex((node) => node.id === link.toId);
 
       return {
         source,
@@ -97,7 +89,7 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pages }) => {
     // simulation.alpha(0.5).alphaMin(0.05).restart();
 
     return () => simulation.stop();
-  }, [pages, currentPageId, width, height]);
+  }, [pageGraph, currentPageId, width, height]);
   return (
     <div ref={ref} className="w-full h-full">
       <svg className="w-full h-full" key="sidebar-svg">
@@ -118,7 +110,7 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pages }) => {
           );
         })}
         {simulatedNodes.map((node) => {
-          const page = pages.find((page) => page.id === node.id);
+          const page = pageGraph.pages.find((page) => page.id === node.id);
 
           if (node.x && node.y) {
             return (
@@ -139,10 +131,7 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pages }) => {
                     x={node.x}
                     y={Number(node.y) + 25}
                   >
-                    {page?.properties.image?.__typename === 'Emoji'
-                      ? page.properties.image.emoji
-                      : ''}{' '}
-                    {page?.properties.title.rawText}
+                    {page?.emoji} {page?.rawText}
                   </text>
                 </g>
               </Link>

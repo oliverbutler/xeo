@@ -23,4 +23,18 @@ export class PageLinkService {
       },
     });
   }
+
+  async deletePageLink(
+    sourcePageId: Page['id'],
+    targetPageId: Page['id']
+  ): Promise<PageLink> {
+    return await this.prisma.pageLink.delete({
+      where: {
+        linkFromId_linkToId: {
+          linkFromId: sourcePageId,
+          linkToId: targetPageId,
+        },
+      },
+    });
+  }
 }

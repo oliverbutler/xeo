@@ -3,40 +3,42 @@ import { useSyncContext } from 'context/SyncContext';
 import { v4 } from 'uuid';
 import {
   CreateDatabaseMutationVariables,
-  CreateHeadingBlockMutationVariables,
   CreatePageMutationVariables,
-  CreateParagraphBlockMutationVariables,
+  CreateTextBlockMutationVariables,
   UpdateBlockLocationMutationOptions,
-  UpdateContentBlockMutationOptions,
   UpdatePageMutationOptions,
+  UpdateTextBlockMutationVariables,
   useCreateDatabaseMutation,
-  useCreateHeadingBlockMutation,
   useCreatePageMutation,
-  useCreateParagraphBlockMutation,
+  useCreateTextBlockMutation,
   useDeleteBlockMutation,
   useUpdateBlockLocationMutation,
-  useUpdateContentBlockMutation,
   useUpdatePageMutation,
+  useUpdateTextBlockMutation,
 } from 'generated';
 
 export const useBlock = () => {
-  const [updateBlock] = useUpdateContentBlockMutation();
+  const [updateTextBlock] = useUpdateTextBlockMutation();
+  const [createTextBlock] = useCreateTextBlockMutation();
+
   const [updatePage] = useUpdatePageMutation();
-  const [updateBlockLocation] = useUpdateBlockLocationMutation();
-  const [deleteBlock] = useDeleteBlockMutation();
-  const [createParagraphBlock] = useCreateParagraphBlockMutation();
-  const [createHeadingBlock] = useCreateHeadingBlockMutation();
   const [createPage] = useCreatePageMutation();
+
+  const [updateBlockLocation] = useUpdateBlockLocationMutation();
+
+  const [deleteBlock] = useDeleteBlockMutation();
+
   const [createDatabase] = useCreateDatabaseMutation();
 
   const { setIsSyncing } = useSyncContext();
 
-  const updateBlockHandler = async (
-    options: UpdateContentBlockMutationOptions
+  const updateTextBlockHandler = async (
+    id: string,
+    input: UpdateTextBlockMutationVariables['input']
   ) => {
     setIsSyncing(true);
 
-    await updateBlock(options);
+    await updateTextBlock({ variables: { id, input } });
 
     // TODO update local cache optimistically - this is a super basic re-fetch as a step in to ensure state is valid everywhere
     await client.refetchQueries({
@@ -115,40 +117,14 @@ export const useBlock = () => {
     return result;
   };
 
-  const createParagraphBlockHandler = async (
-    input: CreateParagraphBlockMutationVariables['input']
+  const createTextBlockHandler = async (
+    input: CreateTextBlockMutationVariables['input']
   ) => {
     setIsSyncing(true);
 
     const id = v4();
 
-    const result = await createParagraphBlock({
-      variables: { input: { id, ...input } },
-      refetchQueries: ['GetPage'],
-      optimisticResponse: {
-        createParagraphBlock: {
-          __typename: 'ContentBlock',
-          id: id,
-          parentId: input.parentId,
-          properties: {
-            __typename: 'ParagraphProperties',
-            ...input.properties,
-          },
-        },
-      },
-    });
-    setIsSyncing(false);
-    return result;
-  };
-
-  const createHeadingBlockHandler = async (
-    input: CreateHeadingBlockMutationVariables['input']
-  ) => {
-    setIsSyncing(true);
-
-    const id = v4();
-
-    const result = await createHeadingBlock({
+    const result = await createTextBlock({
       variables: { input: { id, ...input } },
       refetchQueries: ['GetPage'],
     });
@@ -157,12 +133,11 @@ export const useBlock = () => {
   };
 
   return {
-    updateBlock: updateBlockHandler,
     updatePage: updatePageHandler,
     updateBlockLocation: updateBlockLocationHandler,
     deleteBlock: deleteBlockHandler,
-    createParagraphBlock: createParagraphBlockHandler,
-    createHeadingBlock: createHeadingBlockHandler,
+    createTextBlock: createTextBlockHandler,
+    updateTextBlock: updateTextBlockHandler,
     createPage: createPageHandler,
     createDatabase: createDatabaseHandler,
   };

@@ -54,4 +54,16 @@ export class PageLinkResolver {
 
     return mapPageLinkToGraphQL(link);
   }
+
+  @Mutation('unlinkPage')
+  @UseGuards(GqlAuthGuard)
+  async unlinkPage(
+    @CurrentUser() user: CurrentAuthUser,
+    @Args('fromId') fromId: string,
+    @Args('toId') toId: string
+  ): Promise<PageLinkGraphQlWithoutRelations> {
+    const link = await this.pageLinkService.deletePageLink(fromId, toId);
+
+    return mapPageLinkToGraphQL(link);
+  }
 }

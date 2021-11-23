@@ -7,69 +7,43 @@ import {
   FiType,
 } from 'react-icons/fi';
 import { motion } from 'framer-motion';
-import { HeadingType, PageChildrenFragment } from 'generated';
+import { BlockVariant } from 'generated';
 import { useBlock } from 'hooks/useBlock';
 import { moveFocusToBlock } from '../../DynamicBlock/helpers/block';
-import { convertToRaw, EditorState } from 'draft-js';
-import { emptyContentStateString, emptyRichTextInput } from 'utils/draft';
 
 interface Props {
   block: PageChildrenFragment;
 }
 
 export const AddButton: React.FunctionComponent<Props> = ({ block }) => {
-  const {
-    createHeadingBlock,
-    createParagraphBlock,
-    createPage,
-    createDatabase,
-  } = useBlock();
+  const { createTextBlock, createPage, createDatabase } = useBlock();
 
-  const handleAddParagraphBlock = async () => {
-    const result = await createParagraphBlock({
-      parentId: block.parentId,
-      afterId: block.id,
-      properties: {
-        text: emptyRichTextInput,
-      },
+  const handleAddEmptyTextBlock = async (variant: BlockVariant) => {
+    const result = await createTextBlock({
+      parentPageId: block.parentId,
+      // aft: block.id,
+      richText: JSON.stringify({}),
+      rawText: '',
+      variant,
     });
 
-    if (result.data?.createParagraphBlock) {
-      moveFocusToBlock(result.data.createParagraphBlock.id);
-    }
-  };
-
-  const handleAddHeadingBlock = async (type: HeadingType) => {
-    const result = await createHeadingBlock({
-      parentId: block.parentId,
-      afterId: block.id,
-      properties: {
-        text: emptyRichTextInput,
-        variant: type,
-      },
-    });
-    if (result.data) {
-      moveFocusToBlock(result.data.createHeadingBlock.id);
+    if (result.data?.createTextBlock) {
+      moveFocusToBlock(result.data.createTextBlock.id);
     }
   };
 
   const handleAddPage = async () => {
     const result = await createPage({
-      parentId: block.parentId,
-      afterId: block.id,
-      properties: { title: emptyRichTextInput },
+      rawText: '',
+      richText: JSON.stringify({}),
     });
-
-    if (result.data) {
-      moveFocusToBlock(result.data.createPage.id);
-    }
   };
 
   const handleAddDatabase = async () => {
     const result = await createDatabase({
-      parentId: block.parentId,
-      afterId: block.id,
-      properties: { title: emptyRichTextInput },
+      richText: JSON.stringify({}),
+      rawText: ' ',
+      schema: JSON.stringify({}),
     });
 
     if (result.data) {
@@ -95,24 +69,24 @@ export const AddButton: React.FunctionComponent<Props> = ({ block }) => {
           {
             text: 'Paragraph',
             logo: <FiAlignLeft />,
-            onClick: () => handleAddParagraphBlock(),
+            onClick: () => handleAddEmptyTextBlock(BlockVariant.Paragraph),
           },
         ],
         [
           {
             text: 'Heading 1',
             logo: <FiType />,
-            onClick: () => handleAddHeadingBlock(HeadingType.H1),
+            onClick: () => handleAddEmptyTextBlock(BlockVariant.Heading_1),
           },
           {
             text: 'Heading 2',
             logo: <FiType />,
-            onClick: () => handleAddHeadingBlock(HeadingType.H2),
+            onClick: () => handleAddEmptyTextBlock(BlockVariant.Heading_2),
           },
           {
             text: 'Heading 3',
             logo: <FiType />,
-            onClick: () => handleAddHeadingBlock(HeadingType.H3),
+            onClick: () => handleAddEmptyTextBlock(BlockVariant.Heading_3),
           },
         ],
         [

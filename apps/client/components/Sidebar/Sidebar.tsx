@@ -2,14 +2,9 @@ import { Tab } from '@headlessui/react';
 import { Resize } from 'components/Resize/Resize';
 import { useCurrentUser } from 'hooks/useCurrentUser';
 import { useLocalStorage } from 'hooks/useLocalStorage';
-import { PageGraph } from './SidebarGraphTabs/PageGraph/PageGraph';
 import { UserRow } from './UserRow/UserRow';
-import { MdOutlineAccountTree } from 'react-icons/md';
-import { RiNodeTree } from 'react-icons/ri';
-import { AnimatePresence, motion } from 'framer-motion';
 import { SidebarItem } from './SidebarItem/SidebarItem';
 import Link from 'next/link';
-import { ImageRenderer } from 'components/Image/ImageRenderer';
 import classNames from 'classnames';
 import { SidebarGraphTabs } from './SidebarGraphTabs/SidebarGraphTabs';
 
@@ -20,9 +15,6 @@ export const Sidebar = () => {
     'sidebar-width',
     192
   );
-
-  const favourites =
-    user?.pages?.filter((page) => page.properties.favourite) ?? [];
 
   return (
     <Resize
@@ -36,16 +28,16 @@ export const Sidebar = () => {
       <div className="dark:bg-transparent flex flex-col justify-between h-full">
         <div>
           {user ? <UserRow user={user} /> : <p>Not logged in</p>}
-          {favourites.map((page) => (
+          {user?.pages?.map((page) => (
             <Link href={`/page/${page.id}`} key={page.id}>
               <SidebarItem className="text-gray-700 dark:text-white text-sm flex items-center">
-                <ImageRenderer image={page.properties.image} />
+                <span>{page.emoji}</span>
                 <span
                   className={classNames('ml-2', {
-                    'text-gray-300': !page.properties.title.rawText,
+                    'text-gray-300': !page.rawText,
                   })}
                 >
-                  {page.properties.title.rawText || 'Untitled'}
+                  {page.rawText || 'Untitled'}
                 </span>
               </SidebarItem>
             </Link>

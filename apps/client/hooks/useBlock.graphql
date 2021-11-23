@@ -4,6 +4,12 @@ mutation UpdateTextBlock($id: ID!, $input: UpdateTextBlockInput!) {
   }
 }
 
+mutation CreateTextBlock($input: CreateTextBlockInput!) {
+  createTextBlock(input: $input) {
+    id
+  }
+}
+
 mutation UpdatePage($id: ID!, $input: UpdatePageInput!) {
   updatePage(id: $id, input: $input) {
     id
