@@ -21,168 +21,101 @@ export type AuthResponse = {
 };
 
 export type Block = {
+  __typename?: 'Block';
+  children: Array<Block>;
+  createdAt: Scalars['String'];
   createdBy: User;
   createdById: Scalars['ID'];
   id: Scalars['ID'];
-  object: BlockObjectType;
-  parent?: Maybe<Block>;
-  parentId?: Maybe<Scalars['ID']>;
+  parentBlock?: Maybe<Block>;
+  parentBlockId?: Maybe<Scalars['ID']>;
+  parentPage: Page;
+  parentPageId: Scalars['ID'];
+  rank: Scalars['Int'];
+  rawText: Scalars['String'];
+  richText: Scalars['String'];
+  softDeletedAt?: Maybe<Scalars['String']>;
+  type: BlockType;
+  updatedAt: Scalars['String'];
+  updatedBy: User;
+  updatedById: Scalars['ID'];
+  variant: BlockVariant;
 };
 
 export type BlockFilters = {
-  object?: Maybe<BlockObjectType>;
-  parentId?: Maybe<Scalars['ID']>;
+  parentPageId?: Maybe<Scalars['ID']>;
+  type?: Maybe<BlockType>;
 };
 
-export enum BlockObjectType {
-  Block = 'BLOCK',
-  Database = 'DATABASE',
-  Page = 'PAGE'
+export enum BlockType {
+  List = 'LIST',
+  ListItem = 'LIST_ITEM',
+  PageLink = 'PAGE_LINK',
+  Text = 'TEXT'
 }
 
-export type BlockProperties = DatabaseProperties | HeadingProperties | PageProperties | ParagraphProperties;
-
-export type ContentBlock = Block & {
-  __typename?: 'ContentBlock';
-  createdBy: User;
-  createdById: Scalars['ID'];
-  id: Scalars['ID'];
-  object: BlockObjectType;
-  parent?: Maybe<Block>;
-  parentId?: Maybe<Scalars['ID']>;
-  properties: ContentProperties;
-};
-
-export type ContentProperties = HeadingProperties | ParagraphProperties;
-
-export type CoverImage = {
-  __typename?: 'CoverImage';
-  gradient?: Maybe<Scalars['String']>;
-};
-
-export type CoverImageInput = {
-  gradient: Scalars['String'];
-};
-
-export type CreateBlockInput = {
-  object: BlockObjectType;
-  parentId?: Maybe<Scalars['ID']>;
-};
+export enum BlockVariant {
+  Heading_1 = 'HEADING_1',
+  Heading_2 = 'HEADING_2',
+  Heading_3 = 'HEADING_3',
+  Paragraph = 'PARAGRAPH'
+}
 
 export type CreateDatabaseInput = {
-  afterId?: Maybe<Scalars['ID']>;
   id?: Maybe<Scalars['ID']>;
-  parentId?: Maybe<Scalars['ID']>;
-  properties: DatabasePropertiesInput;
-};
-
-export type CreateHeadingBlockInput = {
-  afterId?: Maybe<Scalars['ID']>;
-  id?: Maybe<Scalars['ID']>;
-  parentId?: Maybe<Scalars['ID']>;
-  properties: HeadingPropertiesInput;
+  rawText: Scalars['String'];
+  richText: Scalars['String'];
+  schema: Scalars['String'];
 };
 
 export type CreatePageInput = {
-  afterId?: Maybe<Scalars['ID']>;
+  emoji?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['ID']>;
-  parentId?: Maybe<Scalars['ID']>;
-  properties: PagePropertiesInput;
+  linkedFromPageId?: Maybe<Scalars['ID']>;
+  rawText: Scalars['String'];
+  richText: Scalars['String'];
 };
 
-export type CreateParagraphBlockInput = {
-  afterId?: Maybe<Scalars['ID']>;
+export type CreateTextBlockInput = {
   id?: Maybe<Scalars['ID']>;
-  parentId?: Maybe<Scalars['ID']>;
-  properties: ParagraphPropertiesInput;
+  parentPageId: Scalars['ID'];
+  rawText: Scalars['String'];
+  richText: Scalars['String'];
+  variant: BlockVariant;
 };
 
-export type Database = Block & {
+export type Database = {
   __typename?: 'Database';
-  children: Array<Page>;
+  createdAt: Scalars['String'];
   createdBy: User;
   createdById: Scalars['ID'];
+  emoji?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
-  object: BlockObjectType;
-  parent?: Maybe<Block>;
-  parentId?: Maybe<Scalars['ID']>;
-  properties: DatabaseProperties;
+  pages: Array<Page>;
+  rawText: Scalars['String'];
+  richText: Scalars['String'];
+  schema: Scalars['String'];
+  softDeletedAt?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['String'];
 };
 
-export type DatabaseProperties = {
-  __typename?: 'DatabaseProperties';
-  schema: Array<DatabaseSchema>;
-  title: RichText;
-  type: Scalars['String'];
-};
-
-export type DatabasePropertiesInput = {
-  schema?: Maybe<Array<DatabaseSchemaInput>>;
-  title: RichTextInput;
-};
-
-export type DatabaseSchema = DatabaseSchema_Number | DatabaseSchema_String;
-
-export type DatabaseSchemaInput = {
-  name: Scalars['String'];
-  type: Scalars['String'];
-};
-
-export type DatabaseSchema_Number = {
-  __typename?: 'DatabaseSchema_Number';
-  name: Scalars['String'];
-  type: Scalars['String'];
-};
-
-export type DatabaseSchema_String = {
-  __typename?: 'DatabaseSchema_String';
-  name: Scalars['String'];
-  type: Scalars['String'];
-};
-
-export type Emoji = {
-  __typename?: 'Emoji';
-  emoji: Scalars['String'];
-};
-
-export type EmojiImage = Emoji | Image;
-
-export type HeadingProperties = {
-  __typename?: 'HeadingProperties';
-  text: RichText;
-  type: Scalars['String'];
-  variant: HeadingType;
-};
-
-export type HeadingPropertiesInput = {
-  text: RichTextInput;
-  variant: HeadingType;
-};
-
-export enum HeadingType {
-  H1 = 'H1',
-  H2 = 'H2',
-  H3 = 'H3'
-}
-
-export type Image = {
-  __typename?: 'Image';
-  image: Scalars['String'];
+export type DatabaseFilters = {
+  createdById?: Maybe<Scalars['ID']>;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
   createDatabase: Database;
-  createHeadingBlock: ContentBlock;
   createPage: Page;
-  createParagraphBlock: ContentBlock;
+  createTextBlock: Block;
   deleteBlock: Scalars['Boolean'];
+  deletePage: Page;
+  linkPage: PageLink;
   signIn: AuthResponse;
   signUp: User;
-  updateBlockLocation: Scalars['Boolean'];
-  updateContentBlock: ContentBlock;
-  updateDatabase: Database;
+  updateBlockLocation: Block;
   updatePage: Page;
+  updateTextBlock: Block;
 };
 
 
@@ -191,23 +124,29 @@ export type MutationCreateDatabaseArgs = {
 };
 
 
-export type MutationCreateHeadingBlockArgs = {
-  input: CreateHeadingBlockInput;
-};
-
-
 export type MutationCreatePageArgs = {
   input: CreatePageInput;
 };
 
 
-export type MutationCreateParagraphBlockArgs = {
-  input: CreateParagraphBlockInput;
+export type MutationCreateTextBlockArgs = {
+  input: CreateTextBlockInput;
 };
 
 
 export type MutationDeleteBlockArgs = {
   id: Scalars['ID'];
+};
+
+
+export type MutationDeletePageArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationLinkPageArgs = {
+  fromId: Scalars['ID'];
+  toId: Scalars['ID'];
 };
 
 
@@ -223,21 +162,8 @@ export type MutationSignUpArgs = {
 
 
 export type MutationUpdateBlockLocationArgs = {
-  afterId?: Maybe<Scalars['ID']>;
   id: Scalars['ID'];
-  parentId: Scalars['ID'];
-};
-
-
-export type MutationUpdateContentBlockArgs = {
-  id: Scalars['ID'];
-  input: UpdateContentBlockInput;
-};
-
-
-export type MutationUpdateDatabaseArgs = {
-  id: Scalars['ID'];
-  input: UpdateDatabaseInput;
+  input: UpdateBlockLocationInput;
 };
 
 
@@ -246,50 +172,59 @@ export type MutationUpdatePageArgs = {
   input: UpdatePageInput;
 };
 
-export type Page = Block & {
+
+export type MutationUpdateTextBlockArgs = {
+  id: Scalars['ID'];
+  input?: Maybe<UpdateTextBlockInput>;
+};
+
+export type Page = {
   __typename?: 'Page';
-  children: Array<Block>;
+  backLinks: Array<Page>;
+  blocks: Array<Block>;
+  coverGradient?: Maybe<Scalars['String']>;
+  createdAt: Scalars['String'];
   createdBy: User;
   createdById: Scalars['ID'];
-  id: Scalars['ID'];
-  object: BlockObjectType;
-  parent?: Maybe<Block>;
-  parentId?: Maybe<Scalars['ID']>;
-  properties: PageProperties;
-};
-
-export type PageProperties = {
-  __typename?: 'PageProperties';
-  childrenOrder: Array<Scalars['String']>;
-  coverImage?: Maybe<CoverImage>;
+  database?: Maybe<Database>;
+  databaseId?: Maybe<Scalars['ID']>;
+  emoji?: Maybe<Scalars['String']>;
   favourite: Scalars['Boolean'];
-  image?: Maybe<EmojiImage>;
-  title: RichText;
-  type: Scalars['String'];
+  id: Scalars['ID'];
+  links: Array<Page>;
+  rawText: Scalars['String'];
+  richText: Scalars['String'];
+  softDeletedAt?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['String'];
+  updatedBy: User;
+  updatedById: Scalars['ID'];
 };
 
-export type PagePropertiesInput = {
-  title: RichTextInput;
+export type PageFilters = {
+  favourite?: Maybe<Scalars['Boolean']>;
 };
 
-export type ParagraphProperties = {
-  __typename?: 'ParagraphProperties';
-  text: RichText;
-  type: Scalars['String'];
-};
-
-export type ParagraphPropertiesInput = {
-  text: RichTextInput;
+export type PageLink = {
+  __typename?: 'PageLink';
+  createdAt: Scalars['String'];
+  createdBy: User;
+  createdById: Scalars['ID'];
+  from: Page;
+  fromId: Scalars['ID'];
+  to: Page;
+  toId: Scalars['ID'];
+  updatedAt: Scalars['String'];
 };
 
 export type Query = {
   __typename?: 'Query';
   block: Block;
   blocks: Array<Block>;
+  databases: Array<Database>;
   me: User;
   page: Page;
+  pageLinks: Array<PageLink>;
   pages: Array<Page>;
-  path: Array<Page>;
   users: Array<User>;
 };
 
@@ -304,30 +239,18 @@ export type QueryBlocksArgs = {
 };
 
 
+export type QueryDatabasesArgs = {
+  input: DatabaseFilters;
+};
+
+
 export type QueryPageArgs = {
   id: Scalars['ID'];
-  populateSubTree?: Maybe<Scalars['Boolean']>;
 };
 
 
 export type QueryPagesArgs = {
-  filters?: Maybe<BlockFilters>;
-};
-
-
-export type QueryPathArgs = {
-  id: Scalars['ID'];
-};
-
-export type RichText = {
-  __typename?: 'RichText';
-  content: Scalars['String'];
-  rawText: Scalars['String'];
-};
-
-export type RichTextInput = {
-  content: Scalars['String'];
-  rawText: Scalars['String'];
+  filters?: Maybe<PageFilters>;
 };
 
 export type SignUpInput = {
@@ -337,20 +260,25 @@ export type SignUpInput = {
   username: Scalars['String'];
 };
 
-export type UpdateContentBlockInput = {
-  text?: Maybe<RichTextInput>;
-};
-
-export type UpdateDatabaseInput = {
-  title?: Maybe<RichTextInput>;
+export type UpdateBlockLocationInput = {
+  afterBlockId: Scalars['ID'];
+  parentBlockId: Scalars['ID'];
+  parentPageId: Scalars['ID'];
 };
 
 export type UpdatePageInput = {
-  coverImage?: Maybe<CoverImageInput>;
+  coverGradient?: Maybe<Scalars['String']>;
   emoji?: Maybe<Scalars['String']>;
   favourite?: Maybe<Scalars['Boolean']>;
-  image?: Maybe<Scalars['String']>;
-  title?: Maybe<RichTextInput>;
+  rawText?: Maybe<Scalars['String']>;
+  richText?: Maybe<Scalars['String']>;
+};
+
+export type UpdateTextBlockInput = {
+  parentPageId?: Maybe<Scalars['ID']>;
+  rawText?: Maybe<Scalars['String']>;
+  richText?: Maybe<Scalars['String']>;
+  variant?: Maybe<BlockVariant>;
 };
 
 export type User = {
@@ -376,43 +304,26 @@ export type SignInMutationVariables = Exact<{
 
 export type SignInMutation = { __typename?: 'Mutation', signIn: { __typename?: 'AuthResponse', accessToken: string } };
 
-export type GetPathQueryVariables = Exact<{
-  id: Scalars['ID'];
-}>;
-
-
-export type GetPathQuery = { __typename?: 'Query', path: Array<{ __typename?: 'Page', id: string, properties: { __typename?: 'PageProperties', title: { __typename?: 'RichText', rawText: string }, image?: { __typename?: 'Emoji', emoji: string } | { __typename?: 'Image', image: string } | null | undefined } }> };
-
-export type PagePropertiesFragment = { __typename?: 'PageProperties', favourite: boolean, image?: { __typename: 'Emoji', emoji: string } | { __typename: 'Image', image: string } | null | undefined, title: { __typename?: 'RichText', rawText: string, content: string } };
-
-export type PageChildren_ContentBlock_Fragment = { __typename: 'ContentBlock', id: string, parentId?: string | null | undefined, properties: { __typename?: 'HeadingProperties', variant: HeadingType, text: { __typename?: 'RichText', rawText: string, content: string } } | { __typename?: 'ParagraphProperties', text: { __typename?: 'RichText', rawText: string, content: string } } };
-
-export type PageChildren_Database_Fragment = { __typename: 'Database', id: string, parentId?: string | null | undefined, properties: { __typename?: 'DatabaseProperties', title: { __typename?: 'RichText', rawText: string, content: string } } };
-
-export type PageChildren_Page_Fragment = { __typename: 'Page', id: string, parentId?: string | null | undefined, properties: { __typename?: 'PageProperties', favourite: boolean, image?: { __typename: 'Emoji', emoji: string } | { __typename: 'Image', image: string } | null | undefined, title: { __typename?: 'RichText', rawText: string, content: string } } };
-
-export type PageChildrenFragment = PageChildren_ContentBlock_Fragment | PageChildren_Database_Fragment | PageChildren_Page_Fragment;
-
 export type GetPageQueryVariables = Exact<{
   id: Scalars['ID'];
   populateSubTree: Scalars['Boolean'];
 }>;
 
 
-export type GetPageQuery = { __typename?: 'Query', page: { __typename?: 'Page', id: string, properties: { __typename?: 'PageProperties', favourite: boolean, childrenOrder: Array<string>, image?: { __typename: 'Emoji', emoji: string } | { __typename: 'Image', image: string } | null | undefined, title: { __typename?: 'RichText', rawText: string }, coverImage?: { __typename?: 'CoverImage', gradient?: string | null | undefined } | null | undefined }, children: Array<{ __typename: 'ContentBlock', id: string, parentId?: string | null | undefined, properties: { __typename?: 'HeadingProperties', variant: HeadingType, text: { __typename?: 'RichText', rawText: string, content: string } } | { __typename?: 'ParagraphProperties', text: { __typename?: 'RichText', rawText: string, content: string } } } | { __typename: 'Database', id: string, parentId?: string | null | undefined, properties: { __typename?: 'DatabaseProperties', title: { __typename?: 'RichText', rawText: string, content: string } } } | { __typename: 'Page', id: string, parentId?: string | null | undefined, properties: { __typename?: 'PageProperties', favourite: boolean, image?: { __typename: 'Emoji', emoji: string } | { __typename: 'Image', image: string } | null | undefined, title: { __typename?: 'RichText', rawText: string, content: string } } }> } };
+export type GetPageQuery = { __typename?: 'Query', page: { __typename?: 'Page', id: string, emoji?: string | null | undefined, rawText: string, richText: string, favourite: boolean, coverGradient?: string | null | undefined, blocks: Array<{ __typename?: 'Block', id: string, type: BlockType, richText: string, rawText: string, rank: number, variant: BlockVariant }> } };
 
 export type GetPageGraphQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetPageGraphQuery = { __typename?: 'Query', pages: Array<{ __typename?: 'Page', id: string, parentId?: string | null | undefined, properties: { __typename?: 'PageProperties', image?: { __typename?: 'Emoji', emoji: string } | { __typename?: 'Image' } | null | undefined, title: { __typename?: 'RichText', rawText: string } } }> };
+export type GetPageGraphQuery = { __typename?: 'Query', pages: Array<{ __typename?: 'Page', id: string, rawText: string, emoji?: string | null | undefined }>, pageLinks: Array<{ __typename?: 'PageLink', fromId: string, toId: string }> };
 
-export type UpdateContentBlockMutationVariables = Exact<{
+export type UpdateTextBlockMutationVariables = Exact<{
   id: Scalars['ID'];
-  input: UpdateContentBlockInput;
+  input: UpdateTextBlockInput;
 }>;
 
 
-export type UpdateContentBlockMutation = { __typename?: 'Mutation', updateContentBlock: { __typename?: 'ContentBlock', id: string } };
+export type UpdateTextBlockMutation = { __typename?: 'Mutation', updateTextBlock: { __typename?: 'Block', id: string } };
 
 export type UpdatePageMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -438,12 +349,11 @@ export type CreateDatabaseMutation = { __typename?: 'Mutation', createDatabase: 
 
 export type UpdateBlockLocationMutationVariables = Exact<{
   id: Scalars['ID'];
-  parentId: Scalars['ID'];
-  afterId?: Maybe<Scalars['ID']>;
+  input: UpdateBlockLocationInput;
 }>;
 
 
-export type UpdateBlockLocationMutation = { __typename?: 'Mutation', updateBlockLocation: boolean };
+export type UpdateBlockLocationMutation = { __typename?: 'Mutation', updateBlockLocation: { __typename?: 'Block', id: string } };
 
 export type DeleteBlockMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -452,88 +362,12 @@ export type DeleteBlockMutationVariables = Exact<{
 
 export type DeleteBlockMutation = { __typename?: 'Mutation', deleteBlock: boolean };
 
-export type CreateParagraphBlockMutationVariables = Exact<{
-  input: CreateParagraphBlockInput;
-}>;
-
-
-export type CreateParagraphBlockMutation = { __typename?: 'Mutation', createParagraphBlock: { __typename: 'ContentBlock', id: string, parentId?: string | null | undefined, properties: { __typename?: 'HeadingProperties' } | { __typename?: 'ParagraphProperties', text: { __typename?: 'RichText', rawText: string } } } };
-
-export type CreateHeadingBlockMutationVariables = Exact<{
-  input: CreateHeadingBlockInput;
-}>;
-
-
-export type CreateHeadingBlockMutation = { __typename?: 'Mutation', createHeadingBlock: { __typename: 'ContentBlock', id: string, parentId?: string | null | undefined, properties: { __typename?: 'HeadingProperties', variant: HeadingType, text: { __typename?: 'RichText', rawText: string } } | { __typename?: 'ParagraphProperties' } } };
-
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, username: string, firstName: string, lastName: string, avatar?: string | null | undefined, pages?: Array<{ __typename: 'Page', id: string, properties: { __typename?: 'PageProperties', favourite: boolean, title: { __typename?: 'RichText', rawText: string, content: string }, image?: { __typename?: 'Emoji', emoji: string } | { __typename?: 'Image', image: string } | null | undefined } }> | null | undefined } };
-
-export type UpdateDatabaseMutationVariables = Exact<{
-  id: Scalars['ID'];
-  input: UpdateDatabaseInput;
-}>;
+export type GetMeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, username: string, firstName: string, lastName: string, avatar?: string | null | undefined } };
 
 
-export type UpdateDatabaseMutation = { __typename?: 'Mutation', updateDatabase: { __typename?: 'Database', id: string } };
-
-export const PagePropertiesFragmentDoc = gql`
-    fragment PageProperties on PageProperties {
-  image {
-    __typename
-    ... on Emoji {
-      emoji
-    }
-    ... on Image {
-      image
-    }
-  }
-  title {
-    rawText
-    content
-  }
-  favourite
-}
-    `;
-export const PageChildrenFragmentDoc = gql`
-    fragment PageChildren on Block {
-  id
-  __typename
-  parentId
-  ... on Page {
-    properties {
-      ...PageProperties
-    }
-  }
-  ... on Database {
-    properties {
-      title {
-        rawText
-        content
-      }
-    }
-  }
-  ... on ContentBlock {
-    properties {
-      ... on ParagraphProperties {
-        text {
-          rawText
-          content
-        }
-      }
-      ... on HeadingProperties {
-        text {
-          rawText
-          content
-        }
-        variant
-      }
-    }
-  }
-}
-    ${PagePropertiesFragmentDoc}`;
 export const SignInDocument = gql`
     mutation SignIn($username: String!, $password: String!) {
   signIn(username: $username, password: $password) {
@@ -568,85 +402,26 @@ export function useSignInMutation(baseOptions?: Apollo.MutationHookOptions<SignI
 export type SignInMutationHookResult = ReturnType<typeof useSignInMutation>;
 export type SignInMutationResult = Apollo.MutationResult<SignInMutation>;
 export type SignInMutationOptions = Apollo.BaseMutationOptions<SignInMutation, SignInMutationVariables>;
-export const GetPathDocument = gql`
-    query GetPath($id: ID!) {
-  path(id: $id) {
+export const GetPageDocument = gql`
+    query GetPage($id: ID!, $populateSubTree: Boolean!) {
+  page(id: $id) {
     id
-    ... on Page {
-      properties {
-        title {
-          rawText
-        }
-        image {
-          ... on Image {
-            image
-          }
-          ... on Emoji {
-            emoji
-          }
-        }
-      }
+    emoji
+    rawText
+    richText
+    favourite
+    coverGradient
+    blocks {
+      id
+      type
+      richText
+      rawText
+      rank
+      variant
     }
   }
 }
     `;
-
-/**
- * __useGetPathQuery__
- *
- * To run a query within a React component, call `useGetPathQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetPathQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetPathQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useGetPathQuery(baseOptions: Apollo.QueryHookOptions<GetPathQuery, GetPathQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetPathQuery, GetPathQueryVariables>(GetPathDocument, options);
-      }
-export function useGetPathLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPathQuery, GetPathQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetPathQuery, GetPathQueryVariables>(GetPathDocument, options);
-        }
-export type GetPathQueryHookResult = ReturnType<typeof useGetPathQuery>;
-export type GetPathLazyQueryHookResult = ReturnType<typeof useGetPathLazyQuery>;
-export type GetPathQueryResult = Apollo.QueryResult<GetPathQuery, GetPathQueryVariables>;
-export const GetPageDocument = gql`
-    query GetPage($id: ID!, $populateSubTree: Boolean!) {
-  page(id: $id, populateSubTree: $populateSubTree) {
-    id
-    properties {
-      image {
-        __typename
-        ... on Emoji {
-          emoji
-        }
-        ... on Image {
-          image
-        }
-      }
-      title {
-        rawText
-      }
-      favourite
-      childrenOrder
-      coverImage {
-        gradient
-      }
-    }
-    children {
-      ...PageChildren
-    }
-  }
-}
-    ${PageChildrenFragmentDoc}`;
 
 /**
  * __useGetPageQuery__
@@ -678,19 +453,14 @@ export type GetPageLazyQueryHookResult = ReturnType<typeof useGetPageLazyQuery>;
 export type GetPageQueryResult = Apollo.QueryResult<GetPageQuery, GetPageQueryVariables>;
 export const GetPageGraphDocument = gql`
     query GetPageGraph {
-  pages(filters: {object: PAGE}) {
+  pages {
     id
-    parentId
-    properties {
-      image {
-        ... on Emoji {
-          emoji
-        }
-      }
-      title {
-        rawText
-      }
-    }
+    rawText
+    emoji
+  }
+  pageLinks {
+    fromId
+    toId
   }
 }
     `;
@@ -721,40 +491,40 @@ export function useGetPageGraphLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetPageGraphQueryHookResult = ReturnType<typeof useGetPageGraphQuery>;
 export type GetPageGraphLazyQueryHookResult = ReturnType<typeof useGetPageGraphLazyQuery>;
 export type GetPageGraphQueryResult = Apollo.QueryResult<GetPageGraphQuery, GetPageGraphQueryVariables>;
-export const UpdateContentBlockDocument = gql`
-    mutation UpdateContentBlock($id: ID!, $input: UpdateContentBlockInput!) {
-  updateContentBlock(id: $id, input: $input) {
+export const UpdateTextBlockDocument = gql`
+    mutation UpdateTextBlock($id: ID!, $input: UpdateTextBlockInput!) {
+  updateTextBlock(id: $id, input: $input) {
     id
   }
 }
     `;
-export type UpdateContentBlockMutationFn = Apollo.MutationFunction<UpdateContentBlockMutation, UpdateContentBlockMutationVariables>;
+export type UpdateTextBlockMutationFn = Apollo.MutationFunction<UpdateTextBlockMutation, UpdateTextBlockMutationVariables>;
 
 /**
- * __useUpdateContentBlockMutation__
+ * __useUpdateTextBlockMutation__
  *
- * To run a mutation, you first call `useUpdateContentBlockMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateContentBlockMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUpdateTextBlockMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateTextBlockMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [updateContentBlockMutation, { data, loading, error }] = useUpdateContentBlockMutation({
+ * const [updateTextBlockMutation, { data, loading, error }] = useUpdateTextBlockMutation({
  *   variables: {
  *      id: // value for 'id'
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useUpdateContentBlockMutation(baseOptions?: Apollo.MutationHookOptions<UpdateContentBlockMutation, UpdateContentBlockMutationVariables>) {
+export function useUpdateTextBlockMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTextBlockMutation, UpdateTextBlockMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateContentBlockMutation, UpdateContentBlockMutationVariables>(UpdateContentBlockDocument, options);
+        return Apollo.useMutation<UpdateTextBlockMutation, UpdateTextBlockMutationVariables>(UpdateTextBlockDocument, options);
       }
-export type UpdateContentBlockMutationHookResult = ReturnType<typeof useUpdateContentBlockMutation>;
-export type UpdateContentBlockMutationResult = Apollo.MutationResult<UpdateContentBlockMutation>;
-export type UpdateContentBlockMutationOptions = Apollo.BaseMutationOptions<UpdateContentBlockMutation, UpdateContentBlockMutationVariables>;
+export type UpdateTextBlockMutationHookResult = ReturnType<typeof useUpdateTextBlockMutation>;
+export type UpdateTextBlockMutationResult = Apollo.MutationResult<UpdateTextBlockMutation>;
+export type UpdateTextBlockMutationOptions = Apollo.BaseMutationOptions<UpdateTextBlockMutation, UpdateTextBlockMutationVariables>;
 export const UpdatePageDocument = gql`
     mutation UpdatePage($id: ID!, $input: UpdatePageInput!) {
   updatePage(id: $id, input: $input) {
@@ -856,8 +626,10 @@ export type CreateDatabaseMutationHookResult = ReturnType<typeof useCreateDataba
 export type CreateDatabaseMutationResult = Apollo.MutationResult<CreateDatabaseMutation>;
 export type CreateDatabaseMutationOptions = Apollo.BaseMutationOptions<CreateDatabaseMutation, CreateDatabaseMutationVariables>;
 export const UpdateBlockLocationDocument = gql`
-    mutation UpdateBlockLocation($id: ID!, $parentId: ID!, $afterId: ID) {
-  updateBlockLocation(id: $id, parentId: $parentId, afterId: $afterId)
+    mutation UpdateBlockLocation($id: ID!, $input: UpdateBlockLocationInput!) {
+  updateBlockLocation(id: $id, input: $input) {
+    id
+  }
 }
     `;
 export type UpdateBlockLocationMutationFn = Apollo.MutationFunction<UpdateBlockLocationMutation, UpdateBlockLocationMutationVariables>;
@@ -876,8 +648,7 @@ export type UpdateBlockLocationMutationFn = Apollo.MutationFunction<UpdateBlockL
  * const [updateBlockLocationMutation, { data, loading, error }] = useUpdateBlockLocationMutation({
  *   variables: {
  *      id: // value for 'id'
- *      parentId: // value for 'parentId'
- *      afterId: // value for 'afterId'
+ *      input: // value for 'input'
  *   },
  * });
  */
@@ -919,95 +690,6 @@ export function useDeleteBlockMutation(baseOptions?: Apollo.MutationHookOptions<
 export type DeleteBlockMutationHookResult = ReturnType<typeof useDeleteBlockMutation>;
 export type DeleteBlockMutationResult = Apollo.MutationResult<DeleteBlockMutation>;
 export type DeleteBlockMutationOptions = Apollo.BaseMutationOptions<DeleteBlockMutation, DeleteBlockMutationVariables>;
-export const CreateParagraphBlockDocument = gql`
-    mutation CreateParagraphBlock($input: CreateParagraphBlockInput!) {
-  createParagraphBlock(input: $input) {
-    id
-    __typename
-    parentId
-    ... on ContentBlock {
-      properties {
-        ... on ParagraphProperties {
-          text {
-            rawText
-          }
-        }
-      }
-    }
-  }
-}
-    `;
-export type CreateParagraphBlockMutationFn = Apollo.MutationFunction<CreateParagraphBlockMutation, CreateParagraphBlockMutationVariables>;
-
-/**
- * __useCreateParagraphBlockMutation__
- *
- * To run a mutation, you first call `useCreateParagraphBlockMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateParagraphBlockMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createParagraphBlockMutation, { data, loading, error }] = useCreateParagraphBlockMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateParagraphBlockMutation(baseOptions?: Apollo.MutationHookOptions<CreateParagraphBlockMutation, CreateParagraphBlockMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateParagraphBlockMutation, CreateParagraphBlockMutationVariables>(CreateParagraphBlockDocument, options);
-      }
-export type CreateParagraphBlockMutationHookResult = ReturnType<typeof useCreateParagraphBlockMutation>;
-export type CreateParagraphBlockMutationResult = Apollo.MutationResult<CreateParagraphBlockMutation>;
-export type CreateParagraphBlockMutationOptions = Apollo.BaseMutationOptions<CreateParagraphBlockMutation, CreateParagraphBlockMutationVariables>;
-export const CreateHeadingBlockDocument = gql`
-    mutation CreateHeadingBlock($input: CreateHeadingBlockInput!) {
-  createHeadingBlock(input: $input) {
-    id
-    __typename
-    parentId
-    ... on ContentBlock {
-      properties {
-        ... on HeadingProperties {
-          text {
-            rawText
-          }
-          variant
-        }
-      }
-    }
-  }
-}
-    `;
-export type CreateHeadingBlockMutationFn = Apollo.MutationFunction<CreateHeadingBlockMutation, CreateHeadingBlockMutationVariables>;
-
-/**
- * __useCreateHeadingBlockMutation__
- *
- * To run a mutation, you first call `useCreateHeadingBlockMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateHeadingBlockMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createHeadingBlockMutation, { data, loading, error }] = useCreateHeadingBlockMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateHeadingBlockMutation(baseOptions?: Apollo.MutationHookOptions<CreateHeadingBlockMutation, CreateHeadingBlockMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateHeadingBlockMutation, CreateHeadingBlockMutationVariables>(CreateHeadingBlockDocument, options);
-      }
-export type CreateHeadingBlockMutationHookResult = ReturnType<typeof useCreateHeadingBlockMutation>;
-export type CreateHeadingBlockMutationResult = Apollo.MutationResult<CreateHeadingBlockMutation>;
-export type CreateHeadingBlockMutationOptions = Apollo.BaseMutationOptions<CreateHeadingBlockMutation, CreateHeadingBlockMutationVariables>;
 export const GetMeDocument = gql`
     query GetMe {
   me {
@@ -1016,25 +698,6 @@ export const GetMeDocument = gql`
     firstName
     lastName
     avatar
-    pages {
-      __typename
-      id
-      properties {
-        favourite
-        title {
-          rawText
-          content
-        }
-        image {
-          ... on Image {
-            image
-          }
-          ... on Emoji {
-            emoji
-          }
-        }
-      }
-    }
   }
 }
     `;
@@ -1065,37 +728,3 @@ export function useGetMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetM
 export type GetMeQueryHookResult = ReturnType<typeof useGetMeQuery>;
 export type GetMeLazyQueryHookResult = ReturnType<typeof useGetMeLazyQuery>;
 export type GetMeQueryResult = Apollo.QueryResult<GetMeQuery, GetMeQueryVariables>;
-export const UpdateDatabaseDocument = gql`
-    mutation UpdateDatabase($id: ID!, $input: UpdateDatabaseInput!) {
-  updateDatabase(id: $id, input: $input) {
-    id
-  }
-}
-    `;
-export type UpdateDatabaseMutationFn = Apollo.MutationFunction<UpdateDatabaseMutation, UpdateDatabaseMutationVariables>;
-
-/**
- * __useUpdateDatabaseMutation__
- *
- * To run a mutation, you first call `useUpdateDatabaseMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateDatabaseMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateDatabaseMutation, { data, loading, error }] = useUpdateDatabaseMutation({
- *   variables: {
- *      id: // value for 'id'
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUpdateDatabaseMutation(baseOptions?: Apollo.MutationHookOptions<UpdateDatabaseMutation, UpdateDatabaseMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateDatabaseMutation, UpdateDatabaseMutationVariables>(UpdateDatabaseDocument, options);
-      }
-export type UpdateDatabaseMutationHookResult = ReturnType<typeof useUpdateDatabaseMutation>;
-export type UpdateDatabaseMutationResult = Apollo.MutationResult<UpdateDatabaseMutation>;
-export type UpdateDatabaseMutationOptions = Apollo.BaseMutationOptions<UpdateDatabaseMutation, UpdateDatabaseMutationVariables>;

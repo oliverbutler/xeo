@@ -1,7 +1,7 @@
 type Block {
   id: ID!
   type: BlockType!
-  richText: String! # TODO make scalar
+  richText: String!
   rawText: String!
   variant: BlockVariant!
   rank: Int!
@@ -53,6 +53,12 @@ input UpdateTextBlockInput {
   parentPageId: ID
 }
 
+input UpdateBlockLocationInput {
+  parentPageId: ID!
+  afterBlockId: ID!
+  parentBlockId: ID!
+}
+
 type Query {
   blocks(filters: BlockFilters): [Block!]!
   block(id: ID!): Block!
@@ -60,7 +66,7 @@ type Query {
 
 type Mutation {
   createTextBlock(input: CreateTextBlockInput!): Block!
-  updateBlockLocation(id: ID!, parentId: ID!, afterId: ID): Block!
+  updateBlockLocation(id: ID!, input: UpdateBlockLocationInput!): Block!
   deleteBlock(id: ID!): Boolean!
   updateTextBlock(id: ID!, input: UpdateTextBlockInput): Block!
 }

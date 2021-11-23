@@ -11,7 +11,7 @@ import { PrismaModule } from './prisma/prisma.module';
   imports: [
     ConfigModule.forRoot(),
     GraphQLModule.forRoot({
-      typePaths: ['./**/*.graphql'],
+      typePaths: ['apps/server/**/*.graphql'],
       definitions: {
         path: join(process.cwd(), 'apps/server/src/graphql.ts'),
       },
