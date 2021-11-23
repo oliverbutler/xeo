@@ -1,80 +1,18 @@
-fragment PageProperties on PageProperties {
-  image {
-    __typename
-    ... on Emoji {
-      emoji
-    }
-    ... on Image {
-      image
-    }
-  }
-  title {
-    rawText
-    content
-  }
-  favourite
-}
-
-fragment PageChildren on Block {
-  id
-  __typename
-  parentId
-  ... on Page {
-    properties {
-      ...PageProperties
-    }
-  }
-  ... on Database {
-    properties {
-      title {
-        rawText
-        content
-      }
-    }
-  }
-  ... on ContentBlock {
-    properties {
-      ... on ParagraphProperties {
-        text {
-          rawText
-          content
-        }
-      }
-      ... on HeadingProperties {
-        text {
-          rawText
-          content
-        }
-        variant
-      }
-    }
-  }
-}
-
 query GetPage($id: ID!, $populateSubTree: Boolean!) {
-  page(id: $id, populateSubTree: $populateSubTree) {
+  page(id: $id) {
     id
-    properties {
-      image {
-        __typename
-        ... on Emoji {
-          emoji
-        }
-        ... on Image {
-          image
-        }
-      }
-      title {
-        rawText
-      }
-      favourite
-      childrenOrder
-      coverImage {
-        gradient
-      }
-    }
-    children {
-      ...PageChildren
+    emoji
+    rawText
+    richText
+    favourite
+    coverGradient
+    blocks {
+      id
+      type
+      richText
+      rawText
+      rank
+      variant
     }
   }
 }

@@ -1,16 +1,11 @@
 query GetPageGraph {
-  pages(filters: { object: PAGE }) {
+  pages {
     id
-    parentId
-    properties {
-      image {
-        ... on Emoji {
-          emoji
-        }
-      }
-      title {
-        rawText
-      }
-    }
+    rawText
+    emoji
+  }
+  pageLinks {
+    fromId
+    toId
   }
 }

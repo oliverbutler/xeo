@@ -5,11 +5,10 @@ import { Clickable } from 'components/UI/Clickable/Clickable';
 import { Dropdown } from 'components/UI/Dropdown/Dropdown';
 import { usePageContext } from 'context/PageContext';
 import { useSyncContext } from 'context/SyncContext';
-import { useGetPathQuery } from 'generated';
+import { useGetPageQuery, useGetPathQuery } from 'generated';
 import { useBlock } from 'hooks/useBlock';
 import { useRouter } from 'next/dist/client/router';
-import Link from 'next/link';
-import { FiChevronRight, FiMoreHorizontal, FiTrash } from 'react-icons/fi';
+import { FiMoreHorizontal, FiTrash } from 'react-icons/fi';
 import { DarkModeButton } from './DarkModeButton/DarkModeButton';
 import { FavouriteButton } from './FavouriteButton/FavouriteButton';
 
@@ -21,8 +20,8 @@ export const Navbar: React.FunctionComponent = () => {
 
   const { isSyncing } = useSyncContext();
 
-  const { data, loading } = useGetPathQuery({
-    variables: { id: currentPageId! },
+  const { data, loading } = useGetPageQuery({
+    variables: { id: currentPageId as string },
     skip: !currentPageId,
   });
 
@@ -30,7 +29,7 @@ export const Navbar: React.FunctionComponent = () => {
     return null;
   }
 
-  const path = data.path.slice().reverse();
+  const page = data.page;
 
   const handleDeleteBlock = async () => {
     router.push('/');
@@ -42,36 +41,21 @@ export const Navbar: React.FunctionComponent = () => {
       id="navbar"
       className="p-2 flex flex-row  justify-between bg-opacity-50 bg-white dark:bg-black dark:bg-opacity-50 absolute w-full z-50 backdrop-blur-sm filter"
     >
-      <div className="flex flex-row items-center">
-        {path.map((block, index) => {
-          if (block.__typename === 'Page') {
-            return (
-              <div key={block.id} className="flex flex-row items-center">
-                <Clickable>
-                  <Link href={`/page/${block.id}`}>
-                    <a className="mx-0.5 text-gray-700 dark:text-white text-sm flex items-center ">
-                      <ImageRenderer image={block.properties.image} />
-                      <span
-                        className={classNames('ml-2', {
-                          'text-gray-300 dark:text-white':
-                            !block.properties.title.rawText,
-                        })}
-                      >
-                        {block.properties.title.rawText || 'Untitled'}
-                      </span>
-                    </a>
-                  </Link>
-                </Clickable>
-                {index < path.length - 1 && (
-                  <div className="text-gray-700 dark:text-white text-sm ">
-                    <FiChevronRight />
-                  </div>
-                )}
-              </div>
-            );
-          }
-        })}
+      <div key={block.id} className="flex flex-row items-center">
+        <Clickable>
+          <a className="mx-0.5 text-gray-700 dark:text-white text-sm flex items-center ">
+            {/* <ImageRenderer image={page.emoji} /> */}
+            <span
+              className={classNames('ml-2', {
+                'text-gray-300 dark:text-white': !page.rawText,
+              })}
+            >
+              {page.rawText || 'Untitled'}
+            </span>
+          </a>
+        </Clickable>
       </div>
+
       <div className="flex flex-row items-center">
         {isSyncing && <Loading className="text-gray-400 h-3" />}
         <DarkModeButton />
