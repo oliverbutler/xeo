@@ -14,7 +14,7 @@ interface Props {
 export const PageCover: React.FunctionComponent<Props> = ({ page }) => {
   const { formatMessage } = useIntl();
 
-  const originalGradient = page.properties.coverImage?.gradient ?? '';
+  const originalGradient = page.coverGradient ?? '';
 
   const [gradient, setGradient] = useState(originalGradient);
 
@@ -28,9 +28,7 @@ export const PageCover: React.FunctionComponent<Props> = ({ page }) => {
         variables: {
           id: page.id,
           input: {
-            coverImage: {
-              gradient: debouncedGradient,
-            },
+            coverGradient: debouncedGradient,
           },
         },
       });

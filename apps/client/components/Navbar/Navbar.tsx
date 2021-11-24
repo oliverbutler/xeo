@@ -1,11 +1,10 @@
 import classNames from 'classnames';
 import { Loading } from 'components/Animate/Loading/Loading';
-import { ImageRenderer } from 'components/Image/ImageRenderer';
 import { Clickable } from 'components/UI/Clickable/Clickable';
 import { Dropdown } from 'components/UI/Dropdown/Dropdown';
 import { usePageContext } from 'context/PageContext';
 import { useSyncContext } from 'context/SyncContext';
-import { useGetPageQuery, useGetPathQuery } from 'generated';
+import { useGetPageQuery } from 'generated';
 import { useBlock } from 'hooks/useBlock';
 import { useRouter } from 'next/dist/client/router';
 import { FiMoreHorizontal, FiTrash } from 'react-icons/fi';
@@ -41,7 +40,7 @@ export const Navbar: React.FunctionComponent = () => {
       id="navbar"
       className="p-2 flex flex-row  justify-between bg-opacity-50 bg-white dark:bg-black dark:bg-opacity-50 absolute w-full z-50 backdrop-blur-sm filter"
     >
-      <div key={block.id} className="flex flex-row items-center">
+      <div className="flex flex-row items-center">
         <Clickable>
           <a className="mx-0.5 text-gray-700 dark:text-white text-sm flex items-center ">
             {/* <ImageRenderer image={page.emoji} /> */}

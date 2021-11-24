@@ -1,4 +1,15 @@
-query GetPage($id: ID!, $populateSubTree: Boolean!) {
+fragment PageBlock on Block {
+  id
+  type
+  richText
+  rawText
+  rank
+  variant
+  parentBlockId
+  parentPageId
+}
+
+query GetPage($id: ID!) {
   page(id: $id) {
     id
     emoji
@@ -7,12 +18,7 @@ query GetPage($id: ID!, $populateSubTree: Boolean!) {
     favourite
     coverGradient
     blocks {
-      id
-      type
-      richText
-      rawText
-      rank
-      variant
+      ...PageBlock
     }
   }
 }

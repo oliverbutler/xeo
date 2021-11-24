@@ -1,22 +1,22 @@
-import { PageChildrenFragment } from 'generated';
+import { PageBlockFragment } from 'generated';
 import React from 'react';
-import { DatabaseBlock } from '../DatabaseBlock/DatabaseBlock';
-import { PageBlock } from '../PageBlock/PageBlock';
 import { TextBlock } from '../TextBlock/TextBlock';
 
 interface Props {
-  block: PageChildrenFragment;
+  block: PageBlockFragment;
 }
 
 export const DynamicBlockRenderer: React.FunctionComponent<Props> = ({
   block,
 }) => {
   switch (block.__typename) {
-    case 'ContentBlock':
+    case 'Block':
       return <TextBlock block={block} />;
-    case 'Page':
-      return <PageBlock block={block} />;
-    case 'Database':
-      return <DatabaseBlock database={block} />;
+    default:
+      return null;
+    // case 'Page':
+    //   return <PageBlock block={block} />;
+    // case 'Database':
+    //   return <DatabaseBlock database={block} />;
   }
 };

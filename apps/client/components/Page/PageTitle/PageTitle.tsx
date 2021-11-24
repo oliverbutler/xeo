@@ -10,18 +10,18 @@ interface Props {
 }
 
 export const PageTitle: React.FunctionComponent<Props> = ({ page }) => {
-  const [text, setText] = useState(page.properties.title.rawText);
+  const [text, setText] = useState(page.rawText);
 
   const debouncedText = useDebounce(text, 500);
 
   const { updatePage } = useBlock();
 
   useEffect(() => {
-    if (debouncedText !== page.properties.title.rawText) {
+    if (debouncedText !== page.rawText) {
       updatePage({
         variables: {
           id: page.id,
-          input: { title: { rawText: debouncedText } },
+          input: { rawText: debouncedText, richText: null },
         },
       });
     }

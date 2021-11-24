@@ -2,6 +2,7 @@ import { client } from 'components/Wrappers/ApolloWrapper';
 import { useSyncContext } from 'context/SyncContext';
 import { v4 } from 'uuid';
 import {
+  BlockVariant,
   CreateDatabaseMutationVariables,
   CreatePageMutationVariables,
   CreateTextBlockMutationVariables,
@@ -16,6 +17,7 @@ import {
   useUpdatePageMutation,
   useUpdateTextBlockMutation,
 } from 'generated';
+import { SlateValue } from 'components/Blocks/TextBlock/TextBlock';
 
 export const useBlock = () => {
   const [updateTextBlock] = useUpdateTextBlockMutation();
@@ -132,11 +134,31 @@ export const useBlock = () => {
     return result;
   };
 
+  const createEmptyTextBlock = async (
+    parentPageId: string,
+    variant?: BlockVariant
+  ) => {
+    const richText: SlateValue = [
+      {
+        type: 'paragraph',
+        children: [{ text: '' }],
+      },
+    ];
+
+    return createTextBlockHandler({
+      parentPageId,
+      rawText: '',
+      richText: JSON.stringify(richText),
+      variant: variant ?? BlockVariant.Paragraph,
+    });
+  };
+
   return {
     updatePage: updatePageHandler,
     updateBlockLocation: updateBlockLocationHandler,
     deleteBlock: deleteBlockHandler,
     createTextBlock: createTextBlockHandler,
+    createEmptyTextBlock,
     updateTextBlock: updateTextBlockHandler,
     createPage: createPageHandler,
     createDatabase: createDatabaseHandler,

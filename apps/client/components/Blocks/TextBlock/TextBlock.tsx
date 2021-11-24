@@ -1,143 +1,84 @@
 import classNames from 'classnames';
-import { HeadingType, PageChildren_ContentBlock_Fragment } from 'generated';
+import { BlockVariant, PageBlockFragment } from 'generated';
 import { useBlock } from 'hooks/useBlock';
 import { useDebounce } from 'hooks/useDebounce';
-import React, { useEffect, useState } from 'react';
-import {
-  moveFocusToBlock,
-  moveFocusToPreviousBlock,
-} from '../DynamicBlock/helpers/block';
-import {
-  convertFromRaw,
-  convertToRaw,
-  DraftEditorCommand,
-  DraftHandleValue,
-  Editor,
-  EditorState,
-  RichUtils,
-} from 'draft-js';
-import 'draft-js/dist/Draft.css';
-import { emptyRichTextInput } from 'utils/draft';
+import React, { useEffect, useMemo, useState } from 'react';
+import { createEditor, BaseEditor, Descendant } from 'slate';
+import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
+import { serializeToString } from 'utils/slate';
 
 interface Props {
-  block: PageChildren_ContentBlock_Fragment;
+  block: PageBlockFragment;
+}
+
+type CustomElement = { type: 'paragraph'; children: CustomText[] };
+type CustomText = { text: string };
+
+export type SlateValue = Descendant[];
+
+declare module 'slate' {
+  interface CustomTypes {
+    Editor: BaseEditor & ReactEditor;
+    Element: CustomElement;
+    Text: CustomText;
+  }
 }
 
 export const TextBlock: React.FunctionComponent<Props> = ({ block }) => {
-  const [editorState, setEditorState] = useState<EditorState>(() =>
-    EditorState.createWithContent(
-      convertFromRaw(JSON.parse(block.properties.text.content))
-    )
-  );
+  const { updateTextBlock, deleteBlock, createTextBlock } = useBlock();
 
-  const debouncedEditorState = useDebounce(editorState, 1000);
+  const [value, setValue] = useState<Descendant[]>(JSON.parse(block.richText));
 
-  const { updateBlock, createParagraphBlock, deleteBlock } = useBlock();
+  const debouncedValue = useDebounce(value, 500);
+
+  const editor = useMemo(() => withReact(createEditor()), []);
 
   useEffect(() => {
-    const contentState = JSON.stringify(
-      convertToRaw(editorState.getCurrentContent())
-    );
-    const rawText = editorState.getCurrentContent().getPlainText();
-
-    if (contentState !== block.properties.text.content) {
-      updateBlock({
-        variables: {
-          id: block.id,
-          input: {
-            text: {
-              rawText: rawText,
-              content: contentState,
-            },
-          },
-        },
+    if (serializeToString(debouncedValue) !== block.rawText) {
+      updateTextBlock(block.id, {
+        richText: JSON.stringify(debouncedValue),
+        rawText: serializeToString(debouncedValue),
       });
     }
-  }, [debouncedEditorState]);
+  }, [debouncedValue]);
 
   useEffect(() => {
-    setEditorState(
-      EditorState.createWithContent(
-        convertFromRaw(JSON.parse(block.properties.text.content))
-      )
-    );
+    //
   }, [block]);
 
-  const handleBlockCreation = async () => {
-    const result = await createParagraphBlock({
-      parentId: block.parentId,
-      afterId: block.id,
-      properties: {
-        text: emptyRichTextInput,
-      },
-    });
+  // const handleBlockCreation = async () => {
+  //   const result = await createTextBlock({
+  //     parentPageId: block.parentId,
+  //     properties: {
+  //       text: emptyRichTextInput,
+  //     },
+  //   });
 
-    const paragraph = result.data?.createParagraphBlock;
+  //   const paragraph = result.data?.createParagraphBlock;
 
-    if (!paragraph) return;
+  //   if (!paragraph) return;
 
-    await moveFocusToBlock(paragraph.id);
+  //   await moveFocusToBlock(paragraph.id);
+  // };
+
+  const getClassNames = () => {
+    switch (block.variant) {
+      case BlockVariant.Heading_1:
+        return 'font-semibold text-3xl';
+      case BlockVariant.Heading_2:
+        return 'font-semibold text-2xl';
+      case BlockVariant.Heading_3:
+        return 'font-semibold text-lg';
+      default:
+        return 'px-1 py-0.5';
+    }
   };
 
-  const handleKeyCommand = (
-    command: DraftEditorCommand,
-    editorState: EditorState
-  ): DraftHandleValue => {
-    const newState = RichUtils.handleKeyCommand(editorState, command);
+  console.log(value);
 
-    // Handle block deletion
-    // if (
-    //   command === 'backspace' &&
-    //   editorState.getCurrentContent().getPlainText() === ''
-    // ) {
-    //   deleteBlock(block.id).then(() => {
-    //     moveFocusToPreviousBlock(block.id);
-    //   });
-    //   return 'handled';
-    // }
-
-    // Handle block creation
-    if (command === 'split-block') {
-      handleBlockCreation();
-      return 'handled';
-    }
-
-    if (newState) {
-      setEditorState(newState);
-      return 'handled';
-    }
-
-    return 'not-handled';
-  };
-
-  switch (block.properties.__typename) {
-    case 'ParagraphProperties':
-      return (
-        <div className="px-1 py-0.5">
-          <Editor
-            editorState={editorState}
-            onChange={setEditorState}
-            handleKeyCommand={handleKeyCommand}
-          />
-        </div>
-      );
-    case 'HeadingProperties':
-      return (
-        <div
-          className={classNames('px-1 py-0.5 font-semibold', {
-            'text-3xl': block.properties.variant === HeadingType.H1,
-            'text-2xl': block.properties.variant === HeadingType.H2,
-            'text-lg': block.properties.variant === HeadingType.H3,
-          })}
-        >
-          <Editor
-            editorState={editorState}
-            onChange={setEditorState}
-            handleKeyCommand={handleKeyCommand}
-          />
-        </div>
-      );
-    default:
-      return null;
-  }
+  return (
+    <Slate editor={editor} value={value} onChange={setValue}>
+      <Editable className={classNames('text-left', getClassNames())} />
+    </Slate>
+  );
 };

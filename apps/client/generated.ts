@@ -311,13 +311,14 @@ export type SignInMutationVariables = Exact<{
 
 export type SignInMutation = { __typename?: 'Mutation', signIn: { __typename?: 'AuthResponse', accessToken: string } };
 
+export type PageBlockFragment = { __typename?: 'Block', id: string, type: BlockType, richText: string, rawText: string, rank: number, variant: BlockVariant, parentBlockId?: string | null | undefined, parentPageId: string };
+
 export type GetPageQueryVariables = Exact<{
   id: Scalars['ID'];
-  populateSubTree: Scalars['Boolean'];
 }>;
 
 
-export type GetPageQuery = { __typename?: 'Query', page: { __typename?: 'Page', id: string, emoji?: string | null | undefined, rawText: string, richText: string, favourite: boolean, coverGradient?: string | null | undefined, blocks: Array<{ __typename?: 'Block', id: string, type: BlockType, richText: string, rawText: string, rank: number, variant: BlockVariant }> } };
+export type GetPageQuery = { __typename?: 'Query', page: { __typename?: 'Page', id: string, emoji?: string | null | undefined, rawText: string, richText: string, favourite: boolean, coverGradient?: string | null | undefined, blocks: Array<{ __typename?: 'Block', id: string, type: BlockType, richText: string, rawText: string, rank: number, variant: BlockVariant, parentBlockId?: string | null | undefined, parentPageId: string }> } };
 
 export type GetPageGraphQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -381,7 +382,18 @@ export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetMeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, username: string, firstName: string, lastName: string, avatar?: string | null | undefined, pages?: Array<{ __typename?: 'Page', id: string, rawText: string, emoji?: string | null | undefined }> | null | undefined } };
 
-
+export const PageBlockFragmentDoc = gql`
+    fragment PageBlock on Block {
+  id
+  type
+  richText
+  rawText
+  rank
+  variant
+  parentBlockId
+  parentPageId
+}
+    `;
 export const SignInDocument = gql`
     mutation SignIn($username: String!, $password: String!) {
   signIn(username: $username, password: $password) {
@@ -417,7 +429,7 @@ export type SignInMutationHookResult = ReturnType<typeof useSignInMutation>;
 export type SignInMutationResult = Apollo.MutationResult<SignInMutation>;
 export type SignInMutationOptions = Apollo.BaseMutationOptions<SignInMutation, SignInMutationVariables>;
 export const GetPageDocument = gql`
-    query GetPage($id: ID!, $populateSubTree: Boolean!) {
+    query GetPage($id: ID!) {
   page(id: $id) {
     id
     emoji
@@ -426,16 +438,11 @@ export const GetPageDocument = gql`
     favourite
     coverGradient
     blocks {
-      id
-      type
-      richText
-      rawText
-      rank
-      variant
+      ...PageBlock
     }
   }
 }
-    `;
+    ${PageBlockFragmentDoc}`;
 
 /**
  * __useGetPageQuery__
@@ -450,7 +457,6 @@ export const GetPageDocument = gql`
  * const { data, loading, error } = useGetPageQuery({
  *   variables: {
  *      id: // value for 'id'
- *      populateSubTree: // value for 'populateSubTree'
  *   },
  * });
  */

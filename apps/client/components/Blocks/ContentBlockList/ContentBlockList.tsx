@@ -1,4 +1,4 @@
-import { Block, PageChildrenFragment } from 'generated';
+import { Block, GetPageQuery, PageBlockFragment } from 'generated';
 import { useBlock } from 'hooks/useBlock';
 import React, { useEffect, useState } from 'react';
 import {
@@ -10,7 +10,7 @@ import {
 import { ContentBlock } from '../ContentBlock';
 
 interface BlockListProps {
-  blocks: PageChildrenFragment[];
+  blocks: PageBlockFragment[];
   parentId: string;
 }
 
@@ -18,7 +18,7 @@ interface BlockListProps {
  * Render a list of Content Blocks (sub class of Block), each ContentBlock has a different rendering method, so BlockRenderer will be used
  */
 export const ContentBlockList = ({ blocks, parentId }: BlockListProps) => {
-  const [order, setOrder] = useState<PageChildrenFragment[]>(blocks);
+  const [order, setOrder] = useState<PageBlockFragment[]>(blocks);
 
   // When the state updates, update the blocks
   useEffect(() => {
@@ -43,20 +43,21 @@ export const ContentBlockList = ({ blocks, parentId }: BlockListProps) => {
     if (result.destination.index === result.source.index) return;
 
     const items = reorder(order, result.source.index, result.destination.index);
-    setOrder(items as PageChildrenFragment[]);
+    setOrder(items as PageBlockFragment[]);
 
     const blockBeforeNewPosition =
       result.destination.index === 0
         ? parentId
         : (items[result.destination.index - 1] as Block).id;
 
-    await updateBlockLocation({
-      variables: {
-        id: result.draggableId,
-        afterId: blockBeforeNewPosition,
-        parentId,
-      },
-    });
+    console.log('update location');
+    // await updateBlockLocation({
+    //   variables: {
+    //     id: result.draggableId,
+    //     afterId: blockBeforeNewPosition,
+    //     parentId,
+    //   },
+    // });
   };
 
   // BUG Strange issue where leaving a page and returning to it causes the page to re-render, but the blocks to not re-render as order doesn't update correctly

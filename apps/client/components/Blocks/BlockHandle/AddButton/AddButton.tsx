@@ -7,25 +7,19 @@ import {
   FiType,
 } from 'react-icons/fi';
 import { motion } from 'framer-motion';
-import { BlockVariant } from 'generated';
+import { BlockVariant, PageBlockFragment } from 'generated';
 import { useBlock } from 'hooks/useBlock';
 import { moveFocusToBlock } from '../../DynamicBlock/helpers/block';
 
 interface Props {
-  block: PageChildrenFragment;
+  block: PageBlockFragment;
 }
 
 export const AddButton: React.FunctionComponent<Props> = ({ block }) => {
-  const { createTextBlock, createPage, createDatabase } = useBlock();
+  const { createEmptyTextBlock, createPage, createDatabase } = useBlock();
 
   const handleAddEmptyTextBlock = async (variant: BlockVariant) => {
-    const result = await createTextBlock({
-      parentPageId: block.parentId,
-      // aft: block.id,
-      richText: JSON.stringify({}),
-      rawText: '',
-      variant,
-    });
+    const result = await createEmptyTextBlock(block.parentPageId, variant);
 
     if (result.data?.createTextBlock) {
       moveFocusToBlock(result.data.createTextBlock.id);

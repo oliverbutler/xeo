@@ -1,7 +1,7 @@
 import { Loading } from 'components/Animate/Loading/Loading';
 import { ContentBlockList } from 'components/Blocks/ContentBlockList/ContentBlockList';
 import { usePageContext } from 'context/PageContext';
-import { PageChildrenFragment, useGetPageQuery } from 'generated';
+import { useGetPageQuery } from 'generated';
 import { useEffect } from 'react';
 import { PageCover } from './PageCover/PageCover';
 import { PageEmpty } from './PageEmpty/PageEmpty';
@@ -14,7 +14,7 @@ interface Props {
 
 export const Page: React.FunctionComponent<Props> = ({ id }) => {
   const { data } = useGetPageQuery({
-    variables: { id, populateSubTree: true },
+    variables: { id },
   });
 
   const page = data?.page;
@@ -23,15 +23,7 @@ export const Page: React.FunctionComponent<Props> = ({ id }) => {
     return <Loading />;
   }
 
-  const orderedChildren: PageChildrenFragment[] = page.properties.childrenOrder
-    .map((id) => {
-      const child = page.children.find((child) => child.id === id);
-      if (!child) {
-        return null;
-      }
-      return child;
-    })
-    .filter((child) => child !== null) as PageChildrenFragment[];
+  const blocks = [...page.blocks].sort((a, b) => a.rank - b.rank);
 
   return (
     <div className="overflow-auto h-screen">
@@ -44,8 +36,8 @@ export const Page: React.FunctionComponent<Props> = ({ id }) => {
 
           <PageTitle page={page} />
 
-          {orderedChildren?.length > 0 ? (
-            <ContentBlockList blocks={orderedChildren} parentId={page.id} />
+          {blocks?.length > 0 ? (
+            <ContentBlockList blocks={blocks} parentId={page.id} />
           ) : (
             <PageEmpty page={page} />
           )}
