@@ -5,12 +5,12 @@ import classNames from 'classnames';
 
 import { AddButton } from './AddButton/AddButton';
 import { HandleButton } from './HandleButton/HandleButton';
-import { PageChildrenFragment } from 'generated';
+import { PageBlockFragment } from 'generated';
 
 interface BlockProps {
   children?: JSX.Element;
   dragHandleProps?: DraggableProvidedDragHandleProps;
-  block: PageChildrenFragment;
+  block: PageBlockFragment;
 }
 
 export const BlockHandle = ({

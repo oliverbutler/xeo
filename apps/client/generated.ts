@@ -77,6 +77,7 @@ export type CreatePageInput = {
 };
 
 export type CreateTextBlockInput = {
+  afterBlockId?: Maybe<Scalars['ID']>;
   id?: Maybe<Scalars['ID']>;
   parentPageId: Scalars['ID'];
   rawText: Scalars['String'];
@@ -108,7 +109,7 @@ export type Mutation = {
   createDatabase: Database;
   createPage: Page;
   createTextBlock: Block;
-  deleteBlock: Scalars['Boolean'];
+  deleteBlock: Block;
   deletePage: Page;
   linkPage: PageLink;
   signIn: AuthResponse;
@@ -268,8 +269,8 @@ export type SignUpInput = {
 };
 
 export type UpdateBlockLocationInput = {
-  afterBlockId: Scalars['ID'];
-  parentBlockId: Scalars['ID'];
+  afterBlockId?: Maybe<Scalars['ID']>;
+  parentBlockId?: Maybe<Scalars['ID']>;
   parentPageId: Scalars['ID'];
 };
 
@@ -375,7 +376,7 @@ export type DeleteBlockMutationVariables = Exact<{
 }>;
 
 
-export type DeleteBlockMutation = { __typename?: 'Mutation', deleteBlock: boolean };
+export type DeleteBlockMutation = { __typename?: 'Mutation', deleteBlock: { __typename?: 'Block', id: string } };
 
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -714,7 +715,9 @@ export type UpdateBlockLocationMutationResult = Apollo.MutationResult<UpdateBloc
 export type UpdateBlockLocationMutationOptions = Apollo.BaseMutationOptions<UpdateBlockLocationMutation, UpdateBlockLocationMutationVariables>;
 export const DeleteBlockDocument = gql`
     mutation DeleteBlock($id: ID!) {
-  deleteBlock(id: $id)
+  deleteBlock(id: $id) {
+    id
+  }
 }
     `;
 export type DeleteBlockMutationFn = Apollo.MutationFunction<DeleteBlockMutation, DeleteBlockMutationVariables>;

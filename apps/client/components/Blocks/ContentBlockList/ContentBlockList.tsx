@@ -47,17 +47,13 @@ export const ContentBlockList = ({ blocks, parentId }: BlockListProps) => {
 
     const blockBeforeNewPosition =
       result.destination.index === 0
-        ? parentId
+        ? null
         : (items[result.destination.index - 1] as Block).id;
 
-    console.log('update location');
-    // await updateBlockLocation({
-    //   variables: {
-    //     id: result.draggableId,
-    //     afterId: blockBeforeNewPosition,
-    //     parentId,
-    //   },
-    // });
+    await updateBlockLocation(result.draggableId, {
+      parentPageId: parentId,
+      afterBlockId: blockBeforeNewPosition,
+    });
   };
 
   // BUG Strange issue where leaving a page and returning to it causes the page to re-render, but the blocks to not re-render as order doesn't update correctly

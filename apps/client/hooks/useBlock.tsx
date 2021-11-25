@@ -6,7 +6,7 @@ import {
   CreateDatabaseMutationVariables,
   CreatePageMutationVariables,
   CreateTextBlockMutationVariables,
-  UpdateBlockLocationMutationOptions,
+  UpdateBlockLocationMutationVariables,
   UpdatePageMutationOptions,
   UpdateTextBlockMutationVariables,
   useCreateDatabaseMutation,
@@ -17,7 +17,8 @@ import {
   useUpdatePageMutation,
   useUpdateTextBlockMutation,
 } from 'generated';
-import { SlateValue } from 'components/Blocks/TextBlock/TextBlock';
+import { SlateValue } from 'utils/slate';
+import { SlateBlockType } from 'utils/slate.interface';
 
 export const useBlock = () => {
   const [updateTextBlock] = useUpdateTextBlockMutation();
@@ -60,10 +61,14 @@ export const useBlock = () => {
   };
 
   const updateBlockLocationHandler = async (
-    options: UpdateBlockLocationMutationOptions
+    id: string,
+    input: UpdateBlockLocationMutationVariables['input']
   ) => {
     setIsSyncing(true);
-    await updateBlockLocation({ ...options, refetchQueries: ['GetPage'] });
+    await updateBlockLocation({
+      variables: { id, input },
+      refetchQueries: ['GetPage'],
+    });
     setIsSyncing(false);
   };
 
@@ -140,7 +145,7 @@ export const useBlock = () => {
   ) => {
     const richText: SlateValue = [
       {
-        type: 'paragraph',
+        type: SlateBlockType.PARAGRAPH,
         children: [{ text: '' }],
       },
     ];

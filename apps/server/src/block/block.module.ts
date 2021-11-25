@@ -10,6 +10,7 @@ import { BlockResolver } from './block/block.resolver';
 import { PrismaModule } from '../prisma/prisma.module';
 import { PageLinkService } from './page-link/page-link.service';
 import { PageLinkResolver } from './page-link/page-link.resolver';
+import { BlockAdapter } from './block/block.adapter';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { PageLinkResolver } from './page-link/page-link.resolver';
     BlockTypeResolver,
     PageResolver,
     BlockResolver,
+    BlockAdapter,
     PageLinkResolver,
     PageService,
     BlockService,

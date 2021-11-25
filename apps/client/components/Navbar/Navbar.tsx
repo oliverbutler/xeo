@@ -43,7 +43,7 @@ export const Navbar: React.FunctionComponent = () => {
       <div className="flex flex-row items-center">
         <Clickable>
           <a className="mx-0.5 text-gray-700 dark:text-white text-sm flex items-center ">
-            {/* <ImageRenderer image={page.emoji} /> */}
+            <span>{page.emoji}</span>
             <span
               className={classNames('ml-2', {
                 'text-gray-300 dark:text-white': !page.rawText,

@@ -14,9 +14,5 @@ export const DynamicBlockRenderer: React.FunctionComponent<Props> = ({
       return <TextBlock block={block} />;
     default:
       return null;
-    // case 'Page':
-    //   return <PageBlock block={block} />;
-    // case 'Database':
-    //   return <DatabaseBlock database={block} />;
   }
 };

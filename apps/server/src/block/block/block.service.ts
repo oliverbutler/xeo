@@ -1,26 +1,24 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Block, Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
+import {
+  BlockAdapter,
+  CreateBlockInput,
+  UpdateBlockLocationInput,
+} from './block.adapter';
 
 @Injectable()
 export class BlockService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly blockAdapter: BlockAdapter
+  ) {}
   async getById(id: Block['id']): Promise<Block> {
     const block = await this.prisma.block.findUnique({ where: { id } });
 
     if (!block) {
       throw new BadRequestException(`BlockService > Block ${id} not found`);
     }
-
-    return block;
-  }
-
-  async createTextBlock(
-    input: Prisma.BlockUncheckedCreateInput
-  ): Promise<Block> {
-    const block = await this.prisma.block.create({
-      data: input,
-    });
 
     return block;
   }
@@ -55,9 +53,15 @@ export class BlockService {
     return await this.prisma.block.delete({ where: { id } });
   }
 
-  async create(input: Prisma.BlockCreateInput): Promise<Block> {
-    const block = await this.prisma.block.create({ data: input });
+  async create(input: CreateBlockInput): Promise<Block> {
+    const block = await this.blockAdapter.create(input);
 
     return block;
+  }
+
+  async updateBlockLocation(id: string, input: UpdateBlockLocationInput) {
+    const updatedBlock = this.blockAdapter.updateBlockLocation(id, input);
+
+    return updatedBlock;
   }
 }

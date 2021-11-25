@@ -35,5 +35,7 @@ mutation UpdateBlockLocation($id: ID!, $input: UpdateBlockLocationInput!) {
 }
 
 mutation DeleteBlock($id: ID!) {
-  deleteBlock(id: $id)
+  deleteBlock(id: $id) {
+    id
+  }
 }

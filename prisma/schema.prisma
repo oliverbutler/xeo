@@ -75,10 +75,6 @@ model Block {
   createdById   String
   updatedBy     User            @relation("blockUpdatedBy", fields: [updatedById], references: [id])
   updatedById   String
-
-
-  @@unique([parentPageId, rank])
-  @@unique([parentBlockId, rank])
 }
 
 model User {

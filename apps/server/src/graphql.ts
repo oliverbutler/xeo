@@ -39,6 +39,7 @@ export interface CreateTextBlockInput {
     rawText: string;
     variant: BlockVariant;
     parentPageId: string;
+    afterBlockId?: Nullable<string>;
 }
 
 export interface UpdateTextBlockInput {
@@ -50,8 +51,8 @@ export interface UpdateTextBlockInput {
 
 export interface UpdateBlockLocationInput {
     parentPageId: string;
-    afterBlockId: string;
-    parentBlockId: string;
+    afterBlockId?: Nullable<string>;
+    parentBlockId?: Nullable<string>;
 }
 
 export interface CreateDatabaseInput {
@@ -95,7 +96,7 @@ export interface IMutation {
     signIn(username: string, password: string): AuthResponse | Promise<AuthResponse>;
     createTextBlock(input: CreateTextBlockInput): Block | Promise<Block>;
     updateBlockLocation(id: string, input: UpdateBlockLocationInput): Block | Promise<Block>;
-    deleteBlock(id: string): boolean | Promise<boolean>;
+    deleteBlock(id: string): Block | Promise<Block>;
     updateTextBlock(id: string, input?: Nullable<UpdateTextBlockInput>): Block | Promise<Block>;
     createDatabase(input: CreateDatabaseInput): Database | Promise<Database>;
     linkPage(fromId: string, toId: string): PageLink | Promise<PageLink>;

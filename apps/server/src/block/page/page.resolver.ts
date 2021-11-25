@@ -19,6 +19,10 @@ import {
   UpdatePageInput,
 } from '../../graphql';
 import { UserService } from '../../user/user.service';
+import {
+  BlockWithoutRelations,
+  mapBlockToGraphQL,
+} from '../block/block.resolver';
 import { BlockService } from '../block/block.service';
 import { PageLinkService } from '../page-link/page-link.service';
 
@@ -57,10 +61,10 @@ export class PageResolver {
   }
 
   @ResolveField('blocks')
-  async blocks(@Parent() page: PageGraphQL): Promise<any> {
+  async blocks(@Parent() page: PageGraphQL): Promise<BlockWithoutRelations[]> {
     const blocks = await this.blockService.getAllByParentId(page.id);
 
-    return blocks;
+    return blocks.map(mapBlockToGraphQL);
   }
 
   @ResolveField('links')

@@ -44,6 +44,7 @@ input CreateTextBlockInput {
   rawText: String!
   variant: BlockVariant!
   parentPageId: ID!
+  afterBlockId: ID
 }
 
 input UpdateTextBlockInput {
@@ -55,8 +56,8 @@ input UpdateTextBlockInput {
 
 input UpdateBlockLocationInput {
   parentPageId: ID!
-  afterBlockId: ID!
-  parentBlockId: ID!
+  afterBlockId: ID
+  parentBlockId: ID
 }
 
 type Query {
@@ -67,6 +68,6 @@ type Query {
 type Mutation {
   createTextBlock(input: CreateTextBlockInput!): Block!
   updateBlockLocation(id: ID!, input: UpdateBlockLocationInput!): Block!
-  deleteBlock(id: ID!): Boolean!
+  deleteBlock(id: ID!): Block!
   updateTextBlock(id: ID!, input: UpdateTextBlockInput): Block!
 }

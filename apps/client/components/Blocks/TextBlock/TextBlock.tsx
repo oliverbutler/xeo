@@ -1,37 +1,37 @@
-import classNames from 'classnames';
-import { BlockVariant, PageBlockFragment } from 'generated';
+import { PageBlockFragment } from 'generated';
 import { useBlock } from 'hooks/useBlock';
 import { useDebounce } from 'hooks/useDebounce';
-import React, { useEffect, useMemo, useState } from 'react';
-import { createEditor, BaseEditor, Descendant } from 'slate';
-import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
-import { serializeToString } from 'utils/slate';
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+  createEditor,
+  Descendant,
+  Editor,
+  Point,
+  Element as SlateElement,
+  Range,
+  Transforms,
+} from 'slate';
+import { Slate, Editable, withReact, RenderElementProps } from 'slate-react';
+import { withHistory } from 'slate-history';
+import { getTextTypeFromShortcut, serializeToString } from 'utils/slate';
+import { SlateBlockType } from 'utils/slate.interface';
 
 interface Props {
   block: PageBlockFragment;
 }
 
-type CustomElement = { type: 'paragraph'; children: CustomText[] };
-type CustomText = { text: string };
-
-export type SlateValue = Descendant[];
-
-declare module 'slate' {
-  interface CustomTypes {
-    Editor: BaseEditor & ReactEditor;
-    Element: CustomElement;
-    Text: CustomText;
-  }
-}
-
 export const TextBlock: React.FunctionComponent<Props> = ({ block }) => {
-  const { updateTextBlock, deleteBlock, createTextBlock } = useBlock();
+  const { updateTextBlock } = useBlock();
 
   const [value, setValue] = useState<Descendant[]>(JSON.parse(block.richText));
 
-  const debouncedValue = useDebounce(value, 500);
+  const renderElement = useCallback((props) => <Element {...props} />, []);
 
-  const editor = useMemo(() => withReact(createEditor()), []);
+  const debouncedValue = useDebounce(value, 1000);
+
+  const [editor] = useState(() =>
+    withShortcuts(withReact(withHistory(createEditor())))
+  );
 
   useEffect(() => {
     if (serializeToString(debouncedValue) !== block.rawText) {
@@ -42,15 +42,11 @@ export const TextBlock: React.FunctionComponent<Props> = ({ block }) => {
     }
   }, [debouncedValue]);
 
-  useEffect(() => {
-    //
-  }, [block]);
-
   // const handleBlockCreation = async () => {
   //   const result = await createTextBlock({
   //     parentPageId: block.parentId,
   //     properties: {
-  //       text: emptyRichTextInput,
+  //       text: emptySlateBlockTypeInput,
   //     },
   //   });
 
@@ -61,24 +57,157 @@ export const TextBlock: React.FunctionComponent<Props> = ({ block }) => {
   //   await moveFocusToBlock(paragraph.id);
   // };
 
-  const getClassNames = () => {
-    switch (block.variant) {
-      case BlockVariant.Heading_1:
-        return 'font-semibold text-3xl';
-      case BlockVariant.Heading_2:
-        return 'font-semibold text-2xl';
-      case BlockVariant.Heading_3:
-        return 'font-semibold text-lg';
-      default:
-        return 'px-1 py-0.5';
+  return (
+    <Slate editor={editor} value={value} onChange={setValue}>
+      <Editable
+        className={'text-left px-1 py-0.5'}
+        renderElement={renderElement}
+        placeholder="Write some text..."
+        spellCheck
+        autoFocus
+      />
+    </Slate>
+  );
+};
+
+const withShortcuts = (editor: Editor) => {
+  const { deleteBackward, insertText } = editor;
+
+  editor.insertText = (text) => {
+    const { selection } = editor;
+
+    if (text === ' ' && selection && Range.isCollapsed(selection)) {
+      const { anchor } = selection;
+      const block = Editor.above(editor, {
+        match: (n) => Editor.isBlock(editor, n),
+      });
+      const path = block ? block[1] : [];
+      const start = Editor.start(editor, path);
+      const range = { anchor, focus: start };
+      const beforeText = Editor.string(editor, range);
+
+      const type = getTextTypeFromShortcut(beforeText);
+
+      if (!type) {
+        return;
+      }
+
+      Transforms.select(editor, range);
+      Transforms.delete(editor);
+      const newProperties: Partial<SlateElement> = {
+        type,
+      };
+      Transforms.setNodes<SlateElement>(editor, newProperties, {
+        match: (n) => Editor.isBlock(editor, n),
+      });
+
+      if (type === SlateBlockType.LIST_ITEM) {
+        const list = {
+          type: SlateBlockType.BULLET_LIST,
+          children: [],
+        };
+        Transforms.wrapNodes(editor, list, {
+          match: (n) =>
+            !Editor.isEditor(n) &&
+            SlateElement.isElement(n) &&
+            n.type === SlateBlockType.LIST_ITEM,
+        });
+      }
+
+      return;
+    }
+
+    insertText(text);
+  };
+
+  editor.deleteBackward = (...args) => {
+    const { selection } = editor;
+
+    if (selection && Range.isCollapsed(selection)) {
+      const match = Editor.above(editor, {
+        match: (n) => Editor.isBlock(editor, n),
+      });
+
+      if (match) {
+        const [block, path] = match;
+        const start = Editor.start(editor, path);
+
+        if (
+          !Editor.isEditor(block) &&
+          SlateElement.isElement(block) &&
+          block.type !== SlateBlockType.PARAGRAPH &&
+          Point.equals(selection.anchor, start)
+        ) {
+          const newProperties: Partial<SlateElement> = {
+            type: SlateBlockType.PARAGRAPH,
+          };
+          Transforms.setNodes(editor, newProperties);
+
+          if (block.type === SlateBlockType.LIST_ITEM) {
+            Transforms.unwrapNodes(editor, {
+              match: (n) =>
+                !Editor.isEditor(n) &&
+                SlateElement.isElement(n) &&
+                n.type === SlateBlockType.BULLET_LIST,
+              split: true,
+            });
+          }
+
+          return;
+        }
+      }
+
+      deleteBackward(...args);
     }
   };
 
-  console.log(value);
+  return editor;
+};
 
-  return (
-    <Slate editor={editor} value={value} onChange={setValue}>
-      <Editable className={classNames('text-left', getClassNames())} />
-    </Slate>
-  );
+const Element = ({ attributes, children, element }: RenderElementProps) => {
+  switch (element.type) {
+    case 'block-quote':
+      return (
+        <blockquote
+          className="text-gray-300 border-l-2 pl-2 my-1"
+          {...attributes}
+        >
+          {children}
+        </blockquote>
+      );
+    case 'bulleted-list':
+      return (
+        <ul className="list-disc ml-6" {...attributes}>
+          {children}
+        </ul>
+      );
+    case 'heading-one':
+      return (
+        <h1 className="font-semibold text-3xl" {...attributes}>
+          {children}
+        </h1>
+      );
+    case 'heading-two':
+      return (
+        <h2 className="font-semibold text-2xl" {...attributes}>
+          {children}
+        </h2>
+      );
+    case 'heading-three':
+      return (
+        <h3 className="font-semibold text-lg" {...attributes}>
+          {children}
+        </h3>
+      );
+    case 'heading-four':
+      return (
+        <h4 className="font-semibold text-xl" {...attributes}>
+          {children}
+        </h4>
+      );
+    case 'list-item':
+      return <li {...attributes}>{children}</li>;
+    default:
+      return <p {...attributes}>{children}</p>;
+  }
 };

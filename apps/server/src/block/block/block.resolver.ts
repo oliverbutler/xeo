@@ -9,6 +9,7 @@ import {
   BlockType,
   BlockVariant,
   CreateTextBlockInput,
+  UpdateBlockLocationInput,
   UpdateTextBlockInput,
 } from '../../graphql';
 import { BlockService } from './block.service';
@@ -18,7 +19,7 @@ export type BlockWithoutRelations = Omit<
   'parentPage' | 'children' | 'createdBy' | 'updatedBy'
 >;
 
-const mapBlockToGraphQL = (block: Block): BlockWithoutRelations => {
+export const mapBlockToGraphQL = (block: Block): BlockWithoutRelations => {
   return {
     ...block,
     richText: JSON.stringify(block.richText),
@@ -58,14 +59,16 @@ export class BlockResolver {
     @CurrentUser() user: CurrentAuthUser,
     @Args('input') input: CreateTextBlockInput
   ): Promise<BlockWithoutRelations> {
-    const block = await this.blockService.createTextBlock({
+    const block = await this.blockService.create({
       type: block_type_enum.TEXT,
-      richText: input.richText,
+      richText: JSON.parse(input.richText),
       rawText: input.rawText,
+      variant: input.variant,
       rank: 0,
       createdById: user.id,
       updatedById: user.id,
       parentPageId: input.parentPageId,
+      afterBlockId: input.afterBlockId,
     });
 
     return mapBlockToGraphQL(block);
@@ -89,13 +92,30 @@ export class BlockResolver {
     @Args('id') id: string,
     @Args('input') input: UpdateTextBlockInput
   ): Promise<BlockWithoutRelations> {
+    console.log(input);
+
     const block = await this.blockService.update(id, {
-      richText: input.richText ?? undefined,
+      richText: input.richText ? JSON.parse(input.richText) : undefined,
       rawText: input.rawText ?? undefined,
       variant: input.variant ?? undefined,
       parentPageId: input.parentPageId ?? undefined,
       updatedAt: new Date(),
       updatedById: user.id,
+    });
+
+    return mapBlockToGraphQL(block);
+  }
+
+  @Mutation('updateBlockLocation')
+  @UseGuards(GqlAuthGuard)
+  async updateBlockLocation(
+    @CurrentUser() user: CurrentAuthUser,
+    @Args('id') id: string,
+    @Args('input') input: UpdateBlockLocationInput
+  ): Promise<BlockWithoutRelations> {
+    const block = await this.blockService.updateBlockLocation(id, {
+      parentPageId: input.parentPageId,
+      afterBlockId: input.afterBlockId,
     });
 
     return mapBlockToGraphQL(block);

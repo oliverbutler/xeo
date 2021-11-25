@@ -43,7 +43,7 @@ export const PageGraph: React.FunctionComponent<Props> = ({ localGraph }) => {
         }
       }
     }
-  }, [data, localGraph]);
+  }, [data, localGraph, currentPageId]);
 
   return <ForceGraph pageGraph={pageGraph} />;
 };
