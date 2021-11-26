@@ -10,3 +10,11 @@ export enum SlateBlockType {
   HEADING_FIVE = 'heading-five',
   HEADING_SIX = 'heading-six',
 }
+
+export enum TextFormat {
+  BOLD = 'bold',
+  ITALIC = 'italic',
+  UNDERLINE = 'underline',
+  CODE = 'code',
+  STRIKE_THROUGH = 'strikeThrough',
+}

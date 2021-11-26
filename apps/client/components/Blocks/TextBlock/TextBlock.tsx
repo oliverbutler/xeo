@@ -1,7 +1,7 @@
 import { PageBlockFragment } from 'generated';
 import { useBlock } from 'hooks/useBlock';
 import { useDebounce } from 'hooks/useDebounce';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   createEditor,
   Descendant,
@@ -11,11 +11,19 @@ import {
   Range,
   Transforms,
 } from 'slate';
-import { Slate, Editable, withReact, RenderElementProps } from 'slate-react';
-import { withHistory } from 'slate-history';
-import { getTextTypeFromShortcut, serializeToString } from 'utils/slate';
+import {
+  Slate,
+  Editable,
+  withReact,
+  RenderElementProps,
+  RenderLeafProps,
+} from 'slate-react';
+import {
+  getTextTypeFromShortcut,
+  serializeToString,
+  forEventToggleMarks,
+} from 'utils/slate';
 import { SlateBlockType } from 'utils/slate.interface';
-
 interface Props {
   block: PageBlockFragment;
 }
@@ -29,9 +37,7 @@ export const TextBlock: React.FunctionComponent<Props> = ({ block }) => {
 
   const debouncedValue = useDebounce(value, 1000);
 
-  const [editor] = useState(() =>
-    withShortcuts(withReact(withHistory(createEditor())))
-  );
+  const editor = useMemo(() => withShortcuts(withReact(createEditor())), []);
 
   useEffect(() => {
     if (serializeToString(debouncedValue) !== block.rawText) {
@@ -62,6 +68,10 @@ export const TextBlock: React.FunctionComponent<Props> = ({ block }) => {
       <Editable
         className={'text-left px-1 py-0.5'}
         renderElement={renderElement}
+        renderLeaf={(props) => <Leaf {...props} />}
+        onKeyDown={(event) => {
+          forEventToggleMarks(editor, event);
+        }}
         placeholder="Write some text..."
         spellCheck
         autoFocus
@@ -88,33 +98,29 @@ const withShortcuts = (editor: Editor) => {
 
       const type = getTextTypeFromShortcut(beforeText);
 
-      if (!type) {
-        return;
-      }
-
-      Transforms.select(editor, range);
-      Transforms.delete(editor);
-      const newProperties: Partial<SlateElement> = {
-        type,
-      };
-      Transforms.setNodes<SlateElement>(editor, newProperties, {
-        match: (n) => Editor.isBlock(editor, n),
-      });
-
-      if (type === SlateBlockType.LIST_ITEM) {
-        const list = {
-          type: SlateBlockType.BULLET_LIST,
-          children: [],
+      if (type) {
+        Transforms.select(editor, range);
+        Transforms.delete(editor);
+        const newProperties: Partial<SlateElement> = {
+          type,
         };
-        Transforms.wrapNodes(editor, list, {
-          match: (n) =>
-            !Editor.isEditor(n) &&
-            SlateElement.isElement(n) &&
-            n.type === SlateBlockType.LIST_ITEM,
+        Transforms.setNodes<SlateElement>(editor, newProperties, {
+          match: (n) => Editor.isBlock(editor, n),
         });
-      }
 
-      return;
+        if (type === SlateBlockType.LIST_ITEM) {
+          const list = {
+            type: SlateBlockType.BULLET_LIST,
+            children: [],
+          };
+          Transforms.wrapNodes(editor, list, {
+            match: (n) =>
+              !Editor.isEditor(n) &&
+              SlateElement.isElement(n) &&
+              n.type === SlateBlockType.LIST_ITEM,
+          });
+        }
+      }
     }
 
     insertText(text);
@@ -164,6 +170,30 @@ const withShortcuts = (editor: Editor) => {
   return editor;
 };
 
+const Leaf = ({ attributes, children, leaf }: RenderLeafProps) => {
+  if (leaf.bold) {
+    children = <strong {...attributes}>{children}</strong>;
+  }
+
+  if (leaf.italic) {
+    children = <em {...attributes}>{children}</em>;
+  }
+
+  if (leaf.underline) {
+    children = <u {...attributes}>{children}</u>;
+  }
+
+  if (leaf.code) {
+    children = <code {...attributes}>{children}</code>;
+  }
+
+  if (leaf.strikeThrough) {
+    children = <del {...attributes}>{children}</del>;
+  }
+
+  return <span {...attributes}>{children}</span>;
+};
+
 const Element = ({ attributes, children, element }: RenderElementProps) => {
   switch (element.type) {
     case 'block-quote':
@@ -177,7 +207,7 @@ const Element = ({ attributes, children, element }: RenderElementProps) => {
       );
     case 'bulleted-list':
       return (
-        <ul className="list-disc ml-6" {...attributes}>
+        <ul className="list-disc ml-6 " {...attributes}>
           {children}
         </ul>
       );
@@ -206,7 +236,11 @@ const Element = ({ attributes, children, element }: RenderElementProps) => {
         </h4>
       );
     case 'list-item':
-      return <li {...attributes}>{children}</li>;
+      return (
+        <li className="" {...attributes}>
+          {children}
+        </li>
+      );
     default:
       return <p {...attributes}>{children}</p>;
   }

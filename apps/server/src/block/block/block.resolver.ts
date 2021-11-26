@@ -92,8 +92,6 @@ export class BlockResolver {
     @Args('id') id: string,
     @Args('input') input: UpdateTextBlockInput
   ): Promise<BlockWithoutRelations> {
-    console.log(input);
-
     const block = await this.blockService.update(id, {
       richText: input.richText ? JSON.parse(input.richText) : undefined,
       rawText: input.rawText ?? undefined,
