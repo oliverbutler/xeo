@@ -1,8 +1,9 @@
 {
   "version": 2,
   "projects": {
-    "server": "apps/server",
+    "client": "apps/client",
     "client-e2e": "apps/client-e2e",
-    "client": "apps/client"
+    "server": "apps/server",
+    "utils": "libs/utils"
   }
 }

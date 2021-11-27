@@ -131,7 +131,7 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pageGraph }) => {
                     x={node.x}
                     y={Number(node.y) + 25}
                   >
-                    {page?.emoji} {page?.rawText}
+                    {page?.emoji} {page?.titlePlainText}
                   </text>
                 </g>
               </Link>

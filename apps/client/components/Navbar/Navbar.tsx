@@ -5,16 +5,12 @@ import { Dropdown } from 'components/UI/Dropdown/Dropdown';
 import { usePageContext } from 'context/PageContext';
 import { useSyncContext } from 'context/SyncContext';
 import { useGetPageQuery } from 'generated';
-import { useBlock } from 'hooks/useBlock';
 import { useRouter } from 'next/dist/client/router';
 import { FiMoreHorizontal, FiTrash } from 'react-icons/fi';
 import { DarkModeButton } from './DarkModeButton/DarkModeButton';
 import { FavouriteButton } from './FavouriteButton/FavouriteButton';
 
 export const Navbar: React.FunctionComponent = () => {
-  const { deleteBlock } = useBlock();
-  const router = useRouter();
-
   const { currentPageId } = usePageContext();
 
   const { isSyncing } = useSyncContext();
@@ -30,11 +26,6 @@ export const Navbar: React.FunctionComponent = () => {
 
   const page = data.page;
 
-  const handleDeleteBlock = async () => {
-    router.push('/');
-    await deleteBlock(currentPageId);
-  };
-
   return (
     <nav
       id="navbar"
@@ -46,10 +37,10 @@ export const Navbar: React.FunctionComponent = () => {
             <span>{page.emoji}</span>
             <span
               className={classNames('ml-2', {
-                'text-gray-300 dark:text-white': !page.rawText,
+                'text-gray-300 dark:text-white': !page.titlePlainText,
               })}
             >
-              {page.rawText || 'Untitled'}
+              {page.titlePlainText || 'Untitled'}
             </span>
           </a>
         </Clickable>
@@ -71,7 +62,7 @@ export const Navbar: React.FunctionComponent = () => {
               {
                 text: 'Delete',
                 logo: <FiTrash />,
-                onClick: handleDeleteBlock,
+                onClick: () => {},
               },
             ],
           ]}

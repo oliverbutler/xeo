@@ -34,10 +34,10 @@ export const Sidebar = () => {
                 <span>{page.emoji}</span>
                 <span
                   className={classNames('ml-2', {
-                    'text-gray-300': !page.rawText,
+                    'text-gray-300': !page.titlePlainText,
                   })}
                 >
-                  {page.rawText || 'Untitled'}
+                  {page.titlePlainText || 'Untitled'}
                 </span>
               </SidebarItem>
             </Link>

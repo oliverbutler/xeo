@@ -1,41 +1,31 @@
-import classNames from 'classnames';
-import { Editable } from 'components/Editable/Editable';
+import { TextBlock } from 'components/Blocks/TextBlock/TextBlock';
 import { GetPageQuery } from 'generated';
 import { useBlock } from 'hooks/useBlock';
-import { useDebounce } from 'hooks/useDebounce';
-import { useEffect, useState } from 'react';
+import { Descendant } from 'slate';
 
 interface Props {
   page: GetPageQuery['page'];
 }
 
 export const PageTitle: React.FunctionComponent<Props> = ({ page }) => {
-  const [text, setText] = useState(page.rawText);
-
-  const debouncedText = useDebounce(text, 500);
-
   const { updatePage } = useBlock();
 
-  useEffect(() => {
-    if (debouncedText !== page.rawText) {
-      updatePage({
-        variables: {
-          id: page.id,
-          input: { rawText: debouncedText, richText: null },
+  const handleTextUpdate = (text: Descendant[]) => {
+    updatePage({
+      variables: {
+        id: page.id,
+        input: {
+          title: JSON.parse(JSON.stringify(text)),
         },
-      });
-    }
-  }, [debouncedText, page]);
+      },
+    });
+  };
+
+  const initialTitle = page.title as Descendant[];
 
   return (
-    <Editable
-      tagName="h1"
-      html={text}
-      placeholder="Untitled"
-      className={classNames('text-4xl font-bold text-left mb-10', {
-        'text-gray-300': !text,
-      })}
-      onChange={(e) => setText(e.target.value)}
-    />
+    <div className="text-3xl font-bold">
+      <TextBlock initialValue={initialTitle} onSave={handleTextUpdate} />
+    </div>
   );
 };

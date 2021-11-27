@@ -29,8 +29,7 @@ input PageFilters {
 input CreatePageInput {
   id: ID
   emoji: String
-  title: JSON!
-  body: JSON!
+  titlePlainText: String!
   linkedFromPageId: ID
 }
 

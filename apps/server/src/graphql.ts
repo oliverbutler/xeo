@@ -32,8 +32,7 @@ export interface PageFilters {
 export interface CreatePageInput {
     id?: Nullable<string>;
     emoji?: Nullable<string>;
-    title: JSON;
-    body: JSON;
+    titlePlainText: string;
     linkedFromPageId?: Nullable<string>;
 }
 

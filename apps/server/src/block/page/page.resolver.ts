@@ -20,8 +20,8 @@ import {
 } from '../../graphql';
 import { UserService } from '../../user/user.service';
 import { PageLinkService } from '../page-link/page-link.service';
-
 import { PageService } from './page.service';
+import { serializeToString, slateStateFactory } from 'libs/utils/src/lib/slate';
 
 export type PageGraphQlWithoutRelations = Omit<
   PageGraphQL,
@@ -31,7 +31,6 @@ export type PageGraphQlWithoutRelations = Omit<
 const mapPageToGraphQL = (page: Page): PageGraphQlWithoutRelations => {
   return {
     ...page,
-    title: JSON.stringify(page.title),
     createdAt: page.createdAt.toISOString(),
     updatedAt: page.updatedAt.toISOString(),
     softDeletedAt: page.softDeletedAt?.toISOString(),
@@ -105,14 +104,17 @@ export class PageResolver {
   ): Promise<PageGraphQlWithoutRelations> {
     const id = input.id ?? randomUUID();
 
+    const title = slateStateFactory(input.titlePlainText);
+    const body = slateStateFactory('');
+
     const page = await this.pageService.create({
       id,
       emoji: input.emoji,
-      title: input.title,
-      titlePlainText: '',
-      body: JSON.parse(input.body),
+      title: title,
+      titlePlainText: input.titlePlainText,
       createdById: user.id,
       updatedById: user.id,
+      body,
       fields: {},
     });
 
@@ -145,8 +147,13 @@ export class PageResolver {
     @Args('id') id: string,
     @Args('input') input: UpdatePageInput
   ): Promise<PageGraphQlWithoutRelations> {
+    const titlePlainText = input.title
+      ? serializeToString(input.title)
+      : undefined;
+
     const page = await this.pageService.update(id, {
       title: input.title ?? undefined,
+      titlePlainText: input.title ? titlePlainText : undefined,
       body: input.body ?? undefined,
       coverGradient: input.coverGradient ?? undefined,
       emoji: input.emoji ?? undefined,

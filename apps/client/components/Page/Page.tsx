@@ -1,8 +1,13 @@
 import { Loading } from 'components/Animate/Loading/Loading';
 import { ContentBlockList } from 'components/Blocks/ContentBlockList/ContentBlockList';
+import { TextBlock } from 'components/Blocks/TextBlock/TextBlock';
 import { usePageContext } from 'context/PageContext';
 import { useGetPageQuery } from 'generated';
+import { useBlock } from 'hooks/useBlock';
 import { useEffect } from 'react';
+import { Descendant } from 'slate';
+import { SlateBlockType } from 'utils/slate.interface';
+import { slateStateFactory } from '../../../../libs/utils/src/lib/slate';
 import { PageCover } from './PageCover/PageCover';
 import { PageEmpty } from './PageEmpty/PageEmpty';
 import { PageIcon } from './PageIcon/PageIcon';
@@ -16,6 +21,7 @@ export const Page: React.FunctionComponent<Props> = ({ id }) => {
   const { data } = useGetPageQuery({
     variables: { id },
   });
+  const { updatePage } = useBlock();
 
   const page = data?.page;
 
@@ -23,7 +29,7 @@ export const Page: React.FunctionComponent<Props> = ({ id }) => {
     return <Loading />;
   }
 
-  const blocks = [...page.blocks].sort((a, b) => a.rank - b.rank);
+  const body = page.body as Descendant[];
 
   return (
     <div className="overflow-auto h-screen">
@@ -36,11 +42,19 @@ export const Page: React.FunctionComponent<Props> = ({ id }) => {
 
           <PageTitle page={page} />
 
-          {blocks?.length > 0 ? (
-            <ContentBlockList blocks={blocks} parentId={page.id} />
-          ) : (
-            <PageEmpty page={page} />
-          )}
+          <div className="mt-4">
+            <TextBlock
+              initialValue={body}
+              onSave={(val) => {
+                updatePage({
+                  variables: {
+                    id: page.id,
+                    input: { body: JSON.parse(JSON.stringify(val)) },
+                  },
+                });
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>

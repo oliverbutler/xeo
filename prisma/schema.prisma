@@ -11,10 +11,10 @@ model Page {
   id             String     @id @default(uuid())
   emoji          String?
   coverGradient  String?
-  title          Json       @default("{}") @db.JsonB
-  titlePlainText String     @default("")
-  body           Json       @default("{}") @db.JsonB
-  fields         Json       @default("{}") @db.JsonB
+  title          Json       @db.JsonB
+  titlePlainText String
+  body           Json       @db.JsonB
+  fields         Json       @db.JsonB
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
   softDeletedAt  DateTime?

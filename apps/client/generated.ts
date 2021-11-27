@@ -14,7 +14,7 @@ export type Scalars = {
   Int: number;
   Float: number;
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
-  JSON: any;
+  JSON: Object;
 };
 
 export type AuthResponse = {
@@ -31,11 +31,10 @@ export type CreateDatabaseInput = {
 };
 
 export type CreatePageInput = {
-  body: Scalars['JSON'];
   emoji?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['ID']>;
   linkedFromPageId?: InputMaybe<Scalars['ID']>;
-  title: Scalars['JSON'];
+  titlePlainText: Scalars['String'];
 };
 
 export type Database = {
@@ -220,7 +219,7 @@ export type GetPageQueryVariables = Exact<{
 }>;
 
 
-export type GetPageQuery = { __typename?: 'Query', page: { __typename?: 'Page', id: string, emoji?: string | null | undefined, title: any, titlePlainText: string, body: any, favourite: boolean, coverGradient?: string | null | undefined } };
+export type GetPageQuery = { __typename?: 'Query', page: { __typename?: 'Page', id: string, emoji?: string | null | undefined, title: Object, titlePlainText: string, body: Object, favourite: boolean, coverGradient?: string | null | undefined } };
 
 export type GetPageGraphQueryVariables = Exact<{ [key: string]: never; }>;
 

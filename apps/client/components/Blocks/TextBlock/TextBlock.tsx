@@ -1,5 +1,3 @@
-import { PageBlockFragment } from 'generated';
-import { useBlock } from 'hooks/useBlock';
 import { useDebounce } from 'hooks/useDebounce';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -20,39 +18,41 @@ import {
 } from 'slate-react';
 import {
   getTextTypeFromShortcut,
-  serializeToString,
   forEventToggleMarks,
-} from 'utils/slate';
+  serializeToString,
+  slateStateFactory,
+} from '../../../../../libs/utils/src/lib/slate';
 import { SlateBlockType } from 'utils/slate.interface';
 
 interface Props {
-  block: PageBlockFragment;
+  initialValue?: Descendant[];
+  onSave: (text: Descendant[], plainText: string) => void;
+  debounceDuration?: number;
 }
 
-export const TextBlock: React.FunctionComponent<Props> = ({ block }) => {
-  const { updateTextBlock } = useBlock();
-
-  const [value, setValue] = useState<Descendant[]>(JSON.parse(block.richText));
+export const TextBlock: React.FunctionComponent<Props> = ({
+  initialValue,
+  onSave,
+  debounceDuration = 1000,
+}) => {
+  const [value, setValue] = useState<Descendant[]>(
+    initialValue ?? slateStateFactory('')
+  );
 
   const renderElement = useCallback((props) => <Element {...props} />, []);
 
-  const debouncedValue = useDebounce(value, 1000);
+  const debouncedValue = useDebounce(value, debounceDuration);
 
   const editor = useMemo(() => withShortcuts(withReact(createEditor())), []);
 
   useEffect(() => {
-    if (serializeToString(debouncedValue) !== block.rawText) {
-      updateTextBlock(block.id, {
-        richText: JSON.stringify(debouncedValue),
-        rawText: serializeToString(debouncedValue),
-      });
-    }
+    onSave(debouncedValue, serializeToString(debouncedValue));
   }, [debouncedValue]);
 
   return (
     <Slate editor={editor} value={value} onChange={setValue}>
       <Editable
-        className={'editable-block text-left px-1 py-0.5'}
+        className={'text-left px-1 py-0.5'}
         renderElement={renderElement}
         renderLeaf={(props) => <Leaf {...props} />}
         onKeyDown={(event) => {
