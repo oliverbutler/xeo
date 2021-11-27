@@ -1,11 +1,13 @@
+scalar JSON
+
 type Page {
   id: ID!
-  blocks: [Block!]!
   emoji: String
   coverGradient: String
-  richText: String! # TODO make scalar
-  rawText: String!
-  # fields: String!
+  title: JSON!
+  titlePlainText: String!
+  body: JSON!
+  fields: JSON!
   createdAt: String!
   updatedAt: String!
   softDeletedAt: String
@@ -27,14 +29,14 @@ input PageFilters {
 input CreatePageInput {
   id: ID
   emoji: String
-  richText: String!
-  rawText: String!
+  title: JSON!
+  body: JSON!
   linkedFromPageId: ID
 }
 
 input UpdatePageInput {
-  richText: String
-  rawText: String
+  title: JSON
+  body: JSON
   coverGradient: String
   emoji: String
   favourite: Boolean

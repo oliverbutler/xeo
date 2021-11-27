@@ -19,24 +19,19 @@ import {
   UpdatePageInput,
 } from '../../graphql';
 import { UserService } from '../../user/user.service';
-import {
-  BlockWithoutRelations,
-  mapBlockToGraphQL,
-} from '../block/block.resolver';
-import { BlockService } from '../block/block.service';
 import { PageLinkService } from '../page-link/page-link.service';
 
 import { PageService } from './page.service';
 
 export type PageGraphQlWithoutRelations = Omit<
   PageGraphQL,
-  'blocks' | 'createdBy' | 'updatedBy' | 'links' | 'backLinks'
+  'createdBy' | 'updatedBy' | 'links' | 'backLinks'
 >;
 
 const mapPageToGraphQL = (page: Page): PageGraphQlWithoutRelations => {
   return {
     ...page,
-    richText: JSON.stringify(page.richText),
+    title: JSON.stringify(page.title),
     createdAt: page.createdAt.toISOString(),
     updatedAt: page.updatedAt.toISOString(),
     softDeletedAt: page.softDeletedAt?.toISOString(),
@@ -48,7 +43,6 @@ export class PageResolver {
   constructor(
     private readonly pageService: PageService,
     private readonly pageLinkService: PageLinkService,
-    private readonly blockService: BlockService,
     private readonly userService: UserService
   ) {}
 
@@ -58,13 +52,6 @@ export class PageResolver {
     const page = await this.pageService.getById(id);
 
     return mapPageToGraphQL(page);
-  }
-
-  @ResolveField('blocks')
-  async blocks(@Parent() page: PageGraphQL): Promise<BlockWithoutRelations[]> {
-    const blocks = await this.blockService.getAllByParentId(page.id);
-
-    return blocks.map(mapBlockToGraphQL);
   }
 
   @ResolveField('links')
@@ -121,8 +108,9 @@ export class PageResolver {
     const page = await this.pageService.create({
       id,
       emoji: input.emoji,
-      richText: JSON.parse(input.richText),
-      rawText: input.rawText,
+      title: input.title,
+      titlePlainText: '',
+      body: JSON.parse(input.body),
       createdById: user.id,
       updatedById: user.id,
       fields: {},
@@ -158,8 +146,8 @@ export class PageResolver {
     @Args('input') input: UpdatePageInput
   ): Promise<PageGraphQlWithoutRelations> {
     const page = await this.pageService.update(id, {
-      richText: input.richText ?? undefined,
-      rawText: input.rawText ?? undefined,
+      title: input.title ?? undefined,
+      body: input.body ?? undefined,
       coverGradient: input.coverGradient ?? undefined,
       emoji: input.emoji ?? undefined,
       favourite: input.favourite ?? undefined,

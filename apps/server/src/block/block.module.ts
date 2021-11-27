@@ -1,16 +1,12 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { UserModule } from '../user/user.module';
-import { BlockService } from './block/block.service';
 import { AuthModule } from '../auth/auth.module';
-import { BlockTypeResolver } from './block-type.resolver';
 import { PageService } from './page/page.service';
 import { DatabaseService } from './database/database.service';
 import { PageResolver } from './page/page.resolver';
-import { BlockResolver } from './block/block.resolver';
 import { PrismaModule } from '../prisma/prisma.module';
 import { PageLinkService } from './page-link/page-link.service';
 import { PageLinkResolver } from './page-link/page-link.resolver';
-import { BlockAdapter } from './block/block.adapter';
 
 @Module({
   imports: [
@@ -19,17 +15,12 @@ import { BlockAdapter } from './block/block.adapter';
     PrismaModule,
   ],
   providers: [
-    BlockService,
-    BlockTypeResolver,
     PageResolver,
-    BlockResolver,
-    BlockAdapter,
     PageLinkResolver,
     PageService,
-    BlockService,
     DatabaseService,
     PageLinkService,
   ],
-  exports: [BlockService, PageService, DatabaseService],
+  exports: [PageService, DatabaseService],
 })
 export class BlockModule {}

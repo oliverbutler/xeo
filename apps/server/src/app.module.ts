@@ -6,6 +6,7 @@ import { BlockModule } from './block/block.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
+import GraphQLJSON from 'graphql-type-json';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { PrismaModule } from './prisma/prisma.module';
       definitions: {
         path: join(process.cwd(), 'apps/server/src/graphql.ts'),
       },
-      resolvers: {},
+      resolvers: { JSON: GraphQLJSON },
     }),
     PrismaModule,
     UserModule,
