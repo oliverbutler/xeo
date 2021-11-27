@@ -7,18 +7,6 @@
 
 /* tslint:disable */
 /* eslint-disable */
-export enum BlockObjectType {
-    PAGE = "PAGE",
-    BLOCK = "BLOCK",
-    DATABASE = "DATABASE"
-}
-
-export enum HeadingType {
-    H1 = "H1",
-    H2 = "H2",
-    H3 = "H3"
-}
-
 export interface SignUpInput {
     username: string;
     firstName: string;
@@ -26,98 +14,34 @@ export interface SignUpInput {
     password: string;
 }
 
-export interface RichTextInput {
+export interface CreateDatabaseInput {
+    id?: Nullable<string>;
+    schema: string;
+    richText: string;
     rawText: string;
 }
 
-export interface PagePropertiesInput {
-    title: RichTextInput;
+export interface DatabaseFilters {
+    createdById?: Nullable<string>;
 }
 
-export interface ParagraphPropertiesInput {
-    text: RichTextInput;
-}
-
-export interface HeadingPropertiesInput {
-    text: RichTextInput;
-    variant: HeadingType;
-}
-
-export interface CoverImageInput {
-    gradient: string;
-}
-
-export interface CreateBlockInput {
-    object: BlockObjectType;
-    parentId?: Nullable<string>;
-}
-
-export interface BlockFilters {
-    object?: Nullable<BlockObjectType>;
-    parentId?: Nullable<string>;
+export interface PageFilters {
+    favourite?: Nullable<boolean>;
 }
 
 export interface CreatePageInput {
     id?: Nullable<string>;
-    properties: PagePropertiesInput;
-    parentId?: Nullable<string>;
-    afterId?: Nullable<string>;
-}
-
-export interface CreateParagraphBlockInput {
-    id?: Nullable<string>;
-    properties: ParagraphPropertiesInput;
-    parentId?: Nullable<string>;
-    afterId?: Nullable<string>;
-}
-
-export interface CreateHeadingBlockInput {
-    id?: Nullable<string>;
-    properties: HeadingPropertiesInput;
-    parentId?: Nullable<string>;
-    afterId?: Nullable<string>;
+    emoji?: Nullable<string>;
+    titlePlainText: string;
+    linkedFromPageId?: Nullable<string>;
 }
 
 export interface UpdatePageInput {
-    title?: Nullable<RichTextInput>;
-    image?: Nullable<string>;
+    title?: Nullable<JSON>;
+    body?: Nullable<JSON>;
+    coverGradient?: Nullable<string>;
     emoji?: Nullable<string>;
-    coverImage?: Nullable<CoverImageInput>;
     favourite?: Nullable<boolean>;
-}
-
-export interface UpdateContentBlockInput {
-    text?: Nullable<RichTextInput>;
-}
-
-export interface DatabaseSchemaInput {
-    type: string;
-    name: string;
-}
-
-export interface DatabasePropertiesInput {
-    title: RichTextInput;
-    schema?: Nullable<DatabaseSchemaInput[]>;
-}
-
-export interface UpdateDatabaseInput {
-    title?: Nullable<RichTextInput>;
-}
-
-export interface CreateDatabaseInput {
-    id?: Nullable<string>;
-    properties: DatabasePropertiesInput;
-    parentId?: Nullable<string>;
-    afterId?: Nullable<string>;
-}
-
-export interface Block {
-    id: string;
-    object: BlockObjectType;
-    createdBy: User;
-    createdById: string;
-    parent?: Nullable<Block>;
-    parentId?: Nullable<string>;
 }
 
 export interface AuthResponse {
@@ -128,122 +52,78 @@ export interface AuthResponse {
 export interface IMutation {
     signUp(input: SignUpInput): User | Promise<User>;
     signIn(username: string, password: string): AuthResponse | Promise<AuthResponse>;
+    createDatabase(input: CreateDatabaseInput): Database | Promise<Database>;
+    linkPage(fromId: string, toId: string): PageLink | Promise<PageLink>;
+    unlinkPage(fromId: string, toId: string): PageLink | Promise<PageLink>;
     createPage(input: CreatePageInput): Page | Promise<Page>;
     updatePage(id: string, input: UpdatePageInput): Page | Promise<Page>;
-    createParagraphBlock(input: CreateParagraphBlockInput): ContentBlock | Promise<ContentBlock>;
-    createHeadingBlock(input: CreateHeadingBlockInput): ContentBlock | Promise<ContentBlock>;
-    createDatabase(input: CreateDatabaseInput): Database | Promise<Database>;
-    updateDatabase(id: string, input: UpdateDatabaseInput): Database | Promise<Database>;
-    updateContentBlock(id: string, input: UpdateContentBlockInput): ContentBlock | Promise<ContentBlock>;
-    updateBlockLocation(id: string, parentId: string, afterId?: Nullable<string>): boolean | Promise<boolean>;
-    deleteBlock(id: string): boolean | Promise<boolean>;
+    deletePage(id: string): Page | Promise<Page>;
 }
 
-export interface Emoji {
-    emoji: string;
-}
-
-export interface Image {
-    image: string;
-}
-
-export interface RichText {
+export interface Database {
+    id: string;
+    schema: string;
+    pages: Page[];
+    emoji?: Nullable<string>;
+    richText: string;
     rawText: string;
-}
-
-export interface PageProperties {
-    type: string;
-    title: RichText;
-    favourite: boolean;
-    image?: Nullable<EmojiImage>;
-    coverImage?: Nullable<CoverImage>;
-    childrenOrder: string[];
-}
-
-export interface DatabaseSchema_String {
-    type: string;
-    name: string;
-}
-
-export interface DatabaseSchema_Number {
-    type: string;
-    name: string;
-}
-
-export interface DatabaseProperties {
-    type: string;
-    title: RichText;
-    schema: DatabaseSchema[];
-}
-
-export interface ParagraphProperties {
-    type: string;
-    text: RichText;
-}
-
-export interface HeadingProperties {
-    type: string;
-    text: RichText;
-    variant: HeadingType;
-}
-
-export interface CoverImage {
-    gradient?: Nullable<string>;
-}
-
-export interface Database extends Block {
-    id: string;
-    object: BlockObjectType;
+    createdAt: string;
+    updatedAt: string;
+    softDeletedAt?: Nullable<string>;
     createdBy: User;
     createdById: string;
-    parent?: Nullable<Block>;
-    parentId?: Nullable<string>;
-    properties: DatabaseProperties;
-    children: Page[];
-}
-
-export interface Page extends Block {
-    id: string;
-    object: BlockObjectType;
-    createdBy: User;
-    createdById: string;
-    parent?: Nullable<Block>;
-    parentId?: Nullable<string>;
-    properties: PageProperties;
-    children: Block[];
-}
-
-export interface ContentBlock extends Block {
-    id: string;
-    object: BlockObjectType;
-    createdBy: User;
-    createdById: string;
-    parent?: Nullable<Block>;
-    parentId?: Nullable<string>;
-    properties: ContentProperties;
 }
 
 export interface IQuery {
-    blocks(filters?: Nullable<BlockFilters>): Block[] | Promise<Block[]>;
-    block(id: string): Block | Promise<Block>;
-    page(id: string, populateSubTree?: Nullable<boolean>): Page | Promise<Page>;
-    pages(filters?: Nullable<BlockFilters>): Page[] | Promise<Page[]>;
-    path(id: string): Page[] | Promise<Page[]>;
+    databases(input: DatabaseFilters): Database[] | Promise<Database[]>;
+    pageLinks(): PageLink[] | Promise<PageLink[]>;
+    page(id: string): Page | Promise<Page>;
+    pages(filters?: Nullable<PageFilters>): Page[] | Promise<Page[]>;
     me(): User | Promise<User>;
     users(): User[] | Promise<User[]>;
 }
 
+export interface PageLink {
+    from: Page;
+    fromId: string;
+    to: Page;
+    toId: string;
+    createdBy: User;
+    createdById: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface Page {
+    id: string;
+    emoji?: Nullable<string>;
+    coverGradient?: Nullable<string>;
+    title: JSON;
+    titlePlainText: string;
+    body: JSON;
+    fields: JSON;
+    createdAt: string;
+    updatedAt: string;
+    softDeletedAt?: Nullable<string>;
+    createdBy: User;
+    createdById: string;
+    updatedBy: User;
+    updatedById: string;
+    backLinks: Page[];
+    links: Page[];
+    database?: Nullable<Database>;
+    databaseId?: Nullable<string>;
+    favourite: boolean;
+}
+
 export interface User {
     id: string;
-    username: string;
     firstName: string;
     lastName: string;
+    username: string;
     avatar?: Nullable<string>;
     pages?: Nullable<Page[]>;
 }
 
-export type EmojiImage = Emoji | Image;
-export type DatabaseSchema = DatabaseSchema_String | DatabaseSchema_Number;
-export type ContentProperties = ParagraphProperties | HeadingProperties;
-export type BlockProperties = DatabaseProperties | PageProperties | ParagraphProperties | HeadingProperties;
+export type JSON = any;
 type Nullable<T> = T | null;

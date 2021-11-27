@@ -1,96 +1,237 @@
-import classNames from 'classnames';
-import { Editable } from 'components/Editable/Editable';
-import { HeadingType, PageChildren_ContentBlock_Fragment } from 'generated';
-import { useBlock } from 'hooks/useBlock';
 import { useDebounce } from 'hooks/useDebounce';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  moveFocusToBlock,
-  moveFocusToPreviousBlock,
-} from '../DynamicBlock/helpers/block';
+  createEditor,
+  Descendant,
+  Editor,
+  Point,
+  Element as SlateElement,
+  Range,
+  Transforms,
+} from 'slate';
+import {
+  Slate,
+  Editable,
+  withReact,
+  RenderElementProps,
+  RenderLeafProps,
+} from 'slate-react';
+import {
+  getTextTypeFromShortcut,
+  forEventToggleMarks,
+  serializeToString,
+  slateStateFactory,
+} from '../../../../../libs/utils/src/lib/slate';
+import { SlateBlockType } from 'utils/slate.interface';
 
 interface Props {
-  block: PageChildren_ContentBlock_Fragment;
+  initialValue?: Descendant[];
+  onSave: (text: Descendant[], plainText: string) => void;
+  debounceDuration?: number;
 }
 
-export const TextBlock: React.FunctionComponent<Props> = ({ block }) => {
-  const [text, setText] = useState(block.properties.text.rawText);
+export const TextBlock: React.FunctionComponent<Props> = ({
+  initialValue,
+  onSave,
+  debounceDuration = 1000,
+}) => {
+  const [value, setValue] = useState<Descendant[]>(
+    initialValue ?? slateStateFactory('')
+  );
 
-  const debouncedText = useDebounce(text, 500);
+  const renderElement = useCallback((props) => <Element {...props} />, []);
 
-  const { updateBlock, createParagraphBlock, deleteBlock } = useBlock();
+  const debouncedValue = useDebounce(value, debounceDuration);
+
+  const editor = useMemo(() => withShortcuts(withReact(createEditor())), []);
 
   useEffect(() => {
-    if (debouncedText !== block.properties.text.rawText) {
-      updateBlock({
-        variables: {
-          id: block.id,
-          input: {
-            text: {
-              rawText: text,
-            },
-          },
-        },
+    onSave(debouncedValue, serializeToString(debouncedValue));
+  }, [debouncedValue]);
+
+  return (
+    <Slate editor={editor} value={value} onChange={setValue}>
+      <Editable
+        className={'text-left px-1 py-0.5'}
+        renderElement={renderElement}
+        renderLeaf={(props) => <Leaf {...props} />}
+        onKeyDown={(event) => {
+          forEventToggleMarks(editor, event);
+        }}
+        placeholder="Write some text..."
+        spellCheck
+        autoFocus
+      />
+    </Slate>
+  );
+};
+
+const withShortcuts = (editor: Editor) => {
+  const { deleteBackward, insertText } = editor;
+
+  editor.insertText = (text) => {
+    const { selection } = editor;
+
+    if (text === ' ' && selection && Range.isCollapsed(selection)) {
+      const { anchor } = selection;
+      const block = Editor.above(editor, {
+        match: (n) => Editor.isBlock(editor, n),
       });
-    }
-  }, [debouncedText, block]);
+      const path = block ? block[1] : [];
+      const start = Editor.start(editor, path);
+      const range = { anchor, focus: start };
+      const beforeText = Editor.string(editor, range);
 
-  const handleOnKeyDown = async (
-    event: React.KeyboardEvent<HTMLDivElement>
-  ) => {
-    // Allow shift + enter to add a new line
-    if (event.key === 'Enter' && event.shiftKey) {
-      return;
+      const type = getTextTypeFromShortcut(beforeText);
+
+      if (type) {
+        Transforms.select(editor, range);
+        Transforms.delete(editor);
+
+        const newProperties: Partial<SlateElement> = {
+          type,
+        };
+        Transforms.setNodes<SlateElement>(editor, newProperties, {
+          match: (n) => Editor.isBlock(editor, n),
+        });
+
+        if (type === SlateBlockType.LIST_ITEM) {
+          const list = {
+            type: SlateBlockType.BULLET_LIST,
+            children: [],
+          };
+          Transforms.wrapNodes(editor, list, {
+            match: (n) =>
+              !Editor.isEditor(n) &&
+              SlateElement.isElement(n) &&
+              n.type === SlateBlockType.LIST_ITEM,
+          });
+        }
+
+        // don't insert the " " here
+        return;
+      }
     }
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      const result = await createParagraphBlock({
-        parentId: block.parentId,
-        afterId: block.id,
-        properties: { text: { rawText: '' } },
+
+    insertText(text);
+  };
+
+  editor.deleteBackward = (...args) => {
+    const { selection } = editor;
+
+    if (selection && Range.isCollapsed(selection)) {
+      const match = Editor.above(editor, {
+        match: (n) => Editor.isBlock(editor, n),
       });
 
-      const paragraph = result.data?.createParagraphBlock;
+      if (match) {
+        const [block, path] = match;
+        const start = Editor.start(editor, path);
 
-      if (!paragraph) return;
+        if (
+          !Editor.isEditor(block) &&
+          SlateElement.isElement(block) &&
+          block.type !== SlateBlockType.PARAGRAPH &&
+          Point.equals(selection.anchor, start)
+        ) {
+          const newProperties: Partial<SlateElement> = {
+            type: SlateBlockType.PARAGRAPH,
+          };
+          Transforms.setNodes(editor, newProperties);
 
-      await moveFocusToBlock(paragraph.id);
-    }
+          if (block.type === SlateBlockType.LIST_ITEM) {
+            Transforms.unwrapNodes(editor, {
+              match: (n) =>
+                !Editor.isEditor(n) &&
+                SlateElement.isElement(n) &&
+                n.type === SlateBlockType.BULLET_LIST,
+              split: true,
+            });
+          }
 
-    if (event.key === 'Backspace' && text === '') {
-      event.preventDefault();
+          return;
+        }
+      }
 
-      await deleteBlock(block.id);
-
-      await moveFocusToPreviousBlock(block.id);
+      deleteBackward(...args);
     }
   };
 
-  switch (block.properties.__typename) {
-    case 'ParagraphProperties':
+  return editor;
+};
+
+const Leaf = ({ attributes, children, leaf }: RenderLeafProps) => {
+  if (leaf.bold) {
+    children = <strong {...attributes}>{children}</strong>;
+  }
+
+  if (leaf.italic) {
+    children = <em {...attributes}>{children}</em>;
+  }
+
+  if (leaf.underline) {
+    children = <u {...attributes}>{children}</u>;
+  }
+
+  if (leaf.code) {
+    children = <code {...attributes}>{children}</code>;
+  }
+
+  if (leaf.strikeThrough) {
+    children = <del {...attributes}>{children}</del>;
+  }
+
+  return <span {...attributes}>{children}</span>;
+};
+
+const Element = ({ attributes, children, element }: RenderElementProps) => {
+  switch (element.type) {
+    case 'block-quote':
       return (
-        <Editable
-          onKeyDown={handleOnKeyDown}
-          className="px-1 py-0.5"
-          html={text}
-          onChange={(e) => setText(e.target.value)}
-        />
+        <blockquote
+          className="text-gray-300 border-l-2 pl-2 my-1"
+          {...attributes}
+        >
+          {children}
+        </blockquote>
       );
-    case 'HeadingProperties':
+    case 'bulleted-list':
       return (
-        <Editable
-          onKeyDown={handleOnKeyDown}
-          className={classNames('px-1 py-0.5 font-semibold', {
-            'text-3xl': block.properties.variant === HeadingType.H1,
-            'text-2xl': block.properties.variant === HeadingType.H2,
-            'text-lg': block.properties.variant === HeadingType.H3,
-          })}
-          tagName={block.properties.variant.toLowerCase()}
-          html={text}
-          onChange={(e) => setText(e.target.value)}
-        />
+        <ul className="list-disc ml-6 " {...attributes}>
+          {children}
+        </ul>
+      );
+    case 'heading-one':
+      return (
+        <h1 className="font-semibold text-3xl" {...attributes}>
+          {children}
+        </h1>
+      );
+    case 'heading-two':
+      return (
+        <h2 className="font-semibold text-2xl" {...attributes}>
+          {children}
+        </h2>
+      );
+    case 'heading-three':
+      return (
+        <h3 className="font-semibold text-lg" {...attributes}>
+          {children}
+        </h3>
+      );
+    case 'heading-four':
+      return (
+        <h4 className="font-semibold text-xl" {...attributes}>
+          {children}
+        </h4>
+      );
+    case 'list-item':
+      return (
+        <li className="" {...attributes}>
+          {children}
+        </li>
       );
     default:
-      return null;
+      return <p {...attributes}>{children}</p>;
   }
 };

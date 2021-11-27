@@ -1,0 +1,13 @@
+type User {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  username: String!
+  avatar: String
+  pages(filters: PageFilters): [Page!]
+}
+
+type Query {
+  me: User!
+  users: [User!]!
+}

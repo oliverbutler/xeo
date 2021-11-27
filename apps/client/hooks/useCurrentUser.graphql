@@ -5,23 +5,10 @@ query GetMe {
     firstName
     lastName
     avatar
-    pages {
-      __typename
+    pages(filters: { favourite: true }) {
       id
-      properties {
-        favourite
-        title {
-          rawText
-        }
-        image {
-          ... on Image {
-            image
-          }
-          ... on Emoji {
-            emoji
-          }
-        }
-      }
+      titlePlainText
+      emoji
     }
   }
 }

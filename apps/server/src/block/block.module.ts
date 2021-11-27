@@ -1,20 +1,26 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from '../user/user.module';
-import { BlockAdapter } from './infrastructure/block.adapter';
-import { BlockResolver } from './interface/block.resolver';
-import { BlockService } from './core/block.service';
-import { BlockRepository } from './infrastructure/block.repository';
 import { AuthModule } from '../auth/auth.module';
-import { BlockTypeResolver } from './interface/block-type.resolver';
+import { PageService } from './page/page.service';
+import { DatabaseService } from './database/database.service';
+import { PageResolver } from './page/page.resolver';
+import { PrismaModule } from '../prisma/prisma.module';
+import { PageLinkService } from './page-link/page-link.service';
+import { PageLinkResolver } from './page-link/page-link.resolver';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([BlockRepository]),
     forwardRef(() => UserModule),
     forwardRef(() => AuthModule),
+    PrismaModule,
   ],
-  providers: [BlockService, BlockResolver, BlockTypeResolver, BlockAdapter],
-  exports: [BlockService],
+  providers: [
+    PageResolver,
+    PageLinkResolver,
+    PageService,
+    DatabaseService,
+    PageLinkService,
+  ],
+  exports: [PageService, DatabaseService],
 })
 export class BlockModule {}

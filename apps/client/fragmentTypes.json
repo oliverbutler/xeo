@@ -1,27 +1,3 @@
 {
-  "possibleTypes": {
-    "Block": [
-      "ContentBlock",
-      "Database",
-      "Page"
-    ],
-    "BlockProperties": [
-      "DatabaseProperties",
-      "HeadingProperties",
-      "PageProperties",
-      "ParagraphProperties"
-    ],
-    "ContentProperties": [
-      "HeadingProperties",
-      "ParagraphProperties"
-    ],
-    "DatabaseSchema": [
-      "DatabaseSchema_Number",
-      "DatabaseSchema_String"
-    ],
-    "EmojiImage": [
-      "Emoji",
-      "Image"
-    ]
-  }
+  "possibleTypes": {}
 }

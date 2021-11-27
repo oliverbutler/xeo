@@ -1,0 +1,32 @@
+type Database {
+  id: ID!
+  schema: String! # JSON
+  pages: [Page!]!
+  emoji: String
+  richText: String! # TODO make scalar
+  rawText: String!
+  createdAt: String!
+  updatedAt: String!
+  softDeletedAt: String
+  createdBy: User!
+  createdById: ID!
+}
+
+input CreateDatabaseInput {
+  id: ID
+  schema: String!
+  richText: String!
+  rawText: String!
+}
+
+input DatabaseFilters {
+  createdById: ID
+}
+
+type Query {
+  databases(input: DatabaseFilters!): [Database!]!
+}
+
+type Mutation {
+  createDatabase(input: CreateDatabaseInput!): Database!
+}

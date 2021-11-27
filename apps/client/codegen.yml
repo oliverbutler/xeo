@@ -8,6 +8,8 @@ generates:
       - typescript-operations
       - typescript-react-apollo
     config:
+      scalars:
+        JSON: Object
       withHooks: true
       exportFragmentSpreadSubTypes: true
   apps/client/fragmentTypes.json:

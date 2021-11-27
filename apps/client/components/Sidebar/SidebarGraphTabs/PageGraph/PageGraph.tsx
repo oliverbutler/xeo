@@ -10,34 +10,40 @@ interface Props {
 export const PageGraph: React.FunctionComponent<Props> = ({ localGraph }) => {
   const { data } = useGetPageGraphQuery();
 
-  const [pages, setPages] = useState<GetPageGraphQuery['pages']>([]);
+  const [pageGraph, setPageGraph] = useState<GetPageGraphQuery>({
+    pages: [],
+    pageLinks: [],
+  });
 
   const { currentPageId } = usePageContext();
 
-  // @ts-ignore
   useEffect(() => {
     if (data?.pages) {
       const currentPage = data.pages.find((page) => page.id === currentPageId);
 
       if (currentPage) {
         if (!localGraph) {
-          setPages(data.pages);
+          setPageGraph(data);
         } else {
-          const pageChildren = data.pages.filter(
-            (page) => page.parentId === currentPageId
+          const relevantPageLinks = data.pageLinks.filter(
+            (link) =>
+              link.fromId === currentPageId || link.toId === currentPageId
           );
 
-          const pageParents = data.pages.filter(
-            (page) => page.id === currentPage.parentId
+          const referencedPageIds = relevantPageLinks
+            .map((link) => [link.toId, link.fromId])
+            .flat();
+          const referencedPages = data.pages.filter((page) =>
+            referencedPageIds.includes(page.id)
           );
 
-          const localPages = [currentPage, ...pageParents, ...pageChildren];
+          const localPages = [currentPage, ...referencedPages];
 
-          setPages(localPages);
+          setPageGraph({ pageLinks: relevantPageLinks, pages: localPages });
         }
       }
     }
   }, [data, localGraph, currentPageId]);
 
-  return <ForceGraph pages={pages} />;
+  return <ForceGraph pageGraph={pageGraph} />;
 };

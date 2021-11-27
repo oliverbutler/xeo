@@ -11,7 +11,7 @@ interface Props {
 
 export const FavouriteButton: React.FunctionComponent<Props> = ({ pageId }) => {
   const { data } = useGetPageQuery({
-    variables: { id: pageId, populateSubTree: true },
+    variables: { id: pageId },
   });
 
   const [isFavourite, setIsFavourite] = useState<boolean | null>(null);
@@ -19,7 +19,7 @@ export const FavouriteButton: React.FunctionComponent<Props> = ({ pageId }) => {
   const { updatePage } = useBlock();
 
   useEffect(() => {
-    if (data) setIsFavourite(data.page.properties.favourite);
+    if (data) setIsFavourite(data.page.favourite);
   }, [data]);
 
   const handleClick = () => {

@@ -1,0 +1,53 @@
+scalar JSON
+
+type Page {
+  id: ID!
+  emoji: String
+  coverGradient: String
+  title: JSON!
+  titlePlainText: String!
+  body: JSON!
+  fields: JSON!
+  createdAt: String!
+  updatedAt: String!
+  softDeletedAt: String
+  createdBy: User!
+  createdById: ID!
+  updatedBy: User!
+  updatedById: ID!
+  backLinks: [Page!]!
+  links: [Page!]!
+  database: Database
+  databaseId: ID
+  favourite: Boolean!
+}
+
+input PageFilters {
+  favourite: Boolean
+}
+
+input CreatePageInput {
+  id: ID
+  emoji: String
+  titlePlainText: String!
+  linkedFromPageId: ID
+}
+
+input UpdatePageInput {
+  title: JSON
+  body: JSON
+  coverGradient: String
+  emoji: String
+  favourite: Boolean
+}
+
+type Query {
+  page(id: ID!): Page!
+  pages(filters: PageFilters): [Page!]!
+}
+
+type Mutation {
+  createPage(input: CreatePageInput!): Page!
+  updatePage(id: ID!, input: UpdatePageInput!): Page!
+  deletePage(id: ID!): Page!
+}

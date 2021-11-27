@@ -15,10 +15,7 @@ interface Props {
 export const PageIcon: React.FunctionComponent<Props> = ({ page }) => {
   const { formatMessage } = useIntl();
 
-  const currentEmoji =
-    page.properties.image?.__typename === 'Emoji'
-      ? page.properties.image.emoji
-      : '';
+  const currentEmoji = page.emoji || '';
 
   const [pageIcon, setPageIcon] = useState<string>(currentEmoji);
 
@@ -43,8 +40,8 @@ export const PageIcon: React.FunctionComponent<Props> = ({ page }) => {
     <Popover
       button={
         <Clickable className="p-2 w-min select-none text-7xl outline-none">
-          {page.properties.image?.__typename === 'Emoji' ? (
-            page.properties.image.emoji
+          {page.emoji ? (
+            <span>{page.emoji}</span>
           ) : (
             <FiFileText className="text-gray-400 stroke-current select-none" />
           )}

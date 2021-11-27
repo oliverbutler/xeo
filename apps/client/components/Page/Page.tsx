@@ -1,8 +1,13 @@
 import { Loading } from 'components/Animate/Loading/Loading';
 import { ContentBlockList } from 'components/Blocks/ContentBlockList/ContentBlockList';
+import { TextBlock } from 'components/Blocks/TextBlock/TextBlock';
 import { usePageContext } from 'context/PageContext';
-import { PageChildrenFragment, useGetPageQuery } from 'generated';
+import { useGetPageQuery } from 'generated';
+import { useBlock } from 'hooks/useBlock';
 import { useEffect } from 'react';
+import { Descendant } from 'slate';
+import { SlateBlockType } from 'utils/slate.interface';
+import { slateStateFactory } from '../../../../libs/utils/src/lib/slate';
 import { PageCover } from './PageCover/PageCover';
 import { PageEmpty } from './PageEmpty/PageEmpty';
 import { PageIcon } from './PageIcon/PageIcon';
@@ -14,8 +19,9 @@ interface Props {
 
 export const Page: React.FunctionComponent<Props> = ({ id }) => {
   const { data } = useGetPageQuery({
-    variables: { id, populateSubTree: true },
+    variables: { id },
   });
+  const { updatePage } = useBlock();
 
   const page = data?.page;
 
@@ -23,15 +29,7 @@ export const Page: React.FunctionComponent<Props> = ({ id }) => {
     return <Loading />;
   }
 
-  const orderedChildren: PageChildrenFragment[] = page.properties.childrenOrder
-    .map((id) => {
-      const child = page.children.find((child) => child.id === id);
-      if (!child) {
-        return null;
-      }
-      return child;
-    })
-    .filter((child) => child !== null) as PageChildrenFragment[];
+  const body = page.body as Descendant[];
 
   return (
     <div className="overflow-auto h-screen">
@@ -44,11 +42,19 @@ export const Page: React.FunctionComponent<Props> = ({ id }) => {
 
           <PageTitle page={page} />
 
-          {orderedChildren?.length > 0 ? (
-            <ContentBlockList blocks={orderedChildren} parentId={page.id} />
-          ) : (
-            <PageEmpty page={page} />
-          )}
+          <div className="mt-4">
+            <TextBlock
+              initialValue={body}
+              onSave={(val) => {
+                updatePage({
+                  variables: {
+                    id: page.id,
+                    input: { body: JSON.parse(JSON.stringify(val)) },
+                  },
+                });
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>
