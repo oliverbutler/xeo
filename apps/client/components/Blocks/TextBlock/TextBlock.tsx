@@ -24,6 +24,7 @@ import {
   forEventToggleMarks,
 } from 'utils/slate';
 import { SlateBlockType } from 'utils/slate.interface';
+
 interface Props {
   block: PageBlockFragment;
 }
@@ -48,25 +49,10 @@ export const TextBlock: React.FunctionComponent<Props> = ({ block }) => {
     }
   }, [debouncedValue]);
 
-  // const handleBlockCreation = async () => {
-  //   const result = await createTextBlock({
-  //     parentPageId: block.parentId,
-  //     properties: {
-  //       text: emptySlateBlockTypeInput,
-  //     },
-  //   });
-
-  //   const paragraph = result.data?.createParagraphBlock;
-
-  //   if (!paragraph) return;
-
-  //   await moveFocusToBlock(paragraph.id);
-  // };
-
   return (
     <Slate editor={editor} value={value} onChange={setValue}>
       <Editable
-        className={'text-left px-1 py-0.5'}
+        className={'editable-block text-left px-1 py-0.5'}
         renderElement={renderElement}
         renderLeaf={(props) => <Leaf {...props} />}
         onKeyDown={(event) => {
@@ -101,6 +87,7 @@ const withShortcuts = (editor: Editor) => {
       if (type) {
         Transforms.select(editor, range);
         Transforms.delete(editor);
+
         const newProperties: Partial<SlateElement> = {
           type,
         };
@@ -120,6 +107,9 @@ const withShortcuts = (editor: Editor) => {
               n.type === SlateBlockType.LIST_ITEM,
           });
         }
+
+        // don't insert the " " here
+        return;
       }
     }
 

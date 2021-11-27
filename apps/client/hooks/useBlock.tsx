@@ -74,12 +74,14 @@ export const useBlock = () => {
 
   const deleteBlockHandler = async (id: string) => {
     setIsSyncing(true);
-    await deleteBlock({
+    const result = await deleteBlock({
       variables: { id },
       refetchQueries: ['GetPage'],
     });
 
     setIsSyncing(false);
+
+    return result;
   };
 
   const createPageHandler = async (
@@ -146,7 +148,16 @@ export const useBlock = () => {
     const richText: SlateValue = [
       {
         type: SlateBlockType.PARAGRAPH,
-        children: [{ text: '' }],
+        children: [
+          {
+            text: '',
+            bold: false,
+            italic: false,
+            code: false,
+            underline: false,
+            strikeThrough: false,
+          },
+        ],
       },
     ];
 
