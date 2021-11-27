@@ -7,7 +7,7 @@ query GetMe {
     avatar
     pages(filters: { favourite: true }) {
       id
-      rawText
+      titlePlainText
       emoji
     }
   }

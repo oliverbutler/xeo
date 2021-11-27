@@ -1,15 +1,3 @@
-mutation UpdateTextBlock($id: ID!, $input: UpdateTextBlockInput!) {
-  updateTextBlock(id: $id, input: $input) {
-    id
-  }
-}
-
-mutation CreateTextBlock($input: CreateTextBlockInput!) {
-  createTextBlock(input: $input) {
-    id
-  }
-}
-
 mutation UpdatePage($id: ID!, $input: UpdatePageInput!) {
   updatePage(id: $id, input: $input) {
     id
@@ -24,18 +12,6 @@ mutation CreatePage($input: CreatePageInput!) {
 
 mutation CreateDatabase($input: CreateDatabaseInput!) {
   createDatabase(input: $input) {
-    id
-  }
-}
-
-mutation UpdateBlockLocation($id: ID!, $input: UpdateBlockLocationInput!) {
-  updateBlockLocation(id: $id, input: $input) {
-    id
-  }
-}
-
-mutation DeleteBlock($id: ID!) {
-  deleteBlock(id: $id) {
     id
   }
 }

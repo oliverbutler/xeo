@@ -1,24 +1,11 @@
-fragment PageBlock on Block {
-  id
-  type
-  richText
-  rawText
-  rank
-  variant
-  parentBlockId
-  parentPageId
-}
-
 query GetPage($id: ID!) {
   page(id: $id) {
     id
     emoji
-    rawText
-    richText
+    title
+    titlePlainText
+    body
     favourite
     coverGradient
-    blocks {
-      ...PageBlock
-    }
   }
 }
