@@ -10,7 +10,14 @@ export const serializeToString = (nodes: Node[]) => {
   return nodes.map((n) => Node.string(n)).join('\n');
 };
 
-type CustomElement = { type: SlateBlockType; children: CustomText[] };
+export type CustomElement =
+  | { type: SlateBlockType; children: CustomText[] }
+  | {
+      type: SlateBlockType.MENTION_PAGE;
+      pageId: string;
+      children: CustomText[];
+    };
+
 type CustomText = {
   text: string;
   [TextFormat.BOLD]: boolean;
@@ -30,17 +37,6 @@ declare module 'slate' {
   }
 }
 
-const SHORTCUTS = {
-  '*': SlateBlockType.LIST_ITEM,
-  '-': SlateBlockType.LIST_ITEM,
-  '+': SlateBlockType.LIST_ITEM,
-  '>': SlateBlockType.BLOCK_QUOTE,
-  '#': SlateBlockType.HEADING_ONE,
-  '##': SlateBlockType.HEADING_TWO,
-  '###': SlateBlockType.HEADING_THREE,
-  '####': SlateBlockType.HEADING_FOUR,
-};
-
 export const HOTKEYS = {
   'mod+b': TextFormat.BOLD,
   'mod+i': TextFormat.ITALIC,
@@ -49,12 +45,7 @@ export const HOTKEYS = {
   'mod+shift+s': TextFormat.STRIKE_THROUGH,
 };
 
-type Shortcut = keyof typeof SHORTCUTS;
 export type Hotkey = keyof typeof HOTKEYS;
-
-const isShortcut = (text: string): text is Shortcut => {
-  return Object.keys(SHORTCUTS).includes(text);
-};
 
 export const forEventToggleMarks = (
   editor: Editor,
@@ -85,14 +76,12 @@ const isMarkActive = (editor: Editor, format: TextFormat) => {
   return marks ? marks[format] === true : false;
 };
 
-export const getTextTypeFromShortcut = (
-  text: string
-): SlateBlockType | null => {
-  if (!isShortcut(text)) {
-    return null;
-  }
-
-  return SHORTCUTS[text];
+export const emptySlateText = {
+  bold: false,
+  italic: false,
+  underline: false,
+  code: false,
+  strikeThrough: false,
 };
 
 export const slateStateFactory = (text: string): SlateValue => {
@@ -102,11 +91,7 @@ export const slateStateFactory = (text: string): SlateValue => {
       children: [
         {
           text,
-          bold: false,
-          italic: false,
-          underline: false,
-          code: false,
-          strikeThrough: false,
+          ...emptySlateText,
         },
       ],
     },

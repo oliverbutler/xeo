@@ -1,8 +1,6 @@
 import classNames from 'classnames';
 import { Clickable } from 'components/UI/Clickable/Clickable';
-import { PageChildren_Database_Fragment } from 'generated';
 import { FiMoreHorizontal, FiPlus } from 'react-icons/fi';
-import { DatabaseTitle } from './DatabaseTitle/DatabaseTitle';
 
 const testData: { id: string; fields: Record<string, React.ReactNode> }[] = [
   {
@@ -44,14 +42,14 @@ const columns = [
 ];
 
 interface Props {
-  database: PageChildren_Database_Fragment;
+  database: any;
 }
 
 export const Database: React.FunctionComponent<Props> = ({ database }) => {
   return (
     <div>
       <div className="flex flex-row justify-between mb-2">
-        <DatabaseTitle database={database} />
+        {/* <DatabaseTitle database={database} /> */}
         <div className="flex flex-row items-center">
           <Clickable className="hover:bg-gray-300">
             <FiPlus />
@@ -68,6 +66,7 @@ export const Database: React.FunctionComponent<Props> = ({ database }) => {
               <th
                 scope="col"
                 className="px-4 py-1 text-left font-normal capitalize hover:bg-gray-100 cursor-pointer select-none"
+                key={column.name}
               >
                 {column.name}
               </th>
@@ -78,7 +77,10 @@ export const Database: React.FunctionComponent<Props> = ({ database }) => {
           {testData.map((item) => (
             <tr key={item.id} className="divide-x">
               {columns.map((column) => (
-                <td className="px-4 py-1 whitespace-nowrap text-left">
+                <td
+                  className="px-4 py-1 whitespace-nowrap text-left"
+                  key={item.id}
+                >
                   {item.fields[column.name]}
                 </td>
               ))}

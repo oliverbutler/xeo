@@ -9,6 +9,7 @@ export enum SlateBlockType {
   HEADING_FOUR = 'heading-four',
   HEADING_FIVE = 'heading-five',
   HEADING_SIX = 'heading-six',
+  MENTION_PAGE = 'mention-page',
 }
 
 export enum TextFormat {
