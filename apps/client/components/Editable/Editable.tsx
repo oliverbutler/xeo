@@ -1,103 +1,47 @@
-import classNames from 'classnames';
-import React, { useEffect, useRef } from 'react';
-import ReactContentEditable, {
-  ContentEditableEvent,
-  Props,
-} from 'react-contenteditable';
+import { Slate, Editable as SlateEditable, withReact } from 'slate-react';
+import React, { useCallback, useMemo } from 'react';
+import { createEditor, Descendant } from 'slate';
 
-type ContentEditableProps = {
-  onChange?: (event: ContentEditableEvent) => void;
-  onBlur?: (event: React.FormEvent<HTMLDivElement>) => void;
-  onInput?: (event: React.FormEvent<HTMLDivElement>) => void;
-  onKeyPress?: (event: React.KeyboardEvent<HTMLDivElement>) => void;
-  onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void;
-  html: string;
-  tagName?: string;
-  className?: string;
-} & Props;
+import { Leaf } from './Leaf/Leaf';
+import { Element } from './Element/Element';
+import { markdownShortcuts } from './plugins/markdownShortcuts/markdownShortcuts';
+import { EditablePlugin } from './plugins/plugins.interface';
 
-// Component by EduardoAraujoB https://github.com/lovasoa/react-contenteditable/issues/161#issuecomment-912581676
-// ContentEditable component with hook support
-export const Editable: React.FunctionComponent<ContentEditableProps> = ({
+interface Props {
+  value: Descendant[];
+  onChange: (value: Descendant[]) => void;
+}
+
+export const Editable: React.FunctionComponent<Props> = ({
+  value,
   onChange,
-  onInput,
-  onBlur,
-  onKeyPress,
-  onKeyDown,
-  className,
-  ref,
-  ...props
 }) => {
-  const onChangeRef = useRef(onChange);
-  const onInputRef = useRef(onInput);
-  const onBlurRef = useRef(onBlur);
-  const onKeyPressRef = useRef(onKeyPress);
-  const onKeyDownRef = useRef(onKeyDown);
+  const renderElement = useCallback((props) => <Element {...props} />, []);
 
-  useEffect(() => {
-    onChangeRef.current = onChange;
-  }, [onChange]);
-  useEffect(() => {
-    onInputRef.current = onInput;
-  }, [onInput]);
-  useEffect(() => {
-    onBlurRef.current = onBlur;
-  }, [onBlur]);
-  useEffect(() => {
-    onKeyPressRef.current = onKeyPress;
-  }, [onKeyPress]);
-  useEffect(() => {
-    onKeyDownRef.current = onKeyDown;
-  }, [onKeyDown]);
+  const plugins: EditablePlugin[] = [markdownShortcuts];
+
+  const editor = useMemo(
+    () =>
+      plugins.reduce(
+        (editor, plugin) => plugin.wrapper(editor),
+        withReact(createEditor())
+      ),
+    []
+  );
 
   return (
-    <ReactContentEditable
-      className={classNames(
-        'editable-block outline-none text-left placeholder-slate-600',
-        className
-      )}
-      {...props}
-      onChange={(...args) => {
-        if (onChangeRef.current) {
-          onChangeRef.current(...args);
-        }
-      }}
-      onInput={
-        onInput
-          ? (...args) => {
-              if (onInputRef.current) {
-                onInputRef.current(...args);
-              }
-            }
-          : undefined
-      }
-      onBlur={
-        onBlur
-          ? (...args) => {
-              if (onBlurRef.current) {
-                onBlurRef.current(...args);
-              }
-            }
-          : undefined
-      }
-      onKeyPress={
-        onKeyPress
-          ? (...args) => {
-              if (onKeyPressRef.current) {
-                onKeyPressRef.current(...args);
-              }
-            }
-          : undefined
-      }
-      onKeyDown={
-        onKeyDown
-          ? (...args) => {
-              if (onKeyDownRef.current) {
-                onKeyDownRef.current(...args);
-              }
-            }
-          : undefined
-      }
-    />
+    <Slate editor={editor} value={value} onChange={onChange}>
+      <SlateEditable
+        className={'text-left px-1 py-0.5'}
+        renderElement={renderElement}
+        renderLeaf={(props) => <Leaf {...props} />}
+        onKeyDown={(event) => {
+          plugins.forEach((plugin) => plugin.onKeyDown?.(editor, event));
+        }}
+        placeholder="Write some text..."
+        spellCheck
+        autoFocus
+      />
+    </Slate>
   );
 };

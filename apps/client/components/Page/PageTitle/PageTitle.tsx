@@ -1,7 +1,7 @@
-import { TextBlock } from 'components/Blocks/TextBlock/TextBlock';
 import { GetPageQuery } from 'generated';
 import { useBlock } from 'hooks/useBlock';
 import { Descendant } from 'slate';
+import { serializeToString } from '../../../../../libs/utils/src';
 
 interface Props {
   page: GetPageQuery['page'];
@@ -24,8 +24,6 @@ export const PageTitle: React.FunctionComponent<Props> = ({ page }) => {
   const initialTitle = page.title as Descendant[];
 
   return (
-    <div className="text-3xl font-bold">
-      <TextBlock initialValue={initialTitle} onSave={handleTextUpdate} />
-    </div>
+    <div className="text-3xl font-bold">{serializeToString(initialTitle)}</div>
   );
 };
