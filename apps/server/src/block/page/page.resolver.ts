@@ -21,7 +21,7 @@ import {
 import { UserService } from '../../user/user.service';
 import { PageLinkService } from '../page-link/page-link.service';
 import { PageService } from './page.service';
-import { serializeToString, slateStateFactory } from 'libs/utils/src/lib/slate';
+import { serializeToString, slateStateFactory } from '@xeo/utils';
 
 export type PageGraphQlWithoutRelations = Omit<
   PageGraphQL,

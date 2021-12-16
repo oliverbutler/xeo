@@ -28,8 +28,7 @@ export const AddButton: React.FunctionComponent<Props> = ({ block }) => {
 
   const handleAddPage = async () => {
     const result = await createPage({
-      rawText: '',
-      richText: JSON.stringify({}),
+      titlePlainText: '',
     });
   };
 

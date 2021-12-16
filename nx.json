@@ -1,5 +1,5 @@
 {
-  "npmScope": "nx-nextjs-monorepo",
+  "npmScope": "xeo",
   "affected": {
     "defaultBase": "main"
   },
@@ -15,9 +15,10 @@
   },
   "tasksRunnerOptions": {
     "default": {
-      "runner": "@nrwl/workspace/tasks-runners/default",
+      "runner": "@nrwl/nx-cloud",
       "options": {
-        "cacheableOperations": ["build", "lint", "test", "e2e"]
+        "cacheableOperations": ["build", "lint", "test", "e2e"],
+        "accessToken": "NGI2OWUwYzEtNjI5OC00NjM1LTk3NjUtMGJlNmVkMDM0NTIxfHJlYWQtd3JpdGU="
       }
     }
   },

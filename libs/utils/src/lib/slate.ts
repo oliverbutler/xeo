@@ -1,9 +1,6 @@
 import { BaseEditor, Descendant, Editor, Node } from 'slate';
 import { ReactEditor } from 'slate-react';
-import {
-  SlateBlockType,
-  TextFormat,
-} from '../../../../apps/client/utils/slate.interface';
+import { SlateBlockType, TextFormat } from './slate.interface';
 import { isHotkey } from 'is-hotkey';
 
 export const serializeToString = (nodes: Node[]) => {

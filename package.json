@@ -3,9 +3,10 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "nx serve",
     "build": "nx build",
-    "test": "nx test"
+    "test": "nx test",
+    "lint": "nx affected:lint --all",
+    "dev": "nx run-many --target=serve --projects=server,client --parallel"
   },
   "private": true,
   "dependencies": {
@@ -73,6 +74,7 @@
     "@nrwl/nest": "^13.3.1",
     "@nrwl/next": "^13.3.1",
     "@nrwl/node": "13.3.1",
+    "@nrwl/nx-cloud": "^13.0.0",
     "@nrwl/react": "13.3.1",
     "@nrwl/tao": "13.3.1",
     "@nrwl/web": "13.3.1",
