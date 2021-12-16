@@ -1,6 +1,5 @@
 import { Editor, Element, Point, Range, Transforms } from 'slate';
-import { SlateBlockType } from 'utils/slate.interface';
-import { forEventToggleMarks } from '../../../../../../libs/utils/src';
+import { SlateBlockType, forEventToggleMarks } from '@xeo/utils';
 import { EditablePlugin } from '../plugins.interface';
 
 const SHORTCUTS = {

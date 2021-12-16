@@ -14,13 +14,6 @@
     "baseUrl": ".",
     "incremental": true
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.js",
-    "**/*.jsx",
-    "next-env.d.ts",
-    "../../libs/utils/src/lib/slate.ts"
-  ],
+  "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "next-env.d.ts"],
   "exclude": ["node_modules"]
 }

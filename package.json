@@ -3,10 +3,10 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "build": "nx build",
-    "test": "nx test",
+    "build": "nx affected:build --all",
+    "test": "nx affected:test --all",
     "lint": "nx affected:lint --all",
-    "dev": "nx run-many --target=serve --projects=server,client --parallel"
+    "dev": "nx run-many --target=serve --all --parallel"
   },
   "private": true,
   "dependencies": {
