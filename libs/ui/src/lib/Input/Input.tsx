@@ -2,12 +2,17 @@ import classNames from 'classnames';
 import { DetailedHTMLProps, forwardRef, InputHTMLAttributes } from 'react';
 import { FieldError } from '../../../../../node_modules/react-hook-form/dist';
 
-type Props = {
+/* eslint-disable-next-line */
+export interface InputProps
+  extends DetailedHTMLProps<
+    InputHTMLAttributes<HTMLInputElement>,
+    HTMLInputElement
+  > {
   label: string;
   error?: FieldError | undefined;
-} & DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
+}
 
-export const Input = forwardRef<HTMLInputElement, Props>(
+export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ label, error, ...inputProps }, ref) => {
     return (
       <div>
@@ -30,3 +35,5 @@ export const Input = forwardRef<HTMLInputElement, Props>(
     );
   }
 );
+
+export default Input;

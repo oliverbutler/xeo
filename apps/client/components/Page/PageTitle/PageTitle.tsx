@@ -1,7 +1,7 @@
 import { GetPageQuery } from 'generated';
 import { useBlock } from 'hooks/useBlock';
 import { Descendant } from 'slate';
-import { serializeToString } from '../../../../../libs/utils/src';
+import { serializeToString } from '@xeo/utils';
 
 interface Props {
   page: GetPageQuery['page'];

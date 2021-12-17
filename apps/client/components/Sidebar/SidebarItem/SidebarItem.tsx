@@ -21,3 +21,5 @@ export const SidebarItem = forwardRef<HTMLDivElement, Props>(
     );
   }
 );
+
+SidebarItem.displayName = 'SidebarItem';

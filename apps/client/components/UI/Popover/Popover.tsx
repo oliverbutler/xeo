@@ -58,6 +58,7 @@ export const Popover: React.FunctionComponent<Props> = ({
               {items &&
                 items.map((item) => (
                   <a
+                    key={item.title}
                     className={classNames(
                       'cursor-pointer hover:bg-gray-100rounded-sm flex items-center w-full px-2 py-1 text-sm text-gray-800 hover:bg-gray-100'
                     )}

@@ -1,4 +1,4 @@
-import { Loading } from 'components/Animate/Loading/Loading';
+import { Loader } from '@xeo/ui';
 import { PageRichText } from 'components/Blocks/PageRichText/PageRichText';
 import { useGetPageQuery } from 'generated';
 import { PageCover } from './PageCover/PageCover';
@@ -17,7 +17,7 @@ export const Page: React.FunctionComponent<Props> = ({ id }) => {
   const page = data?.page;
 
   if (!page) {
-    return <Loading />;
+    return <Loader />;
   }
 
   return (

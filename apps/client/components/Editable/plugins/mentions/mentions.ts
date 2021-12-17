@@ -1,10 +1,6 @@
 import { Page } from 'generated';
 import { Editor, Transforms } from 'slate';
-import { SlateBlockType } from 'utils/slate.interface';
-import {
-  CustomElement,
-  emptySlateText,
-} from '../../../../../../libs/utils/src';
+import { CustomElement, emptySlateText, SlateBlockType } from '@xeo/utils';
 import { EditablePlugin } from '../plugins.interface';
 
 const insertPageMention = (editor: Editor, pageId: Page['id']): void => {

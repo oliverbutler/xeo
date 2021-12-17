@@ -32,7 +32,6 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pageGraph }) => {
   const width = ref.current?.offsetWidth ?? 0;
   const height = ref.current?.offsetHeight ?? 0;
 
-  // @ts-ignore
   useEffect(() => {
     const formattedPages: Node[] = pageGraph.pages.map((page) => ({
       id: page.id,
@@ -88,8 +87,10 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pageGraph }) => {
 
     // simulation.alpha(0.5).alphaMin(0.05).restart();
 
-    return () => simulation.stop();
-  }, [pageGraph, currentPageId, width, height]);
+    return () => {
+      simulation.stop();
+    };
+  }, [pageGraph, currentPageId, width, height, simulatedNodes]);
   return (
     <div ref={ref} className="w-full h-full">
       <svg className="w-full h-full" key="sidebar-svg">
@@ -114,7 +115,7 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pageGraph }) => {
 
           if (node.x && node.y) {
             return (
-              <Link href={`/page/${page?.id}`} key={node.id}>
+              <Link href={`/page/${page?.id}`} key={node.id} passHref={true}>
                 <g className="cursor-pointer ">
                   <circle
                     cx={node.x}

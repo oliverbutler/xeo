@@ -14,14 +14,14 @@ const Index: React.FunctionComponent = () => {
     if (!accessToken) {
       router.push('/login');
     }
-  }, []);
+  }, [accessToken, router]);
 
   useEffect(() => {
     if (user) {
       const firstPage = user.pages?.find(() => true);
       router.push(`/page/${firstPage?.id}`);
     }
-  }, [user]);
+  }, [router, user]);
 
   return <PageLayout currentPageId={null} />;
 };

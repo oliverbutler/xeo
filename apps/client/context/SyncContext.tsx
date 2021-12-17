@@ -2,7 +2,7 @@ import { createContext, useContext, useState } from 'react';
 
 const SyncContext = createContext<SyncContextProps>({
   isSyncing: false,
-  setIsSyncing: () => {},
+  setIsSyncing: () => undefined,
 });
 
 interface SyncContextProps {

@@ -1,5 +1,5 @@
+import { Loader } from '@xeo/ui';
 import classNames from 'classnames';
-import { Loading } from 'components/Animate/Loading/Loading';
 import { Clickable } from 'components/UI/Clickable/Clickable';
 import { Dropdown } from 'components/UI/Dropdown/Dropdown';
 import { usePageContext } from 'context/PageContext';
@@ -47,7 +47,7 @@ export const Navbar: React.FunctionComponent = () => {
       </div>
 
       <div className="flex flex-row items-center">
-        {isSyncing && <Loading className="text-gray-400 h-3" />}
+        {isSyncing && <Loader className="text-gray-400 h-3" />}
         <DarkModeButton />
         <FavouriteButton pageId={currentPageId} />
         <Dropdown
@@ -62,7 +62,7 @@ export const Navbar: React.FunctionComponent = () => {
               {
                 text: 'Delete',
                 logo: <FiTrash />,
-                onClick: () => {},
+                onClick: () => undefined,
               },
             ],
           ]}

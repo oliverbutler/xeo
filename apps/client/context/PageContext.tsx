@@ -2,7 +2,7 @@ import { createContext, useContext, useState } from 'react';
 
 const PageContext = createContext<SyncContextProps>({
   currentPageId: null,
-  setCurrentPageId: () => {},
+  setCurrentPageId: () => undefined,
 });
 
 interface SyncContextProps {

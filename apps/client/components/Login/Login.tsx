@@ -1,7 +1,6 @@
-import { Input } from 'components/Form/Input/Input';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { Button } from 'components/Button/Button';
 import { useLogin } from './useLogin';
+import { Input, Button } from '@xeo/ui';
 
 export const Login: React.FunctionComponent = () => {
   const { formatMessage } = useIntl();
