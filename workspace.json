@@ -3,6 +3,10 @@
   "projects": {
     "client": "apps/client",
     "server": "apps/server",
+    "site": "apps/site",
+    "site-e2e": "apps/site-e2e",
+    "ui": "libs/ui",
+    "ui-e2e": "apps/ui-e2e",
     "utils": "libs/utils"
   }
 }

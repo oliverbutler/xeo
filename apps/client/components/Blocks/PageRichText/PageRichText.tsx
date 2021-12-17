@@ -4,7 +4,7 @@ import { useBlock } from 'hooks/useBlock';
 import { useDebounce } from 'hooks/useDebounce';
 import React, { useEffect, useState } from 'react';
 import { Descendant } from 'slate';
-import { slateStateFactory } from '../../../../../libs/utils/src';
+import { slateStateFactory } from '@xeo/utils';
 
 interface Props {
   page: GetPageQuery['page'];
