@@ -1,6 +1,8 @@
 import { Button, ButtonVariation } from '@xeo/ui';
 import Image from 'next/image';
 
+import image from 'public/xeo-1.png';
+
 export const Header: React.FunctionComponent = () => {
   return (
     <div className="h-full flex flex-col lg:flex-row mt-12 items-center">
@@ -13,8 +15,8 @@ export const Header: React.FunctionComponent = () => {
           done with Xeo
         </h1>
         <p className="leading-normal text-base lg:text-xl mb-8 text-center lg:text-left text-white">
-          Xeo offers a simple, intuitive and powerful way to organise your notes
-          and <u>get sh*t done</u>.
+          Xeo offers a simple, intuitive and powerful way to create and organise
+          your notes.
         </p>
         <div className="flex flex-row mx-auto lg:mx-0">
           <Button className="mr-4">View Demo</Button>
@@ -26,10 +28,9 @@ export const Header: React.FunctionComponent = () => {
           <div className="absolute -inset-1.5 bg-gradient-to-r from-pink-600 to-primary-600 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
           <Image
             className="shadow-lg rounded-lg"
-            src="/xeo-1.png"
+            src={image}
             alt="Xeo Home Screen"
-            height={401}
-            width={640}
+            placeholder="blur"
           />
         </div>
       </div>
