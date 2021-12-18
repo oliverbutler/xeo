@@ -1,7 +1,28 @@
 import { BaseEditor, Descendant, Editor, Node } from 'slate';
 import { ReactEditor } from 'slate-react';
-import { SlateBlockType, TextFormat } from './slate.interface';
 import { isHotkey } from 'is-hotkey';
+
+export enum SlateBlockType {
+  PARAGRAPH = 'paragraph',
+  LIST_ITEM = 'list-item',
+  BULLET_LIST = 'bulleted-list',
+  BLOCK_QUOTE = 'block-quote',
+  HEADING_ONE = 'heading-one',
+  HEADING_TWO = 'heading-two',
+  HEADING_THREE = 'heading-three',
+  HEADING_FOUR = 'heading-four',
+  HEADING_FIVE = 'heading-five',
+  HEADING_SIX = 'heading-six',
+  MENTION_PAGE = 'mention-page',
+}
+
+export enum TextFormat {
+  BOLD = 'bold',
+  ITALIC = 'italic',
+  UNDERLINE = 'underline',
+  CODE = 'code',
+  STRIKE_THROUGH = 'strikeThrough',
+}
 
 export const serializeToString = (nodes: Node[]) => {
   return nodes.map((n) => Node.string(n)).join('\n');

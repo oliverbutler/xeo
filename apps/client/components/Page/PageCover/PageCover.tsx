@@ -2,7 +2,6 @@ import { Clickable } from 'components/UI/Clickable/Clickable';
 import { Popover } from 'components/UI/Popover/Popover';
 import { GetPageQuery } from 'generated';
 import { useBlock } from 'hooks/useBlock';
-import { useDebounce } from 'hooks/useDebounce';
 import { useEffect, useState } from 'react';
 import { FiMoreHorizontal } from 'react-icons/fi';
 import { useIntl } from 'react-intl';
@@ -18,22 +17,22 @@ export const PageCover: React.FunctionComponent<Props> = ({ page }) => {
 
   const [gradient, setGradient] = useState(originalGradient);
 
-  const debouncedGradient = useDebounce(gradient, 1000);
-
   const { updatePage } = useBlock();
 
+  console.log(page);
+
   useEffect(() => {
-    if (debouncedGradient !== originalGradient) {
+    if (gradient !== originalGradient) {
       updatePage({
         variables: {
           id: page.id,
           input: {
-            coverGradient: debouncedGradient,
+            coverGradient: gradient,
           },
         },
       });
     }
-  }, [debouncedGradient]);
+  }, [gradient, originalGradient, page.id, updatePage]);
 
   return (
     <div

@@ -41,9 +41,12 @@ export const PageGraph: React.FunctionComponent<Props> = ({ localGraph }) => {
 
           setPageGraph({ pageLinks: relevantPageLinks, pages: localPages });
         }
+      } else {
+        setPageGraph(data);
       }
     }
   }, [data, localGraph, currentPageId]);
 
   return <ForceGraph pageGraph={pageGraph} />;
+  // return <p>page graph for {pageGraph.pages.length} nodes</p>;
 };

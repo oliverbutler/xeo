@@ -31,6 +31,7 @@ module.exports = {
     ...createGlobPatternsForDependenciesLocal(__dirname),
   ],
   darkMode: 'class',
+  mode: 'jit',
   theme: {
     extend: {},
   },

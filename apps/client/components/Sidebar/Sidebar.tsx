@@ -21,15 +21,15 @@ export const Sidebar = () => {
       defaultWindowWidth={defaultWidth}
       onSetWidth={setDefaultWidth}
       minWindowWidth={150}
-      dragHandleWidth={3}
+      dragHandleWidth={2}
       className="bg-gray-50 dark:bg-transparent h-full"
-      dragHandleClassName="bg-gray-50 dark:bg-black hover:bg-gray-200"
+      dragHandleClassName="bg-gray-50 dark:bg-gray-800 hover:bg-gray-200"
     >
       <div className="dark:bg-transparent flex flex-col justify-between h-full">
         <div>
           {user ? <UserRow user={user} /> : <p>Not logged in</p>}
           {user?.pages?.map((page) => (
-            <Link href={`/page/${page.id}`} key={page.id}>
+            <Link href={`/page/${page.id}`} key={page.id} passHref={true}>
               <SidebarItem className="text-gray-700 dark:text-white text-sm flex items-center">
                 <span>{page.emoji}</span>
                 <span

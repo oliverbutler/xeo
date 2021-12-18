@@ -45,7 +45,7 @@ export const Login: React.FunctionComponent = () => {
               <FormattedMessage id="generic.signIn" />
             </Button>
             <a
-              className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
+              className="inline-block align-baseline font-bold text-sm text-primary-500 hover:text-primary-800"
               href="#"
             >
               <FormattedMessage id="generic.forgotPassword" />

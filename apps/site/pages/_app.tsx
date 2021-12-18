@@ -8,7 +8,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
       <Head>
         <title>Xeo</title>
       </Head>
-      <main className="app font-sans">
+      <main className="app">
         <Component {...pageProps} />
       </main>
     </>

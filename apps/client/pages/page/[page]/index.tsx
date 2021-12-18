@@ -6,15 +6,17 @@ import { useEffect } from 'react';
 const Page: React.FunctionComponent = () => {
   const { query } = useRouter();
 
-  const { currentPageId, setCurrentPageId } = usePageContext();
+  const page = query.page as string | undefined;
+
+  const { setCurrentPageId } = usePageContext();
 
   useEffect(() => {
-    if (query.page) {
-      setCurrentPageId(query.page as string);
+    if (page) {
+      setCurrentPageId(page ?? null);
     }
-  }, [query]);
+  });
 
-  return <PageLayout currentPageId={currentPageId} />;
+  return <PageLayout />;
 };
 
 export default Page;

@@ -23,7 +23,7 @@ const Index: React.FunctionComponent = () => {
     }
   }, [router, user]);
 
-  return <PageLayout currentPageId={null} />;
+  return <PageLayout />;
 };
 
 export default Index;
