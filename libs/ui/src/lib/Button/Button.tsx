@@ -19,7 +19,7 @@ export const Button: React.FunctionComponent<ButtonProps> = ({
   return (
     <button
       className={classNames(
-        'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center ',
+        'bg-primary-500 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center ',
         { 'cursor-wait opacity-70': loading },
         className
       )}

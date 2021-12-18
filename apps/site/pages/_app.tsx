@@ -6,9 +6,9 @@ function CustomApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Welcome to site!</title>
+        <title>Xeo</title>
       </Head>
-      <main className="app">
+      <main className="app font-sans">
         <Component {...pageProps} />
       </main>
     </>
