@@ -19,8 +19,6 @@ export const PageCover: React.FunctionComponent<Props> = ({ page }) => {
 
   const { updatePage } = useBlock();
 
-  console.log(page);
-
   useEffect(() => {
     if (gradient !== originalGradient) {
       updatePage({

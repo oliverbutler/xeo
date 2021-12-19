@@ -22,8 +22,17 @@ const authMiddleware = new ApolloLink((operation, forward) => {
       }),
     },
   }));
-
-  return forward(operation);
+  return forward(operation).map((response) => {
+    if (response.errors) {
+      for (const error of response.errors) {
+        if (error.extensions?.code === 'UNAUTHENTICATED') {
+          localStorage.removeItem('accessToken');
+          window.location.href = '/login';
+        }
+      }
+    }
+    return response;
+  });
 });
 
 export const client = new ApolloClient({
