@@ -1,6 +1,8 @@
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useLogin } from './useLogin';
 import { Input, Button } from '@xeo/ui';
+import Image from 'next/image';
+import image from 'public/xeo.png';
 
 export const Login: React.FunctionComponent = () => {
   const { formatMessage } = useIntl();
@@ -16,9 +18,12 @@ export const Login: React.FunctionComponent = () => {
     <div className="flex justify-center items-center h-screen">
       <div className="w-full max-w-xs">
         <form
-          className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+          className="bg-white dark:bg-dark-800 shadow-md rounded px-8 pt-6 pb-8 mb-4"
           onSubmit={handleSubmit}
         >
+          <div className="h-32 aspect-square mb-4 mx-auto">
+            <Image src={image} alt="Xeo Logo" />
+          </div>
           <h1 className="text-xl font-bold mb-4 text-center">
             <FormattedMessage id="generic.login" />
           </h1>
@@ -45,7 +50,7 @@ export const Login: React.FunctionComponent = () => {
               <FormattedMessage id="generic.signIn" />
             </Button>
             <a
-              className="inline-block align-baseline font-bold text-sm text-primary-500 hover:text-primary-800"
+              className="inline-block align-baseline font-bold text-sm text-dark-400 hover:text-dark-300"
               href="#"
             >
               <FormattedMessage id="generic.forgotPassword" />
