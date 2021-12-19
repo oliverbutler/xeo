@@ -14,6 +14,7 @@ export interface ButtonProps
 export enum ButtonVariation {
   Primary = 'primary',
   Secondary = 'secondary',
+  Dark = 'dark',
 }
 
 export const Button: React.FunctionComponent<ButtonProps> = ({
@@ -35,6 +36,9 @@ export const Button: React.FunctionComponent<ButtonProps> = ({
         {
           'bg-secondary-500 hover:bg-secondary-700':
             variation === ButtonVariation.Secondary,
+        },
+        {
+          'bg-dark-500 hover:bg-dark-700': variation === ButtonVariation.Dark,
         },
         className
       )}

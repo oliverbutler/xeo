@@ -5,6 +5,7 @@ import { Dropdown } from 'components/UI/Dropdown/Dropdown';
 import { usePageContext } from 'context/PageContext';
 import { useSyncContext } from 'context/SyncContext';
 import { useGetPageQuery } from 'generated';
+import { useRouter } from 'next/dist/client/router';
 import { FiMoreHorizontal, FiTrash } from 'react-icons/fi';
 import { DarkModeButton } from './DarkModeButton/DarkModeButton';
 import { FavouriteButton } from './FavouriteButton/FavouriteButton';
@@ -28,7 +29,7 @@ export const Navbar: React.FunctionComponent = () => {
   return (
     <nav
       id="navbar"
-      className="p-2 flex flex-row  justify-between bg-opacity-50 bg-white dark:bg-black dark:bg-opacity-50 absolute w-full z-50 backdrop-blur-sm filter"
+      className="p-2 flex flex-row  justify-between bg-opacity-50 bg-white dark:bg-gray-900 dark:bg-opacity-50 absolute w-full z-50 backdrop-blur-sm filter"
     >
       <div className="flex flex-row items-center">
         <Clickable>

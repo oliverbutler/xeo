@@ -12,7 +12,8 @@ module.exports = {
     extend: {
       colors: {
         primary: colors.sky,
-        secondary: colors.slate,
+        secondary: colors.violet,
+        dark: colors.gray,
       },
       animation: {
         blob: 'blob 7s infinite',

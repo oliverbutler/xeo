@@ -16,7 +16,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
         <title>Xeo</title>
         <link rel="icon" href="/xeo.ico" />
       </Head>
-      <div className="app">
+      <div className="app dark:bg-gray-900 accent-primary-300">
         <IntlWrapper>
           <ThemeProvider attribute="class">
             <ApolloWrapper>

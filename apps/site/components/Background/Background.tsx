@@ -10,7 +10,7 @@ export const Background: React.FunctionComponent = () => {
       ></div>
       <div
         style={{ height: '100vh' }}
-        className="absolute right-1/3 top-0 w-40 scale-100 -rotate-45 bg-pink-300 rounded-full "
+        className="absolute right-1/3 top-0 w-40 scale-100 -rotate-45 bg-secondary-300 rounded-full "
       ></div>
     </div>
   );

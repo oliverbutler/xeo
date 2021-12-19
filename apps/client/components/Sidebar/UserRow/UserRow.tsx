@@ -6,6 +6,7 @@ import { useRouter } from 'next/dist/client/router';
 import { toast } from 'react-toastify';
 import { useIntl } from 'react-intl';
 import { Clickable } from 'components/UI/Clickable/Clickable';
+import Image from 'next/image';
 
 interface Props {
   user: GetMeQuery['me'];
@@ -25,7 +26,7 @@ export const UserRow: React.FunctionComponent<Props> = ({ user }) => {
   return (
     <div className="flex flex-row items-center w-full justify-between p-2 mb-4 dark:border-gray-800  border-b-2">
       {user.avatar ? (
-        <img
+        <Image
           className="w-5 h-5"
           src={user.avatar}
           alt={`${user.firstName} ${user.lastName}`}
