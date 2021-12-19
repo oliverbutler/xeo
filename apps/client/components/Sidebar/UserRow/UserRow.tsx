@@ -24,23 +24,25 @@ export const UserRow: React.FunctionComponent<Props> = ({ user }) => {
   };
 
   return (
-    <div className="flex flex-row items-center w-full justify-between p-2 mb-4 dark:border-gray-800  border-b-2">
-      {user.avatar ? (
-        <Image
-          className="w-5 h-5"
-          src={user.avatar}
-          alt={`${user.firstName} ${user.lastName}`}
-        />
-      ) : (
-        <FiUser className="w-5 h-5 mr-3" />
-      )}
+    <div className="flex flex-row items-center w-full justify-between p-2 mb-4 dark:border-dark-800  border-b-2">
+      <Clickable>
+        {user.avatar ? (
+          <Image
+            className="w-5 h-5"
+            src={user.avatar}
+            alt={`${user.firstName} ${user.lastName}`}
+          />
+        ) : (
+          <FiUser className="w-5 h-5" />
+        )}
+      </Clickable>
       <span className="ml-2">
         {user.firstName} {user.lastName}
       </span>
       <Dropdown
         showDirection="left"
         button={
-          <Clickable className="hover:bg-gray-400">
+          <Clickable>
             <FiMoreHorizontal />
           </Clickable>
         }

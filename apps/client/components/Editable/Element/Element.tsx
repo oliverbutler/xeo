@@ -9,7 +9,7 @@ export const Element: React.FunctionComponent<RenderElementProps> = ({
     case 'block-quote':
       return (
         <blockquote
-          className="text-gray-300 border-l-2 pl-2 my-1"
+          className="border-l-2 border-dark-800 dark:border-dark-600 pl-2 my-1 italic"
           {...attributes}
         >
           {children}

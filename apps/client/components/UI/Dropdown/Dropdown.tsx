@@ -1,6 +1,7 @@
 import { Menu, Transition } from '@headlessui/react';
 import classNames from 'classnames';
 import { Fragment } from 'react';
+import { Clickable } from '../Clickable/Clickable';
 
 type DropdownItem = {
   text: string;
@@ -35,7 +36,7 @@ export const Dropdown: React.FunctionComponent<Props> = ({
       >
         <Menu.Items
           className={classNames(
-            'w-44 bg-white dark:bg-neutral-900 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none py-1 z-50 ',
+            'w-44 bg-white dark:bg-dark-900 divide-y divide-dark-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none py-1 z-50 ',
             { 'absolute left-1': showDirection === 'left' },
             { 'absolute right-1': showDirection === 'right' },
             className
@@ -49,14 +50,15 @@ export const Dropdown: React.FunctionComponent<Props> = ({
                   onClick={item.onClick}
                 >
                   {({ active }) => (
-                    <a
-                      className={classNames(
-                        'cursor-pointer hover:bg-gray-100rounded-sm flex items-center w-full px-2 py-1 text-sm text-gray-800 dark:text-white',
-                        { 'bg-gray-100': active }
-                      )}
-                    >
-                      <span className="mr-2">{item.logo}</span> {item.text}
-                    </a>
+                    <Clickable active={active}>
+                      <a
+                        className={classNames(
+                          'flex items-center w-full px-2 py-1 text-sm'
+                        )}
+                      >
+                        <span className="mr-2">{item.logo}</span> {item.text}
+                      </a>
+                    </Clickable>
                   )}
                 </Menu.Item>
               ))}

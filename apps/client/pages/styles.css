@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  html,
+  body {
+    @apply dark:bg-dark-900;
+  }
+}
+
 /* Show placeholder on contenteditable components */
 [contenteditable='true']:empty:before {
   content: attr(placeholder);

@@ -29,15 +29,15 @@ export const Navbar: React.FunctionComponent = () => {
   return (
     <nav
       id="navbar"
-      className="p-2 flex flex-row  justify-between bg-opacity-50 bg-white dark:bg-gray-900 dark:bg-opacity-50 absolute w-full z-50 backdrop-blur-sm filter"
+      className="p-2 flex flex-row  justify-between bg-opacity-50 bg-white dark:bg-dark-900 dark:bg-opacity-50 absolute w-full z-50 backdrop-blur-sm filter"
     >
       <div className="flex flex-row items-center">
         <Clickable>
-          <a className="mx-0.5 text-gray-700 dark:text-white text-sm flex items-center ">
+          <a className="mx-0.5 text-dark-700 dark:text-white text-sm flex items-center ">
             <span>{page.emoji}</span>
             <span
               className={classNames('ml-2', {
-                'text-gray-300 dark:text-white': !page.titlePlainText,
+                'text-dark-300 dark:text-white': !page.titlePlainText,
               })}
             >
               {page.titlePlainText || 'Untitled'}
@@ -47,7 +47,7 @@ export const Navbar: React.FunctionComponent = () => {
       </div>
 
       <div className="flex flex-row items-center">
-        {isSyncing && <Loader className="text-gray-400 h-3" />}
+        {isSyncing && <Loader className="text-dark-400 h-3" />}
         <DarkModeButton />
         <FavouriteButton pageId={currentPageId} />
         <Dropdown

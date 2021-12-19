@@ -57,7 +57,7 @@ export const Login: React.FunctionComponent = () => {
             </a>
           </div>
         </form>
-        <p className="text-center text-gray-500 text-xs">
+        <p className="text-center text-dark-500 text-xs">
           <FormattedMessage id="generic.about.rights" />
         </p>
       </div>

@@ -40,7 +40,7 @@ export const Popover: React.FunctionComponent<Props> = ({
           >
             <PopoverComponent.Panel
               className={classNames(
-                ' bg-white dark:bg-neutral-900 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none py-1',
+                ' bg-white dark:bg-dark-900 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none py-1',
                 { 'absolute left-1': direction === 'right' },
                 { 'absolute right-1': direction === 'left' }
               )}
@@ -49,7 +49,7 @@ export const Popover: React.FunctionComponent<Props> = ({
               {input && (
                 <input
                   className={classNames(
-                    'my-1 mx-2 px-2 py-1 bg-gray-100 dark:bg-neutral-900 dark:text-white text-sm rounded-md w-56',
+                    'my-1 mx-2 px-2 py-1 bg-dark-100 dark:bg-dark-900 dark:text-white text-sm rounded-md w-56',
                     input.className
                   )}
                   {...input}
@@ -60,7 +60,7 @@ export const Popover: React.FunctionComponent<Props> = ({
                   <a
                     key={item.title}
                     className={classNames(
-                      'cursor-pointer hover:bg-gray-100rounded-sm flex items-center w-full px-2 py-1 text-sm text-gray-800 hover:bg-gray-100'
+                      'cursor-pointer hover:bg-dark-100rounded-sm flex items-center w-full px-2 py-1 text-sm text-dark-800 hover:bg-dark-100'
                     )}
                   >
                     <span className="mr-2">{item.icon}</span> {item.title}

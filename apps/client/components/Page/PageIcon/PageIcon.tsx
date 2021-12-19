@@ -43,7 +43,7 @@ export const PageIcon: React.FunctionComponent<Props> = ({ page }) => {
           {page.emoji ? (
             <span>{page.emoji}</span>
           ) : (
-            <FiFileText className="text-gray-400 stroke-current select-none" />
+            <FiFileText className="text-dark-400 stroke-current select-none" />
           )}
         </Clickable>
       }

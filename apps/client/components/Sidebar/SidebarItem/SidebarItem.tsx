@@ -11,7 +11,7 @@ export const SidebarItem = forwardRef<HTMLDivElement, Props>(
       <div
         ref={ref}
         className={classNames(
-          'hover:bg-gray-200 dark:hover:bg-opacity-50 dark:hover:bg-gray-600 py-1 px-2 cursor-pointer ',
+          'hover:bg-dark-200 dark:hover:bg-opacity-50 dark:hover:bg-dark-600 py-1 px-2 cursor-pointer ',
           className
         )}
         {...divProps}

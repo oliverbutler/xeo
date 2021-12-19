@@ -51,21 +51,21 @@ export const Database: React.FunctionComponent<Props> = ({ database }) => {
       <div className="flex flex-row justify-between mb-2">
         {/* <DatabaseTitle database={database} /> */}
         <div className="flex flex-row items-center">
-          <Clickable className="hover:bg-gray-300">
+          <Clickable className="hover:bg-dark-300">
             <FiPlus />
           </Clickable>
-          <Clickable className="hover:bg-gray-300">
+          <Clickable className="hover:bg-dark-300">
             <FiMoreHorizontal />
           </Clickable>
         </div>
       </div>
-      <table className="min-w-full divide-y divide-gray-200 border-y">
+      <table className="min-w-full divide-y divide-dark-200 border-y">
         <thead>
           <tr className="divide-x">
             {columns.map((column) => (
               <th
                 scope="col"
-                className="px-4 py-1 text-left font-normal capitalize hover:bg-gray-100 cursor-pointer select-none"
+                className="px-4 py-1 text-left font-normal capitalize hover:bg-dark-100 cursor-pointer select-none"
                 key={column.name}
               >
                 {column.name}
@@ -73,7 +73,7 @@ export const Database: React.FunctionComponent<Props> = ({ database }) => {
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y  divide-gray-200">
+        <tbody className="divide-y  divide-dark-200">
           {testData.map((item) => (
             <tr key={item.id} className="divide-x">
               {columns.map((column) => (

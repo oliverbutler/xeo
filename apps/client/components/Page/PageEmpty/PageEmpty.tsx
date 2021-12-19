@@ -22,7 +22,7 @@ export const PageEmpty: React.FunctionComponent<Props> = ({ page }) => {
   return (
     <div>
       <Clickable
-        className="text-gray-400 flex flex-row items-center"
+        className="text-dark-400 flex flex-row items-center"
         onClick={handleAddFirstBlock}
       >
         <p className="mr-2">Click to add your first block</p> <FiPlus />
