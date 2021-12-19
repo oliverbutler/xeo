@@ -8,6 +8,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <title>Xeo</title>
+        <link rel="icon" href="/xeo.ico" />
       </Head>
       <main className="app min-h-screen z-10 relative">
         <Component {...pageProps} />
