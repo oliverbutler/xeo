@@ -1,6 +1,6 @@
 import { Button, ButtonVariation } from '@xeo/ui';
 import Image from 'next/image';
-import image from 'public/xeo-1.png';
+import image from 'public/xeo-home.png';
 
 export const Header: React.FunctionComponent = () => {
   return (
