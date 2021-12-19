@@ -6,4 +6,5 @@ html,
 body {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(17 24 39 / var(--tw-bg-opacity)) !important;
+  overflow-x: hidden !important;
 }
