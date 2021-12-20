@@ -1,5 +1,5 @@
 import { GetPageQuery } from 'generated';
-import { useBlock } from 'hooks/useBlock';
+import { useBlock } from 'hooks/useBlock/useBlock';
 import { Descendant } from 'slate';
 import {
   serializeToString,
@@ -26,14 +26,16 @@ export const PageTitle: React.FunctionComponent<Props> = ({ page }) => {
   const debouncedValue = useDebounce(value, 1000);
 
   useEffect(() => {
-    updatePage({
-      variables: {
-        id: page.id,
-        input: {
-          title: debouncedValue,
+    if (debouncedValue !== title) {
+      updatePage({
+        variables: {
+          id: page.id,
+          input: {
+            title: debouncedValue,
+          },
         },
-      },
-    });
+      });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedValue]);
 

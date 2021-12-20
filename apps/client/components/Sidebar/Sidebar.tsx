@@ -1,6 +1,6 @@
 import { Tab } from '@headlessui/react';
 import { Resize } from 'components/Resize/Resize';
-import { useCurrentUser } from 'hooks/useCurrentUser';
+import { useCurrentUser } from 'hooks/useCurrentUser/useCurrentUser';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { UserRow } from './UserRow/UserRow';
 import { SidebarItem } from './SidebarItem/SidebarItem';

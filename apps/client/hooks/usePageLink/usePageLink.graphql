@@ -1,0 +1,6 @@
+mutation CreatePageLink($fromId: ID!, $toId: ID!) {
+  linkPage(fromId: $fromId, toId: $toId) {
+    fromId
+    toId
+  }
+}

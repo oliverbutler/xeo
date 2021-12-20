@@ -1,6 +1,11 @@
 import { RenderElementProps, useFocused, useSelected } from 'slate-react';
 import { MentionElement, SlateBlockType } from '@xeo/utils';
 import classNames from 'classnames';
+import { useGetPageQuery } from 'generated';
+import Link from 'next/link';
+import { usePageLink } from 'hooks/usePageLink/usePageLink';
+import { useEffect } from 'react';
+import { usePageContext } from 'context/PageContext';
 
 export const Element: React.FunctionComponent<RenderElementProps> = (props) => {
   const { attributes, children, element } = props;
@@ -65,23 +70,42 @@ const Mention: React.FunctionComponent<RenderElementProps> = ({
 }) => {
   const selected = useSelected();
   const focused = useFocused();
+  const mentioned = element as MentionElement;
 
-  const ele = element as MentionElement;
+  const { data } = useGetPageQuery({
+    variables: { id: mentioned.pageId },
+  });
+
+  // BUG This may cause a bug, if the currentPageId is changed, and the old pageLink is still loaded
+  const { currentPageId } = usePageContext();
+
+  const page = data?.page;
+
+  const { fetchOrUpsertPageLink } = usePageLink();
+
+  useEffect(() => {
+    if (currentPageId) {
+      fetchOrUpsertPageLink(currentPageId, mentioned.pageId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPageId, mentioned.pageId]);
 
   return (
-    <span
-      {...attributes}
-      contentEditable={false}
-      data-cy={`mention-${ele.pageId?.replace(' ', '-')}`}
-      className={classNames(
-        'dark:bg-dark-800 bg-dark-100 p-1 rounded-sm cursor-pointer',
-        {
-          'dark:bg-dark-600 bg-dark-200': selected && focused,
-        }
-      )}
-    >
-      @{ele.pageId}
-      {children}
-    </span>
+    <Link href={`/page/${mentioned.pageId}`} passHref>
+      <span
+        {...attributes}
+        contentEditable={false}
+        data-cy={`mention-${mentioned.pageId?.replace(' ', '-')}`}
+        className={classNames(
+          'dark:bg-dark-800 bg-dark-100 py-0.5 px-1 rounded-sm cursor-pointer m-1',
+          {
+            'dark:bg-dark-600 bg-dark-200': selected && focused,
+          }
+        )}
+      >
+        {page?.emoji} {page?.titlePlainText}
+        {children}
+      </span>
+    </Link>
   );
 };

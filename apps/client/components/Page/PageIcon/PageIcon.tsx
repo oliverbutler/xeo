@@ -2,7 +2,7 @@ import { Clickable } from 'components/UI/Clickable/Clickable';
 import { Dropdown } from 'components/UI/Dropdown/Dropdown';
 import { Popover } from 'components/UI/Popover/Popover';
 import { GetPageQuery } from 'generated';
-import { useBlock } from 'hooks/useBlock';
+import { useBlock } from 'hooks/useBlock/useBlock';
 import { useDebounce } from 'hooks/useDebounce';
 import { useEffect, useState } from 'react';
 import { FiFileText } from 'react-icons/fi';

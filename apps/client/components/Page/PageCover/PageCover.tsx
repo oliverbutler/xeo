@@ -1,7 +1,7 @@
 import { Clickable } from 'components/UI/Clickable/Clickable';
 import { Popover } from 'components/UI/Popover/Popover';
 import { GetPageQuery } from 'generated';
-import { useBlock } from 'hooks/useBlock';
+import { useBlock } from 'hooks/useBlock/useBlock';
 import { useEffect, useState } from 'react';
 import { FiMoreHorizontal } from 'react-icons/fi';
 import { useIntl } from 'react-intl';

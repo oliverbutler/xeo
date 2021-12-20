@@ -7,7 +7,8 @@
     "test": "nx affected:test --all",
     "lint": "nx affected:lint --all",
     "dev": "nx run-many --target=serve --all --parallel",
-    "storybook": "nx storybook ui"
+    "storybook": "nx storybook ui",
+    "generate-graphql:client": "graphql-codegen --config apps/client/codegen.yml"
   },
   "private": true,
   "dependencies": {

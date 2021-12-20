@@ -253,6 +253,14 @@ export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetMeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, username: string, firstName: string, lastName: string, avatar?: string | null | undefined, pages?: Array<{ __typename?: 'Page', id: string, titlePlainText: string, emoji?: string | null | undefined }> | null | undefined } };
 
+export type CreatePageLinkMutationVariables = Exact<{
+  fromId: Scalars['ID'];
+  toId: Scalars['ID'];
+}>;
+
+
+export type CreatePageLinkMutation = { __typename?: 'Mutation', linkPage: { __typename?: 'PageLink', fromId: string, toId: string } };
+
 
 export const SignInDocument = gql`
     mutation SignIn($username: String!, $password: String!) {
@@ -512,3 +520,38 @@ export function useGetMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetM
 export type GetMeQueryHookResult = ReturnType<typeof useGetMeQuery>;
 export type GetMeLazyQueryHookResult = ReturnType<typeof useGetMeLazyQuery>;
 export type GetMeQueryResult = Apollo.QueryResult<GetMeQuery, GetMeQueryVariables>;
+export const CreatePageLinkDocument = gql`
+    mutation CreatePageLink($fromId: ID!, $toId: ID!) {
+  linkPage(fromId: $fromId, toId: $toId) {
+    fromId
+    toId
+  }
+}
+    `;
+export type CreatePageLinkMutationFn = Apollo.MutationFunction<CreatePageLinkMutation, CreatePageLinkMutationVariables>;
+
+/**
+ * __useCreatePageLinkMutation__
+ *
+ * To run a mutation, you first call `useCreatePageLinkMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreatePageLinkMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createPageLinkMutation, { data, loading, error }] = useCreatePageLinkMutation({
+ *   variables: {
+ *      fromId: // value for 'fromId'
+ *      toId: // value for 'toId'
+ *   },
+ * });
+ */
+export function useCreatePageLinkMutation(baseOptions?: Apollo.MutationHookOptions<CreatePageLinkMutation, CreatePageLinkMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreatePageLinkMutation, CreatePageLinkMutationVariables>(CreatePageLinkDocument, options);
+      }
+export type CreatePageLinkMutationHookResult = ReturnType<typeof useCreatePageLinkMutation>;
+export type CreatePageLinkMutationResult = Apollo.MutationResult<CreatePageLinkMutation>;
+export type CreatePageLinkMutationOptions = Apollo.BaseMutationOptions<CreatePageLinkMutation, CreatePageLinkMutationVariables>;
