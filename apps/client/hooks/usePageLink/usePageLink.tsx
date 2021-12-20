@@ -16,29 +16,19 @@ interface Output {
 }
 
 export const usePageLink = (): Output => {
-  const { data } = useGetPageGraphQuery();
   const [createPageLinkMutation] = useCreatePageLinkMutation();
   const [removePageLinkMutation] = useRemovePageLinkMutation();
 
-  const pageLinks = data?.pageLinks ?? [];
-
-  const fetchOrUpsertPageLink = async (
+  const createPageLink = async (
     fromId: Scalars['ID'],
     toId: Scalars['ID']
   ): Promise<Pick<PageLink, 'fromId' | 'toId'> | undefined> => {
-    const existingPageLink = pageLinks.find(
-      (pageLink) => pageLink.fromId === fromId && pageLink.toId === toId
-    );
-
-    if (existingPageLink) {
-      return existingPageLink;
-    }
-
     const { data } = await createPageLinkMutation({
       variables: {
         fromId,
         toId,
       },
+      refetchQueries: ['GetPageGraph'],
     });
 
     if (!data) {
@@ -51,6 +41,7 @@ export const usePageLink = (): Output => {
   const removePageLink = async (fromId: Scalars['ID'], toId: Scalars['ID']) => {
     const { errors } = await removePageLinkMutation({
       variables: { fromId, toId },
+      refetchQueries: ['GetPageGraph'],
     });
 
     if (errors) {
@@ -58,5 +49,5 @@ export const usePageLink = (): Output => {
     }
   };
 
-  return { fetchOrUpsertPageLink, removePageLink };
+  return { fetchOrUpsertPageLink: createPageLink, removePageLink };
 };

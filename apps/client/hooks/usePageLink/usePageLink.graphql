@@ -2,6 +2,7 @@ mutation CreatePageLink($fromId: ID!, $toId: ID!) {
   linkPage(fromId: $fromId, toId: $toId) {
     fromId
     toId
+    count
   }
 }
 
@@ -9,5 +10,6 @@ mutation RemovePageLink($fromId: ID!, $toId: ID!) {
   unlinkPage(fromId: $fromId, toId: $toId) {
     fromId
     toId
+    count
   }
 }

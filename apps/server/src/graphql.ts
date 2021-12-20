@@ -88,6 +88,7 @@ export interface PageLink {
     fromId: string;
     to: Page;
     toId: string;
+    count: number;
     createdBy: User;
     createdById: string;
     createdAt: string;

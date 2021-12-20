@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { BadRequestException, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { PageLink } from '@prisma/client';
 import { CurrentUser, GqlAuthGuard } from '../../auth/auth.guard';
@@ -17,6 +17,7 @@ const mapPageLinkToGraphQL = (
   return {
     toId: link.linkToId,
     fromId: link.linkFromId,
+    count: link.count,
     createdById: link.createdById,
     createdAt: link.createdAt.toISOString(),
     updatedAt: link.updatedAt.toISOString(),
@@ -46,11 +47,7 @@ export class PageLinkResolver {
     @Args('fromId') fromId: string,
     @Args('toId') toId: string
   ): Promise<PageLinkGraphQlWithoutRelations> {
-    const link = await this.pageLinkService.createPageLink(
-      fromId,
-      toId,
-      user.id
-    );
+    const link = await this.pageLinkService.addPageLink(fromId, toId, user.id);
 
     return mapPageLinkToGraphQL(link);
   }
@@ -63,6 +60,10 @@ export class PageLinkResolver {
     @Args('toId') toId: string
   ): Promise<PageLinkGraphQlWithoutRelations> {
     const link = await this.pageLinkService.deletePageLink(fromId, toId);
+
+    if (!link) {
+      throw new BadRequestException('Link does not exist');
+    }
 
     return mapPageLinkToGraphQL(link);
   }

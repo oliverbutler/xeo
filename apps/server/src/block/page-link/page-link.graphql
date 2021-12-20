@@ -3,6 +3,7 @@ type PageLink {
   fromId: ID!
   to: Page!
   toId: ID!
+  count: Int!
   createdBy: User!
   createdById: ID!
   createdAt: String!

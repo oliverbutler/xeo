@@ -48,6 +48,7 @@ model PageLink {
   linkFromId  String
   linkTo      Page     @relation("linkTo", fields: [linkToId], references: [id])
   linkToId    String
+  count       Int      @default(1)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   createdBy   User     @relation(fields: [createdById], references: [id])

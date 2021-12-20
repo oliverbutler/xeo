@@ -142,6 +142,7 @@ export type PageFilters = {
 
 export type PageLink = {
   __typename?: 'PageLink';
+  count: Scalars['Int'];
   createdAt: Scalars['String'];
   createdBy: User;
   createdById: Scalars['ID'];
@@ -225,7 +226,7 @@ export type GetPageQuery = { __typename?: 'Query', page: { __typename?: 'Page', 
 export type GetPageGraphQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetPageGraphQuery = { __typename?: 'Query', pages: Array<{ __typename?: 'Page', id: string, titlePlainText: string, emoji?: string | null | undefined }>, pageLinks: Array<{ __typename?: 'PageLink', fromId: string, toId: string }> };
+export type GetPageGraphQuery = { __typename?: 'Query', pages: Array<{ __typename?: 'Page', id: string, titlePlainText: string, emoji?: string | null | undefined }>, pageLinks: Array<{ __typename?: 'PageLink', fromId: string, toId: string, count: number }> };
 
 export type UpdatePageMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -260,7 +261,7 @@ export type CreatePageLinkMutationVariables = Exact<{
 }>;
 
 
-export type CreatePageLinkMutation = { __typename?: 'Mutation', linkPage: { __typename?: 'PageLink', fromId: string, toId: string } };
+export type CreatePageLinkMutation = { __typename?: 'Mutation', linkPage: { __typename?: 'PageLink', fromId: string, toId: string, count: number } };
 
 export type RemovePageLinkMutationVariables = Exact<{
   fromId: Scalars['ID'];
@@ -268,7 +269,7 @@ export type RemovePageLinkMutationVariables = Exact<{
 }>;
 
 
-export type RemovePageLinkMutation = { __typename?: 'Mutation', unlinkPage: { __typename?: 'PageLink', fromId: string, toId: string } };
+export type RemovePageLinkMutation = { __typename?: 'Mutation', unlinkPage: { __typename?: 'PageLink', fromId: string, toId: string, count: number } };
 
 
 export const SignInDocument = gql`
@@ -356,6 +357,7 @@ export const GetPageGraphDocument = gql`
   pageLinks {
     fromId
     toId
+    count
   }
 }
     `;
@@ -534,6 +536,7 @@ export const CreatePageLinkDocument = gql`
   linkPage(fromId: $fromId, toId: $toId) {
     fromId
     toId
+    count
   }
 }
     `;
@@ -569,6 +572,7 @@ export const RemovePageLinkDocument = gql`
   unlinkPage(fromId: $fromId, toId: $toId) {
     fromId
     toId
+    count
   }
 }
     `;
