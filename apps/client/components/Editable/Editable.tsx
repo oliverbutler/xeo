@@ -180,7 +180,8 @@ export const Editable: React.FunctionComponent<Props> = ({
         el.style.left = `${rect.left + window.pageXOffset}px`;
       }
     }
-  }, [chars.length, editor, index, search, target]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chars.length, target]);
 
   return (
     <div>
@@ -228,31 +229,18 @@ export const Editable: React.FunctionComponent<Props> = ({
           autoFocus
         ></SlateEditable>
       </Slate>
-      {target && chars.length > 0 && (
+      {target && (
         <div
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           ref={ref}
-          style={{
-            top: '0px',
-            left: '0px',
-            position: 'absolute',
-            zIndex: 100,
-            padding: '3px',
-            background: 'white',
-            borderRadius: '4px',
-            boxShadow: '0 1px 5px rgba(0,0,0,.2)',
-          }}
+          className="fixed z-50 bg-dark-800"
           data-cy="mentions-portal"
         >
           {chars.map((char, i) => (
             <div
               key={char.id}
-              style={{
-                padding: '1px 3px',
-                borderRadius: '3px',
-                background: i === index ? '#B4D5FF' : 'transparent',
-              }}
+              className={classNames('p-1', { 'bg-dark-600': i === index })}
             >
               {char.emoji} {char.titlePlainText}
             </div>
