@@ -1,5 +1,6 @@
 import { BaseEditor, Descendant, Editor, Node } from 'slate';
 import { ReactEditor } from 'slate-react';
+import { HistoryEditor } from 'slate-history';
 import { isHotkey } from 'is-hotkey';
 
 export enum SlateBlockType {
@@ -28,13 +29,15 @@ export const serializeToString = (nodes: Node[]) => {
   return nodes.map((n) => Node.string(n)).join('\n');
 };
 
+export type MentionElement = {
+  type: SlateBlockType.MENTION_PAGE;
+  pageId: string;
+  children: CustomText[];
+};
+
 export type CustomElement =
   | { type: SlateBlockType; children: CustomText[] }
-  | {
-      type: SlateBlockType.MENTION_PAGE;
-      pageId: string;
-      children: CustomText[];
-    };
+  | MentionElement;
 
 type CustomText = {
   text: string;
@@ -49,7 +52,7 @@ export type SlateValue = Descendant[];
 
 declare module 'slate' {
   interface CustomTypes {
-    Editor: BaseEditor & ReactEditor;
+    Editor: BaseEditor & ReactEditor & HistoryEditor;
     Element: CustomElement;
     Text: CustomText;
   }
@@ -102,10 +105,13 @@ export const emptySlateText = {
   strikeThrough: false,
 };
 
-export const slateStateFactory = (text: string): SlateValue => {
+export const slateStateFactory = (
+  text: string,
+  type?: SlateBlockType
+): SlateValue => {
   return [
     {
-      type: SlateBlockType.PARAGRAPH,
+      type: type ?? SlateBlockType.PARAGRAPH,
       children: [
         {
           text,

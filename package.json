@@ -54,6 +54,7 @@
     "regenerator-runtime": "0.13.9",
     "rxjs": "^7.4.0",
     "slate": "^0.72.0",
+    "slate-history": "^0.66.0",
     "slate-react": "^0.72.1",
     "ts-morph": "^13.0.2",
     "tslib": "^2.0.0",

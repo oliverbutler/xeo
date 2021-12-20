@@ -16,6 +16,10 @@ export const Sidebar = () => {
     192
   );
 
+  const pages = [...(user?.pages ?? [])].sort((a, b) =>
+    a.titlePlainText.localeCompare(b.titlePlainText)
+  );
+
   return (
     <Resize
       defaultWindowWidth={defaultWidth}
@@ -28,7 +32,7 @@ export const Sidebar = () => {
       <div className="dark:bg-transparent flex flex-col justify-between h-full">
         <div>
           {user ? <UserRow user={user} /> : <p>Not logged in</p>}
-          {user?.pages?.map((page) => (
+          {pages?.map((page) => (
             <Link href={`/page/${page.id}`} key={page.id} passHref={true}>
               <SidebarItem className="text-dark-700 dark:text-white text-sm flex items-center">
                 <span>{page.emoji}</span>

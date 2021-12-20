@@ -9,7 +9,8 @@
       "defaultConfiguration": "production",
       "options": {
         "root": "apps/client",
-        "outputPath": "dist/apps/client"
+        "outputPath": "dist/apps/client",
+        "showCircularDependencies": false
       },
       "configurations": {
         "production": {}

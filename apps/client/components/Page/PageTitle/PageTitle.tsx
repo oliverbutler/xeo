@@ -1,29 +1,49 @@
 import { GetPageQuery } from 'generated';
 import { useBlock } from 'hooks/useBlock';
 import { Descendant } from 'slate';
-import { serializeToString } from '@xeo/utils';
+import {
+  serializeToString,
+  SlateBlockType,
+  slateStateFactory,
+} from '@xeo/utils';
+import { Editable } from 'components/Editable/Editable';
+import { useEffect, useState } from 'react';
+import { useDebounce } from 'hooks/useDebounce';
 
 interface Props {
   page: GetPageQuery['page'];
 }
 
 export const PageTitle: React.FunctionComponent<Props> = ({ page }) => {
+  const title = page.title as Descendant[];
+
   const { updatePage } = useBlock();
 
-  const handleTextUpdate = (text: Descendant[]) => {
+  const [value, setValue] = useState<Descendant[]>(
+    title ?? slateStateFactory('', SlateBlockType.HEADING_ONE)
+  );
+
+  const debouncedValue = useDebounce(value, 1000);
+
+  useEffect(() => {
     updatePage({
       variables: {
         id: page.id,
         input: {
-          title: JSON.parse(JSON.stringify(text)),
+          title: debouncedValue,
         },
       },
     });
-  };
-
-  const initialTitle = page.title as Descendant[];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedValue]);
 
   return (
-    <div className="text-3xl font-bold">{serializeToString(initialTitle)}</div>
+    <Editable
+      value={value}
+      onChange={setValue}
+      restrictToSingleLine
+      className="text-3xl font-extrabold"
+      placeholder="Untitled"
+    />
   );
 };
