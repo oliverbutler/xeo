@@ -20,8 +20,16 @@ import { EditablePlugin } from './plugins/plugins.interface';
 import { singleLine } from './plugins/singleLine/singleLine';
 import classNames from 'classnames';
 import ReactDOM from 'react-dom';
-import { emptySlateText, MentionElement, SlateBlockType } from '@xeo/utils';
+import {
+  emptySlateText,
+  isMentionElement,
+  isNodeElement,
+  MentionElement,
+  SlateBlockType,
+} from '@xeo/utils';
 import { useGetPageGraphQuery } from 'generated';
+import { usePageLink } from 'hooks/usePageLink/usePageLink';
+import { usePageContext } from 'context/PageContext';
 
 export const Portal: React.FunctionComponent = ({ children }) => {
   return typeof document === 'object'
@@ -59,6 +67,9 @@ export const Editable: React.FunctionComponent<Props> = ({
   const [index, setIndex] = useState(0);
   const [search, setSearch] = useState('');
 
+  const { fetchOrUpsertPageLink, removePageLink } = usePageLink();
+  const { currentPageId } = usePageContext();
+
   const options = data?.pages ?? [];
 
   const chars = options
@@ -68,7 +79,7 @@ export const Editable: React.FunctionComponent<Props> = ({
     .slice(0, 10);
 
   const withMentions = (editor: Editor) => {
-    const { isInline, isVoid } = editor;
+    const { isInline, isVoid, apply, normalizeNode } = editor;
 
     editor.isInline = (element) => {
       return element.type === SlateBlockType.MENTION_PAGE
@@ -80,6 +91,26 @@ export const Editable: React.FunctionComponent<Props> = ({
       return element.type === SlateBlockType.MENTION_PAGE
         ? true
         : isVoid(element);
+    };
+
+    editor.apply = (operation) => {
+      if (
+        operation.type === 'insert_node' &&
+        isMentionElement(operation.node) &&
+        currentPageId
+      ) {
+        fetchOrUpsertPageLink(currentPageId, operation.node.pageId);
+      }
+
+      if (
+        operation.type === 'remove_node' &&
+        isMentionElement(operation.node) &&
+        currentPageId
+      ) {
+        removePageLink(currentPageId, operation.node.pageId);
+      }
+
+      apply(operation);
     };
 
     return editor;
@@ -116,11 +147,11 @@ export const Editable: React.FunctionComponent<Props> = ({
             event.preventDefault();
             Transforms.select(editor, target);
             insertMention(editor, chars[index].id);
-            setTarget(null);
+            setTarget(undefined);
             break;
           case 'Escape':
             event.preventDefault();
-            setTarget(null);
+            setTarget(undefined);
             break;
         }
       }
@@ -199,6 +230,8 @@ export const Editable: React.FunctionComponent<Props> = ({
       </Slate>
       {target && chars.length > 0 && (
         <div
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           ref={ref}
           style={{
             top: '0px',

@@ -4,3 +4,10 @@ mutation CreatePageLink($fromId: ID!, $toId: ID!) {
     toId
   }
 }
+
+mutation RemovePageLink($fromId: ID!, $toId: ID!) {
+  unlinkPage(fromId: $fromId, toId: $toId) {
+    fromId
+    toId
+  }
+}

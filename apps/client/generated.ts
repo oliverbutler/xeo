@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
@@ -260,6 +261,14 @@ export type CreatePageLinkMutationVariables = Exact<{
 
 
 export type CreatePageLinkMutation = { __typename?: 'Mutation', linkPage: { __typename?: 'PageLink', fromId: string, toId: string } };
+
+export type RemovePageLinkMutationVariables = Exact<{
+  fromId: Scalars['ID'];
+  toId: Scalars['ID'];
+}>;
+
+
+export type RemovePageLinkMutation = { __typename?: 'Mutation', unlinkPage: { __typename?: 'PageLink', fromId: string, toId: string } };
 
 
 export const SignInDocument = gql`
@@ -555,3 +564,38 @@ export function useCreatePageLinkMutation(baseOptions?: Apollo.MutationHookOptio
 export type CreatePageLinkMutationHookResult = ReturnType<typeof useCreatePageLinkMutation>;
 export type CreatePageLinkMutationResult = Apollo.MutationResult<CreatePageLinkMutation>;
 export type CreatePageLinkMutationOptions = Apollo.BaseMutationOptions<CreatePageLinkMutation, CreatePageLinkMutationVariables>;
+export const RemovePageLinkDocument = gql`
+    mutation RemovePageLink($fromId: ID!, $toId: ID!) {
+  unlinkPage(fromId: $fromId, toId: $toId) {
+    fromId
+    toId
+  }
+}
+    `;
+export type RemovePageLinkMutationFn = Apollo.MutationFunction<RemovePageLinkMutation, RemovePageLinkMutationVariables>;
+
+/**
+ * __useRemovePageLinkMutation__
+ *
+ * To run a mutation, you first call `useRemovePageLinkMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemovePageLinkMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removePageLinkMutation, { data, loading, error }] = useRemovePageLinkMutation({
+ *   variables: {
+ *      fromId: // value for 'fromId'
+ *      toId: // value for 'toId'
+ *   },
+ * });
+ */
+export function useRemovePageLinkMutation(baseOptions?: Apollo.MutationHookOptions<RemovePageLinkMutation, RemovePageLinkMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemovePageLinkMutation, RemovePageLinkMutationVariables>(RemovePageLinkDocument, options);
+      }
+export type RemovePageLinkMutationHookResult = ReturnType<typeof useRemovePageLinkMutation>;
+export type RemovePageLinkMutationResult = Apollo.MutationResult<RemovePageLinkMutation>;
+export type RemovePageLinkMutationOptions = Apollo.BaseMutationOptions<RemovePageLinkMutation, RemovePageLinkMutationVariables>;

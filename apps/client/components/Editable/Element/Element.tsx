@@ -76,19 +76,7 @@ const Mention: React.FunctionComponent<RenderElementProps> = ({
     variables: { id: mentioned.pageId },
   });
 
-  // BUG This may cause a bug, if the currentPageId is changed, and the old pageLink is still loaded
-  const { currentPageId } = usePageContext();
-
   const page = data?.page;
-
-  const { fetchOrUpsertPageLink } = usePageLink();
-
-  useEffect(() => {
-    if (currentPageId) {
-      fetchOrUpsertPageLink(currentPageId, mentioned.pageId);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPageId, mentioned.pageId]);
 
   return (
     <Link href={`/page/${mentioned.pageId}`} passHref>

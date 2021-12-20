@@ -4,6 +4,8 @@ generates:
   apps/client/generated.ts:
     documents: 'apps/client/**/*.{tsx,graphql}'
     plugins:
+      - add:
+          content: '/* eslint-disable */'
       - typescript
       - typescript-operations
       - typescript-react-apollo

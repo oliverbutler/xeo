@@ -3,15 +3,22 @@ import {
   Scalars,
   useCreatePageLinkMutation,
   useGetPageGraphQuery,
+  useRemovePageLinkMutation,
 } from 'generated';
+import { toast } from 'react-toastify';
 
 interface Output {
-  fetchOrUpsertPageLink: (fromId: Scalars['ID'], toId: Scalars['ID']) => void;
+  fetchOrUpsertPageLink: (
+    fromId: Scalars['ID'],
+    toId: Scalars['ID']
+  ) => Promise<Pick<PageLink, 'fromId' | 'toId'> | undefined>;
+  removePageLink: (fromId: Scalars['ID'], toId: Scalars['ID']) => void;
 }
 
 export const usePageLink = (): Output => {
   const { data } = useGetPageGraphQuery();
-  const [createPageLink] = useCreatePageLinkMutation();
+  const [createPageLinkMutation] = useCreatePageLinkMutation();
+  const [removePageLinkMutation] = useRemovePageLinkMutation();
 
   const pageLinks = data?.pageLinks ?? [];
 
@@ -27,7 +34,7 @@ export const usePageLink = (): Output => {
       return existingPageLink;
     }
 
-    const { data } = await createPageLink({
+    const { data } = await createPageLinkMutation({
       variables: {
         fromId,
         toId,
@@ -41,5 +48,15 @@ export const usePageLink = (): Output => {
     return data.linkPage;
   };
 
-  return { fetchOrUpsertPageLink };
+  const removePageLink = async (fromId: Scalars['ID'], toId: Scalars['ID']) => {
+    const { errors } = await removePageLinkMutation({
+      variables: { fromId, toId },
+    });
+
+    if (errors) {
+      toast.error('Problem removing page link');
+    }
+  };
+
+  return { fetchOrUpsertPageLink, removePageLink };
 };

@@ -1,4 +1,4 @@
-import { BaseEditor, Descendant, Editor, Node } from 'slate';
+import { BaseEditor, Descendant, Editor, Node, Path } from 'slate';
 import { ReactEditor } from 'slate-react';
 import { HistoryEditor } from 'slate-history';
 import { isHotkey } from 'is-hotkey';
@@ -33,6 +33,16 @@ export type MentionElement = {
   type: SlateBlockType.MENTION_PAGE;
   pageId: string;
   children: CustomText[];
+};
+
+export const isNodeElement = (
+  element: Node | Path
+): element is CustomElement => {
+  return (element as CustomElement).type !== undefined;
+};
+
+export const isMentionElement = (element: Node): element is MentionElement => {
+  return isNodeElement(element) && element.type === SlateBlockType.MENTION_PAGE;
 };
 
 export type CustomElement =
