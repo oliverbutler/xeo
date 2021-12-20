@@ -1,5 +1,5 @@
 import { PageLayout } from 'components/Page/PageLayout/PageLayout';
-import { useCurrentUser } from 'hooks/useCurrentUser';
+import { useCurrentUser } from 'hooks/useCurrentUser/useCurrentUser';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { useRouter } from 'next/dist/client/router';
 import { useEffect } from 'react';

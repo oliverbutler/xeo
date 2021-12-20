@@ -4,6 +4,7 @@ import * as d3 from 'd3';
 import Link from 'next/link';
 import { usePageContext } from 'context/PageContext';
 import { useTheme } from 'next-themes';
+import classNames from 'classnames';
 
 interface Props {
   pageGraph: GetPageGraphQuery;
@@ -115,22 +116,42 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pageGraph }) => {
         {simulatedNodes.map((node) => {
           const page = pageGraph.pages.find((page) => page.id === node.id);
 
+          const targetedNodesFromCurrentPage = currentPageId
+            ? [
+                currentPageId,
+                ...pageGraph.pageLinks
+                  .filter((link) => link.fromId === currentPageId)
+                  .map((link) => link.toId),
+              ]
+            : [];
+
+          const isTargeted = targetedNodesFromCurrentPage.includes(node.id);
+
+          const fillColour =
+            page?.id === currentPageId ? 'pink' : isTargeted ? 'white' : 'gray';
+
           if (node.x && node.y) {
             return (
               <Link href={`/page/${page?.id}`} key={node.id} passHref={true}>
-                <g className="cursor-pointer ">
+                <g className="cursor-pointer " opacity={isTargeted ? 1 : 0.5}>
                   <circle
                     cx={node.x}
                     cy={node.y}
                     r={node.radius}
                     stroke="black"
-                    fill={page?.id === currentPageId ? 'pink' : 'white'}
+                    fill={fillColour}
                   />
 
                   <text
                     textAnchor="middle"
-                    className="text-xs text-white"
-                    fill={theme === 'dark' ? 'white' : undefined}
+                    className="text-xs"
+                    fill={
+                      isTargeted
+                        ? theme === 'dark'
+                          ? 'white'
+                          : 'black'
+                        : 'gray'
+                    }
                     x={node.x}
                     y={Number(node.y) + 25}
                   >
