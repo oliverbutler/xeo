@@ -15,3 +15,9 @@ mutation CreateDatabase($input: CreateDatabaseInput!) {
     id
   }
 }
+
+mutation DeletePage($id: ID!) {
+  deletePage(id: $id) {
+    id
+  }
+}

@@ -58,13 +58,9 @@ export class PageLinkResolver {
     @CurrentUser() user: CurrentAuthUser,
     @Args('fromId') fromId: string,
     @Args('toId') toId: string
-  ): Promise<PageLinkGraphQlWithoutRelations> {
+  ): Promise<PageLinkGraphQlWithoutRelations | null> {
     const link = await this.pageLinkService.deletePageLink(fromId, toId);
 
-    if (!link) {
-      throw new BadRequestException('Link does not exist');
-    }
-
-    return mapPageLinkToGraphQL(link);
+    return link ? mapPageLinkToGraphQL(link) : null;
   }
 }

@@ -16,5 +16,5 @@ type Query {
 
 type Mutation {
   linkPage(fromId: ID!, toId: ID!): PageLink!
-  unlinkPage(fromId: ID!, toId: ID!): PageLink!
+  unlinkPage(fromId: ID!, toId: ID!): PageLink
 }

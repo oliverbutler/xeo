@@ -41,8 +41,12 @@ export const isNodeElement = (
   return (element as CustomElement).type !== undefined;
 };
 
-export const isMentionElement = (element: Node): element is MentionElement => {
-  return isNodeElement(element) && element.type === SlateBlockType.MENTION_PAGE;
+export const isMentionElement = (
+  element: Node | Path
+): element is MentionElement => {
+  return (
+    isNodeElement(element) && element?.type === SlateBlockType.MENTION_PAGE
+  );
 };
 
 export type CustomElement =

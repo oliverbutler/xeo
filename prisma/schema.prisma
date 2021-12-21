@@ -44,9 +44,9 @@ model Database {
 }
 
 model PageLink {
-  linkFrom    Page     @relation("linkFrom", fields: [linkFromId], references: [id])
+  linkFrom    Page     @relation("linkFrom", fields: [linkFromId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   linkFromId  String
-  linkTo      Page     @relation("linkTo", fields: [linkToId], references: [id])
+  linkTo      Page     @relation("linkTo", fields: [linkToId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   linkToId    String
   count       Int      @default(1)
   createdAt   DateTime @default(now())

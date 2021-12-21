@@ -30,8 +30,21 @@ export const PageRichText: React.FunctionComponent<Props> = ({ page }) => {
         },
       });
     }
+    // save on unmount to avoid loss of state if navigate away <1second after changes
+    return () => {
+      if (value !== body) {
+        updatePage({
+          variables: {
+            id: page.id,
+            input: { body: value },
+          },
+        });
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedValue]);
 
-  return <Editable value={value} onChange={setValue} />;
+  return (
+    <Editable value={value} onChange={setValue} pageId={page.id} field="body" />
+  );
 };

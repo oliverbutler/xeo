@@ -3,6 +3,7 @@ import { useGetPageQuery } from 'generated';
 import Link from 'next/link';
 import { RenderElementProps, useFocused, useSelected } from 'slate-react';
 import { MentionElement } from '@xeo/utils';
+import ConditionalWrapper from '../../../../../../libs/ui/src/lib/ConditionalWrapper/ConditionalWrapper';
 
 export const Mention: React.FunctionComponent<
   RenderElementProps & { element: MentionElement }
@@ -16,22 +17,35 @@ export const Mention: React.FunctionComponent<
 
   const page = data?.page;
 
+  const text = page
+    ? (page.emoji ? `${page.emoji} ` : '') + page.titlePlainText
+    : '404';
+
   return (
-    <Link href={`/page/${element.pageId}`} passHref>
+    <ConditionalWrapper
+      condition={!!page}
+      wrapper={(children) => (
+        <Link href={`/page/${element.pageId}`} passHref>
+          {children}
+        </Link>
+      )}
+    >
       <span
         {...attributes}
         contentEditable={false}
         data-cy={`mention-${element.pageId?.replace(' ', '-')}`}
         className={classNames(
-          'dark:bg-dark-800 bg-dark-100 py-0.5 px-1 rounded-sm cursor-pointer m-1',
+          'dark:bg-dark-800 bg-dark-100 hover:dark:bg-dark-600 hover:bg-dark-200 py-0.5 px-1 rounded-sm cursor-pointer m-1',
           {
             'dark:bg-dark-600 bg-dark-200': selected && focused,
+            'dark:bg-red-600/20 bg-red-200': !page,
+            'cursor-not-allowed': !page,
           }
         )}
       >
-        {page?.emoji} {page?.titlePlainText}
+        {text}
         {children}
       </span>
-    </Link>
+    </ConditionalWrapper>
   );
 };

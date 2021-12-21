@@ -9,7 +9,7 @@ export const Element: React.FunctionComponent<RenderElementProps> = (props) => {
     case SlateBlockType.BLOCK_QUOTE:
       return (
         <blockquote
-          className="border-l-2 border-dark-800 dark:border-dark-600 pl-2 my-1 italic"
+          className="border-l-2 border-dark-300 dark:border-dark-600 pl-2 my-1 italic"
           {...attributes}
         >
           {children}

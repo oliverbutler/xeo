@@ -7,16 +7,21 @@ import {
   UpdatePageMutationOptions,
   useCreateDatabaseMutation,
   useCreatePageMutation,
+  useDeletePageMutation,
   useUpdatePageMutation,
 } from 'generated';
+import { useRouter } from 'next/router';
 
 export const useBlock = () => {
   const [updatePage] = useUpdatePageMutation();
   const [createPage] = useCreatePageMutation();
+  const [deletePage] = useDeletePageMutation();
 
   const [createDatabase] = useCreateDatabaseMutation();
 
   const { setIsSyncing } = useSyncContext();
+
+  const router = useRouter();
 
   const updatePageHandler = async (options: UpdatePageMutationOptions) => {
     setIsSyncing(true);
@@ -41,7 +46,7 @@ export const useBlock = () => {
           ...input,
         },
       },
-      refetchQueries: ['GetPage'],
+      refetchQueries: ['GetPage', 'GetPageGraph'],
     });
 
     setIsSyncing(false);
@@ -69,9 +74,25 @@ export const useBlock = () => {
     return result;
   };
 
+  const deletePageHandler = async (id: string) => {
+    setIsSyncing(true);
+
+    await deletePage({
+      variables: {
+        id,
+      },
+      refetchQueries: ['GetPage', 'GetPageGraph'],
+    });
+
+    router.push('/');
+
+    setIsSyncing(false);
+  };
+
   return {
     updatePage: updatePageHandler,
     createPage: createPageHandler,
     createDatabase: createDatabaseHandler,
+    deletePage: deletePageHandler,
   };
 };

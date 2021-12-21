@@ -1,52 +1,60 @@
 import {
   PageLink,
   Scalars,
+  UpdatePageInput,
   useCreatePageLinkMutation,
   useGetPageGraphQuery,
   useRemovePageLinkMutation,
 } from 'generated';
 import { toast } from 'react-toastify';
 
-interface Output {
-  fetchOrUpsertPageLink: (
-    fromId: Scalars['ID'],
-    toId: Scalars['ID']
-  ) => Promise<Pick<PageLink, 'fromId' | 'toId'> | undefined>;
-  removePageLink: (fromId: Scalars['ID'], toId: Scalars['ID']) => void;
-}
-
-export const usePageLink = (): Output => {
+export const usePageLink = () => {
   const [createPageLinkMutation] = useCreatePageLinkMutation();
   const [removePageLinkMutation] = useRemovePageLinkMutation();
 
   const createPageLink = async (
-    fromId: Scalars['ID'],
-    toId: Scalars['ID']
+    fromId: string,
+    toId: string,
+    pageId: string,
+    pageUpdate: UpdatePageInput
   ): Promise<Pick<PageLink, 'fromId' | 'toId'> | undefined> => {
-    const { data } = await createPageLinkMutation({
+    const { data, errors } = await createPageLinkMutation({
       variables: {
         fromId,
         toId,
+        id: pageId,
+        input: pageUpdate,
       },
-      refetchQueries: ['GetPageGraph'],
+      refetchQueries: ['GetPageGraph', 'GetPage'],
     });
 
-    if (!data) {
+    if (!data || errors) {
+      toast.error('Problem creating page');
+      console.error(errors);
       return undefined;
     }
 
     return data.linkPage;
   };
 
-  const removePageLink = async (fromId: Scalars['ID'], toId: Scalars['ID']) => {
-    const { errors } = await removePageLinkMutation({
-      variables: { fromId, toId },
-      refetchQueries: ['GetPageGraph'],
+  const removePageLink = async (
+    fromId: string,
+    toId: string,
+    pageId: string,
+    pageUpdate: UpdatePageInput
+  ): Promise<boolean> => {
+    const { errors, data } = await removePageLinkMutation({
+      variables: { fromId, toId, id: pageId, input: pageUpdate },
+      refetchQueries: ['GetPageGraph', 'GetPage'],
     });
 
-    if (errors) {
+    if (errors || !data) {
       toast.error('Problem removing page link');
+      console.error(errors);
+      return false;
     }
+
+    return true;
   };
 
   return { fetchOrUpsertPageLink: createPageLink, removePageLink };

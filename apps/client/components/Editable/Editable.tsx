@@ -1,3 +1,4 @@
+// @refresh reset
 import {
   Slate,
   Editable as SlateEditable,
@@ -11,7 +12,14 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { createEditor, Descendant, Transforms, Range, Editor } from 'slate';
+import {
+  createEditor,
+  Descendant,
+  Transforms,
+  Range,
+  Editor,
+  Node,
+} from 'slate';
 import { withHistory } from 'slate-history';
 import { Leaf } from './Leaf/Leaf';
 import { Element } from './Element/Element';
@@ -23,13 +31,14 @@ import ReactDOM from 'react-dom';
 import {
   emptySlateText,
   isMentionElement,
-  isNodeElement,
   MentionElement,
   SlateBlockType,
 } from '@xeo/utils';
 import { useGetPageGraphQuery } from 'generated';
 import { usePageLink } from 'hooks/usePageLink/usePageLink';
 import { usePageContext } from 'context/PageContext';
+import { MentionSelection } from './plugins/mentions/MentionSelection';
+import { useBlock } from 'hooks/useBlock/useBlock';
 
 export const Portal: React.FunctionComponent = ({ children }) => {
   return typeof document === 'object'
@@ -43,6 +52,8 @@ interface Props {
   restrictToSingleLine?: boolean;
   className?: string;
   placeholder?: string;
+  pageId: string;
+  field: 'body' | 'title';
 }
 
 export const Editable: React.FunctionComponent<Props> = ({
@@ -51,6 +62,8 @@ export const Editable: React.FunctionComponent<Props> = ({
   restrictToSingleLine = false,
   placeholder = 'Write some text...',
   className,
+  pageId,
+  field,
 }) => {
   const renderElement = useCallback((props) => <Element {...props} />, []);
 
@@ -62,17 +75,18 @@ export const Editable: React.FunctionComponent<Props> = ({
 
   const { data } = useGetPageGraphQuery();
 
-  const ref = useRef<HTMLDivElement | null>();
   const [target, setTarget] = useState<Range | undefined>();
   const [index, setIndex] = useState(0);
   const [search, setSearch] = useState('');
+  const [position, setPosition] = useState({ top: '0px', left: '0px' });
 
   const { fetchOrUpsertPageLink, removePageLink } = usePageLink();
   const { currentPageId } = usePageContext();
+  const { createPage } = useBlock();
 
   const options = data?.pages ?? [];
 
-  const chars = options
+  const pages = options
     .filter((c) =>
       c.titlePlainText.toLowerCase().startsWith(search.toLowerCase())
     )
@@ -94,12 +108,30 @@ export const Editable: React.FunctionComponent<Props> = ({
     };
 
     editor.apply = (operation) => {
+      apply(operation);
+
       if (
         operation.type === 'insert_node' &&
         isMentionElement(operation.node) &&
         currentPageId
       ) {
-        fetchOrUpsertPageLink(currentPageId, operation.node.pageId);
+        field == 'body'
+          ? fetchOrUpsertPageLink(
+              currentPageId,
+              operation.node.pageId,
+              pageId,
+              {
+                body: editor.children,
+              }
+            )
+          : fetchOrUpsertPageLink(
+              currentPageId,
+              operation.node.pageId,
+              pageId,
+              {
+                title: editor.children,
+              }
+            );
       }
 
       if (
@@ -107,10 +139,14 @@ export const Editable: React.FunctionComponent<Props> = ({
         isMentionElement(operation.node) &&
         currentPageId
       ) {
-        removePageLink(currentPageId, operation.node.pageId);
+        field == 'body'
+          ? removePageLink(currentPageId, operation.node.pageId, pageId, {
+              body: editor.children,
+            })
+          : removePageLink(currentPageId, operation.node.pageId, pageId, {
+              title: editor.children,
+            });
       }
-
-      apply(operation);
     };
 
     return editor;
@@ -127,26 +163,35 @@ export const Editable: React.FunctionComponent<Props> = ({
   };
 
   const onKeyDown = useCallback(
-    (event) => {
+    async (event) => {
       if (target) {
         switch (event.key) {
           case 'ArrowDown':
             event.preventDefault();
             // eslint-disable-next-line no-case-declarations
-            const prevIndex = index >= chars.length - 1 ? 0 : index + 1;
+            const prevIndex = index >= pages.length - 1 ? 0 : index + 1;
             setIndex(prevIndex);
             break;
           case 'ArrowUp':
             event.preventDefault();
             // eslint-disable-next-line no-case-declarations
-            const nextIndex = index <= 0 ? chars.length - 1 : index - 1;
+            const nextIndex = index <= 0 ? pages.length - 1 : index - 1;
             setIndex(nextIndex);
             break;
           case 'Tab':
           case 'Enter':
             event.preventDefault();
             Transforms.select(editor, target);
-            insertMention(editor, chars[index].id);
+
+            if (pages[index]) {
+              insertMention(editor, pages[index].id);
+            } else {
+              const newPage = await createPage({ titlePlainText: search });
+              if (newPage.data?.createPage) {
+                insertMention(editor, newPage.data.createPage.id);
+              }
+            }
+
             setTarget(undefined);
             break;
           case 'Escape':
@@ -160,28 +205,25 @@ export const Editable: React.FunctionComponent<Props> = ({
     [index, search, target]
   );
 
-  const editor = useMemo(
-    () =>
-      plugins.reduce(
-        (editor, plugin) => plugin.wrapper(editor),
-        withMentions(withHistory(withReact(createEditor())))
-      ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
+  const editorRef = useRef<Editor>();
+  if (!editorRef.current)
+    editorRef.current = plugins.reduce(
+      (editor, plugin) => plugin.wrapper(editor),
+      withMentions(withHistory(withReact(createEditor())))
+    );
+  const editor = editorRef.current;
 
   useEffect(() => {
-    if (target && chars.length > 0) {
-      const el = ref.current;
+    if (target && pages.length > 0) {
       const domRange = ReactEditor.toDOMRange(editor, target);
       const rect = domRange.getBoundingClientRect();
-      if (el) {
-        el.style.top = `${rect.top + window.pageYOffset + 24}px`;
-        el.style.left = `${rect.left + window.pageXOffset}px`;
-      }
+      setPosition({
+        top: `${rect.top + window.pageYOffset + 24}px`,
+        left: `${rect.left + window.pageXOffset}px`,
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chars.length, target]);
+  }, [pages.length, target]);
 
   return (
     <div>
@@ -230,22 +272,11 @@ export const Editable: React.FunctionComponent<Props> = ({
         ></SlateEditable>
       </Slate>
       {target && (
-        <div
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          ref={ref}
-          className="fixed z-50 bg-dark-800"
-          data-cy="mentions-portal"
-        >
-          {chars.map((char, i) => (
-            <div
-              key={char.id}
-              className={classNames('p-1', { 'bg-dark-600': i === index })}
-            >
-              {char.emoji} {char.titlePlainText}
-            </div>
-          ))}
-        </div>
+        <MentionSelection
+          position={position}
+          options={pages.map((x) => `${x.emoji} ${x.titlePlainText}`)}
+          selectedIndex={index}
+        />
       )}
     </div>
   );
