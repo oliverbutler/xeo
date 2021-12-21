@@ -15,41 +15,48 @@ export class PageLinkService {
     targetPageId: Page['id'],
     userId: User['id']
   ): Promise<PageLink> {
-    const currentPageLink = await this.prisma.pageLink.findUnique({
+    const pageLink = await this.prisma.pageLink.upsert({
       where: {
         linkFromId_linkToId: {
           linkFromId: sourcePageId,
           linkToId: targetPageId,
         },
       },
+      update: {
+        count: { increment: 1 },
+      },
+      create: {
+        linkFromId: sourcePageId,
+        linkToId: targetPageId,
+        createdById: userId,
+        count: 1,
+      },
     });
 
-    if (currentPageLink) {
-      return await this.prisma.pageLink.update({
-        where: {
-          linkFromId_linkToId: {
-            linkFromId: sourcePageId,
-            linkToId: targetPageId,
-          },
-        },
-        data: { count: currentPageLink.count + 1 },
-      });
-    } else {
-      return await this.prisma.pageLink.create({
-        data: {
-          linkFromId: sourcePageId,
-          linkToId: targetPageId,
-          createdById: userId,
-        },
-      });
-    }
+    return pageLink;
   }
 
   async deletePageLink(
     sourcePageId: Page['id'],
     targetPageId: Page['id']
   ): Promise<PageLink | undefined> {
-    const currentPageLink = await this.prisma.pageLink.findUnique({
+    const pageLink = await this.prisma.pageLink.update({
+      where: {
+        linkFromId_linkToId: {
+          linkFromId: sourcePageId,
+          linkToId: targetPageId,
+        },
+      },
+      data: {
+        count: { decrement: 1 },
+      },
+    });
+
+    if (pageLink.count > 0) {
+      return pageLink;
+    }
+
+    await this.prisma.pageLink.delete({
       where: {
         linkFromId_linkToId: {
           linkFromId: sourcePageId,
@@ -58,28 +65,6 @@ export class PageLinkService {
       },
     });
 
-    if (currentPageLink) {
-      if (currentPageLink.count === 1) {
-        return await this.prisma.pageLink.delete({
-          where: {
-            linkFromId_linkToId: {
-              linkFromId: sourcePageId,
-              linkToId: targetPageId,
-            },
-          },
-        });
-      } else {
-        return await this.prisma.pageLink.update({
-          where: {
-            linkFromId_linkToId: {
-              linkFromId: sourcePageId,
-              linkToId: targetPageId,
-            },
-          },
-          data: { count: currentPageLink.count - 1 },
-        });
-      }
-    }
     return undefined;
   }
 }
