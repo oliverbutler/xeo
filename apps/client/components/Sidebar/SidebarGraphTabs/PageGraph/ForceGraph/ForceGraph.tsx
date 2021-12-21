@@ -48,9 +48,7 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pageGraph }) => {
       setSimulatedNodes([...simulation.nodes()]);
     });
 
-    simulation.tick(1);
-
-    simulation.alpha(1).alphaMin(0.3).restart();
+    simulation.alpha(1).alphaMin(0.1).velocityDecay(0.6).restart();
 
     return () => simulation.stop();
     // eslint-disable-next-line react-hooks/exhaustive-deps

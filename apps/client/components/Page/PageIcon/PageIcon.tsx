@@ -34,12 +34,13 @@ export const PageIcon: React.FunctionComponent<Props> = ({ page }) => {
         },
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedPageIcon]);
 
   return (
     <Popover
       button={
-        <Clickable className="p-2 w-min select-none text-7xl outline-none">
+        <Clickable className="p-2 select-none text-7xl outline-none w-fit">
           {page.emoji ? (
             <span>{page.emoji}</span>
           ) : (
