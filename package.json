@@ -7,7 +7,8 @@
     "test": "nx affected:test --all",
     "lint": "nx affected:lint --all",
     "dev": "nx run-many --target=serve --all --parallel",
-    "storybook": "nx storybook ui"
+    "storybook": "nx storybook ui",
+    "generate-graphql:client": "graphql-codegen --config apps/client/codegen.yml"
   },
   "private": true,
   "dependencies": {
@@ -33,6 +34,7 @@
     "d3": "^7.2.1",
     "d3-force": "^3.0.0",
     "framer-motion": "^5.5.5",
+    "fuse.js": "^6.4.6",
     "graphql": "15.6.1",
     "graphql-type-json": "^0.3.2",
     "is-hotkey": "^0.2.0",
@@ -54,6 +56,7 @@
     "regenerator-runtime": "0.13.9",
     "rxjs": "^7.4.0",
     "slate": "^0.72.0",
+    "slate-history": "^0.66.0",
     "slate-react": "^0.72.1",
     "ts-morph": "^13.0.2",
     "tslib": "^2.0.0",
@@ -63,6 +66,7 @@
   "devDependencies": {
     "@babel/core": "7.16.5",
     "@babel/preset-typescript": "7.16.5",
+    "@graphql-codegen/add": "^3.1.0",
     "@graphql-codegen/cli": "^2.3.0",
     "@graphql-codegen/fragment-matcher": "^3.2.0",
     "@graphql-codegen/typescript-operations": "^2.2.1",
@@ -114,7 +118,7 @@
     "eslint-plugin-jsx-a11y": "6.5.1",
     "eslint-plugin-react": "7.27.1",
     "eslint-plugin-react-hooks": "4.3.0",
-    "jest": "27.4.5",
+    "jest": "26.6.3",
     "postcss": "^8.4.5",
     "postcss-import": "^14.0.2",
     "prettier": "^2.5.1",
@@ -122,7 +126,7 @@
     "react-test-renderer": "17.0.2",
     "sass": "1.45.0",
     "tailwindcss": "^3.0.7",
-    "ts-jest": "27.1.2",
+    "ts-jest": "^26.3.0",
     "typescript": "~4.5.4"
   }
 }

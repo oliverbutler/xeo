@@ -41,10 +41,12 @@ export const Resize: React.FunctionComponent<Props> = ({
         className={classNames('h-screen', className)}
         style={{ width }}
         transition={{ duration: 1 }}
+        suppressHydrationWarning={true}
       >
         {children}
       </motion.div>
       <motion.div
+        suppressHydrationWarning={true}
         className={classNames(
           'absolute   h-full cursor-move',
           dragHandleClassName

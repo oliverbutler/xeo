@@ -23,8 +23,8 @@ export const Header: React.FunctionComponent = () => {
         </div>
       </div>
       <div className="flex flex-col w-full lg:w-3/5 justify-center items-center">
-        <div className="group relative lg:ml-24">
-          <div className="absolute -inset-1 bg-gradient-to-r from-secondary-600 to-primary-600 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
+        <div className=" relative lg:ml-24">
+          <div className="absolute -inset-1 bg-gradient-to-r from-secondary-600 to-primary-600 rounded-lg blur opacity-75"></div>
           <Image
             className="shadow-lg rounded-lg"
             src={image}

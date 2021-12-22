@@ -1,5 +1,5 @@
 import { GetMeQuery, useGetMeQuery } from 'generated';
-import { useLocalStorage } from './useLocalStorage';
+import { useLocalStorage } from '../useLocalStorage';
 
 interface Output {
   user: GetMeQuery['me'] | null;

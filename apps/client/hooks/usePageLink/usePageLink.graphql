@@ -1,0 +1,31 @@
+mutation CreatePageLink(
+  $fromId: ID!
+  $toId: ID!
+  $id: ID!
+  $input: UpdatePageInput!
+) {
+  linkPage(fromId: $fromId, toId: $toId) {
+    fromId
+    toId
+    count
+  }
+  updatePage(id: $id, input: $input) {
+    id
+  }
+}
+
+mutation RemovePageLink(
+  $fromId: ID!
+  $toId: ID!
+  $id: ID!
+  $input: UpdatePageInput!
+) {
+  unlinkPage(fromId: $fromId, toId: $toId) {
+    fromId
+    toId
+    count
+  }
+  updatePage(id: $id, input: $input) {
+    id
+  }
+}

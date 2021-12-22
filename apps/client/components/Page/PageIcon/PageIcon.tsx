@@ -2,7 +2,7 @@ import { Clickable } from 'components/UI/Clickable/Clickable';
 import { Dropdown } from 'components/UI/Dropdown/Dropdown';
 import { Popover } from 'components/UI/Popover/Popover';
 import { GetPageQuery } from 'generated';
-import { useBlock } from 'hooks/useBlock';
+import { useBlock } from 'hooks/useBlock/useBlock';
 import { useDebounce } from 'hooks/useDebounce';
 import { useEffect, useState } from 'react';
 import { FiFileText } from 'react-icons/fi';
@@ -34,12 +34,13 @@ export const PageIcon: React.FunctionComponent<Props> = ({ page }) => {
         },
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedPageIcon]);
 
   return (
     <Popover
       button={
-        <Clickable className="p-2 w-min select-none text-7xl outline-none">
+        <Clickable className="p-2 select-none text-7xl outline-none w-fit">
           {page.emoji ? (
             <span>{page.emoji}</span>
           ) : (

@@ -7,5 +7,6 @@ query GetPageGraph {
   pageLinks {
     fromId
     toId
+    count
   }
 }

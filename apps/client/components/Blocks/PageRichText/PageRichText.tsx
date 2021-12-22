@@ -1,5 +1,5 @@
 import { GetPageQuery } from 'generated';
-import { useBlock } from 'hooks/useBlock';
+import { useBlock } from 'hooks/useBlock/useBlock';
 import { useDebounce } from 'hooks/useDebounce';
 import React, { useEffect, useState } from 'react';
 import { Descendant } from 'slate';
@@ -22,14 +22,29 @@ export const PageRichText: React.FunctionComponent<Props> = ({ page }) => {
   const debouncedValue = useDebounce(value, 1000);
 
   useEffect(() => {
-    updatePage({
-      variables: {
-        id: page.id,
-        input: { body: debouncedValue },
-      },
-    });
+    if (debouncedValue !== body) {
+      updatePage({
+        variables: {
+          id: page.id,
+          input: { body: debouncedValue },
+        },
+      });
+    }
+    // save on unmount to avoid loss of state if navigate away <1second after changes
+    return () => {
+      if (value !== body) {
+        updatePage({
+          variables: {
+            id: page.id,
+            input: { body: value },
+          },
+        });
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedValue]);
 
-  return <Editable value={value} onChange={setValue} />;
+  return (
+    <Editable value={value} onChange={setValue} pageId={page.id} field="body" />
+  );
 };

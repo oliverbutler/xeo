@@ -10,25 +10,53 @@ export class PageLinkService {
     return await this.prisma.pageLink.findMany({ where });
   }
 
-  async createPageLink(
+  async addPageLink(
     sourcePageId: Page['id'],
     targetPageId: Page['id'],
     userId: User['id']
   ): Promise<PageLink> {
-    return await this.prisma.pageLink.create({
-      data: {
+    const pageLink = await this.prisma.pageLink.upsert({
+      where: {
+        linkFromId_linkToId: {
+          linkFromId: sourcePageId,
+          linkToId: targetPageId,
+        },
+      },
+      update: {
+        count: { increment: 1 },
+      },
+      create: {
         linkFromId: sourcePageId,
         linkToId: targetPageId,
         createdById: userId,
+        count: 1,
       },
     });
+
+    return pageLink;
   }
 
   async deletePageLink(
     sourcePageId: Page['id'],
     targetPageId: Page['id']
-  ): Promise<PageLink> {
-    return await this.prisma.pageLink.delete({
+  ): Promise<PageLink | undefined> {
+    const pageLink = await this.prisma.pageLink.update({
+      where: {
+        linkFromId_linkToId: {
+          linkFromId: sourcePageId,
+          linkToId: targetPageId,
+        },
+      },
+      data: {
+        count: { decrement: 1 },
+      },
+    });
+
+    if (pageLink.count > 0) {
+      return pageLink;
+    }
+
+    await this.prisma.pageLink.delete({
       where: {
         linkFromId_linkToId: {
           linkFromId: sourcePageId,
@@ -36,5 +64,7 @@ export class PageLinkService {
         },
       },
     });
+
+    return undefined;
   }
 }

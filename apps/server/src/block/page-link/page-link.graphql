@@ -3,6 +3,7 @@ type PageLink {
   fromId: ID!
   to: Page!
   toId: ID!
+  count: Int!
   createdBy: User!
   createdById: ID!
   createdAt: String!
@@ -15,5 +16,5 @@ type Query {
 
 type Mutation {
   linkPage(fromId: ID!, toId: ID!): PageLink!
-  unlinkPage(fromId: ID!, toId: ID!): PageLink!
+  unlinkPage(fromId: ID!, toId: ID!): PageLink
 }

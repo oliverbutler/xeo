@@ -119,7 +119,7 @@ export class PageResolver {
     });
 
     if (input.linkedFromPageId) {
-      this.pageLinkService.createPageLink(
+      this.pageLinkService.addPageLink(
         input.linkedFromPageId,
         page.id,
         user.id

@@ -5,13 +5,15 @@ import { Dropdown } from 'components/UI/Dropdown/Dropdown';
 import { usePageContext } from 'context/PageContext';
 import { useSyncContext } from 'context/SyncContext';
 import { useGetPageQuery } from 'generated';
-import { useRouter } from 'next/dist/client/router';
+import { useBlock } from 'hooks/useBlock/useBlock';
 import { FiMoreHorizontal, FiTrash } from 'react-icons/fi';
 import { DarkModeButton } from './DarkModeButton/DarkModeButton';
 import { FavouriteButton } from './FavouriteButton/FavouriteButton';
 
 export const Navbar: React.FunctionComponent = () => {
   const { currentPageId } = usePageContext();
+
+  const { deletePage } = useBlock();
 
   const { isSyncing } = useSyncContext();
 
@@ -62,7 +64,7 @@ export const Navbar: React.FunctionComponent = () => {
               {
                 text: 'Delete',
                 logo: <FiTrash />,
-                onClick: () => undefined,
+                onClick: () => deletePage(currentPageId),
               },
             ],
           ]}
