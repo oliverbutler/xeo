@@ -1,25 +1,11 @@
-// @refresh reset
 import {
   Slate,
   Editable as SlateEditable,
   withReact,
   ReactEditor,
 } from 'slate-react';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import {
-  createEditor,
-  Descendant,
-  Transforms,
-  Range,
-  Editor,
-  Node,
-} from 'slate';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { createEditor, Descendant, Editor } from 'slate';
 import { withHistory } from 'slate-history';
 import { Leaf } from './Leaf/Leaf';
 import { Element } from './Element/Element';
@@ -28,17 +14,12 @@ import { EditablePlugin } from './plugins/plugins.interface';
 import { singleLine } from './plugins/singleLine/singleLine';
 import classNames from 'classnames';
 import ReactDOM from 'react-dom';
-import {
-  emptySlateText,
-  isMentionElement,
-  MentionElement,
-  SlateBlockType,
-} from '@xeo/utils';
-import { useGetPageGraphQuery } from 'generated';
+
 import { usePageLink } from 'hooks/usePageLink/usePageLink';
 import { usePageContext } from 'context/PageContext';
 import { MentionSelection } from './plugins/mentions/MentionSelection';
 import { useBlock } from 'hooks/useBlock/useBlock';
+import { useMentions } from './plugins/mentions/useMentions';
 
 export const Portal: React.FunctionComponent = ({ children }) => {
   return typeof document === 'object'
@@ -62,160 +43,69 @@ export const Editable: React.FunctionComponent<Props> = ({
   restrictToSingleLine = false,
   placeholder = 'Write some text...',
   className,
-  pageId,
   field,
 }) => {
   const renderElement = useCallback((props) => <Element {...props} />, []);
-
-  const plugins: EditablePlugin[] = [markdownShortcuts];
-
-  if (restrictToSingleLine) {
-    plugins.push(singleLine);
-  }
-
-  const { data } = useGetPageGraphQuery();
-
-  const [target, setTarget] = useState<Range | undefined>();
-  const [index, setIndex] = useState(0);
-  const [search, setSearch] = useState('');
-  const [position, setPosition] = useState({ top: '0px', left: '0px' });
 
   const { fetchOrUpsertPageLink, removePageLink } = usePageLink();
   const { currentPageId } = usePageContext();
   const { createPage } = useBlock();
 
-  const options = data?.pages ?? [];
+  const [position, setPosition] = useState({ top: '0px', left: '0px' });
 
-  const pages = options
-    .filter((c) =>
-      c.titlePlainText.toLowerCase().startsWith(search.toLowerCase())
-    )
-    .slice(0, 10);
-
-  const withMentions = (editor: Editor) => {
-    const { isInline, isVoid, apply, normalizeNode } = editor;
-
-    editor.isInline = (element) => {
-      return element.type === SlateBlockType.MENTION_PAGE
-        ? true
-        : isInline(element);
-    };
-
-    editor.isVoid = (element) => {
-      return element.type === SlateBlockType.MENTION_PAGE
-        ? true
-        : isVoid(element);
-    };
-
-    editor.apply = (operation) => {
-      apply(operation);
-
-      if (
-        operation.type === 'insert_node' &&
-        isMentionElement(operation.node) &&
-        currentPageId
-      ) {
+  const {
+    mentionPlugin,
+    mentionOnChange,
+    options,
+    selectedIndex,
+    targetRange,
+  } = useMentions({
+    onMentionCreate: (editor, pageId) => {
+      if (currentPageId) {
         field == 'body'
-          ? fetchOrUpsertPageLink(
-              currentPageId,
-              operation.node.pageId,
-              pageId,
-              {
-                body: editor.children,
-              }
-            )
-          : fetchOrUpsertPageLink(
-              currentPageId,
-              operation.node.pageId,
-              pageId,
-              {
-                title: editor.children,
-              }
-            );
-      }
-
-      if (
-        operation.type === 'remove_node' &&
-        isMentionElement(operation.node) &&
-        currentPageId
-      ) {
-        field == 'body'
-          ? removePageLink(currentPageId, operation.node.pageId, pageId, {
+          ? fetchOrUpsertPageLink(currentPageId, pageId, currentPageId, {
               body: editor.children,
             })
-          : removePageLink(currentPageId, operation.node.pageId, pageId, {
+          : fetchOrUpsertPageLink(currentPageId, pageId, currentPageId, {
               title: editor.children,
             });
       }
-    };
-
-    return editor;
-  };
-
-  const insertMention = (editor: Editor, character: string) => {
-    const mention: MentionElement = {
-      type: SlateBlockType.MENTION_PAGE,
-      pageId: character,
-      children: [{ ...emptySlateText, text: '' }],
-    };
-    Transforms.insertNodes(editor, mention);
-    Transforms.move(editor);
-  };
-
-  const onKeyDown = useCallback(
-    async (event) => {
-      if (target) {
-        switch (event.key) {
-          case 'ArrowDown':
-            event.preventDefault();
-            // eslint-disable-next-line no-case-declarations
-            const prevIndex = index >= pages.length - 1 ? 0 : index + 1;
-            setIndex(prevIndex);
-            break;
-          case 'ArrowUp':
-            event.preventDefault();
-            // eslint-disable-next-line no-case-declarations
-            const nextIndex = index <= 0 ? pages.length - 1 : index - 1;
-            setIndex(nextIndex);
-            break;
-          case 'Tab':
-          case 'Enter':
-            event.preventDefault();
-            Transforms.select(editor, target);
-
-            if (pages[index]) {
-              insertMention(editor, pages[index].id);
-            } else {
-              const newPage = await createPage({ titlePlainText: search });
-              if (newPage.data?.createPage) {
-                insertMention(editor, newPage.data.createPage.id);
-              }
-            }
-
-            setTarget(undefined);
-            break;
-          case 'Escape':
-            event.preventDefault();
-            setTarget(undefined);
-            break;
-        }
+    },
+    onMentionRemove: (editor, pageId) => {
+      if (currentPageId) {
+        field == 'body'
+          ? removePageLink(currentPageId, pageId, currentPageId, {
+              body: editor.children,
+            })
+          : removePageLink(currentPageId, pageId, currentPageId, {
+              title: editor.children,
+            });
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [index, search, target]
-  );
+    handleAddNewMention: async (editor, searchString) => {
+      const newPage = await createPage({ titlePlainText: searchString });
+
+      return newPage.data ? { pageId: newPage.data.createPage.id } : undefined;
+    },
+  });
+
+  const plugins: EditablePlugin[] = [markdownShortcuts, mentionPlugin];
+
+  if (restrictToSingleLine) {
+    plugins.push(singleLine);
+  }
 
   const editorRef = useRef<Editor>();
   if (!editorRef.current)
     editorRef.current = plugins.reduce(
       (editor, plugin) => plugin.wrapper(editor),
-      withMentions(withHistory(withReact(createEditor())))
+      withHistory(withReact(createEditor()))
     );
   const editor = editorRef.current;
 
   useEffect(() => {
-    if (target && pages.length > 0) {
-      const domRange = ReactEditor.toDOMRange(editor, target);
+    if (targetRange && options.length > 0) {
+      const domRange = ReactEditor.toDOMRange(editor, targetRange);
       const rect = domRange.getBoundingClientRect();
       setPosition({
         top: `${rect.top + window.pageYOffset + 24}px`,
@@ -223,7 +113,7 @@ export const Editable: React.FunctionComponent<Props> = ({
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pages.length, target]);
+  }, [options.length, targetRange]);
 
   return (
     <div>
@@ -232,30 +122,7 @@ export const Editable: React.FunctionComponent<Props> = ({
         value={value}
         onChange={(value) => {
           onChange(value);
-          const { selection } = editor;
-
-          if (selection && Range.isCollapsed(selection)) {
-            const [start] = Range.edges(selection);
-            const wordBefore = Editor.before(editor, start, { unit: 'word' });
-            const before = wordBefore && Editor.before(editor, wordBefore);
-            const beforeRange = before && Editor.range(editor, before, start);
-            const beforeText =
-              beforeRange && Editor.string(editor, beforeRange);
-            const beforeMatch = beforeText && beforeText.match(/^@(\w+)$/);
-            const after = Editor.after(editor, start);
-            const afterRange = Editor.range(editor, start, after);
-            const afterText = Editor.string(editor, afterRange);
-            const afterMatch = afterText.match(/^(\s|$)/);
-
-            if (beforeMatch && afterMatch) {
-              setTarget(beforeRange);
-              setSearch(beforeMatch[1]);
-              setIndex(0);
-              return;
-            }
-          }
-
-          setTarget(undefined);
+          mentionOnChange(editor, value);
         }}
       >
         <SlateEditable
@@ -263,21 +130,20 @@ export const Editable: React.FunctionComponent<Props> = ({
           renderElement={renderElement}
           renderLeaf={(props) => <Leaf {...props} />}
           onKeyDown={(event) => {
-            onKeyDown(event);
             plugins.forEach((plugin) => plugin.onKeyDown?.(editor, event));
           }}
           placeholder={placeholder}
           spellCheck
           autoFocus
         ></SlateEditable>
+        {targetRange && (
+          <MentionSelection
+            position={position}
+            options={options.map((x) => `${x.emoji} ${x.titlePlainText}`)}
+            selectedIndex={selectedIndex}
+          />
+        )}
       </Slate>
-      {target && (
-        <MentionSelection
-          position={position}
-          options={pages.map((x) => `${x.emoji} ${x.titlePlainText}`)}
-          selectedIndex={index}
-        />
-      )}
     </div>
   );
 };
