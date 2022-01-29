@@ -6,6 +6,8 @@
     "site": "apps/site",
     "site-e2e": "apps/site-e2e",
     "ui": "libs/ui",
-    "utils": "libs/utils"
+    "utils": "libs/utils",
+    "xeo-scrum": "apps/xeo-scrum",
+    "xeo-scrum-e2e": "apps/xeo-scrum-e2e"
   }
 }

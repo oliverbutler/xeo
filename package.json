@@ -6,7 +6,8 @@
     "build": "nx affected:build --all",
     "test": "nx affected:test --all",
     "lint": "nx affected:lint --all",
-    "dev": "nx run-many --target=serve --all --parallel",
+    "dev:all": "nx run-many --target=serve --all --parallel",
+    "dev:xeo-scrum": "nx serve xeo-scrum",
     "storybook": "nx storybook ui",
     "generate-graphql:client": "graphql-codegen --config apps/client/codegen.yml"
   },
@@ -23,6 +24,7 @@
     "@nestjs/passport": "^8.0.1",
     "@nestjs/platform-express": "^8.2.4",
     "@nestjs/typeorm": "^8.0.2",
+    "@nrwl/next": "13.3.9",
     "@prisma/client": "^3.6.0",
     "@types/d3": "^7.1.0",
     "@types/d3-force": "^3.0.3",

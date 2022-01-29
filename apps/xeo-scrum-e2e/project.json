@@ -1,0 +1,28 @@
+{
+  "root": "apps/xeo-scrum-e2e",
+  "sourceRoot": "apps/xeo-scrum-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/xeo-scrum-e2e/cypress.json",
+        "devServerTarget": "xeo-scrum:serve"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "xeo-scrum:serve:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/xeo-scrum-e2e/**/*.{js,ts}"]
+      }
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["xeo-scrum"]
+}
