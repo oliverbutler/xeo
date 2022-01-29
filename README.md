@@ -19,7 +19,7 @@
 
 # What is Xeo? 🚀
 
-Xeo (_zee-oh_) is a Notion, Obsidian, and Trello alternative with a key focus on productivity, security, and privacy.
+Xeo (_zee-oh_) is a graph-based rich text editor inspired by Notion, Obsidian, and Trello.
 
 ## Features
 
@@ -30,10 +30,18 @@ Xeo (_zee-oh_) is a Notion, Obsidian, and Trello alternative with a key focus on
 
 ## 🚀 Getting Started
 
-Currently this is a WIP, either build the develop branch or hang on a bit longer for V0.1.
+Below is a video of the currently implemented features, we are nearing a V1.0 launch (Q1 2022).
+
+- Rich Text Blocks (Headings, Quotes, Code, Callout, Mentions)
+- Mentions between pages
+- Graph View
+- Favourites
+- Page Emojis
+- Backlinks
+- Dark Mode! 🦉
 
 
-https://user-images.githubusercontent.com/47489826/142513447-af336402-d9f6-4f5b-9f07-648af43d534f.mov
+https://user-images.githubusercontent.com/47489826/151668756-0e0bdcf3-1c93-4357-b198-b25f1678f0f9.mov
 
 
 ## Contributions

@@ -30,20 +30,21 @@ export const Mention: React.FunctionComponent<
         </Link>
       )}
     >
-      <span
-        {...attributes}
-        contentEditable={false}
-        data-cy={`mention-${element.pageId?.replace(' ', '-')}`}
-        className={classNames(
-          'dark:bg-dark-800 bg-dark-100 hover:dark:bg-dark-600 hover:bg-dark-200 py-0.5 px-1 rounded-sm cursor-pointer m-1',
-          {
-            'dark:bg-dark-600 bg-dark-200': selected && focused,
-            'dark:bg-red-600/20 bg-red-200': !page,
-            'cursor-not-allowed': !page,
-          }
-        )}
-      >
-        {text}
+      <span {...attributes}>
+        <span
+          contentEditable={false}
+          data-cy={`mention-${element.pageId?.replace(' ', '-')}`}
+          className={classNames(
+            'select-none dark:bg-dark-800 bg-dark-100 hover:dark:bg-dark-600 hover:bg-dark-200 py-0.5 px-1 rounded-sm cursor-pointer m-1 ',
+            {
+              'dark:bg-dark-600 bg-dark-200': selected && focused,
+              'dark:bg-red-600/20 bg-red-200': !page,
+              'cursor-not-allowed': !page,
+            }
+          )}
+        >
+          {text}
+        </span>
         {children}
       </span>
     </ConditionalWrapper>

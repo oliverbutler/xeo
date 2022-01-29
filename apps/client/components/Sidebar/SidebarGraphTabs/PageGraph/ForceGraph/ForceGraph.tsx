@@ -2,8 +2,8 @@ import { GetPageGraphQuery } from 'generated';
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { usePageContext } from 'context/PageContext';
-import { processNodes } from './forceGraph.utils';
-import { Node as GraphNode, Link } from './ForceGraph.interface';
+import { syncNodes } from './forceGraph.utils';
+import { Node as GraphNode } from './ForceGraph.interface';
 import { Node } from './Node/Node';
 import { Edge } from './Edge/Edge';
 
@@ -24,7 +24,7 @@ export const ForceGraph: React.FunctionComponent<Props> = ({ pageGraph }) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   useEffect(() => {
-    const { nodes, links: newLinks } = processNodes(
+    const { nodes, links: newLinks } = syncNodes(
       pageGraph,
       simulatedNodes,
       height,

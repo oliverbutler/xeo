@@ -15,6 +15,7 @@ export enum SlateBlockType {
   HEADING_FIVE = 'heading-five',
   HEADING_SIX = 'heading-six',
   MENTION_PAGE = 'mention-page',
+  CALLOUT = 'callout',
 }
 
 export enum TextFormat {
@@ -35,6 +36,12 @@ export type MentionElement = {
   children: CustomText[];
 };
 
+export type CalloutElement = {
+  type: SlateBlockType.CALLOUT;
+  emoji: string;
+  children: CustomText[];
+};
+
 export const isNodeElement = (
   element: Node | Path
 ): element is CustomElement => {
@@ -51,7 +58,8 @@ export const isMentionElement = (
 
 export type CustomElement =
   | { type: SlateBlockType; children: CustomText[] }
-  | MentionElement;
+  | MentionElement
+  | CalloutElement;
 
 type CustomText = {
   text: string;
@@ -71,6 +79,20 @@ declare module 'slate' {
     Text: CustomText;
   }
 }
+
+export const MARKDOWN_SHORTCUTS = {
+  '*': SlateBlockType.LIST_ITEM,
+  '-': SlateBlockType.LIST_ITEM,
+  '+': SlateBlockType.LIST_ITEM,
+  '>': SlateBlockType.BLOCK_QUOTE,
+  '#': SlateBlockType.HEADING_ONE,
+  '##': SlateBlockType.HEADING_TWO,
+  '###': SlateBlockType.HEADING_THREE,
+  '####': SlateBlockType.HEADING_FOUR,
+  '=': SlateBlockType.CALLOUT,
+};
+
+export type MarkdownShortcut = keyof typeof MARKDOWN_SHORTCUTS;
 
 export const HOTKEYS = {
   'mod+b': TextFormat.BOLD,

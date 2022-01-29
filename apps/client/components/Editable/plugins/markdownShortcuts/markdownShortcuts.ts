@@ -1,22 +1,16 @@
 import { Editor, Element, Point, Range, Transforms } from 'slate';
-import { SlateBlockType, forEventToggleMarks } from '@xeo/utils';
+import {
+  SlateBlockType,
+  forEventToggleMarks,
+  MarkdownShortcut,
+  MARKDOWN_SHORTCUTS,
+  CalloutElement,
+  emptySlateText,
+} from '@xeo/utils';
 import { EditablePlugin } from '../plugins.interface';
 
-const SHORTCUTS = {
-  '*': SlateBlockType.LIST_ITEM,
-  '-': SlateBlockType.LIST_ITEM,
-  '+': SlateBlockType.LIST_ITEM,
-  '>': SlateBlockType.BLOCK_QUOTE,
-  '#': SlateBlockType.HEADING_ONE,
-  '##': SlateBlockType.HEADING_TWO,
-  '###': SlateBlockType.HEADING_THREE,
-  '####': SlateBlockType.HEADING_FOUR,
-};
-
-type Shortcut = keyof typeof SHORTCUTS;
-
-const isShortcut = (text: string): text is Shortcut => {
-  return Object.keys(SHORTCUTS).includes(text);
+const isShortcut = (text: string): text is MarkdownShortcut => {
+  return Object.keys(MARKDOWN_SHORTCUTS).includes(text);
 };
 
 export const getTextTypeFromShortcut = (
@@ -26,7 +20,7 @@ export const getTextTypeFromShortcut = (
     return null;
   }
 
-  return SHORTCUTS[text];
+  return MARKDOWN_SHORTCUTS[text];
 };
 
 const withMarkdownShortcuts = (editor: Editor): Editor => {
@@ -68,6 +62,20 @@ const withMarkdownShortcuts = (editor: Editor): Editor => {
               !Editor.isEditor(n) &&
               Element.isElement(n) &&
               n.type === SlateBlockType.LIST_ITEM,
+          });
+        }
+
+        if (type === SlateBlockType.CALLOUT) {
+          const newProperties: CalloutElement = {
+            type: SlateBlockType.CALLOUT,
+            emoji: '🌟',
+            children: [{ text: '', ...emptySlateText }],
+          };
+          Transforms.setNodes<Element>(editor, newProperties, {
+            match: (n) =>
+              !Editor.isEditor(n) &&
+              Element.isElement(n) &&
+              n.type === SlateBlockType.CALLOUT,
           });
         }
 

@@ -20,6 +20,7 @@ import { usePageContext } from 'context/PageContext';
 import { MentionSelection } from './plugins/mentions/MentionSelection';
 import { useBlock } from 'hooks/useBlock/useBlock';
 import { useMentions } from './plugins/mentions/useMentions';
+import { lineBehaviour } from './plugins/lineBehaviour/lineBehaviour';
 
 export const Portal: React.FunctionComponent = ({ children }) => {
   return typeof document === 'object'
@@ -62,24 +63,18 @@ export const Editable: React.FunctionComponent<Props> = ({
   } = useMentions({
     onMentionCreate: (editor, pageId) => {
       if (currentPageId) {
-        field == 'body'
-          ? fetchOrUpsertPageLink(currentPageId, pageId, currentPageId, {
-              body: editor.children,
-            })
-          : fetchOrUpsertPageLink(currentPageId, pageId, currentPageId, {
-              title: editor.children,
-            });
+        fetchOrUpsertPageLink(currentPageId, pageId, currentPageId, {
+          ...(field == 'body' && { body: editor.children }),
+          ...(field == 'title' && { title: editor.children }),
+        });
       }
     },
     onMentionRemove: (editor, pageId) => {
       if (currentPageId) {
-        field == 'body'
-          ? removePageLink(currentPageId, pageId, currentPageId, {
-              body: editor.children,
-            })
-          : removePageLink(currentPageId, pageId, currentPageId, {
-              title: editor.children,
-            });
+        removePageLink(currentPageId, pageId, currentPageId, {
+          ...(field == 'body' && { body: editor.children }),
+          ...(field == 'title' && { title: editor.children }),
+        });
       }
     },
     handleAddNewMention: async (editor, searchString) => {
@@ -89,7 +84,11 @@ export const Editable: React.FunctionComponent<Props> = ({
     },
   });
 
-  const plugins: EditablePlugin[] = [markdownShortcuts, mentionPlugin];
+  const plugins: EditablePlugin[] = [
+    lineBehaviour,
+    markdownShortcuts,
+    mentionPlugin,
+  ];
 
   if (restrictToSingleLine) {
     plugins.push(singleLine);
@@ -98,7 +97,7 @@ export const Editable: React.FunctionComponent<Props> = ({
   const editorRef = useRef<Editor>();
   if (!editorRef.current)
     editorRef.current = plugins.reduce(
-      (editor, plugin) => plugin.wrapper(editor),
+      (editor, plugin) => plugin.wrapper?.(editor) ?? editor,
       withHistory(withReact(createEditor()))
     );
   const editor = editorRef.current;
