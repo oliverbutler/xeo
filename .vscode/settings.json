@@ -1,5 +1,5 @@
 {
-  "i18n-ally.localesPaths": ["apps/client/content/locales"],
+  "i18n-ally.localesPaths": ["libs/utils/src/content/locales"],
   "search.exclude": {
     "build/": true,
     "dist/": true

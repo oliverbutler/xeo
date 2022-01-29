@@ -4,7 +4,7 @@ import './styles.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ApolloWrapper } from 'components/Wrappers/ApolloWrapper';
-import { IntlWrapper } from 'components/Wrappers/IntlWrapper';
+import { IntlWrapper } from '@xeo/ui';
 import { SyncContextProvider } from 'context/SyncContext';
 import { PageContextProvider } from 'context/PageContext';
 import { ThemeProvider } from 'next-themes';
