@@ -28,16 +28,16 @@ export const Node: React.FunctionComponent<NodeProps> = ({
     : [];
 
   const isTargeted = targetedNodesFromCurrentPage.includes(node.id);
+  const isActiveNode = page?.id === currentPageId;
 
-  const fillColour =
-    page?.id === currentPageId ? 'pink' : isTargeted ? 'white' : 'gray';
+  const fillColour = isActiveNode ? 'pink' : isTargeted ? 'white' : 'gray';
   return (
     <NextLink href={`/page/${page?.id}`} key={node.id} passHref={true}>
       <g className="cursor-pointer " opacity={isTargeted ? 1 : 0.5}>
         <circle
           cx={node.x}
           cy={node.y}
-          r={node.radius}
+          r={isActiveNode ? node.radius * 2 : node.radius}
           stroke="black"
           fill={fillColour}
         />

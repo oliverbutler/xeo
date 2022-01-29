@@ -1,6 +1,8 @@
 import { RenderElementProps, useFocused, useSelected } from 'slate-react';
-import { MentionElement, SlateBlockType } from '@xeo/utils';
+import { CalloutElement, MentionElement, SlateBlockType } from '@xeo/utils';
 import { Mention } from './Mention/Mention';
+import { Clickable } from 'components/UI/Clickable/Clickable';
+import { Callout } from './Callout/Callout';
 
 export const Element: React.FunctionComponent<RenderElementProps> = (props) => {
   const { attributes, children, element } = props;
@@ -51,13 +53,22 @@ export const Element: React.FunctionComponent<RenderElementProps> = (props) => {
           {children}
         </li>
       );
+    case SlateBlockType.CALLOUT:
+      return (
+        <Callout
+          {...(props as RenderElementProps & {
+            element: CalloutElement;
+          })}
+        />
+      );
     case SlateBlockType.MENTION_PAGE:
-      // eslint-disable-next-line no-case-declarations
-      const mentionProps = {
-        ...props,
-        element: props.element as MentionElement,
-      };
-      return <Mention {...mentionProps} />;
+      return (
+        <Mention
+          {...(props as RenderElementProps & {
+            element: MentionElement;
+          })}
+        />
+      );
     default:
       return <p {...attributes}>{children}</p>;
   }
