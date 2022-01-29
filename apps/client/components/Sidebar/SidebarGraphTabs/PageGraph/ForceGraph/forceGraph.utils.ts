@@ -1,7 +1,7 @@
 import { GetPageGraphQuery } from 'generated';
 import { Link, Node } from './ForceGraph.interface';
 
-export const processNodes = (
+export const syncNodes = (
   pageGraph: GetPageGraphQuery,
   currentNodes: Node[],
   height: number,
