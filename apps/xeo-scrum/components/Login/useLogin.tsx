@@ -1,4 +1,3 @@
-import { gql } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import { BaseSyntheticEvent, useEffect } from 'react';
 import { useIntl } from 'react-intl';
@@ -20,14 +19,6 @@ interface LoginForm {
   password: string;
 }
 
-export const SIGN_IN = gql`
-  mutation SignIn($username: String!, $password: String!) {
-    signIn(username: $username, password: $password) {
-      accessToken
-    }
-  }
-`;
-
 export const useLogin = (): Output => {
   const router = useRouter();
   const { formatMessage } = useIntl();
@@ -41,13 +32,15 @@ export const useLogin = (): Output => {
   useEffect(() => {
     if (accessToken) {
       router.push('/');
-      toast("You're already logged in", { type: 'info' });
+      toast(formatMessage({ id: 'generic.already_logged_in' }), {
+        type: 'info',
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onSubmit = async (data: LoginForm) => {
-    toast('generic.login.success', { type: 'info' });
+    toast(formatMessage({ id: 'generic.login.success' }), { type: 'info' });
   };
   return {
     loading: false,

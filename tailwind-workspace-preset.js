@@ -4,6 +4,7 @@ module.exports = {
   important: true,
   content: [],
   darkMode: false, // or 'media' or 'class'
+  mode: 'jit',
   theme: {
     fontFamily: {
       display: ['Inter', 'system-ui', 'sans-serif'],
@@ -39,5 +40,5 @@ module.exports = {
   variants: {
     extend: {},
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/typography')],
 };

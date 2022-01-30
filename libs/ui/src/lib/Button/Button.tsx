@@ -27,7 +27,7 @@ export const Button: React.FunctionComponent<ButtonProps> = ({
   return (
     <button
       className={classNames(
-        ' text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center ',
+        ' text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center focus:ring-4 ring-opacity-50',
         { 'cursor-wait opacity-70': loading },
         {
           'bg-primary-500 hover:bg-primary-700':

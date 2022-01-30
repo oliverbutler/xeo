@@ -11,5 +11,6 @@
   "generic.login.error": "Error logging in",
   "generic.logout.success": "Logged out successfully",
   "generic.form.emoji": "Pick an Emoji",
-  "generic.form.cover_image": "Pick a cover image"
+  "generic.form.cover_image": "Pick a cover image",
+  "generic.already_logged_in": "You're already logged in"
 }
