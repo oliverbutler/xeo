@@ -35,10 +35,10 @@ export interface DatabaseSelectionForm {
   sprintId: DatabasePropertyOption | undefined;
   ticketStatusId: DatabasePropertyOption | undefined;
   statusMapping: {
-    statusDoneId: DatabaseStatusOptions | undefined;
-    statusToValidateId: DatabaseStatusOptions | undefined;
-    statusInProgressId: DatabaseStatusOptions | undefined;
-    statusToDoId: DatabaseStatusOptions | undefined;
+    statusDoneId: DatabaseStatusOptions[];
+    statusToValidateId: DatabaseStatusOptions[];
+    statusInProgressId: DatabaseStatusOptions[];
+    statusToDoId: DatabaseStatusOptions[];
   };
 }
 

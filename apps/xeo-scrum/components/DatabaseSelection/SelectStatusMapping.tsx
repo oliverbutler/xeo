@@ -31,6 +31,15 @@ export const SelectStatusMapping: React.FunctionComponent<
         }))
       : [];
 
+  const unPickedOptions = availableStatusOptions.filter((option) =>
+    [
+      ...watch('statusMapping.statusDoneId'),
+      ...watch('statusMapping.statusToDoId'),
+      ...watch('statusMapping.statusToValidateId'),
+      ...watch('statusMapping.statusInProgressId'),
+    ].every((x) => x.value !== option.value)
+  );
+
   return (
     <div>
       <h3>Select Status Mappings</h3>
@@ -62,6 +71,15 @@ export const SelectStatusMapping: React.FunctionComponent<
         options={availableStatusOptions}
         isMulti
       />
+      <p className="break-words w-72">
+        Remaining Options:{' '}
+        {unPickedOptions.map((opt, index) => (
+          <span key={opt.value}>
+            {opt.label}
+            {index === unPickedOptions.length - 1 ? '' : ','}{' '}
+          </span>
+        ))}
+      </p>
     </div>
   );
 };
