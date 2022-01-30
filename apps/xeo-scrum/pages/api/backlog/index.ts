@@ -1,4 +1,4 @@
-import { NotionBacklog, PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import {
@@ -26,7 +26,7 @@ export default async function getBacklog(
     return res.status(401).json({ message: 'Not authenticated' });
   }
 
-  const notionBacklog = await prisma.notionBacklog.findFirst({
+  const notionBacklog = await prisma.backlog.findFirst({
     where: {
       userId: session.id as string,
     },

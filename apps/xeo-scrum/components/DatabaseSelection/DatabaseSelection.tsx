@@ -1,10 +1,10 @@
 import { GetNotionDatabasesResponse } from 'pages/api/notion/databases';
 import useSWR from 'swr';
-import Button from '../../../../libs/ui/src/lib/Button/Button';
 import { SelectStatusMapping } from './SelectStatusMapping';
 import { SelectColumns } from './SelectColumns';
 import { SelectDatabase } from './SelectDatabase';
 import { useDatabaseSelection } from './useDatabaseSelection';
+import { Button } from '@xeo/ui';
 
 export const fetcher = (input, init) =>
   fetch(input, init).then((res) => res.json());

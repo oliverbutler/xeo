@@ -1,4 +1,4 @@
-import { NotionBacklog, PrismaClient, BacklogStatus } from '@prisma/client';
+import { Backlog, PrismaClient, BacklogStatus } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { APIRequest, parseAPIRequest } from 'utils/api';
@@ -17,7 +17,7 @@ export type PostCreateBacklog = APIRequest<
     }[];
   },
   {
-    backlog: NotionBacklog;
+    backlog: Backlog;
   }
 >;
 
@@ -55,7 +55,7 @@ export default async function createBacklog(
     return res.status(400).json({ message: error.message });
   }
 
-  const result = await prisma.notionBacklog.create({
+  const result = await prisma.backlog.create({
     data: {
       databaseId: body.notionDatabaseId,
       databaseName: body.notionDatabaseName,

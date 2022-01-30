@@ -1,5 +1,5 @@
+import { SelectField } from '@xeo/ui';
 import { UseFormReturn } from 'react-hook-form';
-import SelectField from '../../../../libs/ui/src/lib/Select/SelectField';
 import {
   DatabasePropertyOption,
   DatabaseSelectionForm,
