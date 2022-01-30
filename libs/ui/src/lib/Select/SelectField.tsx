@@ -1,9 +1,9 @@
 import {
   Control,
-  Controller,
   FieldValues,
   Path,
   RegisterOptions,
+  useController,
 } from 'react-hook-form';
 import Select, { SelectProps } from './Select';
 
@@ -22,16 +22,11 @@ export const SelectField = <T extends FieldValues>({
   rules,
   ...props
 }: Props<T>): React.ReactElement => {
-  return (
-    <Controller
-      control={control}
-      name={name}
-      rules={rules}
-      render={({ field: { value, onChange } }) => (
-        <Select value={value} onChange={onChange} {...props} />
-      )}
-    ></Controller>
-  );
+  const {
+    field: { value, onChange },
+  } = useController({ control, name, rules });
+
+  return <Select {...props} value={value} onChange={onChange} />;
 };
 
 export default SelectField;
