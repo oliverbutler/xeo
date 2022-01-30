@@ -4,6 +4,11 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import useSWR from 'swr';
 import Button from '../../../../libs/ui/src/lib/Button/Button';
+import axios from 'axios';
+import {
+  PostCreateBacklogBody,
+  PostCreateBacklogResponse,
+} from 'pages/api/backlog/create';
 
 const fetcher = (input, init) => fetch(input, init).then((res) => res.json());
 
@@ -47,9 +52,25 @@ export const DatabaseSelection: React.FunctionComponent = () => {
     ? Object.values(currentDatabaseSelected.properties)
     : [];
 
-  const onSubmit = (data: DatabaseSelectionForm) => {
-    toast('Database Selected!');
-    console.log(data.databaseId);
+  const onSubmit = async (formData: DatabaseSelectionForm) => {
+    const body: PostCreateBacklogBody = {
+      notionDatabaseId: formData.databaseId,
+      notionDatabaseName: currentDatabaseSelected?.label,
+      statusColumnId: formData.ticketStatusId,
+      pointsColumnId: formData.storyPointsId,
+      sprintColumnId: formData.sprintId,
+    };
+
+    const { data, status } = await axios.post<PostCreateBacklogResponse>(
+      '/api/backlog/create',
+      body
+    );
+
+    if (status !== 200) {
+      return toast.error('Error Creating Backlog!');
+    }
+
+    toast.success('Backlog Created!');
   };
 
   return (

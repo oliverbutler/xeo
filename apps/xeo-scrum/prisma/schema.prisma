@@ -1,13 +1,11 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider             = "mysql"
-  url                  = env("PLANETSCALE_DB_URL")
-  shadowDatabaseUrl    = env("PLANETSCALE_SHADOW_DB_URL")
-  referentialIntegrity = "prisma"
+  provider          = "mysql"
+  url               = env("PLANETSCALE_DB_URL")
+  shadowDatabaseUrl = env("PLANETSCALE_SHADOW_DB_URL")
 }
 
 model Account {
@@ -68,5 +66,5 @@ model NotionBacklog {
   databaseName   String
   pointsColumnId String
   statusColumnId String
-  sprintColumnid String
+  sprintColumnId String
 }

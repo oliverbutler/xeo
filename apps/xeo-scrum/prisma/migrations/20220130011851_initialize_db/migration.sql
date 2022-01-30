@@ -51,3 +51,16 @@ CREATE TABLE `VerificationToken` (
     UNIQUE INDEX `VerificationToken_token_key`(`token`),
     UNIQUE INDEX `VerificationToken_identifier_token_key`(`identifier`, `token`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `NotionBacklog` (
+    `id` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `databaseId` VARCHAR(191) NOT NULL,
+    `databaseName` VARCHAR(191) NOT NULL,
+    `pointsColumnId` VARCHAR(191) NOT NULL,
+    `statusColumnId` VARCHAR(191) NOT NULL,
+    `sprintColumnId` VARCHAR(191) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

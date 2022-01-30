@@ -8,6 +8,12 @@ const prisma = new PrismaClient();
 export default NextAuth({
   secret: '3',
   adapter: PrismaAdapter(prisma),
+  callbacks: {
+    session: async ({ session, user }) => {
+      session.id = user.id;
+      return Promise.resolve(session);
+    },
+  },
   providers: [
     GithubProvider({
       clientId: process.env.GITHUB_ID,
