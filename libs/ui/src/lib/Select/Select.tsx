@@ -15,7 +15,10 @@ export const Select = ({ label, error, ...selectProps }: SelectProps) => {
   return (
     <div>
       <label className="block text-sm font-bold mt-2">{label}</label>
-      <ReactSelect {...selectProps} />
+      <ReactSelect
+        styles={{ option: (styles) => ({ ...styles, color: 'black' }) }}
+        {...selectProps}
+      />
     </div>
   );
 

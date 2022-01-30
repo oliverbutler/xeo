@@ -64,3 +64,13 @@ CREATE TABLE `NotionBacklog` (
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `NotionStatusLink` (
+    `id` VARCHAR(191) NOT NULL,
+    `notionBacklogId` VARCHAR(191) NOT NULL,
+    `notionStatusId` VARCHAR(191) NOT NULL,
+    `status` ENUM('DONE', 'TO_VALIDATE', 'IN_PROGRESS', 'SPRINT_BACKLOG') NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

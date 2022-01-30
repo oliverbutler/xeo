@@ -33,10 +33,10 @@ export const SelectStatusMapping: React.FunctionComponent<
 
   const unPickedOptions = availableStatusOptions.filter((option) =>
     [
-      ...watch('statusMapping.statusDoneId'),
-      ...watch('statusMapping.statusToDoId'),
-      ...watch('statusMapping.statusToValidateId'),
-      ...watch('statusMapping.statusInProgressId'),
+      ...(watch('statusMapping.statusDoneId') ?? []),
+      ...(watch('statusMapping.statusSprintBacklogId') ?? []),
+      ...(watch('statusMapping.statusToValidateId') ?? []),
+      ...(watch('statusMapping.statusInProgressId') ?? []),
     ].every((x) => x.value !== option.value)
   );
 
@@ -65,9 +65,9 @@ export const SelectStatusMapping: React.FunctionComponent<
         isMulti
       />
       <SelectField
-        label="To Do"
+        label="Sprint Backlog"
         control={control}
-        name="statusMapping.statusToDoId"
+        name="statusMapping.statusSprintBacklogId"
         options={availableStatusOptions}
         isMulti
       />

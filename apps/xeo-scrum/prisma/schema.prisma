@@ -1,11 +1,13 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
 }
 
 datasource db {
-  provider          = "mysql"
-  url               = env("PLANETSCALE_DB_URL")
-  shadowDatabaseUrl = env("PLANETSCALE_SHADOW_DB_URL")
+  provider             = "mysql"
+  url                  = env("PLANETSCALE_DB_URL")
+  shadowDatabaseUrl    = env("PLANETSCALE_SHADOW_DB_URL")
+  referentialIntegrity = "prisma"
 }
 
 model Account {
@@ -56,15 +58,30 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-model NotionBacklog {
-  id     String @id @default(cuid())
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
+enum BacklogStatus {
+  DONE
+  TO_VALIDATE
+  IN_PROGRESS
+  SPRINT_BACKLOG
+}
 
+model NotionBacklog {
+  id                String             @id @default(cuid())
+  user              User               @relation(fields: [userId], references: [id])
+  userId            String
   // Notion Related Fields
-  databaseId     String
-  databaseName   String
-  pointsColumnId String
-  statusColumnId String
-  sprintColumnId String
+  databaseId        String
+  databaseName      String
+  pointsColumnId    String
+  statusColumnId    String
+  sprintColumnId    String
+  notionStatusLinks NotionStatusLink[]
+}
+
+model NotionStatusLink {
+  id              String        @id @default(cuid())
+  notionBacklog   NotionBacklog @relation(fields: [notionBacklogId], references: [id])
+  notionBacklogId String
+  notionStatusId  String
+  status          BacklogStatus
 }
