@@ -10,7 +10,8 @@ import {
   PostCreateBacklogResponse,
 } from 'pages/api/backlog/create';
 
-const fetcher = (input, init) => fetch(input, init).then((res) => res.json());
+export const fetcher = (input, init) =>
+  fetch(input, init).then((res) => res.json());
 
 interface DatabaseSelectionForm {
   databaseId: string;
@@ -18,6 +19,12 @@ interface DatabaseSelectionForm {
   sprintId: string | undefined;
   selectId: string | undefined;
   ticketStatusId: string | undefined;
+  statusMapping: {
+    statusDoneId: string | undefined;
+    statusToValidateId: string | undefined;
+    statusInProgressId: string | undefined;
+    statusToDoId: string | undefined;
+  };
 }
 
 export const DatabaseSelection: React.FunctionComponent = () => {
@@ -87,51 +94,76 @@ export const DatabaseSelection: React.FunctionComponent = () => {
           loading={!data && !error}
         />
 
-        <div>
-          <h3>Select Columns</h3>
-          <SelectField
-            label="Story Points (number)"
-            control={control}
-            name="storyPointsId"
-            error={errors.storyPointsId}
-            options={availableDatabaseProperties
-              .filter((properties) => properties.type === 'number')
-              .map((p) => ({
-                value: p.id,
-                label: p.name,
-              }))}
-            rules={{ required: true }}
-            disabled={!currentDatabaseSelected}
-          />
-          <SelectField
-            label="Status (select)"
-            control={control}
-            name="ticketStatusId"
-            error={errors.ticketStatusId}
-            options={availableDatabaseProperties
-              .filter((properties) => properties.type === 'select')
-              .map((p) => ({
-                value: p.id,
-                label: p.name,
-              }))}
-            rules={{ required: true }}
-            disabled={!currentDatabaseSelected}
-          />
-          <SelectField
-            label="Sprint (select)"
-            control={control}
-            name="sprintId"
-            error={errors.sprintId}
-            options={availableDatabaseProperties
-              .filter((properties) => properties.type === 'select')
-              .map((p) => ({
-                value: p.id,
-                label: p.name,
-              }))}
-            rules={{ required: true }}
-            disabled={!currentDatabaseSelected}
-          />
-        </div>
+        <h3>Select Columns</h3>
+        <SelectField
+          label="Story Points (number field)"
+          control={control}
+          name="storyPointsId"
+          error={errors.storyPointsId}
+          options={availableDatabaseProperties
+            .filter((properties) => properties.type === 'number')
+            .map((p) => ({
+              value: p.id,
+              label: p.name,
+            }))}
+          rules={{ required: true }}
+          disabled={!currentDatabaseSelected}
+        />
+        <SelectField
+          label="Status (select field)"
+          control={control}
+          name="ticketStatusId"
+          error={errors.ticketStatusId}
+          options={availableDatabaseProperties
+            .filter((properties) => properties.type === 'select')
+            .map((p) => ({
+              value: p.id,
+              label: p.name,
+            }))}
+          rules={{ required: true }}
+          disabled={!currentDatabaseSelected}
+        />
+
+        <SelectField
+          label="Sprint (select field)"
+          control={control}
+          name="sprintId"
+          error={errors.sprintId}
+          options={availableDatabaseProperties
+            .filter((properties) => properties.type === 'select')
+            .map((p) => ({
+              value: p.id,
+              label: p.name,
+            }))}
+          rules={{ required: true }}
+          disabled={!currentDatabaseSelected}
+        />
+
+        <h3>Select Status Mappings</h3>
+        <SelectField
+          label="Done"
+          control={control}
+          name="statusMapping.statusDoneId"
+          options={[]}
+        />
+        <SelectField
+          label="To Validate (optional)"
+          control={control}
+          name="statusMapping.statusToValidateId"
+          options={[]}
+        />
+        <SelectField
+          label="In Progress"
+          control={control}
+          name="statusMapping.statusInProgressId"
+          options={[]}
+        />
+        <SelectField
+          label="To Do"
+          control={control}
+          name="statusMapping.statusToDoId"
+          options={[]}
+        />
 
         <Button type="submit" className="mt-4 text-center">
           Add Database to Xeo
