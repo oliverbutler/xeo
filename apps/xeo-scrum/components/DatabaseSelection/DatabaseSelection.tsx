@@ -29,19 +29,16 @@ export const DatabaseSelection: React.FunctionComponent = () => {
     formState: { errors },
   } = useForm<DatabaseSelectionForm>({});
 
-  if (!data && !error) {
-    return <div>Loading...</div>;
-  }
-
   if (error) {
     return <div>Error Loading!</div>;
   }
 
-  const databaseOptions = data.databases.map((database) => ({
-    label: database.title,
-    value: database.id,
-    properties: database.properties,
-  }));
+  const databaseOptions =
+    data?.databases?.map((database) => ({
+      label: database.title,
+      value: database.id,
+      properties: database.properties,
+    })) ?? [];
 
   const currentDatabaseSelected =
     databaseOptions.find((x) => x.value === watch('databaseId')) ?? undefined;
@@ -67,6 +64,7 @@ export const DatabaseSelection: React.FunctionComponent = () => {
           error={errors.databaseId}
           options={databaseOptions}
           rules={{ required: true }}
+          loading={!data && !error}
         />
 
         {currentDatabaseSelected ? (

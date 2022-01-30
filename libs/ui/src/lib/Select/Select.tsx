@@ -10,6 +10,7 @@ export interface SelectProps {
   onChange: (value: string | undefined) => void;
   error?: FieldError | undefined;
   options: SelectOption[];
+  loading?: boolean;
 }
 
 export type SelectOption = {
@@ -23,6 +24,7 @@ export const Select: React.FunctionComponent<SelectProps> = ({
   error,
   value,
   onChange,
+  loading = false,
   options,
 }) => {
   const currentOptionSelected = options.find((x) => x.value === value);
@@ -35,24 +37,48 @@ export const Select: React.FunctionComponent<SelectProps> = ({
           <Listbox.Button
             className={classNames(
               'relative w-full py-2 pl-3 pr-10 text-left bg-white rounded-lg shadow-md sm:text-sm cursor-default focus:ring-4 ring-opacity-50',
-              { 'ring-4 ring-red-500': !!error }
+              { 'ring-4 ring-red-500': !!error },
+              { 'bg-gray-200': loading }
             )}
           >
             <span className="block truncate text-dark-900 h-5">
               {currentOptionSelected?.label}
             </span>
             <span className="absolute inset-y-0 right-0 flex items-center pr-2">
-              <XCircleIcon
-                className={classNames('w-5 h-5 text-dark-200', {
-                  ' text-dark-400 hover:text-dark-700 cursor-pointer': value,
-                })}
-                aria-hidden="true"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onChange(undefined);
-                }}
-              />
+              {loading ? (
+                <svg
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-primary-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+              ) : (
+                <XCircleIcon
+                  className={classNames('w-5 h-5 text-dark-200', {
+                    ' text-dark-400 hover:text-dark-700 cursor-pointer': value,
+                  })}
+                  aria-hidden="true"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onChange(undefined);
+                  }}
+                />
+              )}
               <SelectorIcon
                 className="w-5 h-5 text-dark-400"
                 aria-hidden="true"
