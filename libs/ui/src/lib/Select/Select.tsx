@@ -11,6 +11,7 @@ export interface SelectProps {
   error?: FieldError | undefined;
   options: SelectOption[];
   loading?: boolean;
+  disabled?: boolean;
 }
 
 export type SelectOption = {
@@ -25,6 +26,7 @@ export const Select: React.FunctionComponent<SelectProps> = ({
   value,
   onChange,
   loading = false,
+  disabled = false,
   options,
 }) => {
   const currentOptionSelected = options.find((x) => x.value === value);
@@ -32,13 +34,16 @@ export const Select: React.FunctionComponent<SelectProps> = ({
   return (
     <div className="w-72">
       <label className="block text-sm font-bold mt-2">{label}</label>
-      <Listbox value={value} onChange={onChange}>
-        <div className="relative mt-1">
+      <Listbox value={value} onChange={onChange} disabled={disabled}>
+        <div
+          className={classNames('relative mt-1', {
+            'opacity-60': disabled || loading,
+          })}
+        >
           <Listbox.Button
             className={classNames(
               'relative w-full py-2 pl-3 pr-10 text-left bg-white rounded-lg shadow-md sm:text-sm cursor-default focus:ring-4 ring-opacity-50',
-              { 'ring-4 ring-red-500': !!error },
-              { 'bg-gray-200': loading }
+              { 'ring-4 ring-red-500': !!error }
             )}
           >
             <span className="block truncate text-dark-900 h-5">
@@ -69,7 +74,8 @@ export const Select: React.FunctionComponent<SelectProps> = ({
               ) : (
                 <XCircleIcon
                   className={classNames('w-5 h-5 text-dark-200', {
-                    ' text-dark-400 hover:text-dark-700 cursor-pointer': value,
+                    ' text-dark-400 hover:text-dark-700 cursor-pointer':
+                      value && !disabled,
                   })}
                   aria-hidden="true"
                   onClick={(e) => {

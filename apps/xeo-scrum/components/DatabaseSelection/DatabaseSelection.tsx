@@ -53,10 +53,9 @@ export const DatabaseSelection: React.FunctionComponent = () => {
   };
 
   return (
-    <div className="flex justify-center items-center mt-10 prose dark:prose-invert max-w-none">
+    <div className="flex justify-center items-center mt-10 prose dark:prose-invert max-w-none flex-col">
+      <h1>Select Product Backlog</h1>
       <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
-        <h1>Select DB</h1>
-
         <SelectField
           label="Database"
           control={control}
@@ -67,50 +66,51 @@ export const DatabaseSelection: React.FunctionComponent = () => {
           loading={!data && !error}
         />
 
-        {currentDatabaseSelected ? (
-          <div>
-            <h3>Select Columns</h3>
-            <SelectField
-              label="Story Points (number)"
-              control={control}
-              name="storyPointsId"
-              error={errors.storyPointsId}
-              options={availableDatabaseProperties
-                .filter((properties) => properties.type === 'number')
-                .map((p) => ({
-                  value: p.id,
-                  label: p.name,
-                }))}
-              rules={{ required: true }}
-            />
-            <SelectField
-              label="Status (select)"
-              control={control}
-              name="ticketStatusId"
-              error={errors.ticketStatusId}
-              options={availableDatabaseProperties
-                .filter((properties) => properties.type === 'select')
-                .map((p) => ({
-                  value: p.id,
-                  label: p.name,
-                }))}
-              rules={{ required: true }}
-            />
-            <SelectField
-              label="Sprint (select)"
-              control={control}
-              name="sprintId"
-              error={errors.sprintId}
-              options={availableDatabaseProperties
-                .filter((properties) => properties.type === 'select')
-                .map((p) => ({
-                  value: p.id,
-                  label: p.name,
-                }))}
-              rules={{ required: true }}
-            />
-          </div>
-        ) : null}
+        <div>
+          <h3>Select Columns</h3>
+          <SelectField
+            label="Story Points (number)"
+            control={control}
+            name="storyPointsId"
+            error={errors.storyPointsId}
+            options={availableDatabaseProperties
+              .filter((properties) => properties.type === 'number')
+              .map((p) => ({
+                value: p.id,
+                label: p.name,
+              }))}
+            rules={{ required: true }}
+            disabled={!currentDatabaseSelected}
+          />
+          <SelectField
+            label="Status (select)"
+            control={control}
+            name="ticketStatusId"
+            error={errors.ticketStatusId}
+            options={availableDatabaseProperties
+              .filter((properties) => properties.type === 'select')
+              .map((p) => ({
+                value: p.id,
+                label: p.name,
+              }))}
+            rules={{ required: true }}
+            disabled={!currentDatabaseSelected}
+          />
+          <SelectField
+            label="Sprint (select)"
+            control={control}
+            name="sprintId"
+            error={errors.sprintId}
+            options={availableDatabaseProperties
+              .filter((properties) => properties.type === 'select')
+              .map((p) => ({
+                value: p.id,
+                label: p.name,
+              }))}
+            rules={{ required: true }}
+            disabled={!currentDatabaseSelected}
+          />
+        </div>
 
         <Button type="submit" className="mt-4 text-center">
           Add Database to Xeo
