@@ -8,8 +8,6 @@ const onKeyDown = (
 ) => {
   const blockAbove = Editor.above(editor);
 
-  console.log(blockAbove);
-
   if (!blockAbove) {
     return;
   }

@@ -3,14 +3,15 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { APIRequest, parseAPIRequest } from 'utils/api';
 import Joi from 'joi';
+import { prisma } from 'utils/db';
 
 export type PostCreateBacklog = APIRequest<
   {
     notionDatabaseId: string;
     notionDatabaseName: string;
-    pointsColumnId: string;
-    statusColumnId: string;
-    sprintColumnId: string;
+    pointsColumnName: string;
+    statusColumnName: string;
+    sprintColumnName: string;
     statusMapping: {
       notionStatusId: string;
       status: BacklogStatus;
@@ -24,9 +25,9 @@ export type PostCreateBacklog = APIRequest<
 const schema: PostCreateBacklog['joiBodySchema'] = Joi.object({
   notionDatabaseId: Joi.string().required(),
   notionDatabaseName: Joi.string().required(),
-  pointsColumnId: Joi.string().required(),
-  statusColumnId: Joi.string().required(),
-  sprintColumnId: Joi.string().required(),
+  pointsColumnName: Joi.string().required(),
+  statusColumnName: Joi.string().required(),
+  sprintColumnName: Joi.string().required(),
   statusMapping: Joi.array().items(
     Joi.object({
       notionStatusId: Joi.string().required(),
@@ -36,8 +37,6 @@ const schema: PostCreateBacklog['joiBodySchema'] = Joi.object({
     })
   ),
 });
-
-const prisma = new PrismaClient();
 
 export default async function createBacklog(
   req: NextApiRequest,
@@ -59,9 +58,9 @@ export default async function createBacklog(
     data: {
       databaseId: body.notionDatabaseId,
       databaseName: body.notionDatabaseName,
-      pointsColumnId: body.pointsColumnId,
-      statusColumnId: body.statusColumnId,
-      sprintColumnId: body.sprintColumnId,
+      pointsColumnName: body.pointsColumnName,
+      statusColumnName: body.statusColumnName,
+      sprintColumnName: body.sprintColumnName,
       userId: session.id as string,
       notionStatusLinks: {
         createMany: {

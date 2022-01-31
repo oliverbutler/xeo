@@ -6,3 +6,4 @@ export * from './lib/Animate/Loader/Loader';
 export * from './lib/Button/Button';
 export * from './hooks/useLocalStorage';
 export * from './lib/Wrappers/IntlWrapper';
+export * from './lib/Resize/Resize';

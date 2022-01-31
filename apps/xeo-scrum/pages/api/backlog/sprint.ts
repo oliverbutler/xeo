@@ -1,24 +1,25 @@
-import { Backlog, NotionStatusLink, Sprint } from '@prisma/client';
+import Joi from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { prisma } from 'utils/db';
 import {
-  getProductBacklogFromNotionDatabase,
+  getProductBacklogForSprint,
   ProductBacklog,
 } from 'utils/notion/backlog';
 
-export type GetBacklogRequest = {
+export type GetBacklogSprintRequest = {
   method: 'GET';
-  requestBody: undefined;
+  query: {
+    notionSprintId: string;
+  };
   responseBody: {
     backlog: ProductBacklog;
   };
 };
 
-export type BacklogWithStatusLinksAndSprints = Backlog & {
-  notionStatusLinks: NotionStatusLink[];
-  sprints: Sprint[];
-};
+const schema = Joi.object<GetBacklogSprintRequest['query']>({
+  notionSprintId: Joi.string().required(),
+});
 
 export default async function getBacklog(
   req: NextApiRequest,
@@ -29,6 +30,14 @@ export default async function getBacklog(
   if (!session) {
     return res.status(401).json({ message: 'Not authenticated' });
   }
+
+  const { error, value } = schema.validate(req.query);
+
+  if (error) {
+    return res.status(400).json({ message: error.message });
+  }
+
+  const notionSprintId = value.notionSprintId;
 
   const notionBacklog = await prisma.backlog.findFirst({
     where: {
@@ -46,11 +55,13 @@ export default async function getBacklog(
       .json({ message: 'Backlog not found for your account' });
   }
 
-  const productBacklog = await getProductBacklogFromNotionDatabase(
-    notionBacklog
+  const productBacklog = await getProductBacklogForSprint(
+    notionBacklog,
+    notionBacklog.sprintColumnName,
+    notionSprintId
   );
 
-  const returnValue: GetBacklogRequest['responseBody'] = {
+  const returnValue: GetBacklogSprintRequest['responseBody'] = {
     backlog: productBacklog,
   };
 

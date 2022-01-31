@@ -1,13 +1,19 @@
 import { Client } from '@notionhq/client/build/src';
 import { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
-import { NotionBacklog } from '@prisma/client';
+import { Backlog, BacklogStatus, Sprint } from '@prisma/client';
+import { BacklogWithStatusLinksAndSprints } from 'pages/api/backlog';
 
 export type Ticket = {
   notionId: string;
   title: string;
-  points: number;
-  status: string;
-  sprint: string;
+  points: number | null;
+  status: BacklogStatus;
+  notionSprintSelect: {
+    id: string;
+    name: string;
+    color: string;
+  } | null;
+  sprint: Sprint | undefined;
   icon: TicketIcon | null;
 };
 
@@ -38,36 +44,65 @@ export type ProductBacklog = {
 
 const notion = new Client({ auth: process.env.NOTION_SECRET });
 
+const getBacklogStatusForTicket = (
+  links: BacklogWithStatusLinksAndSprints['notionStatusLinks'],
+  notionStatusId: string | undefined
+): BacklogStatus => {
+  const statusLink = links.find(
+    (link) => link.notionStatusId === notionStatusId
+  );
+  if (!statusLink) {
+    return BacklogStatus.UNKNOWN;
+  }
+  return statusLink.status;
+};
+
 export const getTicketFromNotionObject = (
-  notionBacklog: NotionBacklog,
+  notionBacklog: BacklogWithStatusLinksAndSprints,
   page: QueryDatabaseResponse['results'][0]
 ): Ticket => {
   if (!isNotionDatabaseItem(page)) {
     throw new Error('Not a notion database item');
   }
 
-  const properties = Object.values(page.properties);
+  const getPropertyByName = (id: string) => page.properties[id];
 
-  const getPropertyById = (id: string) =>
-    properties.find((property) => property.id === id);
-
-  const title = getPropertyById('title');
-  const points = getPropertyById(notionBacklog.pointsColumnId);
-  const status = getPropertyById(notionBacklog.statusColumnId);
-  const sprint = getPropertyById(notionBacklog.sprintColumnId);
+  const titleProperty = Object.values(page.properties).find(
+    (property) => property.id === 'title'
+  );
+  const pointsProperty = getPropertyByName(notionBacklog.pointsColumnName);
+  const statusProperty = getPropertyByName(notionBacklog.statusColumnName);
+  const sprintProperty = getPropertyByName(notionBacklog.sprintColumnName);
 
   const titleValue =
-    title.type === 'title' ? title.title[0].plain_text : undefined;
-  const pointsValue = points.type === 'number' ? points.number : undefined;
-  const statusValue = status.type === 'select' ? status.select.name : undefined;
-  const sprintValue = sprint.type === 'select' ? sprint.select.name : undefined;
+    titleProperty?.type === 'title'
+      ? titleProperty.title[0].plain_text
+      : undefined;
+  const pointsValue =
+    pointsProperty?.type === 'number' ? pointsProperty.number : null;
+  const statusId =
+    statusProperty?.type === 'select' ? statusProperty.select?.id : undefined;
+  const sprintPropertySelect =
+    sprintProperty?.type === 'select' ? sprintProperty.select ?? null : null;
+
+  if (!titleValue) {
+    throw new Error('Missing Title Value');
+  }
+
+  const sprint = notionBacklog.sprints.find(
+    (sprint) => sprint.notionSprintValue === sprintPropertySelect?.name
+  );
 
   return {
     notionId: page.id,
     title: titleValue,
     points: pointsValue,
-    status: statusValue,
-    sprint: sprintValue,
+    status: getBacklogStatusForTicket(
+      notionBacklog.notionStatusLinks,
+      statusId
+    ),
+    sprint,
+    notionSprintSelect: sprintPropertySelect,
     icon: getIconFromNotionPage(page),
   };
 };
@@ -97,10 +132,34 @@ const getIconFromNotionPage = (page: NotionDatabaseItem): TicketIcon | null => {
 };
 
 export const getProductBacklogFromNotionDatabase = async (
-  notionBacklog: NotionBacklog
+  notionBacklog: BacklogWithStatusLinksAndSprints
 ): Promise<ProductBacklog> => {
   const databaseResponse = await notion.databases.query({
     database_id: notionBacklog.databaseId,
+  });
+
+  const tickets = databaseResponse.results.map((object) =>
+    getTicketFromNotionObject(notionBacklog, object)
+  );
+
+  return {
+    tickets,
+  };
+};
+
+export const getProductBacklogForSprint = async (
+  notionBacklog: BacklogWithStatusLinksAndSprints,
+  sprintColumnName: Backlog['sprintColumnName'],
+  notionSprintValue: Sprint['notionSprintValue']
+): Promise<ProductBacklog> => {
+  const databaseResponse = await notion.databases.query({
+    database_id: notionBacklog.databaseId,
+    filter: {
+      property: sprintColumnName,
+      select: {
+        equals: notionSprintValue,
+      },
+    },
   });
 
   const tickets = databaseResponse.results.map((object) =>

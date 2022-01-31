@@ -44,12 +44,22 @@ export const useDatabaseSelection = (): Output => {
   const form = useForm<DatabaseSelectionForm>({});
 
   const onSubmit = async (formData: DatabaseSelectionForm) => {
+    if (
+      !formData.database ||
+      !formData.ticketStatusId ||
+      !formData.storyPointsId ||
+      !formData.sprintId
+    ) {
+      toast.error('Fields Missing');
+      return;
+    }
+
     const body: PostCreateBacklog['request'] = {
       notionDatabaseId: formData.database.value,
       notionDatabaseName: formData.database.label,
-      statusColumnId: formData.ticketStatusId.value,
-      pointsColumnId: formData.storyPointsId.value,
-      sprintColumnId: formData.sprintId.value,
+      statusColumnName: formData.ticketStatusId.label,
+      pointsColumnName: formData.storyPointsId.label,
+      sprintColumnName: formData.sprintId.label,
       statusMapping: [
         ...formData.statusMapping.statusDoneId.map((status) => ({
           notionStatusId: status.value,
