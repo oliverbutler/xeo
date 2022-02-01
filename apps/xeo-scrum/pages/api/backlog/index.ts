@@ -12,6 +12,7 @@ export type GetBacklogRequest = {
   requestBody: undefined;
   responseBody: {
     backlog: ProductBacklog;
+    notionBacklog: Backlog;
   };
 };
 
@@ -52,6 +53,7 @@ export default async function getBacklog(
 
   const returnValue: GetBacklogRequest['responseBody'] = {
     backlog: productBacklog,
+    notionBacklog,
   };
 
   return res.status(200).json(returnValue);

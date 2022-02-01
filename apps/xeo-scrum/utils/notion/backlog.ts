@@ -44,10 +44,13 @@ export type ProductBacklog = {
 
 const notion = new Client({ auth: process.env.NOTION_SECRET });
 
-const getBacklogStatusForTicket = (
-  links: BacklogWithStatusLinksAndSprints['notionStatusLinks'],
-  notionStatusId: string | undefined
-): BacklogStatus => {
+const getBacklogStatusForTicket = ({
+  links,
+  notionStatusId,
+}: {
+  links: BacklogWithStatusLinksAndSprints['notionStatusLinks'];
+  notionStatusId: string | undefined;
+}): BacklogStatus => {
   const statusLink = links.find(
     (link) => link.notionStatusId === notionStatusId
   );
@@ -57,10 +60,13 @@ const getBacklogStatusForTicket = (
   return statusLink.status;
 };
 
-export const getTicketFromNotionObject = (
-  notionBacklog: BacklogWithStatusLinksAndSprints,
-  page: QueryDatabaseResponse['results'][0]
-): Ticket => {
+export const getTicketFromNotionObject = ({
+  notionBacklog,
+  page,
+}: {
+  notionBacklog: BacklogWithStatusLinksAndSprints;
+  page: QueryDatabaseResponse['results'][0];
+}): Ticket => {
   if (!isNotionDatabaseItem(page)) {
     throw new Error('Not a notion database item');
   }
@@ -97,10 +103,10 @@ export const getTicketFromNotionObject = (
     notionId: page.id,
     title: titleValue,
     points: pointsValue,
-    status: getBacklogStatusForTicket(
-      notionBacklog.notionStatusLinks,
-      statusId
-    ),
+    status: getBacklogStatusForTicket({
+      links: notionBacklog.notionStatusLinks,
+      notionStatusId: statusId,
+    }),
     sprint,
     notionSprintSelect: sprintPropertySelect,
     icon: getIconFromNotionPage(page),
@@ -139,7 +145,7 @@ export const getProductBacklogFromNotionDatabase = async (
   });
 
   const tickets = databaseResponse.results.map((object) =>
-    getTicketFromNotionObject(notionBacklog, object)
+    getTicketFromNotionObject({ notionBacklog, page: object })
   );
 
   return {
@@ -147,11 +153,15 @@ export const getProductBacklogFromNotionDatabase = async (
   };
 };
 
-export const getProductBacklogForSprint = async (
-  notionBacklog: BacklogWithStatusLinksAndSprints,
-  sprintColumnName: Backlog['sprintColumnName'],
-  notionSprintValue: Sprint['notionSprintValue']
-): Promise<ProductBacklog> => {
+export const getProductBacklogForSprint = async ({
+  notionBacklog,
+  sprintColumnName,
+  notionSprintValue,
+}: {
+  notionBacklog: BacklogWithStatusLinksAndSprints;
+  sprintColumnName: Backlog['sprintColumnName'];
+  notionSprintValue: Sprint['notionSprintValue'];
+}): Promise<ProductBacklog> => {
   const databaseResponse = await notion.databases.query({
     database_id: notionBacklog.databaseId,
     filter: {
@@ -163,7 +173,7 @@ export const getProductBacklogForSprint = async (
   });
 
   const tickets = databaseResponse.results.map((object) =>
-    getTicketFromNotionObject(notionBacklog, object)
+    getTicketFromNotionObject({ notionBacklog, page: object })
   );
 
   return {

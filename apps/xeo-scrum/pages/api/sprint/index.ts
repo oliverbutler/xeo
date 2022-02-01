@@ -8,6 +8,7 @@ export type GetSprintsRequest = {
   requestBody: undefined;
   responseBody: {
     sprints: Sprint[];
+    currentSprintId: string | null;
   };
 };
 
@@ -21,14 +22,24 @@ export default async function getSprints(
     return res.status(401).json({ message: 'Not authenticated' });
   }
 
-  const sprints = await prisma.sprint.findMany({
+  const backlogAndSprints = await prisma.backlog.findFirst({
     where: {
       userId: session.id as string,
     },
+    include: {
+      sprints: true,
+    },
   });
 
+  if (!backlogAndSprints) {
+    return res
+      .status(404)
+      .json({ message: 'Backlog not found for your account' });
+  }
+
   const returnValue: GetSprintsRequest['responseBody'] = {
-    sprints,
+    sprints: backlogAndSprints.sprints,
+    currentSprintId: backlogAndSprints.currentSprintId,
   };
 
   return res.status(200).json(returnValue);

@@ -6,7 +6,7 @@ import { SelectDatabase } from './SelectDatabase';
 import { useDatabaseSelection } from './useDatabaseSelection';
 import { Button } from '@xeo/ui';
 
-export const fetcher = (input, init) =>
+export const fetcher = (input: any, init: any) =>
   fetch(input, init).then((res) => res.json());
 
 export const DatabaseSelection: React.FunctionComponent = () => {

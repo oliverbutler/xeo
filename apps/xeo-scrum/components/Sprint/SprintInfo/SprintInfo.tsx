@@ -3,14 +3,12 @@ import { GetBacklogSprintRequest } from 'pages/api/backlog/sprint';
 import useSWR from 'swr';
 
 interface Props {
-  notionSprintId: string;
+  sprintId: string;
 }
 
-export const SprintInfo: React.FunctionComponent<Props> = ({
-  notionSprintId,
-}) => {
+export const SprintInfo: React.FunctionComponent<Props> = ({ sprintId }) => {
   const { data, error } = useSWR<GetBacklogSprintRequest['responseBody']>(
-    '/api/backlog/sprint?notionSprintId=' + notionSprintId,
+    `/api/backlog/sprint?sprintId=${sprintId}&setDefault=${true} `,
     fetcher
   );
 
@@ -25,7 +23,9 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
   return (
     <div>
       {data.backlog.tickets.map((ticket) => (
-        <div key={ticket.notionId}>{ticket.title}</div>
+        <div key={ticket.notionId}>
+          {ticket.title} {ticket.status} {ticket.points}
+        </div>
       ))}
     </div>
   );

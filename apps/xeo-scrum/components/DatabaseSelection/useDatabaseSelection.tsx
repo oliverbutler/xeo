@@ -34,7 +34,6 @@ export interface DatabaseSelectionForm {
   ticketStatusId: DatabasePropertyOption | undefined;
   statusMapping: {
     statusDoneId: DatabaseStatusOptions[];
-    statusToValidateId: DatabaseStatusOptions[];
     statusInProgressId: DatabaseStatusOptions[];
     statusSprintBacklogId: DatabaseStatusOptions[];
   };
@@ -64,10 +63,6 @@ export const useDatabaseSelection = (): Output => {
         ...formData.statusMapping.statusDoneId.map((status) => ({
           notionStatusId: status.value,
           status: BacklogStatus.DONE,
-        })),
-        ...formData.statusMapping.statusToValidateId.map((status) => ({
-          notionStatusId: status.value,
-          status: BacklogStatus.TO_VALIDATE,
         })),
         ...formData.statusMapping.statusInProgressId.map((status) => ({
           notionStatusId: status.value,

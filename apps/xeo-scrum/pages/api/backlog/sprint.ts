@@ -10,7 +10,8 @@ import {
 export type GetBacklogSprintRequest = {
   method: 'GET';
   query: {
-    notionSprintId: string;
+    sprintId: string;
+    setDefault?: boolean;
   };
   responseBody: {
     backlog: ProductBacklog;
@@ -18,7 +19,8 @@ export type GetBacklogSprintRequest = {
 };
 
 const schema = Joi.object<GetBacklogSprintRequest['query']>({
-  notionSprintId: Joi.string().required(),
+  sprintId: Joi.string().required(),
+  setDefault: Joi.boolean(),
 });
 
 export default async function getBacklog(
@@ -37,7 +39,7 @@ export default async function getBacklog(
     return res.status(400).json({ message: error.message });
   }
 
-  const notionSprintId = value.notionSprintId;
+  const { sprintId, setDefault } = value;
 
   const notionBacklog = await prisma.backlog.findFirst({
     where: {
@@ -55,11 +57,24 @@ export default async function getBacklog(
       .json({ message: 'Backlog not found for your account' });
   }
 
-  const productBacklog = await getProductBacklogForSprint(
+  const sprint = notionBacklog.sprints.find((sprint) => sprint.id === sprintId);
+
+  if (!sprint) {
+    return res.status(404).json({ message: 'Sprint not found' });
+  }
+
+  if (setDefault) {
+    await prisma.backlog.update({
+      where: { id: notionBacklog.id },
+      data: { currentSprintId: sprint.id },
+    });
+  }
+
+  const productBacklog = await getProductBacklogForSprint({
     notionBacklog,
-    notionBacklog.sprintColumnName,
-    notionSprintId
-  );
+    sprintColumnName: notionBacklog.sprintColumnName,
+    notionSprintValue: sprint.notionSprintValue,
+  });
 
   const returnValue: GetBacklogSprintRequest['responseBody'] = {
     backlog: productBacklog,

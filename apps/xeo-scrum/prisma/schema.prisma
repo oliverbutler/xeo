@@ -58,7 +58,6 @@ model VerificationToken {
 
 enum BacklogStatus {
   DONE
-  TO_VALIDATE
   IN_PROGRESS
   SPRINT_BACKLOG
   UNKNOWN
@@ -69,6 +68,8 @@ model Backlog {
   user              User               @relation(fields: [userId], references: [id])
   userId            String
   // Notion Related Fields
+  currentSprint     Sprint?            @relation("currentSprint", fields: [currentSprintId], references: [id])
+  currentSprintId   String?
   databaseId        String
   databaseName      String
   pointsColumnName  String
@@ -87,13 +88,14 @@ model NotionStatusLink {
 }
 
 model Sprint {
-  id                String   @id @default(cuid())
-  name              String
-  startDate         DateTime
-  endDate           DateTime
-  notionSprintValue String // ID of the Notion Sprint (select ID)
-  user              User     @relation(fields: [userId], references: [id])
-  userId            String
-  backlog           Backlog  @relation(fields: [backlogId], references: [id])
-  backlogId         String
+  id                         String    @id @default(cuid())
+  name                       String
+  startDate                  DateTime
+  endDate                    DateTime
+  notionSprintValue          String // ID of the Notion Sprint (select ID)
+  user                       User      @relation(fields: [userId], references: [id])
+  userId                     String
+  backlog                    Backlog   @relation(fields: [backlogId], references: [id])
+  backlogId                  String
+  backlogsWhereCurrentSprint Backlog[] @relation("currentSprint")
 }

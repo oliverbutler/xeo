@@ -20,7 +20,9 @@ export function Index() {
 
   return (
     <div className="p-10">
-      <h1>Backlog</h1>
+      <h1>Backlog - {data?.notionBacklog.databaseName}</h1>
+
+      {/* <pre>{JSON.stringify(data?.notionBacklog, null, 2)}</pre> */}
 
       <table className="divide-y divide-gray-400">
         <thead className="bg-dark-800">

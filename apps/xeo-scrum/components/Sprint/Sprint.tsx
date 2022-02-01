@@ -25,20 +25,25 @@ export const Sprint: React.FunctionComponent<Props> = (props) => {
   }
 
   const sprintOptions = data.sprints.map((sprint) => ({
-    value: sprint.notionSprintValue,
+    value: sprint.id,
     label: sprint.name,
   }));
+
+  const defaultSprintForBacklog = sprintOptions.find(
+    (x) => x.value === data.currentSprintId
+  );
 
   return (
     <div>
       <Select
         label="Select Sprint"
         options={sprintOptions}
+        value={defaultSprintForBacklog}
         onChange={(x) =>
           setSelectedSprint((x as typeof sprintOptions[0]).value)
         }
       />
-      {selectedSprint ? <SprintInfo notionSprintId={selectedSprint} /> : null}
+      {selectedSprint ? <SprintInfo sprintId={selectedSprint} /> : null}
     </div>
   );
 };

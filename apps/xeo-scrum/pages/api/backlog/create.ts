@@ -1,4 +1,4 @@
-import { Backlog, PrismaClient, BacklogStatus } from '@prisma/client';
+import { Backlog, BacklogStatus } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { APIRequest, parseAPIRequest } from 'utils/api';
