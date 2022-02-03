@@ -1,7 +1,7 @@
 import { Select } from '@xeo/ui';
 import { fetcher } from 'components/DatabaseSelection/DatabaseSelection';
 import { GetSprintsRequest } from 'pages/api/sprint';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useSWR from 'swr';
 import { SprintInfo } from './SprintInfo/SprintInfo';
 
@@ -15,6 +15,12 @@ export const Sprint: React.FunctionComponent<Props> = (props) => {
     '/api/sprint',
     fetcher
   );
+
+  useEffect(() => {
+    if (data) {
+      setSelectedSprint(data.currentSprintId);
+    }
+  }, [data]);
 
   if (!data && !error) {
     return <div>Loading...</div>;

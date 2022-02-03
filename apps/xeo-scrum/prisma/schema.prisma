@@ -80,22 +80,41 @@ model Backlog {
 }
 
 model NotionStatusLink {
-  id             String        @id @default(cuid())
-  backlog        Backlog       @relation(fields: [backlogId], references: [id])
-  backlogId      String
-  notionStatusId String
-  status         BacklogStatus
+  id                  String                @id @default(cuid())
+  backlog             Backlog               @relation(fields: [backlogId], references: [id])
+  backlogId           String
+  notionStatusId      String
+  status              BacklogStatus
+  SprintStatusHistory SprintStatusHistory[]
 }
 
 model Sprint {
-  id                         String    @id @default(cuid())
+  id                         String          @id @default(cuid())
   name                       String
   startDate                  DateTime
   endDate                    DateTime
   notionSprintValue          String // ID of the Notion Sprint (select ID)
-  user                       User      @relation(fields: [userId], references: [id])
+  user                       User            @relation(fields: [userId], references: [id])
   userId                     String
-  backlog                    Backlog   @relation(fields: [backlogId], references: [id])
+  backlog                    Backlog         @relation(fields: [backlogId], references: [id])
   backlogId                  String
-  backlogsWhereCurrentSprint Backlog[] @relation("currentSprint")
+  backlogsWhereCurrentSprint Backlog[]       @relation("currentSprint")
+  sprintHistory              SprintHistory[]
+}
+
+model SprintHistory {
+  id                  String                @id @default(cuid())
+  sprint              Sprint                @relation(fields: [sprintId], references: [id])
+  sprintId            String
+  timestamp           DateTime
+  sprintStatusHistory SprintStatusHistory[]
+}
+
+model SprintStatusHistory {
+  id                 String           @id @default(cuid())
+  notionStatusLink   NotionStatusLink @relation(fields: [notionStatusLinkId], references: [id])
+  notionStatusLinkId String
+  sprintHistory      SprintHistory    @relation(fields: [sprintHistoryId], references: [id])
+  sprintHistoryId    String
+  pointsInStatus     Int
 }
