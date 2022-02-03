@@ -1,6 +1,11 @@
 import { NotionStatusLink, Sprint } from '@prisma/client';
+import { logger } from 'utils/api';
 import { prisma } from 'utils/db';
-import { ProductBacklog, Ticket } from 'utils/notion/backlog';
+import {
+  getProductBacklogForSprint,
+  ProductBacklog,
+  Ticket,
+} from 'utils/notion/backlog';
 
 const groupBy = <T, K extends keyof any>(list: T[], getKey: (item: T) => K) =>
   list.reduce((previous, currentItem) => {
@@ -100,4 +105,64 @@ export const saveSprintHistoryForBacklog = async (
       sprintHistoryId: sprintHistory.id,
     })),
   });
+};
+
+export const getSprintHistory = async (sprintId: string) => {
+  console.log('looking for sprint');
+  const sprint = await prisma.sprint.findUnique({
+    where: {
+      id: sprintId,
+    },
+    include: {
+      backlog: {
+        include: {
+          notionStatusLinks: true,
+          sprints: true,
+        },
+      },
+    },
+  });
+
+  console.log('found sprint');
+
+  if (!sprint) {
+    throw new Error('Sprint not found');
+  }
+
+  const productBacklog = await getProductBacklogForSprint({
+    notionBacklog: sprint.backlog,
+    sprint,
+    sprints: sprint.backlog.sprints,
+    notionStatusLinks: sprint.backlog.notionStatusLinks,
+  });
+
+  const updatedHistory = await saveSprintHistoryForBacklogIfChanged(
+    productBacklog,
+    sprint
+  );
+
+  if (updatedHistory) {
+    logger.info(
+      `GET /backlog/sprint > Saved sprint history for sprint ${sprint.id}`
+    );
+  } else {
+    logger.info(
+      `GET /backlog/sprint > Sprint history ${sprint.id} already up to date`
+    );
+  }
+
+  const sprintHistory = await prisma.sprintHistory.findMany({
+    where: {
+      sprintId,
+    },
+    include: {
+      sprintStatusHistory: true,
+    },
+  });
+
+  return {
+    sprintHistory,
+    sprint,
+    notionStatusLinks: sprint.backlog.notionStatusLinks,
+  };
 };

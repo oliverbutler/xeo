@@ -1,5 +1,6 @@
 import { ObjectSchema, Schema, ValidationError } from 'joi';
 import { NextApiRequest } from 'next';
+import pino from 'pino';
 
 /**
  * Generic API Request type for all API requests.
@@ -42,3 +43,5 @@ export const parseAPIRequest = <T extends object>(
     error: undefined,
   };
 };
+
+export const logger = pino();

@@ -1,6 +1,3 @@
-import { fetcher } from 'components/DatabaseSelection/DatabaseSelection';
-import { GetBacklogSprintRequest } from 'pages/api/backlog/sprint';
-import useSWR from 'swr';
 import {
   XAxis,
   YAxis,
@@ -12,33 +9,23 @@ import {
   CartesianGrid,
 } from 'recharts';
 import dayjs from 'dayjs';
-import { ContentType } from 'recharts/types/component/Tooltip';
+import { GetSprintHistoryRequest } from 'pages/api/sprint/history';
 
 interface Props {
-  sprintId: string;
+  sprintData: GetSprintHistoryRequest['responseBody'];
 }
 
-export const SprintInfo: React.FunctionComponent<Props> = ({ sprintId }) => {
-  const { data, error } = useSWR<GetBacklogSprintRequest['responseBody']>(
-    `/api/backlog/sprint?sprintId=${sprintId}&setDefault=${true} `,
-    fetcher
-  );
+const POINTS_LEFT = 'Points Left';
+const SCOPE = 'Scope';
 
-  if (!data && !error) {
-    return <div>Loading...</div>;
-  }
-
-  if (error || !data) {
-    return <div>Error: {error.message}</div>;
-  }
-
+export const SprintGraph: React.FunctionComponent<Props> = ({ sprintData }) => {
   interface DataPlotType {
     time: number;
-    scope: number;
-    pointsLeft: number;
+    [SCOPE]: number;
+    [POINTS_LEFT]: number;
   }
 
-  const plotData: DataPlotType[] = data.sprintHistory
+  const plotData: DataPlotType[] = sprintData.sprintHistory
     .map((historyEvent) => {
       const scope = historyEvent.sprintStatusHistory.reduce((acc, history) => {
         acc += history.pointsInStatus;
@@ -48,7 +35,7 @@ export const SprintInfo: React.FunctionComponent<Props> = ({ sprintId }) => {
       // Count points which are in BacklogStatus.DONE
       const pointsDone = historyEvent.sprintStatusHistory.reduce(
         (acc, history) => {
-          const notionStatusLink = data.notionBacklog.notionStatusLinks.find(
+          const notionStatusLink = sprintData.notionStatusLinks.find(
             (status) => status.id === history.notionStatusLinkId
           );
 
@@ -65,8 +52,8 @@ export const SprintInfo: React.FunctionComponent<Props> = ({ sprintId }) => {
 
       return {
         time: dayjs(historyEvent.timestamp).unix(),
-        scope: scope,
-        pointsLeft,
+        [SCOPE]: scope,
+        [POINTS_LEFT]: pointsLeft,
       };
     })
     .sort((a, b) => a.time - b.time);
@@ -82,8 +69,8 @@ export const SprintInfo: React.FunctionComponent<Props> = ({ sprintId }) => {
   };
 
   const xAxisTicks = getDaysArray(
-    data.sprint.startDate,
-    data.sprint.endDate
+    sprintData.sprint.startDate,
+    sprintData.sprint.endDate
   ).map((date) => dayjs(date).unix());
 
   const CustomTooltip = ({
@@ -96,7 +83,6 @@ export const SprintInfo: React.FunctionComponent<Props> = ({ sprintId }) => {
     label: number;
   }) => {
     if (active && payload && payload.length) {
-      console.log(payload);
       return (
         <div className="bg-dark-800 bg-opacity-60 p-2 border-l-2 ml-4">
           <p className="label">{dayjs(label * 1000).format('HH:MM')}</p>
@@ -118,17 +104,17 @@ export const SprintInfo: React.FunctionComponent<Props> = ({ sprintId }) => {
 
   return (
     <div className="mt-4">
-      <ResponsiveContainer width={'99%'} height={400} className="w-full h-full">
+      <ResponsiveContainer
+        width={'99%'}
+        height={500}
+        minWidth={100}
+        className="w-full h-full"
+      >
         <LineChart
-          width={500}
-          height={400}
+          width={1000}
+          height={500}
           data={plotData}
-          margin={{
-            top: 10,
-            right: 30,
-            left: 0,
-            bottom: 0,
-          }}
+          style={{ position: 'absolute' }}
         >
           <CartesianGrid stroke="#303030" strokeDasharray="5 5" />
           <XAxis
@@ -138,30 +124,31 @@ export const SprintInfo: React.FunctionComponent<Props> = ({ sprintId }) => {
               return dayjs(unixTime * 1000).format('dd DD/MM');
             }}
             domain={[
-              dayjs(data.sprint.startDate).unix(),
-              dayjs(data.sprint.endDate).unix(),
+              dayjs(sprintData.sprint.startDate).unix(),
+              dayjs(sprintData.sprint.endDate).unix(),
             ]}
             type="number"
             ticks={xAxisTicks}
           />
 
-          <YAxis />
+          <YAxis type="number" dataKey={POINTS_LEFT} />
           {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
           {/* @ts-ignore */}
           <Tooltip content={CustomTooltip} />
           <Legend />
           <Line
-            name="scope"
-            type="monotone"
-            dataKey="scope"
+            name={SCOPE}
+            type="step"
+            dataKey={SCOPE}
             strokeDasharray="3 3"
             stroke="#4b4b4b"
+            connectNulls
             dot={false}
           />
           <Line
-            name="pointsLeft"
+            name={POINTS_LEFT}
             type="monotone"
-            dataKey="pointsLeft"
+            dataKey={POINTS_LEFT}
             stroke="#82ca9d"
             dot={false}
           />

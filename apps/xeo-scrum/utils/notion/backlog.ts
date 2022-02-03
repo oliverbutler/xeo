@@ -58,10 +58,14 @@ const getStatusOfTicket = ({
 };
 
 export const getTicketFromNotionObject = ({
+  sprints,
   notionBacklog,
+  notionStatusLinks,
   page,
 }: {
-  notionBacklog: BacklogWithStatusLinksAndSprints;
+  sprints: Sprint[];
+  notionBacklog: Backlog;
+  notionStatusLinks: NotionStatusLink[];
   page: QueryDatabaseResponse['results'][0];
 }): Ticket => {
   if (!isNotionDatabaseItem(page)) {
@@ -92,7 +96,7 @@ export const getTicketFromNotionObject = ({
     throw new Error('Missing Title Value');
   }
 
-  const sprint = notionBacklog.sprints.find(
+  const sprint = sprints.find(
     (sprint) => sprint.notionSprintValue === sprintPropertySelect?.name
   );
 
@@ -101,7 +105,7 @@ export const getTicketFromNotionObject = ({
     title: titleValue,
     points: pointsValue,
     notionStatusLink: getStatusOfTicket({
-      links: notionBacklog.notionStatusLinks,
+      links: notionStatusLinks,
       notionStatusName: notionStatusName,
     }),
     sprint,
@@ -142,7 +146,12 @@ export const getProductBacklogFromNotionDatabase = async (
   });
 
   const tickets = databaseResponse.results.map((object) =>
-    getTicketFromNotionObject({ notionBacklog, page: object })
+    getTicketFromNotionObject({
+      notionBacklog,
+      page: object,
+      sprints: notionBacklog.sprints,
+      notionStatusLinks: notionBacklog.notionStatusLinks,
+    })
   );
 
   return {
@@ -152,25 +161,32 @@ export const getProductBacklogFromNotionDatabase = async (
 
 export const getProductBacklogForSprint = async ({
   notionBacklog,
-  sprintColumnName,
-  notionSprintValue,
+  sprint,
+  sprints,
+  notionStatusLinks,
 }: {
-  notionBacklog: BacklogWithStatusLinksAndSprints;
-  sprintColumnName: Backlog['sprintColumnName'];
-  notionSprintValue: Sprint['notionSprintValue'];
+  notionBacklog: Backlog;
+  sprint: Sprint;
+  sprints: Sprint[];
+  notionStatusLinks: NotionStatusLink[];
 }): Promise<ProductBacklog> => {
   const databaseResponse = await notion.databases.query({
     database_id: notionBacklog.databaseId,
     filter: {
-      property: sprintColumnName,
+      property: notionBacklog.sprintColumnName,
       select: {
-        equals: notionSprintValue,
+        equals: sprint.notionSprintValue,
       },
     },
   });
 
   const tickets = databaseResponse.results.map((object) =>
-    getTicketFromNotionObject({ notionBacklog, page: object })
+    getTicketFromNotionObject({
+      notionBacklog,
+      page: object,
+      notionStatusLinks,
+      sprints,
+    })
   );
 
   return {

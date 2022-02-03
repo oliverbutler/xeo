@@ -1,14 +1,11 @@
-import { Select } from '@xeo/ui';
+import { Button, Select } from '@xeo/ui';
 import { fetcher } from 'components/DatabaseSelection/DatabaseSelection';
+import Link from 'next/link';
 import { GetSprintsRequest } from 'pages/api/sprint';
 import { useEffect, useState } from 'react';
 import useSWR from 'swr';
-import { SprintInfo } from './SprintInfo/SprintInfo';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface Props {}
-
-export const Sprint: React.FunctionComponent<Props> = (props) => {
+export const Sprint: React.FunctionComponent = () => {
   const [selectedSprint, setSelectedSprint] = useState<string | null>(null);
 
   const { data, error } = useSWR<GetSprintsRequest['responseBody']>(
@@ -39,17 +36,23 @@ export const Sprint: React.FunctionComponent<Props> = (props) => {
     (x) => x.value === data.currentSprintId
   );
 
+  const currentlySelectedSprint = sprintOptions.find(
+    (x) => x.value === selectedSprint
+  );
+
   return (
     <div className="w-full">
       <Select
         label="Select Sprint"
         options={sprintOptions}
-        value={defaultSprintForBacklog}
+        value={currentlySelectedSprint ?? defaultSprintForBacklog}
         onChange={(x) =>
           setSelectedSprint((x as typeof sprintOptions[0]).value)
         }
       />
-      {selectedSprint ? <SprintInfo sprintId={selectedSprint} /> : null}
+      <Link href={`/sprint/${selectedSprint}`} passHref>
+        <Button>Go to Sprint</Button>
+      </Link>
     </div>
   );
 };
