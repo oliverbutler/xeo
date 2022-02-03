@@ -40,7 +40,12 @@ export function Index() {
                 </span>
                 {ticket.title}
               </td>
-              <td className="p-2">{ticket.notionStatusLink?.status}</td>
+              <td
+                className="p-2"
+                style={{ color: ticket.notionSprintSelect?.color }}
+              >
+                {ticket.notionStatusLink?.notionStatusName}
+              </td>
               <td className="p-2">{ticket.points}</td>
               <td className="p-2">
                 <SprintRenderer

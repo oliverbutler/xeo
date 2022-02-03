@@ -5,6 +5,7 @@ import {
   SprintHistory,
   SprintStatusHistory,
 } from '@prisma/client';
+import pino from 'pino';
 import Joi from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
@@ -13,7 +14,7 @@ import {
   getProductBacklogForSprint,
   ProductBacklog,
 } from 'utils/notion/backlog';
-import { saveSprintHistoryForBacklog } from 'utils/sprint/sprint-history';
+import { saveSprintHistoryForBacklogIfChanged } from 'utils/sprint/sprint-history';
 
 export type GetBacklogSprintRequest = {
   method: 'GET';
@@ -30,8 +31,11 @@ export type GetBacklogSprintRequest = {
     sprintHistory: (SprintHistory & {
       sprintStatusHistory: SprintStatusHistory[];
     })[];
+    sprint: Sprint;
   };
 };
+
+const logger = pino();
 
 const schema = Joi.object<GetBacklogSprintRequest['query']>({
   sprintId: Joi.string().required(),
@@ -91,7 +95,20 @@ export default async function getBacklog(
     notionSprintValue: sprint.notionSprintValue,
   });
 
-  // await saveSprintHistoryForBacklog(productBacklog, sprint);
+  const updatedHistory = await saveSprintHistoryForBacklogIfChanged(
+    productBacklog,
+    sprint
+  );
+
+  if (updatedHistory) {
+    logger.info(
+      `GET /backlog/sprint > Saved sprint history for sprint ${sprint.id}`
+    );
+  } else {
+    logger.info(
+      `GET /backlog/sprint > Sprint history ${sprint.id} already up to date`
+    );
+  }
 
   const sprintHistory = await prisma.sprintHistory.findMany({
     where: {
@@ -106,6 +123,7 @@ export default async function getBacklog(
     notionBacklog,
     backlog: productBacklog,
     sprintHistory,
+    sprint,
   };
 
   return res.status(200).json(returnValue);

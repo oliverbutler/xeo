@@ -25,6 +25,8 @@ model Account {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
   @@unique([provider, providerAccountId])
 }
 
@@ -34,6 +36,8 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
 }
 
 model User {
@@ -46,12 +50,16 @@ model User {
   sessions      Session[]
   backlogs      Backlog[]
   sprints       Sprint[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
 }
 
 model VerificationToken {
   identifier String
   token      String   @unique
   expires    DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
 
   @@unique([identifier, token])
 }
@@ -77,6 +85,8 @@ model Backlog {
   sprintColumnName  String
   notionStatusLinks NotionStatusLink[]
   sprints           Sprint[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @default(now()) @updatedAt
 }
 
 model NotionStatusLink {
@@ -87,6 +97,8 @@ model NotionStatusLink {
   notionStatusColor   String
   status              BacklogStatus
   SprintStatusHistory SprintStatusHistory[]
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @default(now()) @updatedAt
 }
 
 model Sprint {
@@ -101,6 +113,8 @@ model Sprint {
   backlogId                  String
   backlogsWhereCurrentSprint Backlog[]       @relation("currentSprint")
   sprintHistory              SprintHistory[]
+  createdAt                  DateTime        @default(now())
+  updatedAt                  DateTime        @default(now()) @updatedAt
 }
 
 model SprintHistory {
@@ -109,6 +123,8 @@ model SprintHistory {
   sprintId            String
   timestamp           DateTime
   sprintStatusHistory SprintStatusHistory[]
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @default(now()) @updatedAt
 }
 
 model SprintStatusHistory {
@@ -118,4 +134,6 @@ model SprintStatusHistory {
   sprintHistory      SprintHistory    @relation(fields: [sprintHistoryId], references: [id])
   sprintHistoryId    String
   pointsInStatus     Int
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @default(now()) @updatedAt
 }
