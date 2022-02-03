@@ -40,7 +40,7 @@ export const Sprint: React.FunctionComponent<Props> = (props) => {
   );
 
   return (
-    <div>
+    <div className="w-full">
       <Select
         label="Select Sprint"
         options={sprintOptions}

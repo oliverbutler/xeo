@@ -1,13 +1,13 @@
 import { Client } from '@notionhq/client/build/src';
 import { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
-import { Backlog, BacklogStatus, Sprint } from '@prisma/client';
+import { Backlog, NotionStatusLink, Sprint } from '@prisma/client';
 import { BacklogWithStatusLinksAndSprints } from 'pages/api/backlog';
 
 export type Ticket = {
   notionId: string;
   title: string;
   points: number | null;
-  status: BacklogStatus;
+  notionStatusLink: NotionStatusLink | undefined;
   notionSprintSelect: {
     id: string;
     name: string;
@@ -44,20 +44,17 @@ export type ProductBacklog = {
 
 const notion = new Client({ auth: process.env.NOTION_SECRET });
 
-const getBacklogStatusForTicket = ({
+const getStatusOfTicket = ({
   links,
-  notionStatusId,
+  notionStatusName,
 }: {
   links: BacklogWithStatusLinksAndSprints['notionStatusLinks'];
-  notionStatusId: string | undefined;
-}): BacklogStatus => {
+  notionStatusName: string | undefined;
+}): NotionStatusLink | undefined => {
   const statusLink = links.find(
-    (link) => link.notionStatusId === notionStatusId
+    (link) => link.notionStatusName === notionStatusName
   );
-  if (!statusLink) {
-    return BacklogStatus.UNKNOWN;
-  }
-  return statusLink.status;
+  return statusLink;
 };
 
 export const getTicketFromNotionObject = ({
@@ -86,8 +83,8 @@ export const getTicketFromNotionObject = ({
       : undefined;
   const pointsValue =
     pointsProperty?.type === 'number' ? pointsProperty.number : null;
-  const statusId =
-    statusProperty?.type === 'select' ? statusProperty.select?.id : undefined;
+  const notionStatusName =
+    statusProperty?.type === 'select' ? statusProperty.select?.name : undefined;
   const sprintPropertySelect =
     sprintProperty?.type === 'select' ? sprintProperty.select ?? null : null;
 
@@ -103,9 +100,9 @@ export const getTicketFromNotionObject = ({
     notionId: page.id,
     title: titleValue,
     points: pointsValue,
-    status: getBacklogStatusForTicket({
+    notionStatusLink: getStatusOfTicket({
       links: notionBacklog.notionStatusLinks,
-      notionStatusId: statusId,
+      notionStatusName: notionStatusName,
     }),
     sprint,
     notionSprintSelect: sprintPropertySelect,

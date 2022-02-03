@@ -13,7 +13,8 @@ export type PostCreateBacklog = APIRequest<
     statusColumnName: string;
     sprintColumnName: string;
     statusMapping: {
-      notionStatusId: string;
+      notionStatusName: string;
+      notionStatusColor: string;
       status: BacklogStatus;
     }[];
   },
@@ -30,7 +31,8 @@ const schema: PostCreateBacklog['joiBodySchema'] = Joi.object({
   sprintColumnName: Joi.string().required(),
   statusMapping: Joi.array().items(
     Joi.object({
-      notionStatusId: Joi.string().required(),
+      notionStatusName: Joi.string().required(),
+      notionStatusColor: Joi.string().required(),
       status: Joi.string()
         .valid(...Object.values(BacklogStatus))
         .required(),
@@ -65,7 +67,8 @@ export default async function createBacklog(
       notionStatusLinks: {
         createMany: {
           data: body.statusMapping.map((mapping) => ({
-            notionStatusId: mapping.notionStatusId,
+            notionStatusName: mapping.notionStatusName,
+            notionStatusColor: mapping.notionStatusColor,
             status: mapping.status,
           })),
         },

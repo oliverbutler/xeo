@@ -24,7 +24,8 @@ export const SelectStatusMapping: React.FunctionComponent<
     ticketStatusColumnProperty?.type === 'select'
       ? ticketStatusColumnProperty.select.options.map((option) => ({
           label: option.name,
-          value: option.id,
+          value: option.name,
+          color: option.color ?? 'gray',
         }))
       : [];
 

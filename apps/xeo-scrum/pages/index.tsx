@@ -22,8 +22,6 @@ export function Index() {
     <div className="p-10">
       <h1>Backlog - {data?.notionBacklog.databaseName}</h1>
 
-      {/* <pre>{JSON.stringify(data?.notionBacklog, null, 2)}</pre> */}
-
       <table className="divide-y divide-gray-400">
         <thead className="bg-dark-800">
           <tr>
@@ -42,7 +40,7 @@ export function Index() {
                 </span>
                 {ticket.title}
               </td>
-              <td className="p-2">{ticket.status}</td>
+              <td className="p-2">{ticket.notionStatusLink?.status}</td>
               <td className="p-2">{ticket.points}</td>
               <td className="p-2">
                 <SprintRenderer

@@ -20,6 +20,7 @@ export type DatabasePropertyOption = {
 export type DatabaseStatusOptions = {
   value: string;
   label: string;
+  color: string;
 };
 
 interface Output {
@@ -61,15 +62,18 @@ export const useDatabaseSelection = (): Output => {
       sprintColumnName: formData.sprintId.label,
       statusMapping: [
         ...formData.statusMapping.statusDoneId.map((status) => ({
-          notionStatusId: status.value,
+          notionStatusName: status.value,
+          notionStatusColor: status.color,
           status: BacklogStatus.DONE,
         })),
         ...formData.statusMapping.statusInProgressId.map((status) => ({
-          notionStatusId: status.value,
+          notionStatusName: status.value,
+          notionStatusColor: status.color,
           status: BacklogStatus.IN_PROGRESS,
         })),
         ...formData.statusMapping.statusSprintBacklogId.map((status) => ({
-          notionStatusId: status.value,
+          notionStatusName: status.value,
+          notionStatusColor: status.color,
           status: BacklogStatus.SPRINT_BACKLOG,
         })),
       ],

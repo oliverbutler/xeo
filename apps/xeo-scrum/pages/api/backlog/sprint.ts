@@ -1,3 +1,10 @@
+import {
+  Backlog,
+  NotionStatusLink,
+  Sprint,
+  SprintHistory,
+  SprintStatusHistory,
+} from '@prisma/client';
 import Joi from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
@@ -6,6 +13,7 @@ import {
   getProductBacklogForSprint,
   ProductBacklog,
 } from 'utils/notion/backlog';
+import { saveSprintHistoryForBacklog } from 'utils/sprint/sprint-history';
 
 export type GetBacklogSprintRequest = {
   method: 'GET';
@@ -15,6 +23,13 @@ export type GetBacklogSprintRequest = {
   };
   responseBody: {
     backlog: ProductBacklog;
+    notionBacklog: Backlog & {
+      notionStatusLinks: NotionStatusLink[];
+      sprints: Sprint[];
+    };
+    sprintHistory: (SprintHistory & {
+      sprintStatusHistory: SprintStatusHistory[];
+    })[];
   };
 };
 
@@ -76,8 +91,21 @@ export default async function getBacklog(
     notionSprintValue: sprint.notionSprintValue,
   });
 
+  // await saveSprintHistoryForBacklog(productBacklog, sprint);
+
+  const sprintHistory = await prisma.sprintHistory.findMany({
+    where: {
+      sprintId,
+    },
+    include: {
+      sprintStatusHistory: true,
+    },
+  });
+
   const returnValue: GetBacklogSprintRequest['responseBody'] = {
+    notionBacklog,
     backlog: productBacklog,
+    sprintHistory,
   };
 
   return res.status(200).json(returnValue);

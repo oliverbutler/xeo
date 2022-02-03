@@ -83,7 +83,8 @@ model NotionStatusLink {
   id                  String                @id @default(cuid())
   backlog             Backlog               @relation(fields: [backlogId], references: [id])
   backlogId           String
-  notionStatusId      String
+  notionStatusName    String
+  notionStatusColor   String
   status              BacklogStatus
   SprintStatusHistory SprintStatusHistory[]
 }
