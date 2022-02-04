@@ -10,6 +10,7 @@ import {
 } from 'recharts';
 import dayjs from 'dayjs';
 import { GetSprintHistoryRequest } from 'pages/api/sprint/history';
+import { theme } from '../../../../../tailwind-workspace-preset';
 
 interface Props {
   sprintData: GetSprintHistoryRequest['responseBody'];
@@ -84,7 +85,7 @@ export const SprintGraph: React.FunctionComponent<Props> = ({ sprintData }) => {
   }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-dark-800 bg-opacity-60 p-2 border-l-2 ml-4">
+        <div className="bg-dark-800 bg-opacity-60 p-2 border-l-dark-600 border-l-4 ml-4">
           <p className="label">{dayjs(label * 1000).format('HH:MM')}</p>
           {payload.map((entry) => (
             <p
@@ -102,17 +103,19 @@ export const SprintGraph: React.FunctionComponent<Props> = ({ sprintData }) => {
     return null;
   };
 
+  const HEIGHT = 500;
+  const WIDTH = 1000;
+
   return (
-    <div className="mt-4">
+    <div className="mt-4 relative" style={{ height: HEIGHT }}>
       <ResponsiveContainer
         width={'99%'}
-        height={500}
-        minWidth={100}
+        height={HEIGHT}
         className="w-full h-full"
       >
         <LineChart
-          width={1000}
-          height={500}
+          width={WIDTH}
+          height={HEIGHT}
           data={plotData}
           style={{ position: 'absolute' }}
         >
@@ -137,19 +140,19 @@ export const SprintGraph: React.FunctionComponent<Props> = ({ sprintData }) => {
           <Tooltip content={CustomTooltip} />
           <Legend />
           <Line
+            stroke={theme.extend.colors.dark[400]}
             name={SCOPE}
             type="step"
             dataKey={SCOPE}
             strokeDasharray="3 3"
-            stroke="#4b4b4b"
             connectNulls
             dot={false}
           />
           <Line
+            stroke={theme.extend.colors.secondary[400]}
             name={POINTS_LEFT}
-            type="monotone"
             dataKey={POINTS_LEFT}
-            stroke="#82ca9d"
+            type="monotone"
             dot={false}
           />
         </LineChart>
