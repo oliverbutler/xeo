@@ -1,72 +1,51 @@
+import { Sprint } from '@prisma/client';
 import { SprintInfo } from 'components/SprintInfo/SprintInfo';
 import { GetStaticPaths, GetStaticPathsResult, GetStaticProps } from 'next';
-import { getSession } from 'next-auth/react';
-import { GetSprintHistoryRequest } from 'pages/api/sprint/history';
 import { prisma } from 'utils/db';
-import {
-  getProductBacklogForSprint,
-  ProductBacklog,
-} from 'utils/notion/backlog';
+import { ProductBacklog } from 'utils/notion/backlog';
+import { DataPlotType, getDataForSprintChart } from 'utils/sprint/chart';
 import { getSprintHistory } from 'utils/sprint/sprint-history';
 
 type SprintProps = {
-  sprintData: GetSprintHistoryRequest['responseBody'] | null;
+  sprint: Sprint | null;
+  plotData: DataPlotType[] | null;
   productBacklog: ProductBacklog | null;
 };
 
-// TODO check if this doesn't introduce security vulnerability
-const sprint: React.FunctionComponent<SprintProps> = ({
-  sprintData,
+const sprintComponent: React.FunctionComponent<SprintProps> = ({
+  sprint,
+  plotData,
   productBacklog,
 }) => {
-  if (!sprintData || !productBacklog) {
+  if (!sprint || !plotData || !productBacklog) {
     return null;
   }
 
-  return <SprintInfo sprintData={sprintData} productBacklog={productBacklog} />;
+  return (
+    <SprintInfo
+      sprint={sprint}
+      plotData={plotData}
+      productBacklog={productBacklog}
+    />
+  );
 };
 
-export default sprint;
+export default sprintComponent;
 
 export const getStaticProps: GetStaticProps<SprintProps> = async ({
   params,
 }) => {
   const sprintId = params?.sprintId as string;
 
-  const sprintHistory = await getSprintHistory(sprintId);
+  const { sprintHistory, sprint, productBacklog, notionStatusLinks } =
+    await getSprintHistory(sprintId);
 
-  const sprint = await prisma.sprint.findUnique({
-    where: {
-      id: sprintId,
-    },
-    include: {
-      backlog: {
-        include: {
-          sprints: true,
-        },
-      },
-    },
-  });
-
-  if (!sprint) {
-    return {
-      props: {
-        sprintData: null,
-        productBacklog: null,
-      },
-    };
-  }
-
-  const productBacklog = await getProductBacklogForSprint({
-    notionBacklog: sprint?.backlog,
-    sprint,
-    notionStatusLinks: sprintHistory.notionStatusLinks,
-    sprints: sprint.backlog.sprints,
-  });
+  const plotData = getDataForSprintChart(sprintHistory, notionStatusLinks);
 
   return {
     props: {
-      sprintData: JSON.parse(JSON.stringify(sprintHistory)),
+      sprint: JSON.parse(JSON.stringify(sprint)),
+      plotData: JSON.parse(JSON.stringify(plotData)),
       productBacklog: JSON.parse(JSON.stringify(productBacklog)),
     },
     revalidate: 120, // 2 minutes

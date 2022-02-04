@@ -9,11 +9,13 @@ import {
   CartesianGrid,
 } from 'recharts';
 import dayjs from 'dayjs';
-import { GetSprintHistoryRequest } from 'pages/api/sprint/history';
 import { theme } from '../../../../../tailwind-workspace-preset';
+import { DataPlotLine, DataPlotType } from 'utils/sprint/chart';
+import { Sprint } from '@prisma/client';
 
 interface Props {
-  sprintData: GetSprintHistoryRequest['responseBody'];
+  sprint: Sprint;
+  plotData: DataPlotType[];
   view: SprintGraphView;
   showPointsNotStarted?: boolean;
 }
@@ -23,75 +25,12 @@ export enum SprintGraphView {
   TODAY,
 }
 
-const POINTS_LEFT = 'Points Not Done';
-const POINTS_NOT_STARTED = 'Points Not Started';
-const SCOPE = 'Scope';
-
 export const SprintGraph: React.FunctionComponent<Props> = ({
-  sprintData,
+  sprint,
+  plotData,
   view,
   showPointsNotStarted,
 }) => {
-  interface DataPlotType {
-    time: number;
-    [SCOPE]: number;
-    [POINTS_LEFT]: number;
-    [POINTS_NOT_STARTED]: number;
-  }
-
-  const plotData: DataPlotType[] = sprintData.sprintHistory
-    .map((historyEvent) => {
-      const scope = historyEvent.sprintStatusHistory.reduce((acc, history) => {
-        acc += history.pointsInStatus;
-        return acc;
-      }, 0);
-
-      // Count points which are in BacklogStatus.DONE
-      const pointsDone = historyEvent.sprintStatusHistory.reduce(
-        (acc, history) => {
-          const notionStatusLink = sprintData.notionStatusLinks.find(
-            (status) => status.id === history.notionStatusLinkId
-          );
-
-          if (notionStatusLink?.status === 'DONE') {
-            acc += history.pointsInStatus;
-          }
-
-          return acc;
-        },
-        0
-      );
-
-      const pointsDoneIncludingDoing = historyEvent.sprintStatusHistory.reduce(
-        (acc, history) => {
-          const notionStatusLink = sprintData.notionStatusLinks.find(
-            (status) => status.id === history.notionStatusLinkId
-          );
-
-          if (
-            notionStatusLink?.status === 'DONE' ||
-            notionStatusLink?.status === 'IN_PROGRESS'
-          ) {
-            acc += history.pointsInStatus;
-          }
-
-          return acc;
-        },
-        0
-      );
-
-      const pointsLeft = scope - pointsDone;
-      const pointsLeftExDoing = scope - pointsDoneIncludingDoing;
-
-      return {
-        time: dayjs(historyEvent.timestamp).unix(),
-        [SCOPE]: scope,
-        [POINTS_LEFT]: pointsLeft,
-        [POINTS_NOT_STARTED]: pointsLeftExDoing,
-      };
-    })
-    .sort((a, b) => a.time - b.time);
-
   const getDaysArray = function (start: Date, end: Date) {
     const s = new Date(start);
     const e = new Date(end);
@@ -124,11 +63,9 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
 
   const xAxisTicks = view
     ? todayXAxisTicks
-    : getDaysArray(sprintData.sprint.startDate, sprintData.sprint.endDate).map(
-        (date) => {
-          return dayjs(date).startOf('day').unix();
-        }
-      );
+    : getDaysArray(sprint.startDate, sprint.endDate).map((date) => {
+        return dayjs(date).startOf('day').unix();
+      });
 
   const CustomTooltip = ({
     active,
@@ -189,31 +126,31 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
             ticks={xAxisTicks}
           />
 
-          <YAxis type="number" dataKey={POINTS_LEFT} />
+          <YAxis type="number" dataKey={DataPlotLine.SCOPE} />
           {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
           {/* @ts-ignore */}
           <Tooltip content={CustomTooltip} />
           <Legend />
           <Line
             stroke={theme.extend.colors.dark[400]}
-            name={SCOPE}
+            name={DataPlotLine.SCOPE}
             type="step"
-            dataKey={SCOPE}
+            dataKey={DataPlotLine.SCOPE}
             strokeDasharray="3 3"
             dot={false}
           />
           <Line
             stroke={theme.extend.colors.secondary[400]}
-            name={POINTS_LEFT}
-            dataKey={POINTS_LEFT}
+            name={DataPlotLine.POINTS_LEFT}
+            dataKey={DataPlotLine.POINTS_LEFT}
             type="monotone"
             dot={false}
           />
           <Line
             hide={!showPointsNotStarted}
             stroke={theme.extend.colors.primary[400]}
-            name={POINTS_NOT_STARTED}
-            dataKey={POINTS_NOT_STARTED}
+            name={DataPlotLine.POINTS_NOT_STARTED}
+            dataKey={DataPlotLine.POINTS_NOT_STARTED}
             type="monotone"
             strokeDasharray={'3 3'}
             dot={false}

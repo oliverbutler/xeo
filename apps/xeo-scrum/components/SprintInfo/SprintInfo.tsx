@@ -1,22 +1,25 @@
 import { BeakerIcon, SearchIcon } from '@heroicons/react/outline';
+import { Sprint } from '@prisma/client';
 import { Button, ButtonVariation, Clickable, Table } from '@xeo/ui';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { GetSprintHistoryRequest } from 'pages/api/sprint/history';
 import { useState } from 'react';
 import { ProductBacklog, Ticket } from 'utils/notion/backlog';
+import { DataPlotType } from 'utils/sprint/chart';
 import { SprintGraph, SprintGraphView } from './SprintGraph/SprintGraph';
 import { SprintStats } from './SprintStats/SprintStats';
 
 dayjs.extend(relativeTime);
 
 interface Props {
-  sprintData: GetSprintHistoryRequest['responseBody'];
+  sprint: Sprint;
+  plotData: DataPlotType[];
   productBacklog: ProductBacklog;
 }
 
 export const SprintInfo: React.FunctionComponent<Props> = ({
-  sprintData,
+  sprint,
+  plotData,
   productBacklog,
 }) => {
   const [graphView, setGraphView] = useState<SprintGraphView>(
@@ -27,7 +30,7 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
   return (
     <div className="p-10 w-full">
       <div className="flex flex-row justify-between">
-        <h1>Sprint - {sprintData.sprint.name}</h1>
+        <h1>Sprint - {sprint.name}</h1>
         <div>
           <Button variation={ButtonVariation.Secondary}>Edit</Button>
         </div>
@@ -58,7 +61,8 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
       </div>
 
       <SprintGraph
-        sprintData={sprintData}
+        sprint={sprint}
+        plotData={plotData}
         view={graphView}
         showPointsNotStarted={showPointsNotStarted}
       />

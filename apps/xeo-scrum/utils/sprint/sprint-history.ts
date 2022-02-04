@@ -162,5 +162,6 @@ export const getSprintHistory = async (sprintId: string) => {
     sprintHistory,
     sprint,
     notionStatusLinks: sprint.backlog.notionStatusLinks,
+    productBacklog,
   };
 };
