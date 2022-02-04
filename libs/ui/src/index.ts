@@ -8,3 +8,4 @@ export * from './hooks/useLocalStorage';
 export * from './lib/Wrappers/IntlWrapper';
 export * from './lib/Resize/Resize';
 export * from './lib/Animate/CentredLoader/CentredLoader';
+export * from './lib/Table/Table';

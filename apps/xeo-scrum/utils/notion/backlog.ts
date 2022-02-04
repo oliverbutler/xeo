@@ -15,6 +15,8 @@ export type Ticket = {
   } | null;
   sprint: Sprint | undefined;
   icon: TicketIcon | null;
+  updatedAt: string;
+  notionUrl: string;
 };
 
 export type TicketIcon =
@@ -111,6 +113,8 @@ export const getTicketFromNotionObject = ({
     sprint,
     notionSprintSelect: sprintPropertySelect,
     icon: getIconFromNotionPage(page),
+    updatedAt: page.last_edited_time,
+    notionUrl: page.url,
   };
 };
 

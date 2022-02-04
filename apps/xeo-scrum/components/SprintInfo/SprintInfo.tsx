@@ -1,8 +1,12 @@
-import { Button, ButtonVariation } from '@xeo/ui';
+import { Button, ButtonVariation, Table } from '@xeo/ui';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import { GetSprintHistoryRequest } from 'pages/api/sprint/history';
-import { ProductBacklog } from 'utils/notion/backlog';
+import { ProductBacklog, Ticket } from 'utils/notion/backlog';
 import { SprintGraph } from './SprintGraph/SprintGraph';
 import { SprintStats } from './SprintStats/SprintStats';
+
+dayjs.extend(relativeTime);
 
 interface Props {
   sprintData: GetSprintHistoryRequest['responseBody'];
@@ -26,12 +30,40 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
       <SprintGraph sprintData={sprintData} />
       <h2>Tickets</h2>
       <div>
-        {productBacklog.tickets.map((ticket) => (
-          <div key={ticket.notionId}>
-            {ticket.title} {ticket.points}{' '}
-            {ticket.notionStatusLink?.notionStatusName}
-          </div>
-        ))}
+        <Table<Ticket>
+          data={productBacklog.tickets.sort((a, b) =>
+            b.updatedAt.localeCompare(a.updatedAt)
+          )}
+          columns={[
+            {
+              Header: 'Title',
+              accessor: 'title',
+              Cell: (cell) => (
+                <span>
+                  <a
+                    href={cell.row.original.notionUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {cell.value}
+                  </a>
+                </span>
+              ),
+            },
+            {
+              Header: 'Status',
+              accessor: (ticket) => ticket?.notionStatusLink?.notionStatusName,
+            },
+            {
+              Header: 'Points',
+              accessor: 'points',
+            },
+            {
+              Header: 'Updated',
+              accessor: (ticket) => dayjs(ticket?.updatedAt).fromNow(),
+            },
+          ]}
+        />
       </div>
     </div>
   );
