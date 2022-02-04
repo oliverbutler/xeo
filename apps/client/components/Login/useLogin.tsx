@@ -10,7 +10,7 @@ import { FormState, useForm, UseFormRegister } from 'react-hook-form';
 interface Output {
   loading: boolean;
   handleSubmit: (
-    e?: BaseSyntheticEvent<object, any, any> | undefined
+    e?: BaseSyntheticEvent<object, unknown, unknown> | undefined
   ) => Promise<void>;
   register: UseFormRegister<LoginForm>;
   formState: FormState<LoginForm>;

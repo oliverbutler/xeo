@@ -1,0 +1,11 @@
+@tailwind components;
+@tailwind base;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    @apply bg-dark-900;
+    @apply accent-primary-300;
+  }
+}

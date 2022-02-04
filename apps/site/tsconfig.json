@@ -15,7 +15,6 @@
     "baseUrl": ".",
     "paths": {
       "@xeo/ui": ["../../libs/ui/src/index.ts"]
-      // "@xeo/utils": ["../../libs/utils/src/index.ts"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "next-env.d.ts"],

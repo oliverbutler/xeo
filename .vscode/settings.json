@@ -1,9 +1,9 @@
 {
-  "i18n-ally.localesPaths": ["apps/client/content/locales"],
+  "i18n-ally.localesPaths": ["libs/utils/src/content/locales"],
   "search.exclude": {
     "build/": true,
     "dist/": true
   },
   "i18n-ally.keystyle": "flat",
-  "cSpell.words": ["jsonb", "overscroll", "toastify"]
+  "cSpell.words": ["jsonb", "overscroll", "pino", "toastify"]
 }

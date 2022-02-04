@@ -1,5 +1,5 @@
 import { useRouter } from 'next/dist/client/router';
-import enMessages from 'content/locales/en.json';
+import { en } from '@xeo/utils';
 import { useMemo } from 'react';
 import { IntlProvider } from 'react-intl';
 
@@ -11,9 +11,9 @@ export const IntlWrapper: React.FunctionComponent = ({ children }) => {
   const messages = useMemo(() => {
     switch (shortLocale) {
       case 'en':
-        return enMessages;
+        return en;
       default:
-        return enMessages;
+        return en;
     }
   }, [shortLocale]);
 
