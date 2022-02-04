@@ -29,9 +29,11 @@ function CustomApp({
                 <Component {...pageProps} />
               </main>
             ) : (
-              <main className="app min-h-screen z-10 relative flex flex-row prose dark:prose-invert max-w-none">
+              <main className="app min-h-screen z-10 relative flex flex-row prose dark:prose-invert max-w-none max-h-screen">
                 <Sidebar />
-                <Component {...pageProps} />
+                <div className="w-full overflow-y-scroll ">
+                  <Component {...pageProps} />
+                </div>
               </main>
             )}
           </SessionProvider>

@@ -9,3 +9,4 @@ export * from './lib/Wrappers/IntlWrapper';
 export * from './lib/Resize/Resize';
 export * from './lib/Animate/CentredLoader/CentredLoader';
 export * from './lib/Table/Table';
+export * from './lib/Animate/Loader/Loader';

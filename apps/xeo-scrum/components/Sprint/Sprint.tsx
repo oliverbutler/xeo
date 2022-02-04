@@ -41,7 +41,7 @@ export const Sprint: React.FunctionComponent = () => {
   );
 
   return (
-    <div className="w-full">
+    <div>
       <Select
         label="Select Sprint"
         options={sprintOptions}
@@ -51,7 +51,7 @@ export const Sprint: React.FunctionComponent = () => {
         }
       />
       <Link href={`/sprint/${selectedSprint}`} passHref>
-        <Button>Go to Sprint</Button>
+        <Button className="mt-4">Set Current Sprint</Button>
       </Link>
     </div>
   );

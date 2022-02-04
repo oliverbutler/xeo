@@ -1,5 +1,6 @@
 import { SprintInfo } from 'components/SprintInfo/SprintInfo';
 import { GetStaticPaths, GetStaticPathsResult, GetStaticProps } from 'next';
+import { getSession } from 'next-auth/react';
 import { GetSprintHistoryRequest } from 'pages/api/sprint/history';
 import { prisma } from 'utils/db';
 import {

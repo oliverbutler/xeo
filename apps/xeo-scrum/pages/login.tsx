@@ -3,12 +3,14 @@ import useSWR from 'swr';
 import { GetBacklogRequest } from './api/backlog';
 import { Button } from '@xeo/ui';
 import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
 export function Index() {
   const { data, error } = useSWR<GetBacklogRequest['responseBody']>(
     '/api/backlog',
     fetcher
   );
+  const { push } = useRouter();
 
   if (!data && !error) {
     return <div>Loading...</div>;
@@ -22,7 +24,13 @@ export function Index() {
     <div className="p-10">
       <h1>Sign In</h1>
 
-      <Button onClick={() => signIn()}>Sign In</Button>
+      <Button
+        onClick={() => {
+          signIn().then(() => push('/'));
+        }}
+      >
+        Sign In
+      </Button>
     </div>
   );
 }
