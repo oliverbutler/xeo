@@ -47,11 +47,13 @@ export const SelectColumns: React.FunctionComponent<Props> = ({
       />
 
       <SelectField
-        label="Sprint (select field)"
+        label="Sprint (select/multi_select field)"
         control={control}
         name="sprintId"
         // error={errors.sprintId}
-        options={propertiesOptions.filter((o) => o.type === 'select')}
+        options={propertiesOptions.filter(
+          (o) => o.type === 'select' || o.type === 'multi_select'
+        )}
         rules={{ required: true }}
         isDisabled={!currentDatabaseSelected}
       />

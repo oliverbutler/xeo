@@ -1,9 +1,11 @@
-import { Button, ButtonVariation, Table } from '@xeo/ui';
+import { BeakerIcon, SearchIcon } from '@heroicons/react/outline';
+import { Button, ButtonVariation, Clickable, Table } from '@xeo/ui';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { GetSprintHistoryRequest } from 'pages/api/sprint/history';
+import { useState } from 'react';
 import { ProductBacklog, Ticket } from 'utils/notion/backlog';
-import { SprintGraph } from './SprintGraph/SprintGraph';
+import { SprintGraph, SprintGraphView } from './SprintGraph/SprintGraph';
 import { SprintStats } from './SprintStats/SprintStats';
 
 dayjs.extend(relativeTime);
@@ -17,6 +19,11 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
   sprintData,
   productBacklog,
 }) => {
+  const [graphView, setGraphView] = useState<SprintGraphView>(
+    SprintGraphView.SPRINT
+  );
+  const [showPointsNotStarted, setShowPointsNotStarted] = useState(true);
+
   return (
     <div className="p-10 w-full">
       <div className="flex flex-row justify-between">
@@ -26,8 +33,35 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
         </div>
       </div>
       <SprintStats productBacklog={productBacklog} />
-      <h2>Burn Down Chart</h2>
-      <SprintGraph sprintData={sprintData} />
+      <div className="flex flex-row justify-between items-end">
+        <h2>Burn Down Chart</h2>
+        <div className="flex flex-row gap-2">
+          <Clickable
+            showActiveLabel={showPointsNotStarted}
+            onClick={() => setShowPointsNotStarted(!showPointsNotStarted)}
+          >
+            <BeakerIcon height={20} width={20} />
+          </Clickable>
+          <Clickable
+            showActiveLabel={graphView === SprintGraphView.TODAY}
+            onClick={() =>
+              setGraphView(
+                graphView === SprintGraphView.TODAY
+                  ? SprintGraphView.SPRINT
+                  : SprintGraphView.TODAY
+              )
+            }
+          >
+            <SearchIcon height={20} width={20} />
+          </Clickable>
+        </div>
+      </div>
+
+      <SprintGraph
+        sprintData={sprintData}
+        view={graphView}
+        showPointsNotStarted={showPointsNotStarted}
+      />
       <h2>Tickets</h2>
       <div>
         <Table<Ticket>

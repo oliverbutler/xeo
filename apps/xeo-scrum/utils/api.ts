@@ -44,4 +44,6 @@ export const parseAPIRequest = <T extends object>(
   };
 };
 
-export const logger = pino();
+export const logger = pino({
+  timestamp: () => `,"time":"${new Date(Date.now()).toISOString()}"`,
+});

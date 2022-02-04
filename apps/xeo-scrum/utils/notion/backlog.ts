@@ -1,19 +1,27 @@
 import { Client } from '@notionhq/client/build/src';
 import { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
-import { Backlog, NotionStatusLink, Sprint } from '@prisma/client';
+import {
+  Backlog,
+  NotionColumnType,
+  NotionStatusLink,
+  Sprint,
+} from '@prisma/client';
 import { BacklogWithStatusLinksAndSprints } from 'pages/api/backlog';
+import { logger } from 'utils/api';
 
 export type Ticket = {
   notionId: string;
   title: string;
   points: number | null;
   notionStatusLink: NotionStatusLink | undefined;
-  notionSprintSelect: {
-    id: string;
-    name: string;
-    color: string;
-  } | null;
-  sprint: Sprint | undefined;
+  sprints: {
+    sprint: Sprint | undefined;
+    notionSprintSelect: {
+      id: string;
+      name: string;
+      color: string;
+    };
+  }[];
   icon: TicketIcon | null;
   updatedAt: string;
   notionUrl: string;
@@ -85,22 +93,33 @@ export const getTicketFromNotionObject = ({
 
   const titleValue =
     titleProperty?.type === 'title'
-      ? titleProperty.title[0].plain_text
-      : undefined;
+      ? titleProperty.title?.[0]?.plain_text || ''
+      : '';
   const pointsValue =
     pointsProperty?.type === 'number' ? pointsProperty.number : null;
   const notionStatusName =
     statusProperty?.type === 'select' ? statusProperty.select?.name : undefined;
+
   const sprintPropertySelect =
-    sprintProperty?.type === 'select' ? sprintProperty.select ?? null : null;
+    sprintProperty?.type === 'select' ? sprintProperty.select : null;
+  const sprintPropertyMultiSelect =
+    sprintProperty?.type === 'multi_select'
+      ? sprintProperty.multi_select
+      : null;
+  const availableSprints = sprintPropertySelect
+    ? [sprintPropertySelect]
+    : sprintPropertyMultiSelect
+    ? sprintPropertyMultiSelect
+    : [];
 
-  if (!titleValue) {
-    throw new Error('Missing Title Value');
-  }
-
-  const sprint = sprints.find(
-    (sprint) => sprint.notionSprintValue === sprintPropertySelect?.name
-  );
+  const matchingSprints = availableSprints.map((notionSprint) => {
+    return {
+      notionSprintSelect: notionSprint,
+      sprint: sprints.find(
+        (sprint) => sprint.notionSprintValue === notionSprint.name
+      ),
+    };
+  });
 
   return {
     notionId: page.id,
@@ -110,8 +129,7 @@ export const getTicketFromNotionObject = ({
       links: notionStatusLinks,
       notionStatusName: notionStatusName,
     }),
-    sprint,
-    notionSprintSelect: sprintPropertySelect,
+    sprints: matchingSprints,
     icon: getIconFromNotionPage(page),
     updatedAt: page.last_edited_time,
     notionUrl: page.url,
@@ -174,15 +192,40 @@ export const getProductBacklogForSprint = async ({
   sprints: Sprint[];
   notionStatusLinks: NotionStatusLink[];
 }): Promise<ProductBacklog> => {
+  const startTime = performance.now();
+  logger.info(
+    `getProductBacklogForSprint > Query Notion for  ${sprint.notionSprintValue} in db ${notionBacklog.databaseName}`
+  );
+
+  const filter =
+    notionBacklog.notionColumnType === NotionColumnType.SELECT
+      ? {
+          select: {
+            equals: sprint.notionSprintValue,
+          },
+        }
+      : {
+          multi_select: {
+            contains: sprint.notionSprintValue,
+          },
+        };
+
   const databaseResponse = await notion.databases.query({
     database_id: notionBacklog.databaseId,
     filter: {
       property: notionBacklog.sprintColumnName,
-      select: {
-        equals: sprint.notionSprintValue,
-      },
+      ...filter,
     },
   });
+
+  const endTime = performance.now();
+  logger.info(
+    `getProductBacklogForSprint > Successfully queried (${
+      endTime - startTime
+    }ms) Notion for ${sprint.notionSprintValue} in db ${
+      notionBacklog.databaseName
+    }`
+  );
 
   const tickets = databaseResponse.results.map((object) =>
     getTicketFromNotionObject({

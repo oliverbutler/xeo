@@ -17,4 +17,6 @@ export const IconRenderer: React.FunctionComponent<Props> = ({ icon }) => {
   if (icon.type === 'image') {
     return <Image src={icon.url} alt="notion icon" width={15} height={15} />;
   }
+
+  return null;
 };

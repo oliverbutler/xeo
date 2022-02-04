@@ -108,7 +108,7 @@ export const saveSprintHistoryForBacklog = async (
 };
 
 export const getSprintHistory = async (sprintId: string) => {
-  console.log('looking for sprint');
+  logger.info(`getSprintHistory > searching for sprint ${sprintId}`);
   const sprint = await prisma.sprint.findUnique({
     where: {
       id: sprintId,
@@ -122,8 +122,6 @@ export const getSprintHistory = async (sprintId: string) => {
       },
     },
   });
-
-  console.log('found sprint');
 
   if (!sprint) {
     throw new Error('Sprint not found');
