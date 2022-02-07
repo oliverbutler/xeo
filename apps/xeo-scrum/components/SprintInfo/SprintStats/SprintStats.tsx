@@ -1,38 +1,26 @@
 import { ChartBarIcon, StarIcon } from '@heroicons/react/outline';
-import { ProductBacklog } from 'utils/notion/backlog';
+import { DataPlotType } from 'utils/sprint/chart';
 import { SprintStat } from './SprintStat';
 
 interface Props {
-  productBacklog: ProductBacklog;
+  sprintHistoryPlotData: DataPlotType[];
+  sprintId: string;
 }
 
 export const SprintStats: React.FunctionComponent<Props> = ({
-  productBacklog,
+  sprintHistoryPlotData,
 }) => {
-  const totalPointsInSprint = productBacklog.tickets.reduce((acc, ticket) => {
-    acc += ticket.points ?? 0;
-    return acc;
-  }, 0);
+  const lastHistoryPoint =
+    sprintHistoryPlotData[sprintHistoryPlotData.length - 1];
 
-  const totalPointsInProgress = productBacklog.tickets.reduce((acc, ticket) => {
-    acc +=
-      ticket?.notionStatusLink?.status === 'IN_PROGRESS' && ticket.points
-        ? ticket.points
-        : 0;
-    return acc;
-  }, 0);
+  if (!lastHistoryPoint) {
+    return null;
+  }
 
-  const totalPointsDone = productBacklog.tickets.reduce((acc, ticket) => {
-    acc +=
-      ticket?.notionStatusLink?.status === 'DONE' && ticket.points
-        ? ticket.points
-        : 0;
-    return acc;
-  }, 0);
-
+  const totalPointsInSprint = lastHistoryPoint['Scope'];
+  const totalPointsDone = totalPointsInSprint - lastHistoryPoint['Points Left'];
   const percentDone = Math.round((totalPointsDone / totalPointsInSprint) * 100);
   const numberOfPointsLeft = totalPointsInSprint - totalPointsDone;
-
   return (
     <div className="flex flex-row flex-wrap">
       <SprintStat
@@ -49,7 +37,7 @@ export const SprintStats: React.FunctionComponent<Props> = ({
       <SprintStat
         icon={<StarIcon height={40} width={40} className="stroke-yellow-300" />}
         title="Success"
-        value={<p>On Track +1.5 ✅</p>}
+        value={<p>Unknown</p>}
       />
     </div>
   );
