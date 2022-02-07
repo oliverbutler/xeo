@@ -1,42 +1,78 @@
 import { BeakerIcon, SearchIcon } from '@heroicons/react/outline';
-import { Sprint } from '@prisma/client';
-import { Button, ButtonVariation, Clickable, Table } from '@xeo/ui';
+import { Button, ButtonVariation, Clickable } from '@xeo/ui';
+import { fetcher } from 'components/DatabaseSelection/DatabaseSelection';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { useState } from 'react';
-import { ProductBacklog, Ticket } from 'utils/notion/backlog';
-import { DataPlotType } from 'utils/sprint/chart';
+import Link from 'next/link';
+import { GetSprintHistoryRequest } from 'pages/api/sprint/[sprintId]/history';
+import { useEffect, useState } from 'react';
+import useSWR from 'swr';
 import { SprintGraph, SprintGraphView } from './SprintGraph/SprintGraph';
 import { SprintStats } from './SprintStats/SprintStats';
+import axios from 'axios';
+import { PostUpdateSprintHistory } from 'pages/api/sprint/[sprintId]/update-history';
 
 dayjs.extend(relativeTime);
 
 interface Props {
-  sprint: Sprint;
-  plotData: DataPlotType[];
-  productBacklog: ProductBacklog;
+  sprintId: string;
 }
 
-export const SprintInfo: React.FunctionComponent<Props> = ({
-  sprint,
-  plotData,
-  productBacklog,
-}) => {
+const updateSprintHistory = async (sprintId: string) => {
+  const body: PostUpdateSprintHistory['request'] = { sprintId };
+  const { data } = await axios.post<PostUpdateSprintHistory['response']>(
+    `/api/sprint/${sprintId}/update-history`,
+    body
+  );
+
+  if (data.updatedSprintPlotData) {
+    console.info('[Notion API] Updated sprint plot data');
+  }
+};
+
+export const SprintInfo: React.FunctionComponent<Props> = ({ sprintId }) => {
+  const { data, error } = useSWR<GetSprintHistoryRequest['responseBody']>(
+    `/api/sprint/${sprintId}/history`,
+    fetcher
+  );
+
+  useEffect(() => {
+    if (dayjs(data?.sprint.endDate).isBefore(dayjs(), 'minute')) {
+      console.log('Sprint ended, not updating');
+    }
+    updateSprintHistory(sprintId);
+  }, [data?.sprint, sprintId]);
+
   const [graphView, setGraphView] = useState<SprintGraphView>(
     SprintGraphView.SPRINT
   );
   const [showPointsNotStarted, setShowPointsNotStarted] = useState(true);
 
+  if (!data || error) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
+  const { sprint, sprintHistoryPlotData } = data;
+
   return (
-    <div className="p-10 w-full">
+    <div className="w-full p-10">
       <div className="flex flex-row justify-between">
-        <h1>Sprint - {sprint.name}</h1>
+        <h1>{sprint.name}</h1>
         <div>
-          <Button variation={ButtonVariation.Secondary}>Edit</Button>
+          <Link href={`/sprint/${sprint.id}/edit`} passHref>
+            <Button variation={ButtonVariation.Secondary}>Edit</Button>
+          </Link>
         </div>
       </div>
-      <SprintStats productBacklog={productBacklog} />
-      <div className="flex flex-row justify-between items-end">
+      <SprintStats
+        sprintHistoryPlotData={sprintHistoryPlotData}
+        sprintId={sprintId}
+      />
+      <div className="flex flex-row items-end justify-between">
         <h2>Burn Down Chart</h2>
         <div className="flex flex-row gap-2">
           <Clickable
@@ -62,11 +98,11 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
 
       <SprintGraph
         sprint={sprint}
-        plotData={plotData}
+        plotData={sprintHistoryPlotData}
         view={graphView}
         showPointsNotStarted={showPointsNotStarted}
       />
-      <h2>Tickets</h2>
+      {/* <h2>Tickets</h2>
       <div>
         <Table<Ticket>
           data={productBacklog.tickets.sort((a, b) =>
@@ -102,7 +138,7 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
             },
           ]}
         />
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -107,8 +107,18 @@ export const saveSprintHistoryForBacklog = async (
   });
 };
 
-export const getSprintHistory = async (sprintId: string) => {
-  logger.info(`getSprintHistory > searching for sprint ${sprintId}`);
+/**
+ * Calls the Notion API, looks for differences in Sprint History and saves them to the DB
+ *
+ * @param sprintId
+ * @returns
+ */
+export const updateSprintHistoryIfChanged = async (
+  sprintId: string
+): Promise<boolean> => {
+  logger.info(
+    `updateSprintHistoryIfChanged > searching for sprint ${sprintId}`
+  );
   const sprint = await prisma.sprint.findUnique({
     where: {
       id: sprintId,
@@ -139,29 +149,47 @@ export const getSprintHistory = async (sprintId: string) => {
     sprint
   );
 
-  if (updatedHistory) {
-    logger.info(
-      `GET /backlog/sprint > Saved sprint history for sprint ${sprint.id}`
-    );
-  } else {
-    logger.info(
-      `GET /backlog/sprint > Sprint history ${sprint.id} already up to date`
-    );
-  }
+  logger.info(
+    updatedHistory
+      ? `updateSprintHistoryIfChanged > Sprint history updated for sprint ${sprint.id}`
+      : `updateSprintHistoryIfChanged > Sprint history ${sprint.id} already up to date`
+  );
 
-  const sprintHistory = await prisma.sprintHistory.findMany({
+  return updatedHistory;
+};
+
+/**
+ * Fetch a Xeo Sprint and Sprint History from the DB
+ *
+ * @param sprintId
+ * @returns
+ */
+export const getSprintWithHistory = async (sprintId: string) => {
+  const sprint = await prisma.sprint.findUnique({
     where: {
-      sprintId,
+      id: sprintId,
     },
     include: {
-      sprintStatusHistory: true,
+      backlog: {
+        include: {
+          notionStatusLinks: true,
+        },
+      },
+      sprintHistory: {
+        include: {
+          sprintStatusHistory: true,
+        },
+      },
     },
   });
 
+  if (!sprint) {
+    return undefined;
+  }
+
   return {
-    sprintHistory,
+    sprintHistory: sprint.sprintHistory,
     sprint,
     notionStatusLinks: sprint.backlog.notionStatusLinks,
-    productBacklog,
   };
 };

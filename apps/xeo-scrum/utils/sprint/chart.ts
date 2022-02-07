@@ -21,6 +21,16 @@ export type SprintHistoryWithStatusHistory = SprintHistory & {
   sprintStatusHistory: SprintStatusHistory[];
 };
 
+export const getDaysArray = function (start: Date, end: Date): Date[] {
+  const s = new Date(start);
+  const e = new Date(end);
+  const a: Date[] = [];
+  for (const d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
+    a.push(new Date(d));
+  }
+  return a;
+};
+
 export const getDataForSprintChart = (
   sprintHistory: SprintHistoryWithStatusHistory[],
   notionStatusLinks: NotionStatusLink[]
