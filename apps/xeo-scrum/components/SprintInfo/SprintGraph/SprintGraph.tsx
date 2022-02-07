@@ -10,14 +10,16 @@ import {
 } from 'recharts';
 import dayjs from 'dayjs';
 import { theme } from '../../../../../tailwind-workspace-preset';
-import { DataPlotLine, DataPlotType } from 'utils/sprint/chart';
+import { DataPlotLine, DataPlotType, getDaysArray } from 'utils/sprint/chart';
 import { Sprint } from '@prisma/client';
+import classNames from 'classnames';
 
 interface Props {
   sprint: Sprint;
   plotData: DataPlotType[];
   view: SprintGraphView;
   showPointsNotStarted?: boolean;
+  smallGraph?: boolean;
 }
 
 export enum SprintGraphView {
@@ -30,17 +32,8 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
   plotData,
   view,
   showPointsNotStarted,
+  smallGraph,
 }) => {
-  const getDaysArray = function (start: Date, end: Date) {
-    const s = new Date(start);
-    const e = new Date(end);
-    const a: Date[] = [];
-    for (const d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
-      a.push(new Date(d));
-    }
-    return a;
-  };
-
   const plotDataWithNow = [
     ...plotData,
     {
@@ -61,9 +54,14 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
     todayXAxisTicks.push(dayjs().startOf('day').add(h, 'hour').unix());
   }
 
-  const xAxisTicks = view
+  const xAxisTicks = smallGraph
+    ? [dayjs(sprint.startDate).unix(), dayjs(sprint.endDate).unix()]
+    : view
     ? todayXAxisTicks
-    : getDaysArray(sprint.startDate, sprint.endDate).map((date) => {
+    : getDaysArray(
+        sprint.startDate,
+        dayjs(sprint.endDate).add(1, 'day').toDate()
+      ).map((date) => {
         return dayjs(date).startOf('day').unix();
       });
 
@@ -78,7 +76,7 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
   }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-dark-800 bg-opacity-60 p-2 border-l-dark-600 border-l-4 ml-4">
+        <div className="bg-dark-800 border-l-dark-600 ml-4 border-l-4 bg-opacity-60 p-2">
           <p className="label">{dayjs(label * 1000).format('HH:mm')}</p>
           {payload.map((entry) => (
             <p
@@ -96,15 +94,18 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
     return null;
   };
 
-  const HEIGHT = 400;
+  const HEIGHT = smallGraph ? 200 : 400;
   const WIDTH = 1000;
 
   return (
-    <div className="mt-4 relative" style={{ height: HEIGHT }}>
+    <div
+      className={classNames('relative mt-4', { 'text-sm': smallGraph })}
+      style={{ height: HEIGHT }}
+    >
       <ResponsiveContainer
         width={'99%'}
         height={HEIGHT}
-        className="w-full h-full select-none"
+        className="h-full w-full select-none"
       >
         <LineChart
           width={WIDTH}
@@ -130,7 +131,7 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
           {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
           {/* @ts-ignore */}
           <Tooltip content={CustomTooltip} />
-          <Legend />
+          {!smallGraph && <Legend />}
           <Line
             stroke={theme.extend.colors.dark[400]}
             name={DataPlotLine.SCOPE}

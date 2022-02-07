@@ -1,58 +1,75 @@
-import { Button, Select } from '@xeo/ui';
+import { Sprint as PrismaSprint } from '@prisma/client';
 import { fetcher } from 'components/DatabaseSelection/DatabaseSelection';
+import {
+  SprintGraph,
+  SprintGraphView,
+} from 'components/SprintInfo/SprintGraph/SprintGraph';
+import dayjs from 'dayjs';
 import Link from 'next/link';
 import { GetSprintsRequest } from 'pages/api/sprint';
-import { useEffect, useState } from 'react';
 import useSWR from 'swr';
 
-export const Sprint: React.FunctionComponent = () => {
-  const [selectedSprint, setSelectedSprint] = useState<string | null>(null);
+interface SprintStatusBadgeProps {
+  sprint: PrismaSprint;
+}
 
-  const { data, error } = useSWR<GetSprintsRequest['responseBody']>(
+export const SprintStatusBadge: React.FunctionComponent<
+  SprintStatusBadgeProps
+> = ({ sprint }) => {
+  if (dayjs(sprint.endDate).isBefore(dayjs(), 'minute')) {
+    return (
+      <div className="text-dark-900 w-24 rounded-md bg-red-200 text-center">
+        Past
+      </div>
+    );
+  }
+
+  return (
+    <div className="text-dark-900 w-24 rounded-md bg-green-200 text-center">
+      Active
+    </div>
+  );
+};
+
+export const Sprint: React.FunctionComponent = () => {
+  const { data } = useSWR<GetSprintsRequest['responseBody']>(
     '/api/sprint',
     fetcher
   );
 
-  useEffect(() => {
-    if (data) {
-      setSelectedSprint(data.currentSprintId);
-    }
-  }, [data]);
-
-  if (!data && !error) {
-    return <div>Loading...</div>;
-  }
-
-  if (error || !data) {
-    return <div>Error: {error.message}</div>;
-  }
-
-  const sprintOptions = data.sprints.map((sprint) => ({
-    value: sprint.id,
-    label: sprint.name,
-  }));
-
-  const defaultSprintForBacklog = sprintOptions.find(
-    (x) => x.value === data.currentSprintId
-  );
-
-  const currentlySelectedSprint = sprintOptions.find(
-    (x) => x.value === selectedSprint
-  );
-
   return (
-    <div>
-      <Select
-        label="Select Sprint"
-        options={sprintOptions}
-        value={currentlySelectedSprint ?? defaultSprintForBacklog}
-        onChange={(x) =>
-          setSelectedSprint((x as typeof sprintOptions[0]).value)
-        }
-      />
-      <Link href={`/sprint/${selectedSprint}`} passHref>
-        <Button className="mt-4">Set Current Sprint</Button>
-      </Link>
+    <div className="py-5">
+      <h2>Active Sprints</h2>
+      <div className="flex flex-row flex-wrap gap-4">
+        {data?.sprints.map(({ sprint, plotData }) => (
+          <Link
+            href="/sprint/[sprintId]"
+            as={`/sprint/${sprint.id}`}
+            key={sprint.id}
+            passHref
+          >
+            <div className="border-dark-400 bg-dark-800 flex cursor-pointer flex-row border-l-4 p-2">
+              <div className="ml-1 w-fit">
+                <h3 className="mt-4">{sprint.name}</h3>
+                <p>
+                  {dayjs(sprint.startDate).format('DD/MM')} -{' '}
+                  {dayjs(sprint.endDate).format('DD/MM')}
+                </p>
+                <SprintStatusBadge sprint={sprint} />
+              </div>
+              <div className="h-52 w-72">
+                <SprintGraph
+                  plotData={plotData}
+                  sprint={sprint}
+                  view={SprintGraphView.SPRINT}
+                  smallGraph
+                />
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+      <h2>Past Sprints</h2>
     </div>
   );
 };
