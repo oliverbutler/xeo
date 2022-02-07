@@ -9,3 +9,41 @@
     @apply accent-primary-300;
   }
 }
+
+.DateInput_input__focused {
+  @apply border-b-primary-400;
+}
+
+.DateInput_input {
+  @apply text-dark-900 py-1 text-base font-normal;
+  padding: 0.3rem 0.5rem;
+}
+
+.CalendarDay__selected,
+.CalendarDay__selected:active,
+.CalendarDay__selected:hover {
+  @apply bg-primary-500 border-primary-200;
+}
+
+.CalendarDay__selected_span,
+.CalendarDay__selected_span:active,
+.CalendarDay__selected_span:hover {
+  @apply bg-primary-300 border-primary-200;
+}
+
+.DayPicker_weekHeader_ul {
+  @apply flex p-0;
+}
+
+.DayPicker_transitionContainer {
+  height: 385px !important;
+}
+
+.CalendarMonth_caption > strong {
+  @apply text-dark-900 font-normal;
+}
+
+.CalendarDay {
+  @apply p-0;
+  padding-top: 6px;
+}

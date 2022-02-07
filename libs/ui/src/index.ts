@@ -1,3 +1,4 @@
+export * from './lib/DatePicker';
 export * from './lib/ConditionalWrapper/ConditionalWrapper';
 export * from './lib/Input/Input';
 export * from './lib/Select/Select';
@@ -13,3 +14,4 @@ export * from './lib/Animate/Loader/Loader';
 export * from './lib/Clickable/Clickable';
 export * from './lib/Dropdown/Dropdown';
 export * from './lib/Popover/Popover';
+export * from './lib/Range/Range';

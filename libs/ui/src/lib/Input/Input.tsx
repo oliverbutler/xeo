@@ -10,24 +10,25 @@ export interface InputProps
   > {
   label: string;
   error?: FieldError | undefined;
+  className?: string;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, ...inputProps }, ref) => {
+  ({ label, error, className, ...inputProps }, ref) => {
     return (
-      <div className="text-dark-700 dark:text-white ">
-        <label className="block  text-sm font-bold mb-2">{label}</label>
+      <div className={classNames('text-dark-700 dark:text-white', className)}>
+        <label className="mb-2 block text-sm font-bold">{label}</label>
         <input
           ref={ref}
           className={classNames(
-            'shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none bg-transparent focus:shadow-outline ',
+            'focus:shadow-outline text-dark-800 w-full appearance-none rounded border bg-white py-2 px-3 leading-tight shadow focus:outline-none',
             { 'border-red-500': error }
           )}
           aria-label={label}
           {...inputProps}
         />
         {error && (
-          <p className="text-red-500 text-xs italic">{error.message}</p>
+          <p className="text-xs italic text-red-500">{error.message}</p>
         )}
       </div>
     );
