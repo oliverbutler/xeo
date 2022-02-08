@@ -44,7 +44,6 @@ export const CapacitySlider = <T extends FieldValues>({
         step={0.1}
         label=""
         value={valueToShow}
-        defaultValue={valueToShow}
         onChange={handleOnChange}
       />
     </div>

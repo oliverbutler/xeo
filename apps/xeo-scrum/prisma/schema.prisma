@@ -108,19 +108,22 @@ model NotionStatusLink {
 }
 
 model Sprint {
-  id                         String          @id @default(cuid())
-  name                       String
-  startDate                  DateTime
-  endDate                    DateTime
-  notionSprintValue          String // ID of the Notion Sprint (select ID)
-  user                       User            @relation(fields: [userId], references: [id])
-  userId                     String
-  backlog                    Backlog         @relation(fields: [backlogId], references: [id])
-  backlogId                  String
-  backlogsWhereCurrentSprint Backlog[]       @relation("currentSprint")
-  sprintHistory              SprintHistory[]
-  createdAt                  DateTime        @default(now())
-  updatedAt                  DateTime        @default(now()) @updatedAt
+  id                          String          @id @default(cuid())
+  name                        String
+  startDate                   DateTime
+  endDate                     DateTime
+  notionSprintValue           String // ID of the Notion Sprint (select ID)
+  user                        User            @relation(fields: [userId], references: [id])
+  userId                      String
+  backlog                     Backlog         @relation(fields: [backlogId], references: [id])
+  backlogId                   String
+  backlogsWhereCurrentSprint  Backlog[]       @relation("currentSprint")
+  sprintHistory               SprintHistory[]
+  sprintGoal                  String
+  sprintDevelopersAndCapacity Json // temporarily a JSON, eventually a join table from User to Capacity
+  teamSpeed                   Float
+  createdAt                   DateTime        @default(now())
+  updatedAt                   DateTime        @default(now()) @updatedAt
 }
 
 model SprintHistory {

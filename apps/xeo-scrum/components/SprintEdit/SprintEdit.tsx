@@ -16,6 +16,10 @@ import { getDaysArray } from 'utils/sprint/chart';
 import { CapacitySlider } from './CapacitySlider';
 import { v4 } from 'uuid';
 import React, { useMemo } from 'react';
+import { isDeveloperWithCapacityArray } from 'utils/sprint/utils';
+import axios from 'axios';
+import { PutUpdateSprintRequest } from 'pages/api/sprint/[sprintId]';
+import { toast } from 'react-toastify';
 
 interface Props {
   sprint: Sprint;
@@ -28,7 +32,7 @@ interface SprintEditForm {
   notionSprintValue: string;
   sprintGoal: string;
   teamSpeed: number;
-  devs: { id: string; name: string; capacity: number[] }[];
+  devs: { id: string; name: string; capacity: (number | null)[] }[];
 }
 
 interface SprintCapacityTableRow {
@@ -63,17 +67,22 @@ const SprintEditDeveloperHeader: React.FunctionComponent<
   );
 };
 
+const DEFAULT_CAPACITY = 1;
+
 export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
-  const { control, register, watch } = useForm<SprintEditForm>({
+  const devs = isDeveloperWithCapacityArray(sprint.sprintDevelopersAndCapacity)
+    ? sprint.sprintDevelopersAndCapacity
+    : [];
+
+  const { control, register, watch, handleSubmit } = useForm<SprintEditForm>({
     defaultValues: {
       startDate: new Date(sprint.startDate).toISOString(),
       endDate: new Date(sprint.endDate).toISOString(),
       notionSprintValue: sprint.notionSprintValue,
       sprintName: sprint.name,
-      devs: [
-        { id: v4(), name: 'Olly', capacity: [] },
-        { id: v4(), name: 'John', capacity: [] },
-      ],
+      sprintGoal: sprint.sprintGoal,
+      teamSpeed: sprint.teamSpeed,
+      devs: devs.map((dev) => ({ ...dev, id: v4() })),
     },
   });
 
@@ -123,13 +132,45 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
           <CapacitySlider
             control={control}
             name={`devs.${index}.capacity.${cell.row.index}`}
-            defaultValue={1}
+            defaultValue={DEFAULT_CAPACITY}
           />
         ),
       })),
     ],
     [control, fields, register, remove]
   );
+
+  const updateSprint = async (data: SprintEditForm) => {
+    console.log(data);
+
+    const body: PutUpdateSprintRequest['request'] = {
+      input: {
+        name: data.sprintName,
+        goal: data.sprintGoal,
+        startDate: new Date(data.startDate).toISOString(),
+        endDate: new Date(data.endDate).toISOString(),
+        teamSpeed: data.teamSpeed,
+        notionSprintValue: data.notionSprintValue,
+        developers: data.devs.map((dev) => ({
+          name: dev.name,
+          capacity: dev.capacity.map((capacity) =>
+            capacity ? capacity : DEFAULT_CAPACITY
+          ),
+        })),
+      },
+    };
+
+    const result = await axios.put<PutUpdateSprintRequest['response']>(
+      `/api/sprint/${sprint.id}`,
+      body
+    );
+
+    if (result.status !== 200) {
+      toast.error(result.data);
+    }
+
+    toast.success('Sprint updated');
+  };
 
   return (
     <div className="w-full p-10">
@@ -141,7 +182,7 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
           </Link>
         </div>
       </div>
-      <form className="gap-4">
+      <form className="gap-4" onSubmit={handleSubmit(updateSprint)}>
         <div className="flex flex-row gap-4">
           <Input
             className="w-1/3"
@@ -171,6 +212,8 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
           <Input
             className="w-1/3"
             label="Team Speed"
+            type="number"
+            step={0.1}
             {...register('teamSpeed')}
           />
         </div>
@@ -187,6 +230,7 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
           columns={columns}
           data={sprintCapacityTableRows}
         />
+        <Button type="submit">Save</Button>
       </form>
     </div>
   );
