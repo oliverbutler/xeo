@@ -137,12 +137,12 @@ model SprintHistory {
 }
 
 model SprintStatusHistory {
-  id                 String           @id @default(cuid())
-  notionStatusLink   NotionStatusLink @relation(fields: [notionStatusLinkId], references: [id])
-  notionStatusLinkId String
-  sprintHistory      SprintHistory    @relation(fields: [sprintHistoryId], references: [id])
+  id                 String            @id @default(cuid())
+  notionStatusLink   NotionStatusLink? @relation(fields: [notionStatusLinkId], references: [id])
+  notionStatusLinkId String?
+  sprintHistory      SprintHistory     @relation(fields: [sprintHistoryId], references: [id])
   sprintHistoryId    String
   pointsInStatus     Float
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @default(now()) @updatedAt
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @default(now()) @updatedAt
 }

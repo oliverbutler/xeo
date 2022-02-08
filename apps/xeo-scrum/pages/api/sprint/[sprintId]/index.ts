@@ -5,7 +5,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { APIRequest, parseAPIRequest } from 'utils/api';
 import { prisma } from 'utils/db';
-import { updateSprint, UpdateSprint } from 'utils/sprint/update';
+import { updateSprint, UpdateSprint } from 'utils/sprint/adapter';
 
 export type GetSprintRequest = {
   requestBody: undefined;
@@ -69,12 +69,12 @@ export default async function getSprint(
         return res.status(400).json({ message: error.message });
       }
 
-      const sprint = await updateSprint(
+      const updatedSprint = await updateSprint(
         req.query.sprintId as string,
         body.input
       );
 
-      return res.status(200).json({ sprint });
+      return res.status(200).json({ updatedSprint });
 
     default:
       return res.status(405).json({ message: 'Method not allowed' });
