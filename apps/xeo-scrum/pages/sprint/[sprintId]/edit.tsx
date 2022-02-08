@@ -1,5 +1,5 @@
 import { fetcher } from 'components/DatabaseSelection/DatabaseSelection';
-import { SprintEdit } from 'components/SprintEdit/SprintEdit';
+import { SprintEdit } from 'components/Sprint/SprintEdit/SprintEdit';
 import { useRouter } from 'next/router';
 import { GetSprintRequest } from 'pages/api/sprint/[sprintId]';
 import useSWR from 'swr';
