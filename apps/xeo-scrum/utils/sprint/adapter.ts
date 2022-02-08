@@ -64,8 +64,16 @@ export const createSprint = async (
       notionSprintValue: input.notionSprintValue,
       teamSpeed: input.teamSpeed,
       sprintDevelopersAndCapacity: input.developers,
-      backlogId,
-      userId,
+      backlog: {
+        connect: {
+          id: backlogId,
+        },
+      },
+      user: {
+        connect: {
+          id: userId,
+        },
+      },
     },
   });
 

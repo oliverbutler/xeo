@@ -1,3 +1,4 @@
+import { Button, ButtonVariation } from '@xeo/ui';
 import { fetcher } from 'components/DatabaseSelection/DatabaseSelection';
 import { SprintEdit } from 'components/Sprint/SprintEdit/SprintEdit';
 import { useRouter } from 'next/router';
@@ -25,7 +26,19 @@ export const SprintEditPage: React.FunctionComponent = () => {
     return <div>Error: {error}</div>;
   }
 
-  return <SprintEdit sprint={data.sprint} />;
+  return (
+    <div className="w-full p-10">
+      <div className="flex flex-row justify-between">
+        <h1>Update Sprint - {data.sprint.name}</h1>
+        <div>
+          <Button href="/sprint" variation={ButtonVariation.Secondary}>
+            Back
+          </Button>
+        </div>
+      </div>
+      <SprintEdit sprint={data.sprint} />
+    </div>
+  );
 };
 
 export default SprintEditPage;

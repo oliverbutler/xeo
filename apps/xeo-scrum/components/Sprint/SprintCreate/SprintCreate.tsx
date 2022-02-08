@@ -1,10 +1,6 @@
-import { Sprint } from '@prisma/client';
-import { Button, ButtonVariation, DateRangePickerField, Input } from '@xeo/ui';
-import Link from 'next/link';
+import { Button, DateRangePickerField, Input } from '@xeo/ui';
 import { useForm } from 'react-hook-form';
-import { v4 } from 'uuid';
 import React from 'react';
-import { isDeveloperWithCapacityArray } from 'utils/sprint/utils';
 import axios from 'axios';
 import { PutUpdateSprintRequest } from 'pages/api/sprint/[sprintId]';
 import { toast } from 'react-toastify';
@@ -12,12 +8,11 @@ import {
   SprintCapacityDev,
   SprintCapacityTable,
 } from '../SprintCapacityTable/SprintCapacityTable';
+import dayjs from 'dayjs';
+import { PostCreateSprintRequest } from 'pages/api/sprint';
+import { useRouter } from 'next/router';
 
-interface Props {
-  sprint: Sprint;
-}
-
-interface SprintEditForm {
+interface SprintCreateForm {
   startDate: string;
   endDate: string;
   sprintName: string;
@@ -29,20 +24,20 @@ interface SprintEditForm {
 
 const DEFAULT_CAPACITY = 1;
 
-export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
-  const devs = isDeveloperWithCapacityArray(sprint.sprintDevelopersAndCapacity)
-    ? sprint.sprintDevelopersAndCapacity
-    : [];
+export const SprintCreate: React.FunctionComponent = () => {
+  const { push } = useRouter();
 
-  const form = useForm<SprintEditForm>({
+  const form = useForm<SprintCreateForm>({
     defaultValues: {
-      startDate: new Date(sprint.startDate).toISOString(),
-      endDate: new Date(sprint.endDate).toISOString(),
-      notionSprintValue: sprint.notionSprintValue,
-      sprintName: sprint.name,
-      sprintGoal: sprint.sprintGoal,
-      teamSpeed: sprint.teamSpeed,
-      devs: devs.map((dev) => ({ ...dev, id: v4() })),
+      sprintGoal: '',
+      startDate: dayjs().toISOString(),
+      endDate: dayjs().add(1, 'week').toISOString(),
+      teamSpeed: 6,
+      devs: [
+        { name: '', capacity: [] },
+        { name: '', capacity: [] },
+        { name: '', capacity: [] },
+      ],
     },
   });
 
@@ -51,10 +46,10 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
   const startDate = watch('startDate');
   const endDate = watch('endDate');
 
-  const updateSprint = async (data: SprintEditForm) => {
+  const createSprint = async (data: SprintCreateForm) => {
     console.log(data);
 
-    const body: PutUpdateSprintRequest['request'] = {
+    const body: PostCreateSprintRequest['request'] = {
       input: {
         name: data.sprintName,
         goal: data.sprintGoal,
@@ -71,8 +66,8 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
       },
     };
 
-    const result = await axios.put<PutUpdateSprintRequest['response']>(
-      `/api/sprint/${sprint.id}`,
+    const result = await axios.post<PutUpdateSprintRequest['response']>(
+      `/api/sprint`,
       body
     );
 
@@ -80,11 +75,12 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
       toast.error(result.data);
     }
 
-    toast.success('Sprint updated');
+    toast.success('Sprint Created');
+    push(`/sprint/${result.data.sprint.id}`);
   };
 
   return (
-    <form className="gap-4" onSubmit={handleSubmit(updateSprint)}>
+    <form className="gap-4" onSubmit={handleSubmit(createSprint)}>
       <div className="flex flex-row gap-4">
         <Input
           className="w-1/3"
