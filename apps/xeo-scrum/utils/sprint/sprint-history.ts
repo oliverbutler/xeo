@@ -17,8 +17,8 @@ const groupBy = <T, K extends keyof any>(list: T[], getKey: (item: T) => K) =>
 
 const getAggregatedStatusToPoints = (
   tickets: Ticket[]
-): Record<NotionStatusLink['id'], number> => {
-  const aggregateTickets = groupBy<Ticket, NotionStatusLink['id']>(
+): Record<NotionStatusLink['id'] | '', number> => {
+  const aggregateTickets = groupBy<Ticket, NotionStatusLink['id'] | ''>(
     tickets,
     (ticket) => ticket?.notionStatusLink?.id ?? ''
   );
@@ -54,6 +54,8 @@ export const saveSprintHistoryForBacklogIfChanged = async (
     },
   });
 
+  console.log(lastSprintHistory);
+
   if (!lastSprintHistory) {
     await saveSprintHistoryForBacklog(productBacklog, sprint);
     return true;
@@ -61,7 +63,7 @@ export const saveSprintHistoryForBacklogIfChanged = async (
 
   const statusPointMapLastHistory =
     lastSprintHistory.sprintStatusHistory.reduce((acc, current) => {
-      acc[current.notionStatusLinkId] = current.pointsInStatus;
+      acc[current.notionStatusLinkId ?? ''] = current.pointsInStatus;
       return acc;
     }, {} as Record<NotionStatusLink['id'], number>);
 
@@ -89,22 +91,29 @@ export const saveSprintHistoryForBacklog = async (
 ): Promise<void> => {
   const { tickets } = productBacklog;
 
+  const aggregates = getAggregatedStatusToPoints(tickets);
+
   const sprintHistory = await prisma.sprintHistory.create({
     data: {
       sprintId: sprint.id,
       timestamp: new Date(),
+      sprintStatusHistory: {
+        createMany: {
+          data: Object.entries(aggregates).map(
+            ([notionStatusLinkId, points]) => ({
+              notionStatusLinkId:
+                notionStatusLinkId === '' ? null : notionStatusLinkId, // save as nullable if no status found for those points
+              pointsInStatus: points,
+            })
+          ),
+        },
+      },
     },
   });
 
-  const aggregates = getAggregatedStatusToPoints(tickets);
-
-  await prisma.sprintStatusHistory.createMany({
-    data: Object.entries(aggregates).map(([notionStatusLinkId, points]) => ({
-      notionStatusLinkId,
-      pointsInStatus: points,
-      sprintHistoryId: sprintHistory.id,
-    })),
-  });
+  logger.info(
+    `Saved sprint history ${sprintHistory.id} for sprint ${sprint.id}`
+  );
 };
 
 /**
