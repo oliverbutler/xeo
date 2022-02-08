@@ -150,6 +150,15 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
           <Line
             hide={!showPointsNotStarted}
             stroke={theme.extend.colors.primary[400]}
+            name={DataPlotLine.POINTS_DONE_INC_VALIDATE}
+            dataKey={DataPlotLine.POINTS_DONE_INC_VALIDATE}
+            type="monotone"
+            dot={false}
+            strokeDasharray={'3 3'}
+          />
+          <Line
+            hide={!showPointsNotStarted}
+            stroke={theme.extend.colors.dark[400]}
             name={DataPlotLine.POINTS_NOT_STARTED}
             dataKey={DataPlotLine.POINTS_NOT_STARTED}
             type="monotone"

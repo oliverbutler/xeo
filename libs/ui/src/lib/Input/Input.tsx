@@ -1,13 +1,8 @@
 import classNames from 'classnames';
-import { DetailedHTMLProps, forwardRef, InputHTMLAttributes } from 'react';
+import { forwardRef } from 'react';
 import { FieldError } from '../../../../../node_modules/react-hook-form/dist';
 
-/* eslint-disable-next-line */
-export interface InputProps
-  extends DetailedHTMLProps<
-    InputHTMLAttributes<HTMLInputElement>,
-    HTMLInputElement
-  > {
+export interface InputProps extends React.ComponentPropsWithRef<'input'> {
   label: string;
   error?: FieldError | undefined;
   className?: string;

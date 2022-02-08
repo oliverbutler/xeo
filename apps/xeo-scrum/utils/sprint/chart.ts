@@ -7,8 +7,9 @@ import dayjs from 'dayjs';
 
 export enum DataPlotLine {
   SCOPE = 'Scope',
-  POINTS_LEFT = 'Points Left',
-  POINTS_NOT_STARTED = 'Points Not Started',
+  POINTS_LEFT = 'Done',
+  POINTS_NOT_STARTED = 'In Progress',
+  POINTS_DONE_INC_VALIDATE = 'To Validate',
 }
 
 export type DataPlotType = {
@@ -76,14 +77,32 @@ export const getDataForSprintChart = (
         0
       );
 
+      const pointsDoneIncludingToValidate =
+        historyEvent.sprintStatusHistory.reduce((acc, history) => {
+          const notionStatusLink = notionStatusLinks.find(
+            (status) => status.id === history.notionStatusLinkId
+          );
+
+          if (
+            notionStatusLink?.status === 'DONE' ||
+            notionStatusLink?.notionStatusName === 'TO VALIDATE'
+          ) {
+            acc += history.pointsInStatus;
+          }
+
+          return acc;
+        }, 0);
+
       const pointsLeft = scope - pointsDone;
       const pointsLeftExDoing = scope - pointsDoneIncludingDoing;
+      const pointsLeftExToValidate = scope - pointsDoneIncludingToValidate;
 
       return {
         time: dayjs(historyEvent.timestamp).unix(),
         [DataPlotLine.SCOPE]: scope,
         [DataPlotLine.POINTS_LEFT]: pointsLeft,
         [DataPlotLine.POINTS_NOT_STARTED]: pointsLeftExDoing,
+        [DataPlotLine.POINTS_DONE_INC_VALIDATE]: pointsLeftExToValidate,
       };
     })
     .sort((a, b) => a.time - b.time);

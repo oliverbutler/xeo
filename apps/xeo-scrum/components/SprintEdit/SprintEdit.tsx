@@ -1,4 +1,4 @@
-import { TrashIcon } from '@heroicons/react/outline';
+import { TrashIcon, UserAddIcon } from '@heroicons/react/outline';
 import { Sprint } from '@prisma/client';
 import {
   Button,
@@ -69,6 +69,7 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
       startDate: new Date(sprint.startDate).toISOString(),
       endDate: new Date(sprint.endDate).toISOString(),
       notionSprintValue: sprint.notionSprintValue,
+      sprintName: sprint.name,
       devs: [
         { id: v4(), name: 'Olly', capacity: [] },
         { id: v4(), name: 'John', capacity: [] },
@@ -173,14 +174,19 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
             {...register('teamSpeed')}
           />
         </div>
-        <h2>Sprint Speed</h2>
+        <div className="flex flex-row items-end justify-between">
+          <h2>Sprint Speed</h2>
+          <Clickable
+            className="mt-4 flex flex-row"
+            onClick={() => append({ name: '', id: v4() })}
+          >
+            <UserAddIcon height={25} width={25} />
+          </Clickable>
+        </div>
         <Table<SprintCapacityTableRow>
           columns={columns}
           data={sprintCapacityTableRows}
         />
-        <Button className="mt-4" onClick={() => append({ name: '', id: v4() })}>
-          Add New Dev
-        </Button>
       </form>
     </div>
   );

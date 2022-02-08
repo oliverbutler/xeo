@@ -1,5 +1,5 @@
 import { ChartBarIcon, StarIcon } from '@heroicons/react/outline';
-import { DataPlotType } from 'utils/sprint/chart';
+import { DataPlotLine, DataPlotType } from 'utils/sprint/chart';
 import { SprintStat } from './SprintStat';
 
 interface Props {
@@ -18,7 +18,8 @@ export const SprintStats: React.FunctionComponent<Props> = ({
   }
 
   const totalPointsInSprint = lastHistoryPoint['Scope'];
-  const totalPointsDone = totalPointsInSprint - lastHistoryPoint['Points Left'];
+  const totalPointsDone =
+    totalPointsInSprint - lastHistoryPoint[DataPlotLine['POINTS_LEFT']];
   const percentDone = Math.round((totalPointsDone / totalPointsInSprint) * 100);
   const numberOfPointsLeft = totalPointsInSprint - totalPointsDone;
   return (
@@ -30,7 +31,7 @@ export const SprintStats: React.FunctionComponent<Props> = ({
         title="Progress"
         value={
           <p>
-            {percentDone}% - {numberOfPointsLeft} Points Left
+            {percentDone}% - {numberOfPointsLeft}/{totalPointsInSprint} Left
           </p>
         }
       />

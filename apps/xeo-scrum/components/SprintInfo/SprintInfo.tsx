@@ -37,10 +37,13 @@ export const SprintInfo: React.FunctionComponent<Props> = ({ sprintId }) => {
   );
 
   useEffect(() => {
-    if (dayjs(data?.sprint.endDate).isBefore(dayjs(), 'minute')) {
-      console.log('Sprint ended, not updating');
+    if (data?.sprint) {
+      if (dayjs(data.sprint.endDate).isBefore(dayjs(), 'minute')) {
+        console.log('Sprint ended, not updating');
+      } else {
+        updateSprintHistory(sprintId);
+      }
     }
-    updateSprintHistory(sprintId);
   }, [data?.sprint, sprintId]);
 
   const [graphView, setGraphView] = useState<SprintGraphView>(

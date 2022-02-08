@@ -1,5 +1,4 @@
 import { Sprint } from '@prisma/client';
-import Joi from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { DataPlotType, getDataForSprintChart } from 'utils/sprint/chart';
