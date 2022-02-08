@@ -1,25 +1,17 @@
-import { TrashIcon, UserAddIcon } from '@heroicons/react/outline';
 import { Sprint } from '@prisma/client';
-import {
-  Button,
-  ButtonVariation,
-  DateRangePickerField,
-  Input,
-  Table,
-  Clickable,
-} from '@xeo/ui';
-import dayjs from 'dayjs';
+import { Button, ButtonVariation, DateRangePickerField, Input } from '@xeo/ui';
 import Link from 'next/link';
-import { useFieldArray, useForm, UseFormRegister } from 'react-hook-form';
-import { CellProps, Column } from 'react-table';
-import { getDaysArray } from 'utils/sprint/chart';
-import { CapacitySlider } from './CapacitySlider';
+import { useForm } from 'react-hook-form';
 import { v4 } from 'uuid';
-import React, { useMemo } from 'react';
+import React from 'react';
 import { isDeveloperWithCapacityArray } from 'utils/sprint/utils';
 import axios from 'axios';
 import { PutUpdateSprintRequest } from 'pages/api/sprint/[sprintId]';
 import { toast } from 'react-toastify';
+import {
+  SprintCapacityDev,
+  SprintCapacityTable,
+} from '../SprintCapacityTable/SprintCapacityTable';
 
 interface Props {
   sprint: Sprint;
@@ -32,40 +24,8 @@ interface SprintEditForm {
   notionSprintValue: string;
   sprintGoal: string;
   teamSpeed: number;
-  devs: { id: string; name: string; capacity: (number | null)[] }[];
+  devs: SprintCapacityDev[];
 }
-
-interface SprintCapacityTableRow {
-  date: Date;
-}
-
-type SprintEditDeveloperHeader = {
-  id: string;
-  index: number;
-  remove: (index: number) => void;
-  register: UseFormRegister<SprintEditForm>;
-};
-
-const SprintEditDeveloperHeader: React.FunctionComponent<
-  SprintEditDeveloperHeader
-> = ({ id, remove, index, register }) => {
-  return (
-    <div className="flex w-48 flex-row" key={id}>
-      <Input
-        label=""
-        // value={value}
-        placeholder="Developer"
-        // onChange={(e) => setValue(e.target.value)}
-        {...register(`devs.${index}.name`)}
-      />
-      <div className="mt-2 ml-2">
-        <Clickable onClick={() => remove(index)}>
-          <TrashIcon height={25} width={25} />
-        </Clickable>
-      </div>
-    </div>
-  );
-};
 
 const DEFAULT_CAPACITY = 1;
 
@@ -74,7 +34,7 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
     ? sprint.sprintDevelopersAndCapacity
     : [];
 
-  const { control, register, watch, handleSubmit } = useForm<SprintEditForm>({
+  const form = useForm<SprintEditForm>({
     defaultValues: {
       startDate: new Date(sprint.startDate).toISOString(),
       endDate: new Date(sprint.endDate).toISOString(),
@@ -86,59 +46,10 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
     },
   });
 
-  const { fields, remove, append } = useFieldArray({
-    control,
-    name: 'devs',
-  });
+  const { control, register, watch, handleSubmit } = form;
 
   const startDate = watch('startDate');
   const endDate = watch('endDate');
-
-  const sprintDays = getDaysArray(new Date(startDate), new Date(endDate));
-
-  const sprintCapacityTableRows: SprintCapacityTableRow[] = sprintDays.map(
-    (date) => {
-      return {
-        date,
-      };
-    }
-  );
-
-  const columns: Column<SprintCapacityTableRow>[] = useMemo(
-    () => [
-      {
-        Header: 'Date',
-        accessor: 'date',
-        Cell: (cell) => dayjs(cell.value).format('ddd DD/MM'),
-      },
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      ...fields.map(({ id }, index) => ({
-        Header: () => (
-          <SprintEditDeveloperHeader
-            id={id}
-            index={index}
-            remove={remove}
-            register={register}
-          />
-        ),
-        label: 'Dev',
-        id: `dev-${id}`,
-        Cell: (
-          cell: React.PropsWithChildren<
-            CellProps<SprintCapacityTableRow, unknown>
-          >
-        ) => (
-          <CapacitySlider
-            control={control}
-            name={`devs.${index}.capacity.${cell.row.index}`}
-            defaultValue={DEFAULT_CAPACITY}
-          />
-        ),
-      })),
-    ],
-    [control, fields, register, remove]
-  );
 
   const updateSprint = async (data: SprintEditForm) => {
     console.log(data);
@@ -217,19 +128,19 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
             {...register('teamSpeed')}
           />
         </div>
-        <div className="flex flex-row items-end justify-between">
-          <h2>Sprint Speed</h2>
-          <Clickable
-            className="mt-4 flex flex-row"
-            onClick={() => append({ name: '', id: v4() })}
-          >
-            <UserAddIcon height={25} width={25} />
-          </Clickable>
-        </div>
-        <Table<SprintCapacityTableRow>
-          columns={columns}
-          data={sprintCapacityTableRows}
+
+        <SprintCapacityTable
+          startDate={new Date(startDate)}
+          endDate={new Date(endDate)}
+          form={form}
+          defaultCapacity={DEFAULT_CAPACITY}
+          devFieldName="devs"
+          devNameFieldNameFactory={(devIndex) => `devs.${devIndex}.name`}
+          capacityFieldNameFactory={(devIndex, capacityIndex) =>
+            `devs.${devIndex}.capacity.${capacityIndex}`
+          }
         />
+
         <Button type="submit">Save</Button>
       </form>
     </div>
