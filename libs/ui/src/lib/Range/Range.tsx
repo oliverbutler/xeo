@@ -1,24 +1,29 @@
 import classNames from 'classnames';
-import { forwardRef } from 'react';
+import { DetailedHTMLProps, forwardRef, InputHTMLAttributes } from 'react';
 import { FieldError } from '../../../../../node_modules/react-hook-form/dist';
 
-export interface InputProps extends React.ComponentPropsWithRef<'input'> {
+/* eslint-disable-next-line */
+export interface RangeProps
+  extends DetailedHTMLProps<
+    InputHTMLAttributes<HTMLInputElement>,
+    HTMLInputElement
+  > {
   label: string;
   error?: FieldError | undefined;
   className?: string;
 }
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(
+export const Range = forwardRef<HTMLInputElement, RangeProps>(
   ({ label, error, className, ...inputProps }, ref) => {
     return (
       <div className={classNames('text-dark-700 dark:text-white', className)}>
         <label className="mb-2 block text-sm font-bold">{label}</label>
         <input
           ref={ref}
-          className={classNames(
-            'focus:shadow-outline text-dark-800 w-full appearance-none rounded border bg-white py-2 px-3 leading-tight shadow focus:outline-none',
-            { 'border-red-500': error }
-          )}
+          type="range"
+          className={classNames('accent-primary-300 w-full', {
+            'border-red-500': error,
+          })}
           aria-label={label}
           {...inputProps}
         />
@@ -30,4 +35,4 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
   }
 );
 
-export default Input;
+export default Range;

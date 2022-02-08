@@ -35,6 +35,7 @@ export default async function getNotionDatabases(
         if (database.object === 'database') {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const title = (database as any).title?.[0].plain_text;
+
           return { id: database.id, title, properties: database.properties };
         } else {
           return null;

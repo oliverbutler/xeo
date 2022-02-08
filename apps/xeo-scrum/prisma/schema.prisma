@@ -71,6 +71,11 @@ enum BacklogStatus {
   UNKNOWN
 }
 
+enum NotionColumnType {
+  SELECT
+  MULTI_SELECT
+}
+
 model Backlog {
   id                String             @id @default(cuid())
   user              User               @relation(fields: [userId], references: [id])
@@ -83,6 +88,7 @@ model Backlog {
   pointsColumnName  String
   statusColumnName  String
   sprintColumnName  String
+  notionColumnType  NotionColumnType   @default(SELECT)
   notionStatusLinks NotionStatusLink[]
   sprints           Sprint[]
   createdAt         DateTime           @default(now())
@@ -102,19 +108,22 @@ model NotionStatusLink {
 }
 
 model Sprint {
-  id                         String          @id @default(cuid())
-  name                       String
-  startDate                  DateTime
-  endDate                    DateTime
-  notionSprintValue          String // ID of the Notion Sprint (select ID)
-  user                       User            @relation(fields: [userId], references: [id])
-  userId                     String
-  backlog                    Backlog         @relation(fields: [backlogId], references: [id])
-  backlogId                  String
-  backlogsWhereCurrentSprint Backlog[]       @relation("currentSprint")
-  sprintHistory              SprintHistory[]
-  createdAt                  DateTime        @default(now())
-  updatedAt                  DateTime        @default(now()) @updatedAt
+  id                          String          @id @default(cuid())
+  name                        String
+  startDate                   DateTime
+  endDate                     DateTime
+  notionSprintValue           String // ID of the Notion Sprint (select ID)
+  user                        User            @relation(fields: [userId], references: [id])
+  userId                      String
+  backlog                     Backlog         @relation(fields: [backlogId], references: [id])
+  backlogId                   String
+  backlogsWhereCurrentSprint  Backlog[]       @relation("currentSprint")
+  sprintHistory               SprintHistory[]
+  sprintGoal                  String
+  sprintDevelopersAndCapacity Json // temporarily a JSON, eventually a join table from User to Capacity
+  teamSpeed                   Float
+  createdAt                   DateTime        @default(now())
+  updatedAt                   DateTime        @default(now()) @updatedAt
 }
 
 model SprintHistory {
@@ -133,7 +142,7 @@ model SprintStatusHistory {
   notionStatusLinkId String
   sprintHistory      SprintHistory    @relation(fields: [sprintHistoryId], references: [id])
   sprintHistoryId    String
-  pointsInStatus     Int
+  pointsInStatus     Float
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @default(now()) @updatedAt
 }

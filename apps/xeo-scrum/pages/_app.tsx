@@ -25,7 +25,7 @@ function CustomApp({
         <ThemeProvider attribute="class">
           <SessionProvider session={session}>
             {pathname === '/login' ? (
-              <main className="flex min-h-screen items-center justify-center h-full prose dark:prose-invert">
+              <main className="flex min-h-screen items-center justify-center h-full prose dark:prose-invert ">
                 <Component {...pageProps} />
               </main>
             ) : (

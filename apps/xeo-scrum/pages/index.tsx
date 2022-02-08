@@ -61,12 +61,16 @@ export function Index() {
           },
           {
             Header: 'Sprint',
-            accessor: 'sprint',
+            accessor: 'sprints',
             Cell: (cell) => (
-              <SprintRenderer
-                sprint={cell.value}
-                notionSprintSelect={cell.row.original.notionSprintSelect}
-              />
+              <div>
+                {cell.value.map((value) => (
+                  <SprintRenderer
+                    key={value.notionSprintSelect.id}
+                    sprint={value}
+                  />
+                ))}
+              </div>
             ),
           },
         ]}

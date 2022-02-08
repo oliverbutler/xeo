@@ -2,8 +2,8 @@ import { Sprint } from 'components/Sprint/Sprint';
 
 function sprint() {
   return (
-    <div className="p-10 w-full">
-      <h1>Sprint Selection</h1>
+    <div className="w-full p-10">
+      <h1>All Sprints</h1>
       <Sprint />
     </div>
   );

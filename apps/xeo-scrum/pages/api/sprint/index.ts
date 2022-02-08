@@ -1,14 +1,17 @@
-import { Sprint } from '@prisma/client';
+import { Sprint, SprintHistory, SprintStatusHistory } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { prisma } from 'utils/db';
+import { DataPlotType, getDataForSprintChart } from 'utils/sprint/chart';
 
 export type GetSprintsRequest = {
   method: 'GET';
   requestBody: undefined;
   responseBody: {
-    sprints: Sprint[];
-    currentSprintId: string | null;
+    sprints: {
+      sprint: Sprint;
+      plotData: DataPlotType[];
+    }[];
   };
 };
 
@@ -27,7 +30,16 @@ export default async function getSprints(
       userId: session.id as string,
     },
     include: {
-      sprints: true,
+      sprints: {
+        include: {
+          sprintHistory: {
+            include: {
+              sprintStatusHistory: true,
+            },
+          },
+        },
+      },
+      notionStatusLinks: true,
     },
   });
 
@@ -37,9 +49,16 @@ export default async function getSprints(
       .json({ message: 'Backlog not found for your account' });
   }
 
+  const sprints = backlogAndSprints.sprints.map((sprint) => ({
+    sprint,
+    plotData: getDataForSprintChart(
+      sprint.sprintHistory,
+      backlogAndSprints.notionStatusLinks
+    ),
+  }));
+
   const returnValue: GetSprintsRequest['responseBody'] = {
-    sprints: backlogAndSprints.sprints,
-    currentSprintId: backlogAndSprints.currentSprintId,
+    sprints,
   };
 
   return res.status(200).json(returnValue);
