@@ -194,9 +194,5 @@ export const getSprintWithHistory = async (sprintId: string) => {
     return undefined;
   }
 
-  return {
-    sprintHistory: sprint.sprintHistory,
-    sprint,
-    notionStatusLinks: sprint.backlog.notionStatusLinks,
-  };
+  return sprint;
 };

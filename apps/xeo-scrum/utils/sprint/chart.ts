@@ -1,5 +1,6 @@
 import {
   NotionStatusLink,
+  Sprint,
   SprintHistory,
   SprintStatusHistory,
 } from '@prisma/client';
@@ -33,6 +34,7 @@ export const getDaysArray = function (start: Date, end: Date): Date[] {
 };
 
 export const getDataForSprintChart = (
+  sprint: Sprint,
   sprintHistory: SprintHistoryWithStatusHistory[],
   notionStatusLinks: NotionStatusLink[]
 ) => {

@@ -31,12 +31,16 @@ export default async function getSprintHistoryRequest(
   }
 
   const sprintHistoryPlotData = getDataForSprintChart(
+    sprint,
     sprint.sprintHistory,
-    sprint.notionStatusLinks
+    sprint.backlog.notionStatusLinks
   );
 
+  // Remove backlog and sprintHistory from the response to avoid sending unecessary data
+  const { backlog, sprintHistory, ...restSprint } = sprint;
+
   const returnValue: GetSprintHistoryRequest['responseBody'] = {
-    sprint: sprint.sprint,
+    sprint: restSprint,
     sprintHistoryPlotData,
   };
 

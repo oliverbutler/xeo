@@ -86,6 +86,7 @@ export default async function getSprints(
       const sprints = backlogAndSprints.sprints.map((sprint) => ({
         sprint,
         plotData: getDataForSprintChart(
+          sprint,
           sprint.sprintHistory,
           backlogAndSprints.notionStatusLinks
         ),
