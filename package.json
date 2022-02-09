@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "build": "nx affected:build --all",
-    "build:xeo-scrum": "nx build xeo-scrum && yarn prisma-generate:xeo-scrum",
+    "build:xeo-scrum": "yarn prisma-generate:xeo-scrum && nx build xeo-scrum",
     "prisma-generate:xeo-scrum": "yarn prisma generate --schema=apps/xeo-scrum/prisma/schema.prisma",
     "test": "nx affected:test --all",
     "lint": "nx affected:lint --all",
