@@ -10,9 +10,10 @@ import {
   UseFormReturn,
 } from 'react-hook-form';
 import { CellProps, Column } from 'react-table';
-import { getDaysArray } from 'utils/sprint/chart';
+import { getBusinessDaysArray } from 'utils/sprint/chart';
 import { v4 } from 'uuid';
 import CapacitySlider from '../SprintEdit/CapacitySlider';
+import { SprintCapacityCalculation } from './SprintCapacityCalculation';
 import { SprintEditDeveloperHeader } from './SprintEditDeveloperHeader';
 
 interface Props<T extends FieldValues> {
@@ -25,6 +26,7 @@ interface Props<T extends FieldValues> {
   devNameFieldNameFactory: (devIndex: number) => Path<T>;
   startDate: Date;
   endDate: Date;
+  teamSpeed: number;
   defaultCapacity: number;
 }
 
@@ -41,26 +43,24 @@ export type SprintCapacityDev = {
 export const SprintCapacityTable = <T extends FieldValues>({
   startDate,
   endDate,
-  form,
+  teamSpeed,
+  form: { control, watch, register },
   defaultCapacity,
   devFieldName,
   devNameFieldNameFactory,
   capacityFieldNameFactory,
 }: Props<T>) => {
   const { fields, remove, append } = useFieldArray({
-    control: form.control,
+    control,
     name: devFieldName,
   });
 
-  const sprintDays = getDaysArray(startDate, endDate);
-
-  const sprintCapacityTableRows: SprintCapacityTableRow[] = sprintDays.map(
-    (date) => {
-      return {
-        date,
-      };
-    }
-  );
+  const sprintCapacityTableRows = useMemo(() => {
+    const sprintDays = getBusinessDaysArray(startDate, endDate);
+    return sprintDays.map((date) => ({
+      date,
+    }));
+  }, [endDate, startDate]);
 
   const columns: Column<SprintCapacityTableRow>[] = useMemo(
     () => [
@@ -75,7 +75,7 @@ export const SprintCapacityTable = <T extends FieldValues>({
             id={id}
             index={index}
             remove={remove}
-            register={form.register}
+            register={register}
             devNameFieldNameFactory={devNameFieldNameFactory}
           />
         ),
@@ -83,23 +83,20 @@ export const SprintCapacityTable = <T extends FieldValues>({
         id: `dev-${id}`,
         Cell: (cell: React.PropsWithChildren<CellProps<T, unknown>>) => (
           <CapacitySlider
-            control={form.control}
+            control={control}
             name={capacityFieldNameFactory(index, cell.row.index)}
             defaultValue={defaultCapacity}
           />
         ),
       })),
     ],
-    [
-      capacityFieldNameFactory,
-      defaultCapacity,
-      devNameFieldNameFactory,
-      fields,
-      form.control,
-      form.register,
-      remove,
-    ]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [fields]
   );
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const devs = watch(devFieldName) as SprintCapacityDev[];
 
   return (
     <div>
@@ -117,6 +114,12 @@ export const SprintCapacityTable = <T extends FieldValues>({
       <Table<SprintCapacityTableRow>
         columns={columns}
         data={sprintCapacityTableRows}
+      />
+      <SprintCapacityCalculation
+        startDate={startDate}
+        endDate={endDate}
+        devs={devs}
+        teamSpeed={teamSpeed}
       />
     </div>
   );

@@ -58,7 +58,9 @@ export const SprintCreate: React.FunctionComponent = () => {
         developers: data.devs.map((dev) => ({
           name: dev.name,
           capacity: dev.capacity.map((capacity) =>
-            capacity ? capacity : DEFAULT_CAPACITY
+            capacity === null || capacity === undefined
+              ? DEFAULT_CAPACITY
+              : capacity
           ),
         })),
       },

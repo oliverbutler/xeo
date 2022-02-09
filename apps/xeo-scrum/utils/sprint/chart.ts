@@ -5,6 +5,7 @@ import {
   SprintStatusHistory,
 } from '@prisma/client';
 import dayjs from 'dayjs';
+import { isDeveloperWithCapacityArray } from './utils';
 
 export enum DataPlotLine {
   SCOPE = 'Scope',
@@ -33,11 +34,64 @@ export const getDaysArray = function (start: Date, end: Date): Date[] {
   return a;
 };
 
+export const isBusinessDay = (date: Date): boolean => {
+  const day = date.getDay();
+  return day !== 0 && day !== 6;
+};
+
+export const getBusinessDaysArray = (start: Date, end: Date): Date[] => {
+  const days = getDaysArray(start, end);
+  return days.filter(isBusinessDay);
+};
+
+/**
+ * From a sprint, calculate the expected team capacity per day of the sprint (ex weekends)
+ */
+export const getSprintCapacityPerDay = (
+  sprint: Pick<
+    Sprint,
+    'startDate' | 'endDate' | 'teamSpeed' | 'sprintDevelopersAndCapacity'
+  >
+): { day: Date; capacity: number }[] => {
+  const { startDate, endDate, teamSpeed, sprintDevelopersAndCapacity } = sprint;
+
+  if (!isDeveloperWithCapacityArray(sprintDevelopersAndCapacity)) {
+    throw new Error(
+      'getSprintCapacityPerDay > Sprint developers and capacity must be an array of objects'
+    );
+  }
+
+  const sprintDays = getBusinessDaysArray(startDate, endDate);
+
+  const capacityPerDay: { day: Date; capacity: number }[] = sprintDays.map(
+    (day, dayIndex) => {
+      const devDaysThatDay: number = sprintDevelopersAndCapacity.reduce(
+        (acc, dev) => acc + dev.capacity[dayIndex],
+        0
+      );
+
+      return {
+        day,
+        capacity: Math.round(devDaysThatDay * teamSpeed * 10) / 10,
+      };
+    }
+  );
+
+  return capacityPerDay;
+};
+
 export const getDataForSprintChart = (
   sprint: Sprint,
   sprintHistory: SprintHistoryWithStatusHistory[],
   notionStatusLinks: NotionStatusLink[]
 ) => {
+  const capacityPerDay = getSprintCapacityPerDay(sprint);
+
+  const toalCapacity = capacityPerDay.reduce(
+    (acc, { capacity }) => acc + capacity,
+    0
+  );
+
   const plotData: DataPlotType[] = sprintHistory
     .map((historyEvent) => {
       const scope = historyEvent.sprintStatusHistory.reduce((acc, history) => {
