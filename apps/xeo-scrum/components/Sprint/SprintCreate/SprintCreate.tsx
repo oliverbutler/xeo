@@ -47,8 +47,6 @@ export const SprintCreate: React.FunctionComponent = () => {
   const endDate = watch('endDate');
 
   const createSprint = async (data: SprintCreateForm) => {
-    console.log(data);
-
     const body: PostCreateSprintRequest['request'] = {
       input: {
         name: data.sprintName,

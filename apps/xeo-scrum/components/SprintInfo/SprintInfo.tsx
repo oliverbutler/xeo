@@ -1,16 +1,17 @@
-import { BeakerIcon, SearchIcon } from '@heroicons/react/outline';
+import { BeakerIcon, RefreshIcon, SearchIcon } from '@heroicons/react/outline';
 import { Button, ButtonVariation, Clickable } from '@xeo/ui';
 import { fetcher } from 'components/DatabaseSelection/DatabaseSelection';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import Link from 'next/link';
 import { GetSprintHistoryRequest } from 'pages/api/sprint/[sprintId]/history';
-import { useEffect, useState } from 'react';
-import useSWR from 'swr';
+import { useCallback, useEffect, useState } from 'react';
+import useSWR, { useSWRConfig } from 'swr';
 import { SprintGraph, SprintGraphView } from './SprintGraph/SprintGraph';
 import { SprintStats } from './SprintStats/SprintStats';
 import axios from 'axios';
 import { PostUpdateSprintHistory } from 'pages/api/sprint/[sprintId]/update-history';
+import { ScopedMutator } from 'swr/dist/types';
 
 dayjs.extend(relativeTime);
 
@@ -18,7 +19,10 @@ interface Props {
   sprintId: string;
 }
 
-const updateSprintHistory = async (sprintId: string) => {
+const updateSprintHistory = async (
+  sprintId: string,
+  mutate: ScopedMutator<unknown>
+) => {
   const body: PostUpdateSprintHistory['request'] = { sprintId };
   const { data } = await axios.post<PostUpdateSprintHistory['response']>(
     `/api/sprint/${sprintId}/update-history`,
@@ -27,24 +31,34 @@ const updateSprintHistory = async (sprintId: string) => {
 
   if (data.updatedSprintPlotData) {
     console.info('[Notion API] Updated sprint plot data');
+    mutate(`/api/sprint/${sprintId}/history`); // Tell SWR to update the data
   }
 };
 
 export const SprintInfo: React.FunctionComponent<Props> = ({ sprintId }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const { data, error } = useSWR<GetSprintHistoryRequest['responseBody']>(
     `/api/sprint/${sprintId}/history`,
     fetcher
   );
+  const { mutate } = useSWRConfig();
 
-  useEffect(() => {
+  const handleUpdateSprintHistory = useCallback(async () => {
     if (data?.sprint) {
       if (dayjs(data.sprint.endDate).isBefore(dayjs(), 'minute')) {
         console.log('Sprint ended, not updating');
       } else {
-        updateSprintHistory(sprintId);
+        setIsLoading(true);
+        await updateSprintHistory(sprintId, mutate);
+        setIsLoading(false);
       }
     }
-  }, [data?.sprint, sprintId]);
+  }, [data, mutate, sprintId]);
+
+  useEffect(() => {
+    handleUpdateSprintHistory();
+  }, [handleUpdateSprintHistory]);
 
   const [graphView, setGraphView] = useState<SprintGraphView>(
     SprintGraphView.SPRINT
@@ -77,7 +91,18 @@ export const SprintInfo: React.FunctionComponent<Props> = ({ sprintId }) => {
       />
       <div className="flex flex-row items-end justify-between">
         <h2>Burn Down Chart</h2>
+
         <div className="flex flex-row gap-2">
+          <Clickable
+            showActiveLabel={isLoading}
+            onClick={isLoading ? undefined : handleUpdateSprintHistory}
+          >
+            <RefreshIcon
+              height={20}
+              width={20}
+              className={isLoading ? 'animate-reverse-spin' : ''}
+            />
+          </Clickable>
           <Clickable
             showActiveLabel={showPointsNotStarted}
             onClick={() => setShowPointsNotStarted(!showPointsNotStarted)}

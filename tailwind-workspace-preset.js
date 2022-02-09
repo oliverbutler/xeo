@@ -18,6 +18,7 @@ module.exports = {
       },
       animation: {
         blob: 'blob 7s infinite',
+        'reverse-spin': 'reverse-spin 1s linear infinite',
       },
       keyframes: {
         blob: {
@@ -32,6 +33,11 @@ module.exports = {
           },
           '100%': {
             transform: 'translate(0px, 0px) scale(1)',
+          },
+        },
+        'reverse-spin': {
+          from: {
+            transform: 'rotate(360deg)',
           },
         },
       },

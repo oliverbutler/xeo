@@ -107,8 +107,6 @@ export default async function getSprints(
         return res.status(400).json({ message: errorPost.message });
       }
 
-      console.log('creating sprint');
-
       const createdSprint = await createSprint(
         backlogAndSprints.userId,
         backlogAndSprints.id,

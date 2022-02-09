@@ -52,8 +52,6 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
   const endDate = watch('endDate');
 
   const updateSprint = async (data: SprintEditForm) => {
-    console.log(data);
-
     const body: PutUpdateSprintRequest['request'] = {
       input: {
         name: data.sprintName,

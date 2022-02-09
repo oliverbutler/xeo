@@ -54,8 +54,6 @@ export const saveSprintHistoryForBacklogIfChanged = async (
     },
   });
 
-  console.log(lastSprintHistory);
-
   if (!lastSprintHistory) {
     await saveSprintHistoryForBacklog(productBacklog, sprint);
     return true;

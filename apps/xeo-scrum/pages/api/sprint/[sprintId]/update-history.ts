@@ -37,5 +37,9 @@ export default async function updateSprintHistory(
 
   const updatedHistory = await updateSprintHistoryIfChanged(sprintId);
 
-  return res.status(200).json({ updatedSprintPlotData: updatedHistory });
+  const returnData: PostUpdateSprintHistory['response'] = {
+    updatedSprintPlotData: updatedHistory,
+  };
+
+  return res.status(200).json(returnData);
 }

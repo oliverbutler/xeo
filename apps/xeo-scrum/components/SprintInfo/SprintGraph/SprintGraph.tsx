@@ -135,7 +135,7 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
           <Line
             stroke={theme.extend.colors.dark[400]}
             name={DataPlotLine.SCOPE}
-            type="step"
+            type="monotoneY"
             dataKey={DataPlotLine.SCOPE}
             strokeDasharray="3 3"
             dot={false}
@@ -144,7 +144,7 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
             stroke={theme.extend.colors.secondary[400]}
             name={DataPlotLine.POINTS_LEFT}
             dataKey={DataPlotLine.POINTS_LEFT}
-            type="monotone"
+            type="monotoneY"
             dot={false}
           />
           <Line
@@ -152,7 +152,7 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
             stroke={theme.extend.colors.primary[400]}
             name={DataPlotLine.POINTS_DONE_INC_VALIDATE}
             dataKey={DataPlotLine.POINTS_DONE_INC_VALIDATE}
-            type="monotone"
+            type="monotoneY"
             dot={false}
             strokeDasharray={'3 3'}
           />
@@ -161,7 +161,7 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
             stroke={theme.extend.colors.dark[400]}
             name={DataPlotLine.POINTS_NOT_STARTED}
             dataKey={DataPlotLine.POINTS_NOT_STARTED}
-            type="monotone"
+            type="monotoneY"
             strokeDasharray={'3 3'}
             dot={false}
           />

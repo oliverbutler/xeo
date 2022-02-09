@@ -48,7 +48,7 @@ export const Sprint: React.FunctionComponent = () => {
             key={sprint.id}
             passHref
           >
-            <div className="border-dark-400 bg-dark-800 flex cursor-pointer flex-row border-l-4 p-2">
+            <div className="border-dark-400 bg-dark-800 flex w-1/3 cursor-pointer flex-row border-l-4 p-2">
               <div className="ml-1 w-fit">
                 <h3 className="mt-4">{sprint.name}</h3>
                 <p>
