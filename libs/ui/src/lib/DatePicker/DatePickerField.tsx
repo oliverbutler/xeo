@@ -17,14 +17,14 @@ interface ReusableInputFieldProps<T extends FieldValues> {
   label?: string;
 }
 
-export type ForeignExchangeSupplierInputField = <T extends FieldValues>({
+type ReusableInputField = <T extends FieldValues>({
   control,
   fieldName,
   label,
   useControllerOptions,
 }: ReusableInputFieldProps<T>) => React.ReactElement;
 
-export const DatePickerField: ForeignExchangeSupplierInputField = ({
+export const DatePickerField: ReusableInputField = ({
   control,
   fieldName,
   label,
@@ -32,7 +32,7 @@ export const DatePickerField: ForeignExchangeSupplierInputField = ({
 }) => {
   return (
     <div className="text-dark-700 dark:text-white ">
-      <label className="block text-sm font-bold mb-2">{label}</label>
+      <label className="mb-2 block text-sm font-bold">{label}</label>
       <Controller
         control={control}
         name={fieldName}

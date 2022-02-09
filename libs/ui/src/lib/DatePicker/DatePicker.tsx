@@ -13,6 +13,8 @@ export const DatePicker: React.FunctionComponent<DatePickerProps> = (props) => {
   const [focused, setFocused] = useState<boolean>(false);
 
   return (
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     <SingleDatePicker
       focused={focused}
       onFocusChange={({ focused }) => setFocused(focused)}

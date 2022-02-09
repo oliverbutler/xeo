@@ -18,7 +18,7 @@ export const SprintEditDeveloperHeader = <T extends FieldValues>({
   devNameFieldNameFactory,
 }: SprintEditDeveloperHeaderProps<T>) => {
   return (
-    <div className="flex w-48 flex-row" key={id}>
+    <div className="flex w-32 flex-row" key={id}>
       <Input
         label=""
         placeholder="Developer"

@@ -45,6 +45,7 @@ export const SprintCreate: React.FunctionComponent = () => {
 
   const startDate = watch('startDate');
   const endDate = watch('endDate');
+  const teamSpeed = watch('teamSpeed');
 
   const createSprint = async (data: SprintCreateForm) => {
     const body: PostCreateSprintRequest['request'] = {
@@ -58,7 +59,9 @@ export const SprintCreate: React.FunctionComponent = () => {
         developers: data.devs.map((dev) => ({
           name: dev.name,
           capacity: dev.capacity.map((capacity) =>
-            capacity ? capacity : DEFAULT_CAPACITY
+            capacity === null || capacity === undefined
+              ? DEFAULT_CAPACITY
+              : capacity
           ),
         })),
       },
@@ -117,6 +120,7 @@ export const SprintCreate: React.FunctionComponent = () => {
       <SprintCapacityTable
         startDate={new Date(startDate)}
         endDate={new Date(endDate)}
+        teamSpeed={teamSpeed}
         form={form}
         defaultCapacity={DEFAULT_CAPACITY}
         devFieldName="devs"

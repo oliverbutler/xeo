@@ -21,7 +21,8 @@ export const CapacitySlider = <T extends FieldValues>({
     onChange(Number(e.target.value));
   };
 
-  const valueToShow = value ? String(value) : defaultValue;
+  const valueToShow =
+    value === null || value === undefined ? defaultValue : String(value);
 
   return (
     <div className="flex flex-row">
@@ -31,10 +32,8 @@ export const CapacitySlider = <T extends FieldValues>({
         max={1}
         step={0.1}
         label=""
-        defaultValue={valueToShow}
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        onMouseUp={handleOnChange}
+        value={valueToShow}
+        onChange={handleOnChange}
       />
       <Input
         className="w-16"

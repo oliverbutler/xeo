@@ -1,21 +1,23 @@
 import {
   NotionStatusLink,
+  Sprint,
   SprintHistory,
   SprintStatusHistory,
 } from '@prisma/client';
 import dayjs from 'dayjs';
+import { isDeveloperWithCapacityArray } from './utils';
 
 export enum DataPlotLine {
-  SCOPE = 'Scope',
+  CAPACITY = 'Capacity',
   POINTS_LEFT = 'Done',
-  POINTS_NOT_STARTED = 'In Progress',
   POINTS_DONE_INC_VALIDATE = 'To Validate',
+  EXPECTED_POINTS = 'Expected',
 }
 
 export type DataPlotType = {
   time: number;
 } & {
-  [key in DataPlotLine]: number;
+  [key in DataPlotLine]?: number;
 };
 
 export type SprintHistoryWithStatusHistory = SprintHistory & {
@@ -32,80 +34,169 @@ export const getDaysArray = function (start: Date, end: Date): Date[] {
   return a;
 };
 
+export const isBusinessDay = (date: Date): boolean => {
+  const day = date.getDay();
+  return day !== 0 && day !== 6;
+};
+
+export const getBusinessDaysArray = (start: Date, end: Date): Date[] => {
+  const days = getDaysArray(start, end);
+  return days.filter(isBusinessDay);
+};
+
+/**
+ * From a sprint, calculate the expected team capacity per day of the sprint (ex weekends)
+ */
+export const getSprintCapacityPerDay = (
+  sprint: Pick<
+    Sprint,
+    'startDate' | 'endDate' | 'teamSpeed' | 'sprintDevelopersAndCapacity'
+  >
+): { day: Date; capacity: number }[] => {
+  const { startDate, endDate, teamSpeed, sprintDevelopersAndCapacity } = sprint;
+
+  if (!isDeveloperWithCapacityArray(sprintDevelopersAndCapacity)) {
+    throw new Error(
+      'getSprintCapacityPerDay > Sprint developers and capacity must be an array of objects'
+    );
+  }
+
+  const sprintDays = getBusinessDaysArray(startDate, endDate);
+
+  const capacityPerDay: { day: Date; capacity: number }[] = sprintDays.map(
+    (day, dayIndex) => {
+      const devDaysThatDay: number = sprintDevelopersAndCapacity.reduce(
+        (acc, dev) => acc + dev.capacity[dayIndex],
+        0
+      );
+
+      return {
+        day,
+        capacity: Math.round(devDaysThatDay * teamSpeed * 10) / 10,
+      };
+    }
+  );
+
+  return capacityPerDay;
+};
+
+const getStatusFromStatusLinkId = (
+  statusLinkId: string | null,
+  sprintStatusHistory: NotionStatusLink[]
+): NotionStatusLink | null => {
+  const statusLink = sprintStatusHistory.find(
+    (statusLink) => statusLink.id === statusLinkId
+  );
+  return statusLink ?? null;
+};
+
+export const roundToOneDecimal = (number: number): number => {
+  return Math.round(number * 10) / 10;
+};
+
 export const getDataForSprintChart = (
+  sprint: Sprint,
   sprintHistory: SprintHistoryWithStatusHistory[],
   notionStatusLinks: NotionStatusLink[]
 ) => {
-  const plotData: DataPlotType[] = sprintHistory
-    .map((historyEvent) => {
-      const scope = historyEvent.sprintStatusHistory.reduce((acc, history) => {
-        acc += history.pointsInStatus;
-        return acc;
-      }, 0);
+  const capacityPerDay = getSprintCapacityPerDay(sprint);
 
-      // Count points which are in BacklogStatus.DONE
-      const pointsDone = historyEvent.sprintStatusHistory.reduce(
-        (acc, history) => {
-          const notionStatusLink = notionStatusLinks.find(
-            (status) => status.id === history.notionStatusLinkId
-          );
+  const sprintCapacity = capacityPerDay.reduce(
+    (acc, { capacity }) => acc + capacity,
+    0
+  );
 
-          if (notionStatusLink?.status === 'DONE') {
-            acc += history.pointsInStatus;
-          }
+  const cumulativeCapacityPerDay = capacityPerDay.reduce(
+    (acc, { day, capacity }, index) => {
+      const newElement = {
+        day,
+        capacity: (index == 0 ? 0 : acc[index - 1].capacity) + capacity,
+      };
+      return [...acc, newElement];
+    },
+    [] as { day: Date; capacity: number }[]
+  );
 
-          return acc;
-        },
-        0
+  const plotData: DataPlotType[] = cumulativeCapacityPerDay.map(
+    ({ day, capacity: dailyCapacity }) => {
+      const sprintHistoriesOnDay = sprintHistory.filter(
+        (data) =>
+          dayjs(data.timestamp).unix() >= dayjs(day).startOf('day').unix() &&
+          dayjs(data.timestamp).unix() < dayjs(day).endOf('day').unix()
       );
 
-      const pointsDoneIncludingDoing = historyEvent.sprintStatusHistory.reduce(
-        (acc, history) => {
-          const notionStatusLink = notionStatusLinks.find(
-            (status) => status.id === history.notionStatusLinkId
-          );
+      if (sprintHistoriesOnDay.length === 0) {
+        return {
+          time: dayjs(day).unix(),
+          [DataPlotLine.EXPECTED_POINTS]: roundToOneDecimal(
+            sprintCapacity - dailyCapacity
+          ),
+        };
+      }
 
-          if (
-            notionStatusLink?.status === 'DONE' ||
-            notionStatusLink?.status === 'IN_PROGRESS'
-          ) {
-            acc += history.pointsInStatus;
-          }
+      const latestSprintHistoryOnDay =
+        sprintHistoriesOnDay[sprintHistoriesOnDay.length - 1];
 
-          return acc;
-        },
-        0
+      const { pointsInDone, pointsInToValidate } = getPointsInStatuses(
+        latestSprintHistoryOnDay.sprintStatusHistory,
+        notionStatusLinks
       );
-
-      const pointsDoneIncludingToValidate =
-        historyEvent.sprintStatusHistory.reduce((acc, history) => {
-          const notionStatusLink = notionStatusLinks.find(
-            (status) => status.id === history.notionStatusLinkId
-          );
-
-          if (
-            notionStatusLink?.status === 'DONE' ||
-            notionStatusLink?.notionStatusName === 'TO VALIDATE'
-          ) {
-            acc += history.pointsInStatus;
-          }
-
-          return acc;
-        }, 0);
-
-      const pointsLeft = scope - pointsDone;
-      const pointsLeftExDoing = scope - pointsDoneIncludingDoing;
-      const pointsLeftExToValidate = scope - pointsDoneIncludingToValidate;
 
       return {
-        time: dayjs(historyEvent.timestamp).unix(),
-        [DataPlotLine.SCOPE]: scope,
-        [DataPlotLine.POINTS_LEFT]: pointsLeft,
-        [DataPlotLine.POINTS_NOT_STARTED]: pointsLeftExDoing,
-        [DataPlotLine.POINTS_DONE_INC_VALIDATE]: pointsLeftExToValidate,
+        time: dayjs(day).endOf('day').unix(),
+        [DataPlotLine.EXPECTED_POINTS]: roundToOneDecimal(
+          sprintCapacity - dailyCapacity
+        ),
+        [DataPlotLine.POINTS_LEFT]: roundToOneDecimal(
+          sprintCapacity - pointsInDone
+        ),
+        [DataPlotLine.POINTS_DONE_INC_VALIDATE]: roundToOneDecimal(
+          sprintCapacity - pointsInToValidate
+        ),
       };
-    })
-    .sort((a, b) => a.time - b.time);
+    }
+  );
 
-  return plotData;
+  const startOfSprint: DataPlotType = {
+    time: dayjs(sprint.startDate).startOf('day').unix(),
+    [DataPlotLine.EXPECTED_POINTS]: roundToOneDecimal(sprintCapacity),
+    [DataPlotLine.POINTS_LEFT]: roundToOneDecimal(sprintCapacity),
+    [DataPlotLine.POINTS_DONE_INC_VALIDATE]: roundToOneDecimal(sprintCapacity),
+  };
+
+  return [startOfSprint, ...plotData];
+};
+
+const getPointsInStatuses = (
+  sprintStatusHistory: SprintStatusHistory[],
+  notionStatusLinks: NotionStatusLink[]
+): { pointsInDone: number; pointsInToValidate: number } => {
+  const pointsInDone = sprintStatusHistory.reduce((acc, statusHistory) => {
+    if (
+      getStatusFromStatusLinkId(
+        statusHistory.notionStatusLinkId,
+        notionStatusLinks
+      )?.status === 'DONE'
+    ) {
+      return acc + statusHistory.pointsInStatus;
+    }
+    return acc;
+  }, 0);
+
+  const pointsInToValidate = sprintStatusHistory.reduce(
+    (acc, statusHistory) => {
+      if (
+        getStatusFromStatusLinkId(
+          statusHistory.notionStatusLinkId,
+          notionStatusLinks
+        )?.notionStatusName === 'TO VALIDATE'
+      ) {
+        return acc + statusHistory.pointsInStatus;
+      }
+      return acc;
+    },
+    0
+  );
+
+  return { pointsInDone, pointsInToValidate };
 };

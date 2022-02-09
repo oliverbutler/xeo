@@ -10,9 +10,9 @@ export const SprintStat: React.FunctionComponent<Props> = ({
   value,
 }) => {
   return (
-    <div className="p-2 w-full md:w-1/2 lg:w-1/3 xl:w-1/4">
-      <div className="bg-dark-800 flex flex-row border-l-dark-600 border-l-4">
-        <div id="icon-container" className="flex items-center mx-4">
+    <div className="w-full p-2 md:w-1/2 lg:w-1/3 xl:w-1/4">
+      <div className="bg-dark-800 border-l-dark-600 flex flex-row border-l-4">
+        <div id="icon-container" className="mx-4 flex items-center">
           {icon}
         </div>
         <div id="text-container" className="flex flex-col justify-center">

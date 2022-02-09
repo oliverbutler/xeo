@@ -1,6 +1,5 @@
 import { Sprint } from '@prisma/client';
-import { Button, ButtonVariation, DateRangePickerField, Input } from '@xeo/ui';
-import Link from 'next/link';
+import { Button, DateRangePickerField, Input } from '@xeo/ui';
 import { useForm } from 'react-hook-form';
 import { v4 } from 'uuid';
 import React from 'react';
@@ -12,6 +11,7 @@ import {
   SprintCapacityDev,
   SprintCapacityTable,
 } from '../SprintCapacityTable/SprintCapacityTable';
+import { getBusinessDaysArray } from 'utils/sprint/chart';
 
 interface Props {
   sprint: Sprint;
@@ -27,7 +27,7 @@ interface SprintEditForm {
   devs: SprintCapacityDev[];
 }
 
-const DEFAULT_CAPACITY = 1;
+export const DEFAULT_SPRINT_CAPACITY = 1;
 
 export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
   const devs = isDeveloperWithCapacityArray(sprint.sprintDevelopersAndCapacity)
@@ -48,10 +48,12 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
 
   const { control, register, watch, handleSubmit } = form;
 
-  const startDate = watch('startDate');
-  const endDate = watch('endDate');
-
   const updateSprint = async (data: SprintEditForm) => {
+    const daysInSprint = getBusinessDaysArray(
+      new Date(data.startDate),
+      new Date(data.endDate)
+    );
+
     const body: PutUpdateSprintRequest['request'] = {
       input: {
         name: data.sprintName,
@@ -62,9 +64,13 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
         notionSprintValue: data.notionSprintValue,
         developers: data.devs.map((dev) => ({
           name: dev.name,
-          capacity: dev.capacity.map((capacity) =>
-            capacity ? capacity : DEFAULT_CAPACITY
-          ),
+          capacity: dev.capacity
+            .map((capacity) =>
+              capacity === null || capacity === undefined
+                ? DEFAULT_SPRINT_CAPACITY
+                : capacity
+            )
+            .slice(0, daysInSprint.length),
         })),
       },
     };
@@ -80,6 +86,10 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
 
     toast.success('Sprint updated');
   };
+
+  const startDate = watch('startDate');
+  const endDate = watch('endDate');
+  const teamSpeed = watch('teamSpeed');
 
   return (
     <form className="gap-4" onSubmit={handleSubmit(updateSprint)}>
@@ -121,8 +131,9 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
       <SprintCapacityTable
         startDate={new Date(startDate)}
         endDate={new Date(endDate)}
+        teamSpeed={teamSpeed}
         form={form}
-        defaultCapacity={DEFAULT_CAPACITY}
+        defaultCapacity={DEFAULT_SPRINT_CAPACITY}
         devFieldName="devs"
         devNameFieldNameFactory={(devIndex) => `devs.${devIndex}.name`}
         capacityFieldNameFactory={(devIndex, capacityIndex) =>

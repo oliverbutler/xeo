@@ -65,8 +65,8 @@ export default async function getSprint(
     case 'PUT':
       const { body, error } = parseAPIRequest(req, putSchema);
 
-      if (error) {
-        return res.status(400).json({ message: error.message });
+      if (error || !body) {
+        return res.status(400).json({ message: error?.message });
       }
 
       const updatedSprint = await updateSprint(
