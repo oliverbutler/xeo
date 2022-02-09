@@ -11,6 +11,7 @@ import {
   SprintCapacityDev,
   SprintCapacityTable,
 } from '../SprintCapacityTable/SprintCapacityTable';
+import { getBusinessDaysArray } from 'utils/sprint/chart';
 
 interface Props {
   sprint: Sprint;
@@ -48,6 +49,11 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
   const { control, register, watch, handleSubmit } = form;
 
   const updateSprint = async (data: SprintEditForm) => {
+    const daysInSprint = getBusinessDaysArray(
+      new Date(data.startDate),
+      new Date(data.endDate)
+    );
+
     const body: PutUpdateSprintRequest['request'] = {
       input: {
         name: data.sprintName,
@@ -58,11 +64,13 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
         notionSprintValue: data.notionSprintValue,
         developers: data.devs.map((dev) => ({
           name: dev.name,
-          capacity: dev.capacity.map((capacity) =>
-            capacity === null || capacity === undefined
-              ? DEFAULT_SPRINT_CAPACITY
-              : capacity
-          ),
+          capacity: dev.capacity
+            .map((capacity) =>
+              capacity === null || capacity === undefined
+                ? DEFAULT_SPRINT_CAPACITY
+                : capacity
+            )
+            .slice(0, daysInSprint.length),
         })),
       },
     };

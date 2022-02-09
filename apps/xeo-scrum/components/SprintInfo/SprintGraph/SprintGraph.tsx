@@ -34,19 +34,11 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
   showPointsNotStarted,
   smallGraph,
 }) => {
-  const plotDataWithNow = [
-    ...plotData,
-    {
-      ...plotData[plotData.length - 1],
-      time: dayjs().unix(),
-    },
-  ];
+  console.log(plotData);
 
   const filteredPlotData = view
-    ? plotDataWithNow.filter((data) =>
-        dayjs(data.time * 1000).isSame(dayjs(), 'day')
-      )
-    : plotDataWithNow;
+    ? plotData.filter((data) => dayjs(data.time * 1000).isSame(dayjs(), 'day'))
+    : plotData;
 
   const todayXAxisTicks = [];
 
@@ -77,7 +69,12 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
     if (active && payload && payload.length) {
       return (
         <div className="bg-dark-800 border-l-dark-600 ml-4 border-l-4 bg-opacity-60 p-2">
-          <p className="label">{dayjs(label * 1000).format('HH:mm')}</p>
+          <p className="label">
+            End of{' '}
+            {dayjs(label * 1000)
+              .startOf('day')
+              .format('dddd')}
+          </p>
           {payload.map((entry) => (
             <p
               key={entry.dataKey}
@@ -122,29 +119,20 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
                 ? dayjs(unixTime * 1000).format('HH:mm')
                 : dayjs(unixTime * 1000).format('ddd DD/MM');
             }}
-            domain={[xAxisTicks[0], xAxisTicks[xAxisTicks.length - 1]]}
-            type="number"
-            ticks={xAxisTicks}
+            type="category"
           />
 
-          <YAxis type="number" dataKey={DataPlotLine.SCOPE} />
+          <YAxis type="number" dataKey={DataPlotLine.EXPECTED_POINTS} />
           {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
           {/* @ts-ignore */}
           <Tooltip content={CustomTooltip} />
           {!smallGraph && <Legend />}
-          <Line
-            stroke={theme.extend.colors.dark[400]}
-            name={DataPlotLine.SCOPE}
-            type="monotoneY"
-            dataKey={DataPlotLine.SCOPE}
-            strokeDasharray="3 3"
-            dot={false}
-          />
+
           <Line
             stroke={theme.extend.colors.secondary[400]}
             name={DataPlotLine.POINTS_LEFT}
             dataKey={DataPlotLine.POINTS_LEFT}
-            type="monotoneY"
+            type="monotone"
             dot={false}
           />
           <Line
@@ -152,16 +140,15 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
             stroke={theme.extend.colors.primary[400]}
             name={DataPlotLine.POINTS_DONE_INC_VALIDATE}
             dataKey={DataPlotLine.POINTS_DONE_INC_VALIDATE}
-            type="monotoneY"
+            type="monotone"
             dot={false}
             strokeDasharray={'3 3'}
           />
           <Line
-            hide={!showPointsNotStarted}
             stroke={theme.extend.colors.dark[400]}
-            name={DataPlotLine.POINTS_NOT_STARTED}
-            dataKey={DataPlotLine.POINTS_NOT_STARTED}
-            type="monotoneY"
+            name={DataPlotLine.EXPECTED_POINTS}
+            dataKey={DataPlotLine.EXPECTED_POINTS}
+            type="monotone"
             strokeDasharray={'3 3'}
             dot={false}
           />
