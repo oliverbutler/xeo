@@ -9,7 +9,7 @@ import { useState } from 'react';
 import moment from 'moment';
 
 /* eslint-disable-next-line */
-export type DatePickerProps = Omit<
+export type DateRangePickerProps = Omit<
   DateRangePickerShape,
   'focusedInput' | 'onFocusChange'
 >;
@@ -20,7 +20,7 @@ moment.updateLocale('en', {
   },
 });
 
-export const DateRangePicker: React.FunctionComponent<DatePickerProps> = (
+export const DateRangePicker: React.FunctionComponent<DateRangePickerProps> = (
   props
 ) => {
   const [focused, setFocused] = useState<FocusedInputShape | null>(null);

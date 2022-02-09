@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { Client } from '@notionhq/client';
 import { GetDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
+import { isNotNullOrUndefined } from '@xeo/utils';
 
 export type GetNotionDatabasesResponse = {
   databases: {
@@ -39,7 +40,7 @@ export default async function getNotionDatabases(
           return null;
         }
       })
-      .filter(Boolean);
+      .filter(isNotNullOrUndefined);
 
     const response: GetNotionDatabasesResponse = {
       databases,

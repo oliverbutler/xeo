@@ -19,7 +19,7 @@ interface ReusableInputFieldProps<T extends FieldValues> {
   label?: string;
 }
 
-export type ForeignExchangeSupplierInputField = <T extends FieldValues>({
+type ReusableInputField = <T extends FieldValues>({
   control,
   startDateFieldName,
   endDateFieldName,
@@ -27,7 +27,7 @@ export type ForeignExchangeSupplierInputField = <T extends FieldValues>({
   useControllerOptions,
 }: ReusableInputFieldProps<T>) => React.ReactElement;
 
-export const DateRangePickerField: ForeignExchangeSupplierInputField = ({
+export const DateRangePickerField: ReusableInputField = ({
   control,
   startDateFieldName,
   endDateFieldName,

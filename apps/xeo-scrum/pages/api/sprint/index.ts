@@ -104,8 +104,8 @@ export default async function getSprints(
         postSchema
       );
 
-      if (errorPost) {
-        return res.status(400).json({ message: errorPost.message });
+      if (errorPost || !bodyPost) {
+        return res.status(400).json({ message: errorPost?.message });
       }
 
       const createdSprint = await createSprint(
