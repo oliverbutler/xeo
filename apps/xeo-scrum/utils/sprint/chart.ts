@@ -1,5 +1,4 @@
 import {
-  BacklogStatus,
   NotionStatusLink,
   Sprint,
   SprintHistory,
@@ -91,7 +90,7 @@ const getStatusFromStatusLinkId = (
   return statusLink ?? null;
 };
 
-const roundToOneDecimal = (number: number): number => {
+export const roundToOneDecimal = (number: number): number => {
   return Math.round(number * 10) / 10;
 };
 
@@ -142,8 +141,6 @@ export const getDataForSprintChart = (
         latestSprintHistoryOnDay.sprintStatusHistory,
         notionStatusLinks
       );
-
-      console.log(sprintCapacity - dailyCapacity);
 
       return {
         time: dayjs(day).endOf('day').unix(),

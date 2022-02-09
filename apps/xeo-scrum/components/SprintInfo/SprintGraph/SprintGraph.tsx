@@ -10,53 +10,20 @@ import {
 } from 'recharts';
 import dayjs from 'dayjs';
 import { theme } from '../../../../../tailwind-workspace-preset';
-import { DataPlotLine, DataPlotType, getDaysArray } from 'utils/sprint/chart';
-import { Sprint } from '@prisma/client';
+import { DataPlotLine, DataPlotType } from 'utils/sprint/chart';
 import classNames from 'classnames';
 
 interface Props {
-  sprint: Sprint;
   plotData: DataPlotType[];
-  view: SprintGraphView;
   showPointsNotStarted?: boolean;
   smallGraph?: boolean;
 }
 
-export enum SprintGraphView {
-  SPRINT,
-  TODAY,
-}
-
 export const SprintGraph: React.FunctionComponent<Props> = ({
-  sprint,
   plotData,
-  view,
   showPointsNotStarted,
   smallGraph,
 }) => {
-  console.log(plotData);
-
-  const filteredPlotData = view
-    ? plotData.filter((data) => dayjs(data.time * 1000).isSame(dayjs(), 'day'))
-    : plotData;
-
-  const todayXAxisTicks = [];
-
-  for (let h = 3; h <= 21; h += 3) {
-    todayXAxisTicks.push(dayjs().startOf('day').add(h, 'hour').unix());
-  }
-
-  const xAxisTicks = smallGraph
-    ? [dayjs(sprint.startDate).unix(), dayjs(sprint.endDate).unix()]
-    : view
-    ? todayXAxisTicks
-    : getDaysArray(
-        sprint.startDate,
-        dayjs(sprint.endDate).add(1, 'day').toDate()
-      ).map((date) => {
-        return dayjs(date).startOf('day').unix();
-      });
-
   const CustomTooltip = ({
     active,
     payload,
@@ -107,18 +74,16 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
         <LineChart
           width={WIDTH}
           height={HEIGHT}
-          data={filteredPlotData}
+          data={plotData}
           style={{ position: 'absolute' }}
         >
           <CartesianGrid stroke="#303030" strokeDasharray="5 5" />
           <XAxis
             dataKey="time"
             name="Time"
-            tickFormatter={(unixTime) => {
-              return view
-                ? dayjs(unixTime * 1000).format('HH:mm')
-                : dayjs(unixTime * 1000).format('ddd DD/MM');
-            }}
+            tickFormatter={(unixTime) =>
+              dayjs(unixTime * 1000).format('ddd DD/MM')
+            }
             type="category"
           />
 

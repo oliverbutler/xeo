@@ -111,10 +111,12 @@ export const SprintCapacityTable = <T extends FieldValues>({
           <UserAddIcon height={25} width={25} />
         </Clickable>
       </div>
-      <Table<SprintCapacityTableRow>
-        columns={columns}
-        data={sprintCapacityTableRows}
-      />
+      <div className="overflow-x-auto">
+        <Table<SprintCapacityTableRow>
+          columns={columns}
+          data={sprintCapacityTableRows}
+        />
+      </div>
       <SprintCapacityCalculation
         startDate={startDate}
         endDate={endDate}

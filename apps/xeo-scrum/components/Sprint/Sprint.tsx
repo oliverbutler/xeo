@@ -1,9 +1,6 @@
 import { Sprint as PrismaSprint } from '@prisma/client';
 import { fetcher } from 'components/DatabaseSelection/DatabaseSelection';
-import {
-  SprintGraph,
-  SprintGraphView,
-} from 'components/SprintInfo/SprintGraph/SprintGraph';
+import { SprintGraph } from 'components/SprintInfo/SprintGraph/SprintGraph';
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import { GetSprintsRequest } from 'pages/api/sprint';
@@ -58,12 +55,7 @@ export const Sprint: React.FunctionComponent = () => {
                 <SprintStatusBadge sprint={sprint} />
               </div>
               <div className="h-52 w-72">
-                <SprintGraph
-                  plotData={plotData}
-                  sprint={sprint}
-                  view={SprintGraphView.SPRINT}
-                  smallGraph
-                />
+                <SprintGraph plotData={plotData} smallGraph />
               </div>
             </div>
           </Link>

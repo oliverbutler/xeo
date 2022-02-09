@@ -1,4 +1,4 @@
-import { BeakerIcon, RefreshIcon, SearchIcon } from '@heroicons/react/outline';
+import { BeakerIcon, RefreshIcon } from '@heroicons/react/outline';
 import { Button, ButtonVariation, Clickable } from '@xeo/ui';
 import { fetcher } from 'components/DatabaseSelection/DatabaseSelection';
 import dayjs from 'dayjs';
@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { GetSprintHistoryRequest } from 'pages/api/sprint/[sprintId]/history';
 import { useCallback, useEffect, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
-import { SprintGraph, SprintGraphView } from './SprintGraph/SprintGraph';
+import { SprintGraph } from './SprintGraph/SprintGraph';
 import { SprintStats } from './SprintStats/SprintStats';
 import axios from 'axios';
 import { PostUpdateSprintHistory } from 'pages/api/sprint/[sprintId]/update-history';
@@ -46,9 +46,7 @@ export const SprintInfo: React.FunctionComponent<Props> = ({ sprintId }) => {
 
   const handleUpdateSprintHistory = useCallback(async () => {
     if (data?.sprint) {
-      if (dayjs(data.sprint.endDate).isBefore(dayjs(), 'minute')) {
-        console.log('Sprint ended, not updating');
-      } else {
+      if (!dayjs(data.sprint.endDate).isBefore(dayjs(), 'minute')) {
         setIsLoading(true);
         await updateSprintHistory(sprintId, mutate);
         setIsLoading(false);
@@ -60,9 +58,6 @@ export const SprintInfo: React.FunctionComponent<Props> = ({ sprintId }) => {
     handleUpdateSprintHistory();
   }, [handleUpdateSprintHistory]);
 
-  const [graphView, setGraphView] = useState<SprintGraphView>(
-    SprintGraphView.SPRINT
-  );
   const [showPointsNotStarted, setShowPointsNotStarted] = useState(true);
 
   if (!data || error) {
@@ -109,25 +104,11 @@ export const SprintInfo: React.FunctionComponent<Props> = ({ sprintId }) => {
           >
             <BeakerIcon height={20} width={20} />
           </Clickable>
-          <Clickable
-            showActiveLabel={graphView === SprintGraphView.TODAY}
-            onClick={() =>
-              setGraphView(
-                graphView === SprintGraphView.TODAY
-                  ? SprintGraphView.SPRINT
-                  : SprintGraphView.TODAY
-              )
-            }
-          >
-            <SearchIcon height={20} width={20} />
-          </Clickable>
         </div>
       </div>
 
       <SprintGraph
-        sprint={sprint}
         plotData={sprintHistoryPlotData}
-        view={graphView}
         showPointsNotStarted={showPointsNotStarted}
       />
       {/* <h2>Tickets</h2>
