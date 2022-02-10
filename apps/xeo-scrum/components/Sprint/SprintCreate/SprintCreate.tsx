@@ -11,7 +11,7 @@ import {
 import dayjs from 'dayjs';
 import { PostCreateSprintRequest } from 'pages/api/sprint';
 import { useRouter } from 'next/router';
-import { BacklogWithNotionStatusLinks } from 'pages/api/backlog';
+import { BacklogWithNotionStatusLinksAndOwner } from 'pages/api/backlog';
 
 interface SprintCreateForm {
   backlog: BacklogSelectType;
@@ -27,7 +27,7 @@ interface SprintCreateForm {
 const DEFAULT_CAPACITY = 1;
 
 interface SprintCreateProps {
-  backlogs: BacklogWithNotionStatusLinks[];
+  backlogs: BacklogWithNotionStatusLinksAndOwner[];
 }
 
 interface BacklogSelectType {

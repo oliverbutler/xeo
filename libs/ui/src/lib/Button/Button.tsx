@@ -24,6 +24,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       className,
       variation = ButtonVariation.Primary,
       href,
+      disabled,
       ...buttonProps
     },
     ref
@@ -39,20 +40,25 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             ' focus:shadow-outline flex items-center rounded py-2 px-4 font-bold text-white ring-opacity-50 focus:outline-none focus:ring-4',
             { 'cursor-wait opacity-70': loading },
             {
-              'bg-primary-500 hover:bg-primary-700':
-                variation === ButtonVariation.Primary,
+              'bg-primary-500 hover:bg-primary-700 ring-primary-500':
+                variation === ButtonVariation.Primary && !disabled,
             },
             {
-              'bg-secondary-500 hover:bg-secondary-700':
-                variation === ButtonVariation.Secondary,
+              'bg-secondary-500 hover:bg-secondary-700 ring-secondary-500':
+                variation === ButtonVariation.Secondary && !disabled,
             },
             {
-              'bg-dark-500 hover:bg-dark-700':
-                variation === ButtonVariation.Dark,
+              'bg-dark-500 ring-dark-500':
+                variation === ButtonVariation.Dark || disabled,
+            },
+            {
+              'hover:bg-dark-700':
+                variation === ButtonVariation.Dark && !disabled,
             },
             className
           )}
           type="button"
+          disabled={disabled}
           {...buttonProps}
         >
           {loading && <Loader />}
