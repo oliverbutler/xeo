@@ -8,6 +8,7 @@ import {
 } from '@prisma/client';
 import { BacklogWithStatusLinksAndSprints } from 'pages/api/backlog';
 import { logger } from 'utils/api';
+import { performance } from 'perf_hooks';
 
 export type Ticket = {
   notionId: string;
