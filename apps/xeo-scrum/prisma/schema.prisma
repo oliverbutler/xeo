@@ -44,18 +44,18 @@ model Session {
 }
 
 model User {
-  id               String            @id @default(cuid())
-  name             String?
-  email            String?           @unique
-  emailVerified    DateTime?
-  image            String?
-  accounts         Account[]
-  sessions         Session[]
-  backlogs         Backlog[]
-  backlogsMemberOf MemberOfBacklog[]
-  sprints          Sprint[]
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @default(now()) @updatedAt
+  id                       String             @id @default(cuid())
+  name                     String?
+  email                    String?            @unique
+  emailVerified            DateTime?
+  image                    String?
+  accounts                 Account[]
+  sessions                 Session[]
+  backlogsMemberOf         MemberOfBacklog[]
+  notionConnectionsCreated NotionConnection[]
+  sprints                  Sprint[]
+  createdAt                DateTime           @default(now())
+  updatedAt                DateTime           @default(now()) @updatedAt
 }
 
 model VerificationToken {
@@ -82,21 +82,22 @@ enum NotionColumnType {
 }
 
 model Backlog {
-  id                String             @id @default(cuid())
-  user              User               @relation(fields: [userId], references: [id])
-  userId            String
-  members           MemberOfBacklog[]
+  id                 String             @id @default(cuid())
+  members            MemberOfBacklog[]
+  // Notion Connection
+  notionConnection   NotionConnection?  @relation(fields: [notionConnectionId], references: [id])
+  notionConnectionId String?
   // Notion Related Fields
-  databaseId        String
-  databaseName      String
-  pointsColumnName  String
-  statusColumnName  String
-  sprintColumnName  String
-  notionColumnType  NotionColumnType   @default(SELECT)
-  notionStatusLinks NotionStatusLink[]
-  sprints           Sprint[]
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @default(now()) @updatedAt
+  databaseId         String
+  databaseName       String
+  pointsColumnName   String
+  statusColumnName   String
+  sprintColumnName   String
+  notionColumnType   NotionColumnType   @default(SELECT)
+  notionStatusLinks  NotionStatusLink[]
+  sprints            Sprint[]
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @default(now()) @updatedAt
 }
 
 model MemberOfBacklog {
@@ -159,4 +160,15 @@ model SprintStatusHistory {
   pointsInStatus     Float
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @default(now()) @updatedAt
+}
+
+model NotionConnection {
+  id              String    @id @default(cuid())
+  createdByUserId String
+  createdByUser   User      @relation(fields: [createdByUserId], references: [id])
+  connectionName  String
+  secretKey       String
+  backlogs        Backlog[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @default(now()) @updatedAt
 }

@@ -73,8 +73,8 @@ export const SprintInfo: React.FunctionComponent<Props> = ({ sprintId }) => {
     );
   }
 
-  if (error) {
-    return <div>Error: {error.message}</div>;
+  if (error || !data.sprint) {
+    return <div>Error fetching Sprint</div>;
   }
 
   const { sprint, sprintHistoryPlotData } = data;

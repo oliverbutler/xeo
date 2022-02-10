@@ -2,7 +2,6 @@ import { Sprint } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { DataPlotType, getDataForSprintChart } from 'utils/sprint/chart';
-import { getSprintWithHistory } from 'utils/sprint/sprint-history';
 
 export type GetSprintHistoryRequest = {
   method: 'GET';
@@ -22,9 +21,38 @@ export default async function getSprintHistoryRequest(
     return res.status(401).json({ message: 'Not authenticated' });
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const userId = session?.id as string;
+
   const sprintId = req.query.sprintId as string;
 
-  const sprint = await getSprintWithHistory(sprintId);
+  const sprint = await prisma.sprint.findFirst({
+    where: {
+      id: sprintId,
+      backlog: {
+        members: {
+          some: {
+            user: {
+              id: userId,
+            },
+          },
+        },
+      },
+    },
+    include: {
+      backlog: {
+        include: {
+          notionStatusLinks: true,
+        },
+      },
+      sprintHistory: {
+        include: {
+          sprintStatusHistory: true,
+        },
+      },
+    },
+  });
 
   if (!sprint) {
     return res.status(404).json({ message: 'Sprint not found' });

@@ -22,8 +22,7 @@ export const DatabaseSelection: React.FunctionComponent = () => {
   }
 
   return (
-    <div className="flex justify-center items-center mt-10 prose dark:prose-invert max-w-none flex-col">
-      <h1>Select Product Backlog</h1>
+    <div className="prose dark:prose-invert mt-10 flex max-w-none flex-col items-center justify-center">
       <form className="flex flex-col" onSubmit={onSubmit}>
         <SelectDatabase form={form} databaseQueryData={data} error={error} />
         <SelectColumns form={form} />

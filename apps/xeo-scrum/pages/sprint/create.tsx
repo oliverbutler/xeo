@@ -29,7 +29,7 @@ function Create() {
       <div className="flex flex-row justify-between">
         <h1>Create Sprint</h1>
         <div>
-          <Button href="/sprint" variation={ButtonVariation.Secondary}>
+          <Button href="/" variation={ButtonVariation.Secondary}>
             Back
           </Button>
         </div>

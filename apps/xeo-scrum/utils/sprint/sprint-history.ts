@@ -164,35 +164,3 @@ export const updateSprintHistoryIfChanged = async (
 
   return updatedHistory;
 };
-
-/**
- * Fetch a Xeo Sprint and Sprint History from the DB
- *
- * @param sprintId
- * @returns
- */
-export const getSprintWithHistory = async (sprintId: string) => {
-  const sprint = await prisma.sprint.findUnique({
-    where: {
-      id: sprintId,
-    },
-    include: {
-      backlog: {
-        include: {
-          notionStatusLinks: true,
-        },
-      },
-      sprintHistory: {
-        include: {
-          sprintStatusHistory: true,
-        },
-      },
-    },
-  });
-
-  if (!sprint) {
-    return undefined;
-  }
-
-  return sprint;
-};

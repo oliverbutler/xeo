@@ -32,6 +32,11 @@ export const RouteGuard: React.FunctionComponent = ({ children }) => {
     // redirect to login page if accessing a private page and not logged in
     const publicPaths = ['/login'];
     const path = url.split('?')[0];
+
+    if (session.status === 'loading') {
+      return;
+    }
+
     if (session.status !== 'authenticated' && !publicPaths.includes(path)) {
       setAuthorized(false);
       router.push({

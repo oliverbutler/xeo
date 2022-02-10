@@ -74,16 +74,11 @@ export default async function getSprints(
     // All Backlogs a user has access to
     const backlogs = await prisma.backlog.findMany({
       where: {
-        OR: [
-          { userId },
-          {
-            members: {
-              some: {
-                userId: userId,
-              },
-            },
+        members: {
+          some: {
+            userId: userId,
           },
-        ],
+        },
       },
       include: {
         sprints: {
