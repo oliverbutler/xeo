@@ -18,8 +18,8 @@ import { useWindowDimensions } from '@xeo/ui';
 
 const sidebar = [
   {
-    title: 'Add Notion Board',
-    url: '/new-backlog',
+    title: 'Connections',
+    url: '/connections',
     icon: <ViewGridAddIcon width={20} height={20} />,
   },
   {
