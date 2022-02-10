@@ -36,9 +36,9 @@ export const Resize: React.FunctionComponent<Props> = ({
   );
 
   return (
-    <div className="flex flex-row relative select-none">
+    <div className="relative flex h-full select-none flex-row">
       <motion.div
-        className={classNames('h-screen', className)}
+        className={classNames(className)}
         style={{ width }}
         transition={{ duration: 1 }}
         suppressHydrationWarning={true}

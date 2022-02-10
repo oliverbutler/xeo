@@ -15,3 +15,4 @@ export * from './lib/Clickable/Clickable';
 export * from './lib/Dropdown/Dropdown';
 export * from './lib/Popover/Popover';
 export * from './lib/Range/Range';
+export * from './hooks/useWindowDimensions';

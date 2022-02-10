@@ -72,15 +72,15 @@ export const Sprint: React.FunctionComponent = () => {
             key={sprint.id}
             passHref
           >
-            <div className="border-dark-400 bg-dark-800 flex w-1/3 cursor-pointer flex-row border-l-4 p-2">
-              <div className="ml-1 w-fit">
+            <div className="border-dark-400 bg-dark-800 flex cursor-pointer flex-row border-l-4 p-2 lg:w-1/2 xl:w-1/3 2xl:w-1/4">
+              <div className="ml-1 w-fit flex-grow">
                 <h3 className="mt-4">{sprint.name}</h3>
                 <p>
                   {dayjs(sprint.startDate).format('DD/MM')} -{' '}
                   {dayjs(sprint.endDate).format('DD/MM')}
                 </p>
               </div>
-              <div className="h-52 w-72">
+              <div className="-ml-6 h-52 w-72">
                 <SprintGraph plotData={plotData} smallGraph />
               </div>
             </div>
