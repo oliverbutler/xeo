@@ -1,4 +1,4 @@
-import { Button, ButtonVariation } from '@xeo/ui';
+import { Button, ButtonVariation, CentredLoader } from '@xeo/ui';
 import { fetcher } from 'components/DatabaseSelection/DatabaseSelection';
 import { SprintEdit } from 'components/Sprint/SprintEdit/SprintEdit';
 import { useRouter } from 'next/router';
@@ -19,7 +19,11 @@ export const SprintEditPage: React.FunctionComponent = () => {
   }
 
   if (!data && !error) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <CentredLoader />
+      </div>
+    );
   }
 
   if (error || !data) {

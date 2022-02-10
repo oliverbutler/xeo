@@ -1,11 +1,10 @@
 import {
-  CollectionIcon,
   DatabaseIcon,
   LogoutIcon,
   UserIcon,
   ViewGridAddIcon,
 } from '@heroicons/react/outline';
-import { CentredLoader, Loader, Resize, useLocalStorage } from '@xeo/ui';
+import { CentredLoader, Resize, useLocalStorage } from '@xeo/ui';
 import classNames from 'classnames';
 import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
@@ -15,18 +14,13 @@ import { SidebarItem } from './SidebarItem/SidebarItem';
 
 const sidebar = [
   {
-    title: 'All Backlogs',
-    url: '/',
-    icon: <CollectionIcon height={20} width={20} />,
-  },
-  {
     title: 'Add Notion Board',
     url: '/new-backlog',
     icon: <ViewGridAddIcon width={20} height={20} />,
   },
   {
     title: 'All Sprints',
-    url: '/sprint',
+    url: '/',
     icon: <DatabaseIcon height={20} width={20} />,
   },
 ];

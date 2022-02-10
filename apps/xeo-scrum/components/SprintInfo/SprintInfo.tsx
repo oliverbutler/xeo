@@ -1,5 +1,5 @@
 import { BeakerIcon, RefreshIcon } from '@heroicons/react/outline';
-import { Button, ButtonVariation, Clickable } from '@xeo/ui';
+import { Button, ButtonVariation, CentredLoader, Clickable } from '@xeo/ui';
 import { fetcher } from 'components/DatabaseSelection/DatabaseSelection';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -61,7 +61,11 @@ export const SprintInfo: React.FunctionComponent<Props> = ({ sprintId }) => {
   const [showPointsNotStarted, setShowPointsNotStarted] = useState(true);
 
   if (!data || error) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <CentredLoader />
+      </div>
+    );
   }
 
   if (error) {

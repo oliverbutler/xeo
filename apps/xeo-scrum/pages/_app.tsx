@@ -8,6 +8,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Sidebar } from 'components/Sidebar/Sidebar';
 import { useRouter } from 'next/router';
+import { RouteGuard } from 'components/RouteGuard/RouteGuard';
 
 function CustomApp({
   Component,
@@ -24,18 +25,20 @@ function CustomApp({
       <IntlWrapper>
         <ThemeProvider attribute="class">
           <SessionProvider session={session}>
-            {pathname === '/login' ? (
-              <main className="flex min-h-screen items-center justify-center h-full prose dark:prose-invert ">
-                <Component {...pageProps} />
-              </main>
-            ) : (
-              <main className="app min-h-screen z-10 relative flex flex-row prose dark:prose-invert max-w-none max-h-screen">
-                <Sidebar />
-                <div className="w-full overflow-y-scroll ">
+            <RouteGuard>
+              {pathname === '/login' ? (
+                <main className="prose dark:prose-invert flex h-full min-h-screen items-center justify-center ">
                   <Component {...pageProps} />
-                </div>
-              </main>
-            )}
+                </main>
+              ) : (
+                <main className="app prose dark:prose-invert relative z-10 flex max-h-screen min-h-screen max-w-none flex-row">
+                  <Sidebar />
+                  <div className="w-full overflow-y-scroll ">
+                    <Component {...pageProps} />
+                  </div>
+                </main>
+              )}
+            </RouteGuard>
           </SessionProvider>
           <ToastContainer autoClose={3000} />
         </ThemeProvider>

@@ -1,4 +1,5 @@
 import { Sprint as PrismaSprint } from '@prisma/client';
+import { CentredLoader } from '@xeo/ui';
 import { fetcher } from 'components/DatabaseSelection/DatabaseSelection';
 import { SprintGraph } from 'components/SprintInfo/SprintGraph/SprintGraph';
 import dayjs from 'dayjs';
@@ -29,16 +30,28 @@ export const SprintStatusBadge: React.FunctionComponent<
 };
 
 export const Sprint: React.FunctionComponent = () => {
-  const { data } = useSWR<GetSprintsRequest['responseBody']>(
+  const { data, error } = useSWR<GetSprintsRequest['responseBody']>(
     '/api/sprint',
     fetcher
   );
+
+  if (!data && !error) {
+    return (
+      <div>
+        <CentredLoader />
+      </div>
+    );
+  }
+
+  if (error || !data?.sprints) {
+    return <div>Error Loading Sprints</div>;
+  }
 
   return (
     <div className="py-5">
       <h2>Active Sprints</h2>
       <div className="flex flex-row flex-wrap gap-4">
-        {data?.sprints.map(({ sprint, plotData }) => (
+        {data?.sprints?.map(({ sprint, plotData }) => (
           <Link
             href="/sprint/[sprintId]"
             as={`/sprint/${sprint.id}`}
