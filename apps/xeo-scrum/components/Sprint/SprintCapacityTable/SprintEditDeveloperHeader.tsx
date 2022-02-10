@@ -21,7 +21,7 @@ export const SprintEditDeveloperHeader = <T extends FieldValues>({
     <div className="flex w-32 flex-row" key={id}>
       <Input
         label=""
-        placeholder="Developer"
+        placeholder={`Dev ${index + 1}`}
         {...register(devNameFieldNameFactory(index))}
       />
       <div className="mt-2 ml-2">

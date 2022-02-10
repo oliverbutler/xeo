@@ -99,6 +99,7 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
             dataKey={DataPlotLine.POINTS_LEFT}
             type="monotone"
             dot={false}
+            connectNulls
           />
           <Line
             hide={!showPointsNotStarted}
@@ -108,6 +109,7 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
             type="monotone"
             dot={false}
             strokeDasharray={'3 3'}
+            connectNulls
           />
           <Line
             stroke={theme.extend.colors.dark[400]}
@@ -116,6 +118,7 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
             type="monotone"
             strokeDasharray={'3 3'}
             dot={false}
+            connectNulls
           />
         </LineChart>
       </ResponsiveContainer>

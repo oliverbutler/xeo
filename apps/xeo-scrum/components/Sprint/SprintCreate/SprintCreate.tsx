@@ -1,4 +1,4 @@
-import { Button, DateRangePickerField, Input } from '@xeo/ui';
+import { Button, DateRangePickerField, Input, SelectField } from '@xeo/ui';
 import { useForm } from 'react-hook-form';
 import React from 'react';
 import axios from 'axios';
@@ -11,8 +11,10 @@ import {
 import dayjs from 'dayjs';
 import { PostCreateSprintRequest } from 'pages/api/sprint';
 import { useRouter } from 'next/router';
+import { BacklogWithNotionStatusLinks } from 'pages/api/backlog';
 
 interface SprintCreateForm {
+  backlog: BacklogSelectType;
   startDate: string;
   endDate: string;
   sprintName: string;
@@ -24,7 +26,18 @@ interface SprintCreateForm {
 
 const DEFAULT_CAPACITY = 1;
 
-export const SprintCreate: React.FunctionComponent = () => {
+interface SprintCreateProps {
+  backlogs: BacklogWithNotionStatusLinks[];
+}
+
+interface BacklogSelectType {
+  value: string;
+  label: string;
+}
+
+export const SprintCreate: React.FunctionComponent<SprintCreateProps> = ({
+  backlogs,
+}) => {
   const { push } = useRouter();
 
   const form = useForm<SprintCreateForm>({
@@ -42,6 +55,11 @@ export const SprintCreate: React.FunctionComponent = () => {
   });
 
   const { control, register, watch, handleSubmit } = form;
+
+  const backlogSelectOptions: BacklogSelectType[] = backlogs.map((backlog) => ({
+    value: backlog.id,
+    label: backlog.databaseName,
+  }));
 
   const startDate = watch('startDate');
   const endDate = watch('endDate');
@@ -65,6 +83,7 @@ export const SprintCreate: React.FunctionComponent = () => {
           ),
         })),
       },
+      backlogId: data.backlog.value,
     };
 
     const result = await axios.post<PutUpdateSprintRequest['response']>(
@@ -83,15 +102,23 @@ export const SprintCreate: React.FunctionComponent = () => {
   return (
     <form className="gap-4" onSubmit={handleSubmit(createSprint)}>
       <div className="flex flex-row gap-4">
+        <SelectField
+          className="w-1/3"
+          label="Select Backlog"
+          control={form.control}
+          name="backlog"
+          options={backlogSelectOptions}
+          rules={{ required: true }}
+        />
         <Input
           className="w-1/3"
           label="Sprint Name"
-          {...register('sprintName')}
+          {...register('sprintName', { required: true })}
         />
         <Input
           className="w-2/3"
           label="Sprint Goal"
-          {...register('sprintGoal')}
+          {...register('sprintGoal', { required: true })}
           placeholder="AaU I can..."
         />
       </div>
@@ -101,11 +128,13 @@ export const SprintCreate: React.FunctionComponent = () => {
           startDateFieldName="startDate"
           endDateFieldName="endDate"
           label="Sprint Dates"
+          useControllerOptions={{ rules: { required: true } }}
         />
         <Input
           className="w-1/3"
           label="Notion Sprint Value"
-          {...register('notionSprintValue')}
+          placeholder='Notion Select Value e.g. "07-02"'
+          {...register('notionSprintValue', { required: true })}
         />
 
         <Input
@@ -113,7 +142,7 @@ export const SprintCreate: React.FunctionComponent = () => {
           label="Team Speed"
           type="number"
           step={0.1}
-          {...register('teamSpeed')}
+          {...register('teamSpeed', { required: true })}
         />
       </div>
 

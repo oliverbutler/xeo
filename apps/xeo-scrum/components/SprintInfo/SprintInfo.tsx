@@ -12,6 +12,7 @@ import { SprintStats } from './SprintStats/SprintStats';
 import axios from 'axios';
 import { PostUpdateSprintHistory } from 'pages/api/sprint/[sprintId]/update-history';
 import { ScopedMutator } from 'swr/dist/types';
+import { toast } from 'react-toastify';
 
 dayjs.extend(relativeTime);
 
@@ -24,14 +25,18 @@ const updateSprintHistory = async (
   mutate: ScopedMutator<unknown>
 ) => {
   const body: PostUpdateSprintHistory['request'] = { sprintId };
-  const { data } = await axios.post<PostUpdateSprintHistory['response']>(
-    `/api/sprint/${sprintId}/update-history`,
-    body
-  );
 
-  if (data.updatedSprintPlotData) {
-    console.info('[Notion API] Updated sprint plot data');
-    mutate(`/api/sprint/${sprintId}/history`); // Tell SWR to update the data
+  try {
+    const { data } = await axios.post<PostUpdateSprintHistory['response']>(
+      `/api/sprint/${sprintId}/update-history`,
+      body
+    );
+
+    if (data.updatedSprintPlotData) {
+      mutate(`/api/sprint/${sprintId}/history`); // Tell SWR to update the data
+    }
+  } catch (error) {
+    toast.error('Error fetching latest Sprint history, please try again later');
   }
 };
 

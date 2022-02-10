@@ -34,12 +34,14 @@ export const SelectStatusMapping: React.FunctionComponent<
       ...(watch('statusMapping.statusDoneId') ?? []),
       ...(watch('statusMapping.statusSprintBacklogId') ?? []),
       ...(watch('statusMapping.statusInProgressId') ?? []),
+      ...(watch('statusMapping.statusToValidateId') ?? []),
     ].every((x) => x.value !== option.value)
   );
 
   return (
     <div>
       <h3>Select Status Mappings</h3>
+      <p>To Validate is a column used by some SCRUM teams, it is optional.</p>
       <SelectField
         label="Done"
         control={control}
@@ -48,6 +50,15 @@ export const SelectStatusMapping: React.FunctionComponent<
         isMulti
       />
       <SelectField
+        className="mt-2"
+        label="To Validate"
+        control={control}
+        name="statusMapping.statusToValidateId"
+        options={availableStatusOptions}
+        isMulti
+      />
+      <SelectField
+        className="mt-2"
         label="In Progress"
         control={control}
         name="statusMapping.statusInProgressId"
@@ -55,13 +66,14 @@ export const SelectStatusMapping: React.FunctionComponent<
         isMulti
       />
       <SelectField
+        className="mt-2"
         label="Sprint Backlog"
         control={control}
         name="statusMapping.statusSprintBacklogId"
         options={availableStatusOptions}
         isMulti
       />
-      <p className="break-words w-72">
+      <p className="w-72">
         Remaining Options:{' '}
         {unPickedOptions.map((opt, index) => (
           <span key={opt.value}>

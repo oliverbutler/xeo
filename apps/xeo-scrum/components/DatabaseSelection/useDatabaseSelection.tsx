@@ -3,7 +3,8 @@ import { useForm, UseFormReturn } from 'react-hook-form';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { PostCreateBacklog } from 'pages/api/backlog/create';
-import { BacklogStatus } from '@prisma/client';
+import { BacklogStatus, NotionColumnType } from '@prisma/client';
+import { useRouter } from 'next/router';
 
 export type DatabaseSelectionOption = {
   label: string;
@@ -15,6 +16,11 @@ export type DatabasePropertyOption = {
   label: string;
   value: string;
   type: GetDatabaseResponse['properties'][0]['type'];
+};
+
+export type DatabaseSprintFieldType = {
+  label: string;
+  value: NotionColumnType;
 };
 
 export type DatabaseStatusOptions = {
@@ -31,10 +37,12 @@ interface Output {
 export interface DatabaseSelectionForm {
   database: DatabaseSelectionOption | undefined;
   storyPointsId: DatabasePropertyOption | undefined;
+  sprintSelectType: DatabaseSprintFieldType | undefined;
   sprintId: DatabasePropertyOption | undefined;
   ticketStatusId: DatabasePropertyOption | undefined;
   statusMapping: {
     statusDoneId: DatabaseStatusOptions[];
+    statusToValidateId: DatabaseStatusOptions[];
     statusInProgressId: DatabaseStatusOptions[];
     statusSprintBacklogId: DatabaseStatusOptions[];
   };
@@ -42,15 +50,17 @@ export interface DatabaseSelectionForm {
 
 export const useDatabaseSelection = (): Output => {
   const form = useForm<DatabaseSelectionForm>({});
+  const router = useRouter();
 
   const onSubmit = async (formData: DatabaseSelectionForm) => {
     if (
       !formData.database ||
       !formData.ticketStatusId ||
       !formData.storyPointsId ||
+      !formData.sprintSelectType ||
       !formData.sprintId
     ) {
-      toast.error('Fields Missing');
+      toast.error('Some Fields Missing');
       return;
     }
 
@@ -59,6 +69,7 @@ export const useDatabaseSelection = (): Output => {
       notionDatabaseName: formData.database.label,
       statusColumnName: formData.ticketStatusId.label,
       pointsColumnName: formData.storyPointsId.label,
+      sprintColumnType: formData.sprintSelectType.value,
       sprintColumnName: formData.sprintId.label,
       statusMapping: [
         ...formData.statusMapping.statusDoneId.map((status) => ({
@@ -76,6 +87,11 @@ export const useDatabaseSelection = (): Output => {
           notionStatusColor: status.color,
           status: BacklogStatus.SPRINT_BACKLOG,
         })),
+        ...formData.statusMapping.statusToValidateId.map((status) => ({
+          notionStatusName: status.value,
+          notionStatusColor: status.color,
+          status: BacklogStatus.TO_VALIDATE,
+        })),
       ],
     };
 
@@ -89,6 +105,7 @@ export const useDatabaseSelection = (): Output => {
     }
 
     toast.success('Backlog Created!');
+    router.push('/');
   };
 
   return {

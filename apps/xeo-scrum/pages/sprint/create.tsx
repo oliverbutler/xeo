@@ -1,7 +1,29 @@
-import { Button, ButtonVariation } from '@xeo/ui';
+import { Button, ButtonVariation, CentredLoader } from '@xeo/ui';
+import { fetcher } from 'components/DatabaseSelection/DatabaseSelection';
 import { SprintCreate } from 'components/Sprint/SprintCreate/SprintCreate';
+import { GetBacklogsRequest } from 'pages/api/backlog';
+import { toast } from 'react-toastify';
+import useSWR from 'swr';
 
-function create() {
+function Create() {
+  const { data: dataBacklogs, error: errorBacklogs } = useSWR<
+    GetBacklogsRequest['responseBody'],
+    string
+  >('/api/backlog', fetcher);
+
+  if (!dataBacklogs && !errorBacklogs) {
+    return (
+      <div>
+        <CentredLoader />
+      </div>
+    );
+  }
+
+  if (errorBacklogs || !dataBacklogs) {
+    toast.error('Unable to fetch your Backlogs');
+    return <div>Error Loading Backlogs</div>;
+  }
+
   return (
     <div className="w-full p-10">
       <div className="flex flex-row justify-between">
@@ -12,9 +34,9 @@ function create() {
           </Button>
         </div>
       </div>
-      <SprintCreate />
+      <SprintCreate backlogs={dataBacklogs.backlogs} />
     </div>
   );
 }
 
-export default create;
+export default Create;

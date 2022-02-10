@@ -1,10 +1,11 @@
 import {
+  BacklogStatus,
   NotionStatusLink,
   Sprint,
-  SprintHistory,
   SprintStatusHistory,
 } from '@prisma/client';
 import dayjs from 'dayjs';
+import { SprintWithHistory } from 'pages/api/sprint';
 import { isDeveloperWithCapacityArray } from './utils';
 
 export enum DataPlotLine {
@@ -18,10 +19,6 @@ export type DataPlotType = {
   time: number;
 } & {
   [key in DataPlotLine]?: number;
-};
-
-export type SprintHistoryWithStatusHistory = SprintHistory & {
-  sprintStatusHistory: SprintStatusHistory[];
 };
 
 export const getDaysArray = function (start: Date, end: Date): Date[] {
@@ -96,7 +93,7 @@ export const roundToOneDecimal = (number: number): number => {
 
 export const getDataForSprintChart = (
   sprint: Sprint,
-  sprintHistory: SprintHistoryWithStatusHistory[],
+  sprintHistory: SprintWithHistory['sprintHistory'],
   notionStatusLinks: NotionStatusLink[]
 ) => {
   const capacityPerDay = getSprintCapacityPerDay(sprint);
@@ -176,7 +173,7 @@ const getPointsInStatuses = (
       getStatusFromStatusLinkId(
         statusHistory.notionStatusLinkId,
         notionStatusLinks
-      )?.status === 'DONE'
+      )?.status === BacklogStatus.DONE
     ) {
       return acc + statusHistory.pointsInStatus;
     }
@@ -189,7 +186,7 @@ const getPointsInStatuses = (
         getStatusFromStatusLinkId(
           statusHistory.notionStatusLinkId,
           notionStatusLinks
-        )?.notionStatusName === 'TO VALIDATE'
+        )?.status === BacklogStatus.TO_VALIDATE
       ) {
         return acc + statusHistory.pointsInStatus;
       }

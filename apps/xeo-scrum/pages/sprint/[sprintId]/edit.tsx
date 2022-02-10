@@ -27,7 +27,7 @@ export const SprintEditPage: React.FunctionComponent = () => {
   }
 
   if (error || !data) {
-    return <div>Error: {error}</div>;
+    return <div>Error Loading Sprint</div>;
   }
 
   return (
