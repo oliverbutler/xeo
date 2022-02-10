@@ -151,7 +151,7 @@ export const getDataForSprintChart = (
           sprintCapacity - pointsInDone
         ),
         [DataPlotLine.POINTS_DONE_INC_VALIDATE]: roundToOneDecimal(
-          sprintCapacity - pointsInToValidate
+          sprintCapacity - pointsInDone - pointsInToValidate
         ),
       };
     }
