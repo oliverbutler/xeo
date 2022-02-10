@@ -1,26 +1,38 @@
-/* eslint-disable no-case-declarations */
-import { Sprint } from '@prisma/client';
+import {
+  Backlog,
+  Sprint,
+  SprintHistory,
+  SprintStatusHistory,
+} from '@prisma/client';
+import dayjs from 'dayjs';
 import Joi from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { APIRequest, parseAPIRequest } from 'utils/api';
 import { prisma } from 'utils/db';
 import { createSprint, CreateSprint } from 'utils/sprint/adapter';
-import { DataPlotType, getDataForSprintChart } from 'utils/sprint/chart';
+import { getDataForSprintChart } from 'utils/sprint/chart';
+import { SprintStatus, SprintWithPlotData } from 'utils/sprint/utils';
+
+export type SprintWithHistory = Sprint & {
+  sprintHistory: (SprintHistory & {
+    sprintStatusHistory: SprintStatusHistory[];
+  })[];
+};
 
 export type GetSprintsRequest = {
   method: 'GET';
   requestBody: undefined;
   responseBody: {
-    sprints: {
-      sprint: Sprint;
-      plotData: DataPlotType[];
+    backlogs: {
+      backlog: Backlog;
+      sprints: SprintWithPlotData[];
     }[];
   };
 };
 
 export type PostCreateSprintRequest = APIRequest<
-  { input: CreateSprint },
+  { input: CreateSprint; backlogId: string },
   {
     sprint: Sprint;
   }
@@ -41,6 +53,7 @@ const postSchema: PostCreateSprintRequest['joiBodySchema'] = Joi.object({
       })
     ),
   }),
+  backlogId: Joi.string().required(),
 });
 
 export default async function getSprints(
@@ -55,72 +68,107 @@ export default async function getSprints(
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  const userId = session?.user?.id as string;
+  const userId = session?.id as string;
 
-  const backlogAndSprints = await prisma.backlog.findFirst({
-    where: {
-      userId: session.id as string,
-    },
-    include: {
-      sprints: {
-        include: {
-          sprintHistory: {
-            include: {
-              sprintStatusHistory: true,
+  if (req.method === 'GET') {
+    // All Backlogs a user has access to
+    const backlogs = await prisma.backlog.findMany({
+      where: {
+        OR: [
+          { userId },
+          {
+            members: {
+              some: {
+                userId: userId,
+              },
+            },
+          },
+        ],
+      },
+      include: {
+        sprints: {
+          include: {
+            sprintHistory: {
+              include: {
+                sprintStatusHistory: true,
+              },
             },
           },
         },
+        notionStatusLinks: true,
       },
-      notionStatusLinks: true,
-    },
-  });
+    });
 
-  if (!backlogAndSprints) {
-    return res
-      .status(404)
-      .json({ message: 'Backlog not found for your account' });
-  }
+    const backlogsUserCanAccess = backlogs.map(
+      ({ sprints, ...backlogWithoutSprints }) => {
+        const isSprintActive = (sprint: Sprint) =>
+          dayjs(sprint.endDate).isAfter(dayjs());
 
-  switch (req.method) {
-    case 'GET':
-      const sprints = backlogAndSprints.sprints.map((sprint) => ({
-        sprint,
-        plotData: getDataForSprintChart(
-          sprint,
-          sprint.sprintHistory,
-          backlogAndSprints.notionStatusLinks
-        ),
-      }));
+        const getSprintWithPlotDataIfActive = (
+          sprint: SprintWithHistory
+        ): SprintWithPlotData => {
+          if (isSprintActive(sprint)) {
+            return {
+              status: SprintStatus.ACTIVE,
+              sprint,
+              plotData: getDataForSprintChart(
+                sprint,
+                sprint.sprintHistory,
+                backlogWithoutSprints.notionStatusLinks
+              ),
+            };
+          } else {
+            return {
+              status: SprintStatus.COMPLETED,
+              sprint,
+            };
+          }
+        };
 
-      const returnValue: GetSprintsRequest['responseBody'] = {
-        sprints,
-      };
-
-      return res.status(200).json(returnValue);
-
-    case 'POST':
-      const { body: bodyPost, error: errorPost } = parseAPIRequest(
-        req,
-        postSchema
-      );
-
-      if (errorPost || !bodyPost) {
-        return res.status(400).json({ message: errorPost?.message });
+        return {
+          backlog: backlogWithoutSprints,
+          sprints: sprints.map(getSprintWithPlotDataIfActive),
+        };
       }
+    );
 
-      const createdSprint = await createSprint(
-        backlogAndSprints.userId,
-        backlogAndSprints.id,
-        bodyPost.input
-      );
+    const returnValue: GetSprintsRequest['responseBody'] = {
+      backlogs: backlogsUserCanAccess,
+    };
+    return res.status(200).json(returnValue);
+  } else if (req.method === 'POST') {
+    const { body: bodyPost, error: errorPost } = parseAPIRequest(
+      req,
+      postSchema
+    );
 
-      const postReturn: PostCreateSprintRequest['response'] = {
-        sprint: createdSprint,
-      };
+    if (errorPost || !bodyPost) {
+      return res.status(400).json({ message: errorPost?.message });
+    }
 
-      return res.status(200).json(postReturn);
+    const backlog = await prisma.backlog.findUnique({
+      where: {
+        id: bodyPost.backlogId,
+      },
+    });
 
-    default:
-      return res.status(400).json({ message: 'Invalid request method' });
+    if (!backlog) {
+      return res.status(400).json({ message: 'Backlog not found' });
+    }
+
+    console.log(userId, backlog, bodyPost);
+
+    const createdSprint = await createSprint(
+      userId,
+      backlog.id,
+      bodyPost.input
+    );
+
+    const postReturn: PostCreateSprintRequest['response'] = {
+      sprint: createdSprint,
+    };
+
+    return res.status(200).json(postReturn);
   }
+  return res.status(400).json({ message: 'Invalid request method' });
 }

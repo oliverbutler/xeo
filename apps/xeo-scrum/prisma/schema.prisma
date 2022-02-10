@@ -44,17 +44,18 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  backlogs      Backlog[]
-  sprints       Sprint[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now()) @updatedAt
+  id               String            @id @default(cuid())
+  name             String?
+  email            String?           @unique
+  emailVerified    DateTime?
+  image            String?
+  accounts         Account[]
+  sessions         Session[]
+  backlogs         Backlog[]
+  backlogsMemberOf MemberOfBacklog[]
+  sprints          Sprint[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @default(now()) @updatedAt
 }
 
 model VerificationToken {
@@ -70,6 +71,7 @@ model VerificationToken {
 enum BacklogStatus {
   DONE
   IN_PROGRESS
+  TO_VALIDATE
   SPRINT_BACKLOG
   UNKNOWN
 }
@@ -83,6 +85,7 @@ model Backlog {
   id                String             @id @default(cuid())
   user              User               @relation(fields: [userId], references: [id])
   userId            String
+  members           MemberOfBacklog[]
   // Notion Related Fields
   databaseId        String
   databaseName      String
@@ -94,6 +97,17 @@ model Backlog {
   sprints           Sprint[]
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @default(now()) @updatedAt
+}
+
+model MemberOfBacklog {
+  userId    String
+  backlogId String
+  user      User     @relation(fields: [userId], references: [id])
+  backlog   Backlog  @relation(fields: [backlogId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@id([userId, backlogId])
 }
 
 model NotionStatusLink {

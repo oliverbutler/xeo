@@ -6,7 +6,6 @@ import {
   NotionStatusLink,
   Sprint,
 } from '@prisma/client';
-import { BacklogWithStatusLinksAndSprints } from 'pages/api/backlog';
 import { logger } from 'utils/api';
 import { performance } from 'perf_hooks';
 
@@ -59,7 +58,7 @@ const getStatusOfTicket = ({
   links,
   notionStatusName,
 }: {
-  links: BacklogWithStatusLinksAndSprints['notionStatusLinks'];
+  links: NotionStatusLink[];
   notionStatusName: string | undefined;
 }): NotionStatusLink | undefined => {
   const statusLink = links.find(
@@ -161,27 +160,6 @@ const getIconFromNotionPage = (page: NotionDatabaseItem): TicketIcon | null => {
   }
 };
 
-export const getProductBacklogFromNotionDatabase = async (
-  notionBacklog: BacklogWithStatusLinksAndSprints
-): Promise<ProductBacklog> => {
-  const databaseResponse = await notion.databases.query({
-    database_id: notionBacklog.databaseId,
-  });
-
-  const tickets = databaseResponse.results.map((object) =>
-    getTicketFromNotionObject({
-      notionBacklog,
-      page: object,
-      sprints: notionBacklog.sprints,
-      notionStatusLinks: notionBacklog.notionStatusLinks,
-    })
-  );
-
-  return {
-    tickets,
-  };
-};
-
 export const getProductBacklogForSprint = async ({
   notionBacklog,
   sprint,
@@ -211,33 +189,43 @@ export const getProductBacklogForSprint = async ({
           },
         };
 
-  const databaseResponse = await notion.databases.query({
-    database_id: notionBacklog.databaseId,
-    filter: {
-      property: notionBacklog.sprintColumnName,
-      ...filter,
-    },
-  });
+  try {
+    const databaseResponse = await notion.databases.query({
+      database_id: notionBacklog.databaseId,
+      filter: {
+        property: notionBacklog.sprintColumnName,
+        ...filter,
+      },
+    });
 
-  const endTime = performance.now();
-  logger.info(
-    `getProductBacklogForSprint > Successfully queried (${
-      endTime - startTime
-    }ms) Notion for ${sprint.notionSprintValue} in db ${
-      notionBacklog.databaseName
-    }`
-  );
+    const endTime = performance.now();
+    logger.info(
+      `getProductBacklogForSprint > Successfully queried (${
+        endTime - startTime
+      }ms) Notion for ${sprint.notionSprintValue} in db ${
+        notionBacklog.databaseName
+      }`
+    );
 
-  const tickets = databaseResponse.results.map((object) =>
-    getTicketFromNotionObject({
-      notionBacklog,
-      page: object,
-      notionStatusLinks,
-      sprints,
-    })
-  );
+    const tickets = databaseResponse.results.map((object) =>
+      getTicketFromNotionObject({
+        notionBacklog,
+        page: object,
+        notionStatusLinks,
+        sprints,
+      })
+    );
 
-  return {
-    tickets,
-  };
+    return {
+      tickets,
+    };
+  } catch (error) {
+    logger.error(
+      `getProductBacklogForSprint > Failed to query Notion for ${sprint.notionSprintValue} in db ${notionBacklog.databaseName}`,
+      error
+    );
+    throw new Error(
+      'Failed to query Notion for your Backlog, please try again later'
+    );
+  }
 };

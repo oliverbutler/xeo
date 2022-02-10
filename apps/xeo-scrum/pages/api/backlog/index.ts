@@ -1,27 +1,21 @@
-import { Backlog, NotionStatusLink, Sprint } from '@prisma/client';
+/* eslint-disable no-case-declarations */
+import { Backlog, NotionStatusLink } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { prisma } from 'utils/db';
-import {
-  getProductBacklogFromNotionDatabase,
-  ProductBacklog,
-} from 'utils/notion/backlog';
 
-export type GetBacklogRequest = {
+export type BacklogWithNotionStatusLinks = Backlog & {
+  notionStatusLinks: NotionStatusLink[];
+};
+
+export type GetBacklogsRequest = {
   method: 'GET';
-  requestBody: undefined;
   responseBody: {
-    backlog: ProductBacklog;
-    notionBacklog: Backlog;
+    backlogs: BacklogWithNotionStatusLinks[];
   };
 };
 
-export type BacklogWithStatusLinksAndSprints = Backlog & {
-  notionStatusLinks: NotionStatusLink[];
-  sprints: Sprint[];
-};
-
-export default async function getBacklog(
+export default async function getSprints(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -31,30 +25,34 @@ export default async function getBacklog(
     return res.status(401).json({ message: 'Not authenticated' });
   }
 
-  const notionBacklog = await prisma.backlog.findFirst({
-    where: {
-      userId: session.id as string,
-    },
-    include: {
-      notionStatusLinks: true,
-      sprints: true,
-    },
-  });
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const userId = session?.id as string;
 
-  if (!notionBacklog) {
-    return res
-      .status(404)
-      .json({ message: 'Backlog not found for your account' });
+  if (req.method === 'GET') {
+    const backlogs = await prisma.backlog.findMany({
+      where: {
+        OR: [
+          { userId },
+          {
+            members: {
+              some: {
+                userId: userId,
+              },
+            },
+          },
+        ],
+      },
+      include: {
+        notionStatusLinks: true,
+      },
+    });
+
+    const returnValue: GetBacklogsRequest['responseBody'] = {
+      backlogs,
+    };
+    return res.status(200).json(returnValue);
   }
 
-  const productBacklog = await getProductBacklogFromNotionDatabase(
-    notionBacklog
-  );
-
-  const returnValue: GetBacklogRequest['responseBody'] = {
-    backlog: productBacklog,
-    notionBacklog,
-  };
-
-  return res.status(200).json(returnValue);
+  return res.status(400).json({ message: 'Invalid request method' });
 }
