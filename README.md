@@ -19,16 +19,16 @@
 
 # What is Xeo? 🚀
 
-Xeo (_zee-oh_) is a graph-based rich text editor inspired by Notion, Obsidian, and Trello.
+Xeo (_zee-oh_) is a a modern suite of tools - Xeo currently consists of Xeo Editor and Xeo SCRUM.
 
-## Features
+## Xeo Editor
 
 - 📝 Notion-like Rich Text Editor
 - 🏡 Self-Hostable and Private
 - 📱 Mobile-Friendly
 - 🔒 Secure
 
-## 🚀 Getting Started
+### 🚀 Getting Started
 
 Below is a video of the currently implemented features, we are nearing a V1.0 launch (Q1 2022).
 
@@ -40,9 +40,9 @@ Below is a video of the currently implemented features, we are nearing a V1.0 la
 - Backlinks
 - Dark Mode! 🦉
 
-
 https://user-images.githubusercontent.com/47489826/151668756-0e0bdcf3-1c93-4357-b198-b25f1678f0f9.mov
 
+## Xeo Scrum
 
 ## Contributions
 
