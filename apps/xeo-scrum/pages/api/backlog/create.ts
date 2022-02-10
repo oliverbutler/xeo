@@ -68,7 +68,6 @@ export default async function createBacklog(
       statusColumnName: body.statusColumnName,
       notionColumnType: body.sprintColumnType,
       sprintColumnName: body.sprintColumnName,
-      userId: session.id as string,
       notionStatusLinks: {
         createMany: {
           data: body.statusMapping.map((mapping) => ({
