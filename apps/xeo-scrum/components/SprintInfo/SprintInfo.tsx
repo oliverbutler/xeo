@@ -90,7 +90,11 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
   return (
     <div className="w-full p-10">
       <div className="flex flex-row justify-between">
-        <h1>{sprint.name}</h1>
+        <div>
+          <h1 className="mb-0">{sprint.name}</h1>
+          <p>{sprint.sprintGoal}</p>
+        </div>
+
         <div>
           {publicMode ? (
             <a
@@ -113,6 +117,7 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
           )}
         </div>
       </div>
+
       <SprintStats
         sprintHistoryPlotData={sprintHistoryPlotData}
         sprintId={sprintId}
