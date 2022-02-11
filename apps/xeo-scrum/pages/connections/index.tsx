@@ -13,7 +13,12 @@ import {
 import useSWR from 'swr';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
 import { Backlog } from '@prisma/client';
-import { LogoutIcon, ShareIcon, TrashIcon } from '@heroicons/react/outline';
+import {
+  InformationCircleIcon,
+  LogoutIcon,
+  ShareIcon,
+  TrashIcon,
+} from '@heroicons/react/outline';
 import { SecretText } from 'components/SecretText/SecretText';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
@@ -38,12 +43,12 @@ export function Index() {
   return (
     <div className="p-10">
       <h1>Connections</h1>
-
-      <p>
+      <div className="bg-primary-200 text-primary-800 mb-10 flex flex-row items-center rounded-lg p-5">
+        <InformationCircleIcon width={40} height={40} className="mr-3" />
         If you are a developer, please contact your admin to invite you to the
         Backlog, alternatively you can create a new Connection and invite your
         team.
-      </p>
+      </div>
       <h2>Add New Connections</h2>
       <Connections />
       <h2>My Connections</h2>

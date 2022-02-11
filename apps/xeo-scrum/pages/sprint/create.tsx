@@ -1,4 +1,6 @@
+import { ExclamationIcon } from '@heroicons/react/outline';
 import { Button, ButtonVariation, CentredLoader } from '@xeo/ui';
+import classNames from 'classnames';
 import { fetcher } from 'components/DatabaseSelection/DatabaseSelection';
 import { SprintCreate } from 'components/Sprint/SprintCreate/SprintCreate';
 import { GetBacklogsRequest } from 'pages/api/backlog';
@@ -34,7 +36,20 @@ function Create() {
           </Button>
         </div>
       </div>
-      <SprintCreate backlogs={dataBacklogs.backlogs} />
+      {dataBacklogs.backlogs.length === 0 && (
+        <div className="mb-10 flex flex-row items-center rounded-lg bg-yellow-200 p-5 text-yellow-800">
+          <ExclamationIcon width={40} height={40} className="mr-3" />
+          You currently have no Backlogs. Please join or create one before
+          creating a sprint!
+        </div>
+      )}
+      <div
+        className={classNames({
+          'opacity-30': dataBacklogs.backlogs.length === 0,
+        })}
+      >
+        <SprintCreate backlogs={dataBacklogs.backlogs} />
+      </div>
     </div>
   );
 }

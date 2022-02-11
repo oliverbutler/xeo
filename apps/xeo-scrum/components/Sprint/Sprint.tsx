@@ -1,3 +1,4 @@
+import { InformationCircleIcon } from '@heroicons/react/outline';
 import { Sprint as PrismaSprint } from '@prisma/client';
 import { CentredLoader } from '@xeo/ui';
 import { fetcher } from 'components/DatabaseSelection/DatabaseSelection';
@@ -61,9 +62,20 @@ export const Sprint: React.FunctionComponent = () => {
   const activeSprints = usersSprints.filter(isActiveSprintWithPlotData);
   const completeSprints = usersSprints.filter(isCompleteSprintWithoutPlotData);
 
+  if (usersSprints.length === 0) {
+    return (
+      <div className="bg-primary-200 text-primary-800 mb-10 mt-5 flex flex-row items-center rounded-lg p-5">
+        <InformationCircleIcon width={40} height={40} className="mr-3" />
+        You currently have no Sprints, go to Connections to connect to a Backlog
+        or contact your admin to give you access to your team.
+      </div>
+    );
+  }
+
   return (
     <div className="py-5">
       <h2>Active Sprints</h2>
+
       <div className="flex flex-row flex-wrap gap-4">
         {activeSprints.map(({ sprint, plotData }) => (
           <Link
