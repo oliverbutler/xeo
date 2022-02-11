@@ -1,6 +1,6 @@
 import { InformationCircleIcon } from '@heroicons/react/outline';
 import { Sprint as PrismaSprint } from '@prisma/client';
-import { CentredLoader } from '@xeo/ui';
+import { CentredLoader, Alert } from '@xeo/ui';
 import { fetcher } from 'components/DatabaseSelection/DatabaseSelection';
 import { SprintGraph } from 'components/SprintInfo/SprintGraph/SprintGraph';
 import dayjs from 'dayjs';
@@ -64,11 +64,10 @@ export const Sprint: React.FunctionComponent = () => {
 
   if (usersSprints.length === 0) {
     return (
-      <div className="bg-primary-200 text-primary-800 mb-10 mt-5 flex flex-row items-center rounded-lg p-5">
-        <InformationCircleIcon width={40} height={40} className="mr-3" />
+      <Alert variation="info" className="mt-5">
         You currently have no Sprints, go to Connections to connect to a Backlog
         or contact your admin to give you access to your team.
-      </div>
+      </Alert>
     );
   }
 
@@ -84,7 +83,7 @@ export const Sprint: React.FunctionComponent = () => {
             key={sprint.id}
             passHref
           >
-            <div className="border-dark-400 bg-dark-800 flex cursor-pointer flex-row border-l-4 p-2 lg:w-1/2 xl:w-1/3 2xl:w-1/4">
+            <div className="border-dark-400 bg-dark-100 dark:bg-dark-800 flex cursor-pointer flex-row border-l-4 p-2 lg:w-1/2 xl:w-1/3 2xl:w-1/4">
               <div className="ml-1 w-fit flex-grow">
                 <h3 className="mt-4">{sprint.name}</h3>
                 <p>

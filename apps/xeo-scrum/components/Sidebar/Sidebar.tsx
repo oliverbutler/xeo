@@ -15,6 +15,7 @@ import { SidebarItem } from './SidebarItem/SidebarItem';
 import { motion, Variants } from 'framer-motion';
 import { useState } from 'react';
 import { useWindowDimensions } from '@xeo/ui';
+import { DarkModeButton } from 'components/DarkModeButton/DarkModeButton';
 
 const sidebar = [
   {
@@ -50,14 +51,14 @@ export const Sidebar = () => {
 
   return (
     <div className="h-screen ">
-      <div className="bg-dark-800 hidden h-screen bg-opacity-80  backdrop-blur-md md:block">
+      <div className="bg-dark-100 dark:bg-dark-800 hidden h-screen bg-opacity-80  backdrop-blur-md md:block">
         <Resize
           defaultWindowWidth={defaultWidth}
           onSetWidth={setDefaultWidth}
           minWindowWidth={200}
           dragHandleWidth={2}
           className="h-full"
-          dragHandleClassName="bg-dark-50 dark:bg-dark-700 hover:bg-dark-200 "
+          dragHandleClassName="bg-dark-200 dark:bg-dark-700 hover:bg-dark-200 "
         >
           <SidebarContent />
         </Resize>
@@ -69,11 +70,11 @@ export const Sidebar = () => {
         transition={{ type: 'easeInOut', delay: 0, stiffness: 0 }}
         initial={isOpen}
       >
-        <div className="bg-dark-800 border-r-dark-700 w-full border-r-4 bg-opacity-80 backdrop-blur-md">
+        <div className="dark:bg-dark-800 dark:border-r-dark-700 bg-dark-100 w-full border-r-4 bg-opacity-60 backdrop-blur-md dark:bg-opacity-80">
           <SidebarContent />
         </div>
         <Clickable
-          className="bg-dark-800 h-min w-min"
+          className="bg-dark-100 dark:bg-dark-800 h-min w-min rounded-r-md"
           onClick={() => setIsOpen(!isOpen)}
         >
           <motion.div
@@ -130,6 +131,9 @@ const SidebarContent = () => {
             </SidebarItem>
           </Link>
         ))}
+      </div>
+      <div className="mt-auto w-fit">
+        <DarkModeButton />
       </div>
     </div>
   );

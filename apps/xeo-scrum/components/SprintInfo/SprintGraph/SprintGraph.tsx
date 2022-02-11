@@ -12,6 +12,7 @@ import dayjs from 'dayjs';
 import { theme } from '../../../../../tailwind-workspace-preset';
 import { DataPlotLine, DataPlotType } from 'utils/sprint/chart';
 import classNames from 'classnames';
+import { useTheme } from 'next-themes';
 
 interface Props {
   plotData: DataPlotType[];
@@ -35,7 +36,7 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
   }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-dark-800 border-l-dark-600 ml-4 border-l-4 bg-opacity-60 p-2">
+        <div className="bg-dark-100 dark:bg-dark-800 dark:border-l-dark-600 ml-4 border-l-4  bg-opacity-80 p-2 dark:bg-opacity-60">
           <p className="label">
             End of{' '}
             {dayjs(label * 1000)
@@ -61,9 +62,13 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
   const HEIGHT = smallGraph ? 200 : 400;
   const WIDTH = 1000;
 
+  const nextTheme = useTheme();
+
+  const isDark = nextTheme.theme === 'dark';
+
   return (
     <div
-      className={classNames('relative mt-4', { 'text-sm': smallGraph })}
+      className={classNames('relative -ml-6 mt-4', { 'text-sm': smallGraph })}
       style={{ height: HEIGHT }}
     >
       <ResponsiveContainer
@@ -77,17 +82,38 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
           data={plotData}
           style={{ position: 'absolute' }}
         >
-          <CartesianGrid stroke="#303030" strokeDasharray="5 5" />
+          <CartesianGrid
+            stroke={
+              isDark
+                ? theme.extend.colors.dark[700]
+                : theme.extend.colors.dark[200]
+            }
+            strokeDasharray="5 5"
+          />
           <XAxis
+            dy={10}
             dataKey="time"
             name="Time"
             tickFormatter={(unixTime) =>
               dayjs(unixTime * 1000).format('ddd DD/MM')
             }
             type="category"
+            stroke={
+              isDark
+                ? theme.extend.colors.dark[500]
+                : theme.extend.colors.dark[800]
+            }
           />
 
-          <YAxis type="number" dataKey={DataPlotLine.EXPECTED_POINTS} />
+          <YAxis
+            type="number"
+            dataKey={DataPlotLine.EXPECTED_POINTS}
+            stroke={
+              isDark
+                ? theme.extend.colors.dark[500]
+                : theme.extend.colors.dark[800]
+            }
+          />
           {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
           {/* @ts-ignore */}
           <Tooltip content={CustomTooltip} />
@@ -100,6 +126,7 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
             type="monotone"
             dot={false}
             connectNulls
+            strokeWidth={2}
           />
           <Line
             hide={!showPointsNotStarted}
@@ -109,6 +136,7 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
             type="monotone"
             dot={false}
             strokeDasharray={'3 3'}
+            strokeWidth={2}
             connectNulls
           />
           <Line
@@ -117,6 +145,7 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
             dataKey={DataPlotLine.EXPECTED_POINTS}
             type="monotone"
             strokeDasharray={'3 3'}
+            strokeWidth={2}
             dot={false}
             connectNulls
           />

@@ -16,3 +16,4 @@ export * from './lib/Dropdown/Dropdown';
 export * from './lib/Popover/Popover';
 export * from './lib/Range/Range';
 export * from './hooks/useWindowDimensions';
+export * from './lib/Alert/Alert';

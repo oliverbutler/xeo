@@ -16,14 +16,17 @@ export interface RangeProps
 export const Range = forwardRef<HTMLInputElement, RangeProps>(
   ({ label, error, className, ...inputProps }, ref) => {
     return (
-      <div className={classNames('text-dark-700 dark:text-white', className)}>
+      <div className={classNames(' dark:text-white', className)}>
         <label className="mb-2 block text-sm font-bold">{label}</label>
         <input
           ref={ref}
           type="range"
-          className={classNames('accent-primary-300 w-full', {
-            'border-red-500': error,
-          })}
+          className={classNames(
+            'accent-primary-300  w-ful1 h-2 appearance-none rounded-full bg-gray-100 p-0 dark:bg-gray-700 ',
+            {
+              'border-red-500': error,
+            }
+          )}
           aria-label={label}
           {...inputProps}
         />

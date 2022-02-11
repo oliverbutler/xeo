@@ -25,7 +25,7 @@ export function Index() {
 
   return (
     <div className="flex h-screen w-full items-center justify-center">
-      <div className="bg-dark-800 rounded-lg p-10 shadow-xl">
+      <div className="dark:bg-dark-800 rounded-lg p-10 shadow-xl transition-all hover:shadow-2xl">
         <div className="relative mx-auto aspect-square h-56">
           <Image
             src={xeoImage}

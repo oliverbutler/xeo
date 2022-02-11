@@ -91,7 +91,7 @@ export const SprintStats: React.FunctionComponent<Props> = ({
             <ExclamationCircleIcon
               height={40}
               width={40}
-              className="stroke-red-300"
+              className="stroke-red-400 dark:stroke-red-300"
             />
           ) : (
             <CheckCircleIcon
@@ -105,8 +105,8 @@ export const SprintStats: React.FunctionComponent<Props> = ({
         value={
           <p
             className={classNames(
-              { 'text-red-300': deltaPoints < 0 },
-              { 'text-green-300': deltaPoints >= 0 }
+              { 'text-red-400 dark:text-red-300': deltaPoints < 0 },
+              { 'text-green-400 dark:text-green-300': deltaPoints >= 0 }
             )}
           >
             {roundToOneDecimal(deltaPoints)}{' '}

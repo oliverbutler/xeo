@@ -93,41 +93,40 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
 
   return (
     <form className="gap-4" onSubmit={handleSubmit(updateSprint)}>
-      <div className="flex flex-row gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row">
         <Input
-          className="w-1/3"
+          className="flex-grow"
           label="Sprint Name"
           {...register('sprintName')}
         />
-        <Input
-          className="w-2/3"
-          label="Sprint Goal"
-          {...register('sprintGoal')}
-          placeholder="AaU I can..."
-        />
-      </div>
-      <div className="mt-4 flex flex-grow flex-row gap-4">
         <DateRangePickerField
           control={control}
           startDateFieldName="startDate"
           endDateFieldName="endDate"
           label="Sprint Dates"
         />
+      </div>
+
+      <div className="mt-4 flex flex-grow flex-col gap-4 sm:flex-row">
         <Input
-          className="w-1/3"
+          className="sm:w-2/4"
+          label="Sprint Goal"
+          {...register('sprintGoal')}
+          placeholder="AaU I can..."
+        />
+        <Input
+          className="sm:w-1/4"
           label="Notion Sprint Value"
           {...register('notionSprintValue')}
         />
-
         <Input
-          className="w-1/3"
+          className="sm:w-1/4"
           label="Team Speed"
           type="number"
           step={0.1}
           {...register('teamSpeed')}
         />
       </div>
-
       <SprintCapacityTable
         startDate={new Date(startDate)}
         endDate={new Date(endDate)}

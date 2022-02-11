@@ -26,14 +26,16 @@ function CustomApp({
         <link rel="icon" href="/xeo.ico" />
       </Head>
       <IntlWrapper>
-        <ThemeProvider attribute="class">
+        <ThemeProvider attribute="class" defaultTheme="system">
           <SessionProvider session={session}>
             <RouteGuard>
-              <main className="prose dark:prose-invert max-h-screen min-h-screen max-w-none">
+              <main className="prose dark:prose-invert  max-w-none">
                 {hideSidebar ? (
-                  <Component {...pageProps} />
+                  <div className="max-h-screen min-h-screen">
+                    <Component {...pageProps} />
+                  </div>
                 ) : (
-                  <div className="app relative z-10 flex flex-row">
+                  <div className="app relative z-10 flex max-h-screen min-h-screen flex-row">
                     <Sidebar />
                     <div className="w-full overflow-y-scroll ">
                       <Component {...pageProps} />

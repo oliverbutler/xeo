@@ -44,12 +44,12 @@ export const Connections: React.FunctionComponent = () => {
       {CONNECTIONS.map((connection) => (
         <div
           className={classNames(
-            'bg-dark-800 rounded-lg transition-all',
+            'bg-dark-100 dark:bg-dark-800 rounded-lg transition-all',
             {
               'opacity-40 grayscale': connection.disabled,
             },
             {
-              'ring-dark-700 ring-0 hover:shadow-2xl hover:ring-2':
+              'ring-dark-200 dark:ring-dark-700 ring-0 hover:shadow-2xl hover:ring-2':
                 !connection.disabled,
             }
           )}

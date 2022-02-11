@@ -88,11 +88,10 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
   const { sprint, sprintHistoryPlotData } = data;
 
   return (
-    <div className="w-full p-10">
+    <div className="w-full p-2 pt-10 sm:p-10">
       <div className="flex flex-row justify-between">
         <div>
           <h1 className="mb-0">{sprint.name}</h1>
-          <p>{sprint.sprintGoal}</p>
         </div>
 
         <div>
@@ -101,9 +100,10 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
               target={publicMode ? '_blank' : undefined}
               href={`/sprint/${sprint.id}/edit`}
               rel="noreferrer"
+              className="no-underline"
             >
               <Button variation={ButtonVariation.Secondary}>
-                Edit on Xeo
+                Edit
                 <ExternalLinkIcon className="ml-2" height={25} width={25} />
               </Button>
             </a>
@@ -117,15 +117,14 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
           )}
         </div>
       </div>
+      <p>{sprint.sprintGoal}</p>
 
       <SprintStats
         sprintHistoryPlotData={sprintHistoryPlotData}
         sprintId={sprintId}
       />
       <div className="flex flex-row items-end justify-between">
-        <h2>Burn Down Chart</h2>
-
-        <div className="flex flex-row gap-2">
+        <div className="flex w-full flex-row justify-end gap-2">
           {!publicMode && (
             <Clickable
               onClick={() => {

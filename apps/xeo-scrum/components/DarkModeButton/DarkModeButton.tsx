@@ -1,7 +1,7 @@
-import { FiMoon } from 'react-icons/fi';
-import { useTheme } from 'next-themes';
-import classNames from 'classnames';
+import { MoonIcon } from '@heroicons/react/outline';
 import { Clickable } from '@xeo/ui';
+import classNames from 'classnames';
+import { useTheme } from 'next-themes';
 
 export const DarkModeButton: React.FunctionComponent = () => {
   const { setTheme, theme } = useTheme();
@@ -11,7 +11,9 @@ export const DarkModeButton: React.FunctionComponent = () => {
       onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
       className="select-none"
     >
-      <FiMoon
+      <MoonIcon
+        width={25}
+        height={25}
         className={classNames({
           'fill-current text-white': theme === 'dark',
         })}

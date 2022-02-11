@@ -19,7 +19,7 @@ export const Table = <T extends object>({
   // Render the UI for your table
   return (
     <table {...getTableProps()}>
-      <thead className="bg-dark-800">
+      <thead className="bg-dark-100 dark:bg-dark-800">
         {headerGroups.map((headerGroup) => (
           <tr {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column) => (
