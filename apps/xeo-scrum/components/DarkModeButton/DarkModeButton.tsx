@@ -23,8 +23,8 @@ export const DarkModeButton: React.FunctionComponent = () => {
   return (
     <Clickable onClick={handleThemeChange} className="select-none">
       <MoonIcon
-        width={25}
-        height={25}
+        width={20}
+        height={20}
         className={classNames({
           'fill-current text-white': theme === 'dark',
         })}

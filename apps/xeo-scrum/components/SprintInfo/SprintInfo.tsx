@@ -17,6 +17,7 @@ import axios from 'axios';
 import { PostUpdateSprintHistory } from 'pages/api/sprint/[sprintId]/update-history';
 import { ScopedMutator } from 'swr/dist/types';
 import { toast } from 'react-toastify';
+import { DarkModeButton } from 'components/DarkModeButton/DarkModeButton';
 
 dayjs.extend(relativeTime);
 
@@ -151,6 +152,7 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
           >
             <BeakerIcon height={20} width={20} />
           </Clickable>
+          {publicMode && <DarkModeButton />}
         </div>
       </div>
 
