@@ -80,8 +80,8 @@ export const SprintStats: React.FunctionComponent<Props> = ({
         title="Progress"
         value={
           <p>
-            <span>{percentDone}% D</span> -{' '}
-            <span>{percentDoneValidated}% V</span>
+            <span>{roundToOneDecimal(percentDone)}% D</span> -{' '}
+            <span>{roundToOneDecimal(percentDoneValidated)}% V</span>
           </p>
         }
       />
@@ -109,7 +109,8 @@ export const SprintStats: React.FunctionComponent<Props> = ({
               { 'text-green-300': deltaPoints >= 0 }
             )}
           >
-            {deltaPoints} {deltaPoints < 0 ? 'Behind' : 'Ahead'}
+            {roundToOneDecimal(deltaPoints)}{' '}
+            {roundToOneDecimal(deltaPoints) < 0 ? 'Behind' : 'Ahead'}
           </p>
         }
       />
@@ -122,7 +123,7 @@ export const SprintStats: React.FunctionComponent<Props> = ({
           />
         }
         title="Validation"
-        value={<p>Remaining: {pointsToValidate}</p>}
+        value={<p>Remaining: {roundToOneDecimal(pointsToValidate)}</p>}
       />
     </div>
   );
