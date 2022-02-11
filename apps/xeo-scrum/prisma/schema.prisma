@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider             = "mysql"
-  url                  = env("XEO_SCRUM_DB_URL")
+  url                  = env("PLANETSCALE_PRISMA_DATABASE_URL")
   shadowDatabaseUrl    = env("XEO_SCRUM_SHADOW_DB_URL")
   referentialIntegrity = "prisma"
 }
