@@ -1,6 +1,5 @@
 import Joi from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getSession } from 'next-auth/react';
 import { APIRequest, parseAPIRequest } from 'utils/api';
 import { updateSprintHistoryIfChanged } from 'utils/sprint/sprint-history';
 
@@ -17,16 +16,13 @@ const schema: PostUpdateSprintHistory['joiBodySchema'] = Joi.object({
   sprintId: Joi.string().required(),
 });
 
+/**
+ * ⚠️ Public Facing Route
+ */
 export default async function updateSprintHistory(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const session = await getSession({ req });
-
-  if (!session) {
-    return res.status(401).json({ message: 'Not authenticated' });
-  }
-
   const { body, error } = parseAPIRequest(req, schema);
 
   if (error || !body) {
@@ -35,11 +31,17 @@ export default async function updateSprintHistory(
 
   const { sprintId } = body;
 
-  const updatedHistory = await updateSprintHistoryIfChanged(sprintId);
+  try {
+    const updatedHistory = await updateSprintHistoryIfChanged(sprintId);
 
-  const returnData: PostUpdateSprintHistory['response'] = {
-    updatedSprintPlotData: updatedHistory,
-  };
+    const returnData: PostUpdateSprintHistory['response'] = {
+      updatedSprintPlotData: updatedHistory,
+    };
 
-  return res.status(200).json(returnData);
+    return res.status(200).json(returnData);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: 'Error updating sprint from Notion' });
+  }
 }

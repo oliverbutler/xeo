@@ -1,6 +1,5 @@
 import { Sprint } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getSession } from 'next-auth/react';
 import { DataPlotType, getDataForSprintChart } from 'utils/sprint/chart';
 import { prisma } from 'utils/db';
 
@@ -12,34 +11,18 @@ export type GetSprintHistoryRequest = {
   };
 };
 
+/**
+ * ⚠️ Public Facing Route
+ */
 export default async function getSprintHistoryRequest(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const session = await getSession({ req });
-
-  if (!session) {
-    return res.status(401).json({ message: 'Not authenticated' });
-  }
-
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const userId = session?.id as string;
-
   const sprintId = req.query.sprintId as string;
 
   const sprint = await prisma.sprint.findFirst({
     where: {
       id: sprintId,
-      backlog: {
-        members: {
-          some: {
-            user: {
-              id: userId,
-            },
-          },
-        },
-      },
     },
     include: {
       backlog: {
