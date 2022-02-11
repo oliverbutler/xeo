@@ -16,6 +16,9 @@ function CustomApp({
 }: AppProps) {
   const { pathname } = useRouter();
 
+  const hideSidebar =
+    pathname.startsWith('/login') || pathname.endsWith('/embed');
+
   return (
     <>
       <Head>
@@ -26,18 +29,18 @@ function CustomApp({
         <ThemeProvider attribute="class">
           <SessionProvider session={session}>
             <RouteGuard>
-              {pathname === '/login' ? (
-                <main className="prose dark:prose-invert flex h-full min-h-screen items-center justify-center ">
+              <main className="prose dark:prose-invert max-h-screen min-h-screen max-w-none">
+                {hideSidebar ? (
                   <Component {...pageProps} />
-                </main>
-              ) : (
-                <main className="app prose dark:prose-invert relative z-10 flex max-h-screen min-h-screen max-w-none flex-row">
-                  <Sidebar />
-                  <div className="w-full overflow-y-scroll ">
-                    <Component {...pageProps} />
+                ) : (
+                  <div className="app relative z-10 flex flex-row">
+                    <Sidebar />
+                    <div className="w-full overflow-y-scroll ">
+                      <Component {...pageProps} />
+                    </div>
                   </div>
-                </main>
-              )}
+                )}
+              </main>
             </RouteGuard>
           </SessionProvider>
           <ToastContainer autoClose={3000} />

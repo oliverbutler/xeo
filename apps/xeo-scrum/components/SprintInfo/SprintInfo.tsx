@@ -1,9 +1,13 @@
-import { BeakerIcon, RefreshIcon } from '@heroicons/react/outline';
+import {
+  BeakerIcon,
+  ClipboardCopyIcon,
+  ExternalLinkIcon,
+  RefreshIcon,
+} from '@heroicons/react/outline';
 import { Button, ButtonVariation, CentredLoader, Clickable } from '@xeo/ui';
 import { fetcher } from 'components/DatabaseSelection/DatabaseSelection';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import Link from 'next/link';
 import { GetSprintHistoryRequest } from 'pages/api/sprint/[sprintId]/history';
 import { useCallback, useEffect, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
@@ -18,6 +22,7 @@ dayjs.extend(relativeTime);
 
 interface Props {
   sprintId: string;
+  publicMode: boolean;
 }
 
 const updateSprintHistory = async (
@@ -40,7 +45,10 @@ const updateSprintHistory = async (
   }
 };
 
-export const SprintInfo: React.FunctionComponent<Props> = ({ sprintId }) => {
+export const SprintInfo: React.FunctionComponent<Props> = ({
+  sprintId,
+  publicMode,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { data, error } = useSWR<GetSprintHistoryRequest['responseBody']>(
@@ -82,13 +90,34 @@ export const SprintInfo: React.FunctionComponent<Props> = ({ sprintId }) => {
   return (
     <div className="w-full p-10">
       <div className="flex flex-row justify-between">
-        <h1>{sprint.name}</h1>
         <div>
-          <Link href={`/sprint/${sprint.id}/edit`} passHref>
-            <Button variation={ButtonVariation.Secondary}>Edit</Button>
-          </Link>
+          <h1 className="mb-0">{sprint.name}</h1>
+          <p>{sprint.sprintGoal}</p>
+        </div>
+
+        <div>
+          {publicMode ? (
+            <a
+              target={publicMode ? '_blank' : undefined}
+              href={`/sprint/${sprint.id}/edit`}
+              rel="noreferrer"
+            >
+              <Button variation={ButtonVariation.Secondary}>
+                Edit on Xeo
+                <ExternalLinkIcon className="ml-2" height={25} width={25} />
+              </Button>
+            </a>
+          ) : (
+            <Button
+              href={`/sprint/${sprint.id}/edit`}
+              variation={ButtonVariation.Secondary}
+            >
+              Edit
+            </Button>
+          )}
         </div>
       </div>
+
       <SprintStats
         sprintHistoryPlotData={sprintHistoryPlotData}
         sprintId={sprintId}
@@ -97,6 +126,16 @@ export const SprintInfo: React.FunctionComponent<Props> = ({ sprintId }) => {
         <h2>Burn Down Chart</h2>
 
         <div className="flex flex-row gap-2">
+          {!publicMode && (
+            <Clickable
+              onClick={() => {
+                navigator.clipboard.writeText(`${window.location}/embed`);
+                toast.info('Embeddable link copied to Clipboard');
+              }}
+            >
+              <ClipboardCopyIcon height={20} width={20} />
+            </Clickable>
+          )}
           <Clickable
             showActiveLabel={isLoading}
             onClick={isLoading ? undefined : handleUpdateSprintHistory}

@@ -9,7 +9,7 @@ const SprintComponent: React.FunctionComponent = () => {
     return <div>No sprint id</div>;
   }
 
-  return <SprintInfo sprintId={sprintId as string} publicMode={false} />;
+  return <SprintInfo sprintId={sprintId as string} publicMode={true} />;
 };
 
 export default SprintComponent;
