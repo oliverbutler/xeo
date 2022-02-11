@@ -2,6 +2,7 @@ import { Sprint } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { DataPlotType, getDataForSprintChart } from 'utils/sprint/chart';
+import { prisma } from 'utils/db';
 
 export type GetSprintHistoryRequest = {
   method: 'GET';
