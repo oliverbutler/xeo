@@ -1,4 +1,3 @@
-import { InformationCircleIcon } from '@heroicons/react/outline';
 import { Sprint as PrismaSprint } from '@prisma/client';
 import { CentredLoader, Alert } from '@xeo/ui';
 import { fetcher } from 'components/DatabaseSelection/DatabaseSelection';
@@ -83,7 +82,7 @@ export const Sprint: React.FunctionComponent = () => {
             key={sprint.id}
             passHref
           >
-            <div className="border-dark-400 bg-dark-100 dark:bg-dark-800 flex cursor-pointer flex-row border-l-4 p-2 lg:w-1/2 xl:w-1/3 2xl:w-1/4">
+            <div className=" bg-dark-50 dark:bg-dark-800 flex cursor-pointer flex-row border-l-4 p-2 lg:w-1/2 xl:w-1/3 2xl:w-1/4">
               <div className="ml-1 w-fit flex-grow">
                 <h3 className="mt-4">{sprint.name}</h3>
                 <p>
@@ -91,8 +90,12 @@ export const Sprint: React.FunctionComponent = () => {
                   {dayjs(sprint.endDate).format('DD/MM')}
                 </p>
               </div>
-              <div className="-ml-6 h-52 w-72">
-                <SprintGraph plotData={plotData} smallGraph />
+              <div className="h-52 w-72">
+                <SprintGraph
+                  plotData={plotData}
+                  showPointsNotStarted
+                  smallGraph
+                />
               </div>
             </div>
           </Link>
@@ -107,7 +110,7 @@ export const Sprint: React.FunctionComponent = () => {
             key={sprint.id}
             passHref
           >
-            <div className="border-dark-400 bg-dark-800 flex w-1/3 cursor-pointer flex-row border-l-4 p-2">
+            <div className=" bg-dark-50 dark:bg-dark-800 flex cursor-pointer flex-row border-l-4 p-2 lg:w-1/2 xl:w-1/3 2xl:w-1/4">
               <div className="ml-1 w-fit">
                 <h3 className="mt-4">{sprint.name}</h3>
                 <p>
