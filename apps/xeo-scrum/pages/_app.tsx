@@ -1,6 +1,6 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import { IntlWrapper } from '@xeo/ui';
+import { IntlWrapper, useLocalStorage } from '@xeo/ui';
 import { ThemeProvider } from 'next-themes';
 import { SessionProvider } from 'next-auth/react';
 import './styles.css';
@@ -19,6 +19,8 @@ function CustomApp({
   const hideSidebar =
     pathname.startsWith('/login') || pathname.endsWith('/embed');
 
+  const [storedTheme] = useLocalStorage<string | undefined>('theme', undefined);
+
   return (
     <>
       <Head>
@@ -26,7 +28,7 @@ function CustomApp({
         <link rel="icon" href="/xeo.ico" />
       </Head>
       <IntlWrapper>
-        <ThemeProvider attribute="class" defaultTheme="system">
+        <ThemeProvider defaultTheme={storedTheme} attribute="class">
           <SessionProvider session={session}>
             <RouteGuard>
               <main className="prose dark:prose-invert  max-w-none">

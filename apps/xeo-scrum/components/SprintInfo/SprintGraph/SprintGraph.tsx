@@ -147,7 +147,6 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
           {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
           {/* @ts-ignore */}
           <Tooltip content={CustomTooltip} />
-          {!smallGraph && <Legend />}
 
           <Line
             stroke={theme.extend.colors.secondary[400]}
