@@ -85,8 +85,8 @@ model Backlog {
   id                 String             @id @default(cuid())
   members            MemberOfBacklog[]
   // Notion Connection
-  notionConnection   NotionConnection?  @relation(fields: [notionConnectionId], references: [id])
-  notionConnectionId String?
+  notionConnection   NotionConnection   @relation(fields: [notionConnectionId], references: [id])
+  notionConnectionId String
   // Notion Related Fields
   databaseId         String
   databaseName       String

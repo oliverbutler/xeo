@@ -1,6 +1,6 @@
 import { SelectField } from '@xeo/ui';
 import { UseFormReturn } from 'react-hook-form';
-import { DatabaseSelectionForm } from './useDatabaseSelection';
+import { DatabaseSelectionForm } from './useCreateNotionBacklog';
 
 interface SelectStatusMappingProps {
   form: UseFormReturn<DatabaseSelectionForm>;
@@ -29,15 +29,6 @@ export const SelectStatusMapping: React.FunctionComponent<
         }))
       : [];
 
-  const unPickedOptions = availableStatusOptions.filter((option) =>
-    [
-      ...(watch('statusMapping.statusDoneId') ?? []),
-      ...(watch('statusMapping.statusSprintBacklogId') ?? []),
-      ...(watch('statusMapping.statusInProgressId') ?? []),
-      ...(watch('statusMapping.statusToValidateId') ?? []),
-    ].every((x) => x.value !== option.value)
-  );
-
   return (
     <div>
       <h3>Select Status Mappings</h3>
@@ -47,6 +38,7 @@ export const SelectStatusMapping: React.FunctionComponent<
         control={control}
         name="statusMapping.statusDoneId"
         options={availableStatusOptions}
+        isDisabled={!currentDatabaseSelected}
         isMulti
       />
       <SelectField
@@ -55,6 +47,7 @@ export const SelectStatusMapping: React.FunctionComponent<
         control={control}
         name="statusMapping.statusToValidateId"
         options={availableStatusOptions}
+        isDisabled={!currentDatabaseSelected}
         isMulti
       />
       <SelectField
@@ -63,6 +56,7 @@ export const SelectStatusMapping: React.FunctionComponent<
         control={control}
         name="statusMapping.statusInProgressId"
         options={availableStatusOptions}
+        isDisabled={!currentDatabaseSelected}
         isMulti
       />
       <SelectField
@@ -71,17 +65,9 @@ export const SelectStatusMapping: React.FunctionComponent<
         control={control}
         name="statusMapping.statusSprintBacklogId"
         options={availableStatusOptions}
+        isDisabled={!currentDatabaseSelected}
         isMulti
       />
-      <p className="w-72">
-        Remaining Options:{' '}
-        {unPickedOptions.map((opt, index) => (
-          <span key={opt.value}>
-            {opt.label}
-            {index === unPickedOptions.length - 1 ? '' : ','}{' '}
-          </span>
-        ))}
-      </p>
     </div>
   );
 };

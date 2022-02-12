@@ -5,7 +5,7 @@ import {
   DatabasePropertyOption,
   DatabaseSelectionForm,
   DatabaseSprintFieldType,
-} from './useDatabaseSelection';
+} from './useCreateNotionBacklog';
 
 interface Props {
   form: UseFormReturn<DatabaseSelectionForm>;
@@ -60,9 +60,9 @@ export const SelectColumns: React.FunctionComponent<Props> = ({
         rules={{ required: true }}
         isDisabled={!currentDatabaseSelected}
       />
-      <div className="flex flex-col sm:flex-row">
+      <div className="flex flex-col gap-2 sm:flex-row">
         <SelectField
-          className="mt-2 mr-2"
+          className="mt-2 w-full sm:w-1/2"
           label="Sprint Field Type"
           control={control}
           name="sprintSelectType"
@@ -71,8 +71,8 @@ export const SelectColumns: React.FunctionComponent<Props> = ({
           rules={{ required: true }}
         />
         <SelectField
-          className="mt-2 flex-grow"
-          label="Sprint (select/multi_select field)"
+          className="mt-2 w-full sm:w-1/2"
+          label="Sprint"
           control={control}
           name="sprintId"
           // error={errors.sprintId}

@@ -1,8 +1,10 @@
 import Image from 'next/image';
 import notionLogo from 'public/notion-logo.jpeg';
 import linearLogo from 'public/linear-app.png';
-import { Button, ButtonVariation } from '@xeo/ui';
+import { Button, ButtonVariation, Modal } from '@xeo/ui';
 import classNames from 'classnames';
+import { NotionBacklog } from 'components/Connections/Notion/NotionBacklog/NotionBacklog';
+import { NotionConnection } from './Notion/NotionConnection/NotionConnection';
 
 interface Connection {
   name: string;
@@ -44,7 +46,7 @@ export const Connections: React.FunctionComponent = () => {
       {CONNECTIONS.map((connection) => (
         <div
           className={classNames(
-            'bg-dark-100 dark:bg-dark-800 rounded-lg transition-all',
+            'bg-dark-50 dark:bg-dark-800 rounded-lg transition-all',
             {
               'opacity-40 grayscale': connection.disabled,
             },
@@ -68,13 +70,19 @@ export const Connections: React.FunctionComponent = () => {
             <h2 className="mt-6 mb-2">{connection.name}</h2>
             <div className="flex-grow">{connection.content}</div>
             <div className="mx-auto py-4 pb-6">
-              <Button
-                href={`/connections/${connection.link}`}
-                disabled={connection.disabled}
-                variation={ButtonVariation.Secondary}
-              >
-                Connect to {connection.name}
-              </Button>
+              <Modal
+                mainText="Add Backlog"
+                trigger={(setOpen) => (
+                  <Button
+                    onClick={setOpen}
+                    disabled={connection.disabled}
+                    variation={ButtonVariation.Secondary}
+                  >
+                    Connect to {connection.name}
+                  </Button>
+                )}
+                content={() => <NotionConnection />}
+              />
             </div>
           </div>
         </div>

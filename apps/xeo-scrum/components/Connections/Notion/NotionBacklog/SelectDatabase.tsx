@@ -4,7 +4,7 @@ import { UseFormReturn } from 'react-hook-form';
 import {
   DatabaseSelectionForm,
   DatabaseSelectionOption,
-} from './useDatabaseSelection';
+} from './useCreateNotionBacklog';
 
 interface Props {
   form: UseFormReturn<DatabaseSelectionForm>;

@@ -12,6 +12,7 @@ export interface ButtonProps extends React.ComponentPropsWithRef<'button'> {
 
 export enum ButtonVariation {
   Primary = 'primary',
+  Danger = 'danger',
   Secondary = 'secondary',
   Dark = 'dark',
 }
@@ -46,6 +47,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             {
               'bg-secondary-500 hover:bg-secondary-700 ring-secondary-500':
                 variation === ButtonVariation.Secondary && !disabled,
+            },
+            {
+              'bg-red-500 ring-red-500 hover:bg-red-700':
+                variation === ButtonVariation.Danger && !disabled,
             },
             {
               'bg-dark-500 ring-dark-500':

@@ -1,6 +1,6 @@
 import { Sprint as PrismaSprint } from '@prisma/client';
 import { CentredLoader, Alert } from '@xeo/ui';
-import { fetcher } from 'components/DatabaseSelection/DatabaseSelection';
+import { fetcher } from 'components/Connections/Notion/NotionBacklog/NotionBacklog';
 import { SprintGraph } from 'components/SprintInfo/SprintGraph/SprintGraph';
 import dayjs from 'dayjs';
 import Link from 'next/link';

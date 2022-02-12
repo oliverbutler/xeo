@@ -1,4 +1,9 @@
-import { Backlog, BacklogStatus, NotionColumnType } from '@prisma/client';
+import {
+  Backlog,
+  BacklogStatus,
+  NotionColumnType,
+  NotionConnection,
+} from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { APIRequest, parseAPIRequest } from 'utils/api';
@@ -7,6 +12,7 @@ import { prisma } from 'utils/db';
 
 export type PostCreateBacklog = APIRequest<
   {
+    notionConnectionId: NotionConnection['id'];
     notionDatabaseId: string;
     notionDatabaseName: string;
     pointsColumnName: string;
@@ -25,6 +31,7 @@ export type PostCreateBacklog = APIRequest<
 >;
 
 const schema: PostCreateBacklog['joiBodySchema'] = Joi.object({
+  notionConnectionId: Joi.string().required(),
   notionDatabaseId: Joi.string().required(),
   notionDatabaseName: Joi.string().required(),
   pointsColumnName: Joi.string().required(),
@@ -62,6 +69,7 @@ export default async function createBacklog(
 
   const result = await prisma.backlog.create({
     data: {
+      notionConnectionId: body.notionConnectionId,
       databaseId: body.notionDatabaseId,
       databaseName: body.notionDatabaseName,
       pointsColumnName: body.pointsColumnName,
