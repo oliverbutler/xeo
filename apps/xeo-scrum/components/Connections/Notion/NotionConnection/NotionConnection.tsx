@@ -1,14 +1,20 @@
 import { Input, ModalFooter } from '@xeo/ui';
 import { useNotionConnection } from './useNotionConnection';
 
-export const NotionConnection: React.FunctionComponent = () => {
+interface Props {
+  closeModal: () => void;
+}
+
+export const NotionConnection: React.FunctionComponent<Props> = ({
+  closeModal,
+}) => {
   const {
     onSubmit,
     form: {
       register,
       formState: { errors },
     },
-  } = useNotionConnection();
+  } = useNotionConnection(closeModal);
 
   return (
     <form onSubmit={onSubmit}>

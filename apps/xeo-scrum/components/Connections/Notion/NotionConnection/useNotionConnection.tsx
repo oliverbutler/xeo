@@ -2,6 +2,7 @@ import { useForm, UseFormReturn } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import axios, { AxiosError } from 'axios';
 import { PostCreateNotionConnection } from 'pages/api/connections/notion';
+import { mutate } from 'swr';
 
 interface Output {
   onSubmit: () => void;
@@ -13,7 +14,7 @@ export interface NotionConnectionForm {
   secretKey: string;
 }
 
-export const useNotionConnection = (): Output => {
+export const useNotionConnection = (successCallback: () => void): Output => {
   const form = useForm<NotionConnectionForm>({});
 
   const onSubmit = async (formData: NotionConnectionForm) => {
@@ -29,6 +30,8 @@ export const useNotionConnection = (): Output => {
       .then((res) => {
         if (res.status === 201) {
           toast.success('Notion Connection Created!');
+          mutate('/api/connections');
+          successCallback();
         }
       })
       .catch((err: Error | AxiosError) => {

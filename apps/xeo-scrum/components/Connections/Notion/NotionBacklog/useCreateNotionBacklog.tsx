@@ -9,6 +9,7 @@ import {
   NotionConnection,
 } from '@prisma/client';
 import { useRouter } from 'next/router';
+import { mutate } from 'swr';
 
 export type DatabaseSelectionOption = {
   label: string;
@@ -53,10 +54,10 @@ export interface DatabaseSelectionForm {
 }
 
 export const useCreateNotionBacklog = (
-  notionConnectionId: NotionConnection['id']
+  notionConnectionId: NotionConnection['id'],
+  successCallback: () => void
 ): Output => {
   const form = useForm<DatabaseSelectionForm>({});
-  const router = useRouter();
 
   const onSubmit = async (formData: DatabaseSelectionForm) => {
     if (
@@ -112,7 +113,8 @@ export const useCreateNotionBacklog = (
     }
 
     toast.success('Backlog Created!');
-    router.push('/');
+    mutate('/api/connections');
+    successCallback();
   };
 
   return {

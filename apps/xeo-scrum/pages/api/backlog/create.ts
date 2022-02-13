@@ -67,6 +67,8 @@ export default async function createBacklog(
     return res.status(400).json({ message: error?.message });
   }
 
+  const userId = session?.id as string;
+
   const result = await prisma.backlog.create({
     data: {
       notionConnectionId: body.notionConnectionId,
@@ -83,6 +85,11 @@ export default async function createBacklog(
             notionStatusColor: mapping.notionStatusColor,
             status: mapping.status,
           })),
+        },
+      },
+      members: {
+        create: {
+          userId,
         },
       },
     },

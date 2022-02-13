@@ -63,12 +63,6 @@ export default async function getConnectionNotionDatabases(
       return res.status(404).json({ message: 'Notion Connection not found' });
     }
 
-    if (notionConnection.createdByUserId !== userId) {
-      return res.status(403).json({
-        message: 'Not authenticated to delete this Notion Connection',
-      });
-    }
-
     try {
       await prisma.notionConnection.delete({
         where: {

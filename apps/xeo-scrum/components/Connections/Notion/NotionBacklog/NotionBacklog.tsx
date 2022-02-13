@@ -12,17 +12,22 @@ export const fetcher = (input: any, init: any) =>
 
 interface NotionBacklogProps {
   notionConnectionId: NotionConnection['id'];
+  closeModal: () => void;
 }
 
 export const NotionBacklog: React.FunctionComponent<NotionBacklogProps> = ({
   notionConnectionId,
+  closeModal,
 }) => {
   const { data, error } = useSWR<GetConnectionNotionDatabasesRequest, string>(
     `/api/connections/${notionConnectionId}/notion/databases`,
     fetcher
   );
 
-  const { onSubmit, form } = useCreateNotionBacklog(notionConnectionId);
+  const { onSubmit, form } = useCreateNotionBacklog(
+    notionConnectionId,
+    closeModal
+  );
 
   if (error) {
     return <div>Error Loading!</div>;

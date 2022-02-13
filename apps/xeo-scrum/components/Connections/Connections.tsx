@@ -3,7 +3,6 @@ import notionLogo from 'public/notion-logo.jpeg';
 import linearLogo from 'public/linear-app.png';
 import { Button, ButtonVariation, Modal } from '@xeo/ui';
 import classNames from 'classnames';
-import { NotionBacklog } from 'components/Connections/Notion/NotionBacklog/NotionBacklog';
 import { NotionConnection } from './Notion/NotionConnection/NotionConnection';
 
 interface Connection {
@@ -81,7 +80,9 @@ export const Connections: React.FunctionComponent = () => {
                     Connect to {connection.name}
                   </Button>
                 )}
-                content={() => <NotionConnection />}
+                content={(setClose) => (
+                  <NotionConnection closeModal={setClose} />
+                )}
               />
             </div>
           </div>

@@ -52,8 +52,6 @@ export type ProductBacklog = {
   tickets: Ticket[];
 };
 
-const notion = new Client({ auth: process.env.NOTION_SECRET });
-
 const getStatusOfTicket = ({
   links,
   notionStatusName,
@@ -165,12 +163,16 @@ export const getProductBacklogForSprint = async ({
   sprint,
   sprints,
   notionStatusLinks,
+  notionSecretKey,
 }: {
   notionBacklog: Backlog;
   sprint: Sprint;
   sprints: Sprint[];
   notionStatusLinks: NotionStatusLink[];
+  notionSecretKey: string;
 }): Promise<ProductBacklog> => {
+  const notion = new Client({ auth: notionSecretKey });
+
   const startTime = performance.now();
   logger.info(
     `getProductBacklogForSprint > Query Notion for  ${sprint.notionSprintValue} in db ${notionBacklog.databaseName}`

@@ -23,11 +23,12 @@ import {
 } from 'pages/api/connections';
 import useSWR from 'swr';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
-import { LogoutIcon, ShareIcon, TrashIcon } from '@heroicons/react/outline';
+import { LogoutIcon, ShareIcon } from '@heroicons/react/outline';
 import { SecretText } from 'components/SecretText/SecretText';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { DeleteNotionConnection } from 'components/Connections/Notion/NotionConnection/DeleteNotionConnection';
+import { DeleteNotionBacklog } from 'components/Connections/Notion/NotionBacklog/DeleteNotionBacklog';
 
 dayjs.extend(LocalizedFormat);
 
@@ -93,8 +94,11 @@ export function Index() {
                           Add Backlog
                         </Button>
                       )}
-                      content={() => (
-                        <NotionBacklog notionConnectionId={connection.id} />
+                      content={(setClose) => (
+                        <NotionBacklog
+                          notionConnectionId={connection.id}
+                          closeModal={setClose}
+                        />
                       )}
                     />
                     <DeleteNotionConnection connection={connection} />
@@ -131,14 +135,13 @@ export function Index() {
                       },
                       {
                         Header: 'Actions',
-                        Cell: () => (
+                        accessor: 'id',
+                        Cell: (cell) => (
                           <div className="flex flex-row ">
                             <Clickable>
                               <ShareIcon width={25} height={25} />
                             </Clickable>
-                            <Clickable>
-                              <TrashIcon width={25} height={25} />
-                            </Clickable>
+                            <DeleteNotionBacklog backlogId={cell.value} />
                           </div>
                         ),
                       },
