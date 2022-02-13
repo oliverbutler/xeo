@@ -1,6 +1,6 @@
 import { Button, ButtonVariation, CentredLoader, Alert } from '@xeo/ui';
 import classNames from 'classnames';
-import { fetcher } from 'components/DatabaseSelection/DatabaseSelection';
+import { fetcher } from 'components/Connections/Notion/NotionBacklog/NotionBacklog';
 import { SprintCreate } from 'components/Sprint/SprintCreate/SprintCreate';
 import { GetBacklogsRequest } from 'pages/api/backlog';
 import { toast } from 'react-toastify';

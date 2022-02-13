@@ -1,5 +1,5 @@
 import { Button, ButtonVariation, CentredLoader } from '@xeo/ui';
-import { fetcher } from 'components/DatabaseSelection/DatabaseSelection';
+import { fetcher } from 'components/Connections/Notion/NotionBacklog/NotionBacklog';
 import { SprintEdit } from 'components/Sprint/SprintEdit/SprintEdit';
 import { useRouter } from 'next/router';
 import { GetSprintRequest } from 'pages/api/sprint/[sprintId]';
@@ -35,7 +35,7 @@ export const SprintEditPage: React.FunctionComponent = () => {
       <div className="flex flex-row justify-between">
         <h1>Update Sprint - {data.sprint.name}</h1>
         <div>
-          <Button href="/sprint" variation={ButtonVariation.Secondary}>
+          <Button href="/" variation={ButtonVariation.Secondary}>
             Back
           </Button>
         </div>

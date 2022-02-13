@@ -48,7 +48,7 @@ export default async function getSprintHistoryRequest(
     sprint.backlog.notionStatusLinks
   );
 
-  // Remove backlog and sprintHistory from the response to avoid sending unecessary data
+  // Remove backlog and sprintHistory from the response to avoid sending unnecessary data
   const { backlog, sprintHistory, ...restSprint } = sprint;
 
   const returnValue: GetSprintHistoryRequest['responseBody'] = {

@@ -1,6 +1,17 @@
-import { CentredLoader, Table, Clickable, Alert } from '@xeo/ui';
+import {
+  Loader,
+  Table,
+  Clickable,
+  Modal,
+  Button,
+  ButtonVariation,
+  ModalFooter,
+} from '@xeo/ui';
 import { Connections } from 'components/Connections/Connections';
-import { fetcher } from 'components/DatabaseSelection/DatabaseSelection';
+import {
+  NotionBacklog,
+  fetcher,
+} from 'components/Connections/Notion/NotionBacklog/NotionBacklog';
 import dayjs from 'dayjs';
 import {
   BacklogWithNotionStatusLinksAndOwner,
@@ -12,10 +23,12 @@ import {
 } from 'pages/api/connections';
 import useSWR from 'swr';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
-import { LogoutIcon, ShareIcon, TrashIcon } from '@heroicons/react/outline';
+import { LogoutIcon, ShareIcon } from '@heroicons/react/outline';
 import { SecretText } from 'components/SecretText/SecretText';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
+import { DeleteNotionConnection } from 'components/Connections/Notion/NotionConnection/DeleteNotionConnection';
+import { DeleteNotionBacklog } from 'components/Connections/Notion/NotionBacklog/DeleteNotionBacklog';
 
 dayjs.extend(LocalizedFormat);
 
@@ -37,17 +50,9 @@ export function Index() {
   return (
     <div className="p-10">
       <h1>Connections</h1>
-      <Alert variation="info">
-        If you are a developer, please contact your admin to invite you to the
-        Backlog, alternatively you can create a new Connection and invite your
-        team.
-      </Alert>
 
-      <h2>Add New Connections</h2>
-      <Connections />
-      <h2>My Connections</h2>
       {!dataConnections && !errorConnections ? (
-        <CentredLoader />
+        <Loader />
       ) : errorConnections || !dataConnections ? (
         <div>Error Loading Connections</div>
       ) : (
@@ -58,19 +63,47 @@ export function Index() {
               you.
             </p>
           ) : null}
-          <div className=":border-l-dark-100 dark:border-l-dark-800 mt-10 border-l-4 pl-6">
+          <div className="mt-10 ">
             {dataConnections.connections.map(({ connection, backlogs }) => (
-              <div key={connection.id} className="">
-                <div className="flex flex-row items-center">
-                  <div className="text-dark-900 rounded-lg bg-white px-2 font-bold">
-                    Notion
+              <div
+                key={connection.id}
+                className="outline-dark-200 mb-10 rounded-md p-4 outline-dotted"
+              >
+                <div className="flex w-full flex-row items-center">
+                  <div>
+                    <h3 className="my-0 mr-4">{connection.connectionName}</h3>
+                    <div className="my-2">
+                      <div>
+                        <b>Connected:</b>{' '}
+                        {dayjs(connection.createdAt).format('LLL')}
+                      </div>
+                      <div>
+                        <b>Secret:</b>{' '}
+                        <SecretText text={connection.secretKey} />
+                      </div>
+                    </div>
                   </div>
-                  <h2 className="mx-4 my-0">{connection.connectionName}</h2>
-                  <p className="mb-0">
-                    Connected {dayjs(connection.createdAt).format('LLL')}
-                  </p>
+                  <div className="ml-auto flex flex-row gap-2">
+                    <Modal
+                      mainText="Add Backlog"
+                      trigger={(setOpen) => (
+                        <Button
+                          onClick={setOpen}
+                          variation={ButtonVariation.Secondary}
+                        >
+                          Add Backlog
+                        </Button>
+                      )}
+                      content={(setClose) => (
+                        <NotionBacklog
+                          notionConnectionId={connection.id}
+                          closeModal={setClose}
+                        />
+                      )}
+                    />
+                    <DeleteNotionConnection connection={connection} />
+                  </div>
                 </div>
-                <SecretText text={connection.secretKey} />
                 <div>
                   <Table<BacklogWithMembersRestricted>
                     columns={[
@@ -102,14 +135,13 @@ export function Index() {
                       },
                       {
                         Header: 'Actions',
-                        Cell: () => (
+                        accessor: 'id',
+                        Cell: (cell) => (
                           <div className="flex flex-row ">
                             <Clickable>
                               <ShareIcon width={25} height={25} />
                             </Clickable>
-                            <Clickable>
-                              <TrashIcon width={25} height={25} />
-                            </Clickable>
+                            <DeleteNotionBacklog backlogId={cell.value} />
                           </div>
                         ),
                       },
@@ -124,7 +156,7 @@ export function Index() {
       )}
       <h2>Backlogs Shared With Me</h2>
       {!dataBacklogs && !errorBacklogs ? (
-        <CentredLoader />
+        <Loader />
       ) : errorBacklogs || !dataBacklogs ? (
         <div>Error Loading Backlogs</div>
       ) : (
@@ -171,6 +203,8 @@ export function Index() {
           )}
         />
       )}
+      <h2>Add New Connections</h2>
+      <Connections />
     </div>
   );
 }

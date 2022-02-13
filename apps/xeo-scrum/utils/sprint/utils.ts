@@ -37,27 +37,7 @@ export enum SprintStatus {
   COMPLETED,
 }
 
-export type ActiveSprintWithPlotData = {
-  status: SprintStatus.ACTIVE;
+export type SprintWithPlotData = {
   sprint: Sprint;
   plotData: DataPlotType[];
 };
-
-export type CompleteSprintWithoutPlotData = {
-  status: SprintStatus.COMPLETED;
-  sprint: Sprint;
-};
-
-export type SprintWithPlotData =
-  | ActiveSprintWithPlotData
-  | CompleteSprintWithoutPlotData;
-
-export const isActiveSprintWithPlotData = (
-  sprintWithPlotData: SprintWithPlotData
-): sprintWithPlotData is ActiveSprintWithPlotData =>
-  sprintWithPlotData.status === SprintStatus.ACTIVE;
-
-export const isCompleteSprintWithoutPlotData = (
-  sprintWithPlotData: SprintWithPlotData
-): sprintWithPlotData is CompleteSprintWithoutPlotData =>
-  sprintWithPlotData.status === SprintStatus.COMPLETED;

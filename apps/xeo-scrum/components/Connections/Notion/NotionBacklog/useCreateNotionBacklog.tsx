@@ -3,8 +3,13 @@ import { useForm, UseFormReturn } from 'react-hook-form';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { PostCreateBacklog } from 'pages/api/backlog/create';
-import { BacklogStatus, NotionColumnType } from '@prisma/client';
+import {
+  BacklogStatus,
+  NotionColumnType,
+  NotionConnection,
+} from '@prisma/client';
 import { useRouter } from 'next/router';
+import { mutate } from 'swr';
 
 export type DatabaseSelectionOption = {
   label: string;
@@ -48,9 +53,11 @@ export interface DatabaseSelectionForm {
   };
 }
 
-export const useDatabaseSelection = (): Output => {
+export const useCreateNotionBacklog = (
+  notionConnectionId: NotionConnection['id'],
+  successCallback: () => void
+): Output => {
   const form = useForm<DatabaseSelectionForm>({});
-  const router = useRouter();
 
   const onSubmit = async (formData: DatabaseSelectionForm) => {
     if (
@@ -65,6 +72,7 @@ export const useDatabaseSelection = (): Output => {
     }
 
     const body: PostCreateBacklog['request'] = {
+      notionConnectionId,
       notionDatabaseId: formData.database.value,
       notionDatabaseName: formData.database.label,
       statusColumnName: formData.ticketStatusId.label,
@@ -87,7 +95,7 @@ export const useDatabaseSelection = (): Output => {
           notionStatusColor: status.color,
           status: BacklogStatus.SPRINT_BACKLOG,
         })),
-        ...formData.statusMapping.statusToValidateId.map((status) => ({
+        ...(formData.statusMapping.statusToValidateId ?? []).map((status) => ({
           notionStatusName: status.value,
           notionStatusColor: status.color,
           status: BacklogStatus.TO_VALIDATE,
@@ -105,7 +113,8 @@ export const useDatabaseSelection = (): Output => {
     }
 
     toast.success('Backlog Created!');
-    router.push('/');
+    mutate('/api/connections');
+    successCallback();
   };
 
   return {

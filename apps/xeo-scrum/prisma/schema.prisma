@@ -85,8 +85,8 @@ model Backlog {
   id                 String             @id @default(cuid())
   members            MemberOfBacklog[]
   // Notion Connection
-  notionConnection   NotionConnection?  @relation(fields: [notionConnectionId], references: [id])
-  notionConnectionId String?
+  notionConnection   NotionConnection   @relation(fields: [notionConnectionId], references: [id])
+  notionConnectionId String
   // Notion Related Fields
   databaseId         String
   databaseName       String
@@ -98,22 +98,25 @@ model Backlog {
   sprints            Sprint[]
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @default(now()) @updatedAt
+
+  @@index([notionConnectionId])
 }
 
 model MemberOfBacklog {
   userId    String
   backlogId String
-  user      User     @relation(fields: [userId], references: [id])
-  backlog   Backlog  @relation(fields: [backlogId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  backlog   Backlog  @relation(fields: [backlogId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
   @@id([userId, backlogId])
+  @@index([userId, backlogId])
 }
 
 model NotionStatusLink {
   id                  String                @id @default(cuid())
-  backlog             Backlog               @relation(fields: [backlogId], references: [id])
+  backlog             Backlog               @relation(fields: [backlogId], references: [id], onDelete: Cascade)
   backlogId           String
   notionStatusName    String
   notionStatusColor   String
@@ -121,6 +124,8 @@ model NotionStatusLink {
   SprintStatusHistory SprintStatusHistory[]
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @default(now()) @updatedAt
+
+  @@index([backlogId])
 }
 
 model Sprint {
@@ -139,27 +144,33 @@ model Sprint {
   teamSpeed                   Float
   createdAt                   DateTime        @default(now())
   updatedAt                   DateTime        @default(now()) @updatedAt
+
+  @@index([backlogId])
 }
 
 model SprintHistory {
   id                  String                @id @default(cuid())
-  sprint              Sprint                @relation(fields: [sprintId], references: [id])
+  sprint              Sprint                @relation(fields: [sprintId], references: [id], onDelete: Cascade)
   sprintId            String
   timestamp           DateTime
   sprintStatusHistory SprintStatusHistory[]
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @default(now()) @updatedAt
+
+  @@index([sprintId])
 }
 
 model SprintStatusHistory {
   id                 String            @id @default(cuid())
   notionStatusLink   NotionStatusLink? @relation(fields: [notionStatusLinkId], references: [id])
   notionStatusLinkId String?
-  sprintHistory      SprintHistory     @relation(fields: [sprintHistoryId], references: [id])
+  sprintHistory      SprintHistory     @relation(fields: [sprintHistoryId], references: [id], onDelete: Cascade)
   sprintHistoryId    String
   pointsInStatus     Float
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @default(now()) @updatedAt
+
+  @@index([sprintHistoryId])
 }
 
 model NotionConnection {
@@ -171,4 +182,6 @@ model NotionConnection {
   backlogs        Backlog[]
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @default(now()) @updatedAt
+
+  @@index([createdByUserId])
 }

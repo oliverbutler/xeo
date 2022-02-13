@@ -12,6 +12,8 @@ import {
   SprintCapacityTable,
 } from '../SprintCapacityTable/SprintCapacityTable';
 import { getBusinessDaysArray } from 'utils/sprint/chart';
+import { DeleteSprint } from '../DeleteSprint/DeleteSprint';
+import { useRouter } from 'next/router';
 
 interface Props {
   sprint: Sprint;
@@ -30,6 +32,8 @@ interface SprintEditForm {
 export const DEFAULT_SPRINT_CAPACITY = 1;
 
 export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
+  const { push } = useRouter();
+
   const devs = isDeveloperWithCapacityArray(sprint.sprintDevelopersAndCapacity)
     ? sprint.sprintDevelopersAndCapacity
     : [];
@@ -85,6 +89,7 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
     }
 
     toast.success('Sprint updated');
+    push(`/sprint/${sprint.id}`);
   };
 
   const startDate = watch('startDate');
@@ -92,55 +97,59 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
   const teamSpeed = watch('teamSpeed');
 
   return (
-    <form className="gap-4" onSubmit={handleSubmit(updateSprint)}>
-      <div className="flex flex-col gap-4 sm:flex-row">
-        <Input
-          className="flex-grow"
-          label="Sprint Name"
-          {...register('sprintName')}
-        />
-        <DateRangePickerField
-          control={control}
-          startDateFieldName="startDate"
-          endDateFieldName="endDate"
-          label="Sprint Dates"
-        />
-      </div>
+    <div>
+      <form className="gap-4" onSubmit={handleSubmit(updateSprint)}>
+        <div className="flex flex-col gap-4 sm:flex-row">
+          <Input
+            className="flex-grow"
+            label="Sprint Name"
+            {...register('sprintName')}
+          />
+          <DateRangePickerField
+            control={control}
+            startDateFieldName="startDate"
+            endDateFieldName="endDate"
+            label="Sprint Dates"
+          />
+        </div>
 
-      <div className="mt-4 flex flex-grow flex-col gap-4 sm:flex-row">
-        <Input
-          className="sm:w-2/4"
-          label="Sprint Goal"
-          {...register('sprintGoal')}
-          placeholder="AaU I can..."
+        <div className="mt-4 flex flex-grow flex-col gap-4 sm:flex-row">
+          <Input
+            className="sm:w-2/4"
+            label="Sprint Goal"
+            {...register('sprintGoal')}
+            placeholder="AaU I can..."
+          />
+          <Input
+            className="sm:w-1/4"
+            label="Notion Sprint Value"
+            {...register('notionSprintValue')}
+          />
+          <Input
+            className="sm:w-1/4"
+            label="Team Speed"
+            type="number"
+            step={0.1}
+            {...register('teamSpeed')}
+          />
+        </div>
+        <SprintCapacityTable
+          startDate={new Date(startDate)}
+          endDate={new Date(endDate)}
+          teamSpeed={teamSpeed}
+          form={form}
+          defaultCapacity={DEFAULT_SPRINT_CAPACITY}
+          devFieldName="devs"
+          devNameFieldNameFactory={(devIndex) => `devs.${devIndex}.name`}
+          capacityFieldNameFactory={(devIndex, capacityIndex) =>
+            `devs.${devIndex}.capacity.${capacityIndex}`
+          }
         />
-        <Input
-          className="sm:w-1/4"
-          label="Notion Sprint Value"
-          {...register('notionSprintValue')}
-        />
-        <Input
-          className="sm:w-1/4"
-          label="Team Speed"
-          type="number"
-          step={0.1}
-          {...register('teamSpeed')}
-        />
-      </div>
-      <SprintCapacityTable
-        startDate={new Date(startDate)}
-        endDate={new Date(endDate)}
-        teamSpeed={teamSpeed}
-        form={form}
-        defaultCapacity={DEFAULT_SPRINT_CAPACITY}
-        devFieldName="devs"
-        devNameFieldNameFactory={(devIndex) => `devs.${devIndex}.name`}
-        capacityFieldNameFactory={(devIndex, capacityIndex) =>
-          `devs.${devIndex}.capacity.${capacityIndex}`
-        }
-      />
-
-      <Button type="submit">Save</Button>
-    </form>
+        <div className="flex flex-row gap-2">
+          <DeleteSprint sprintId={sprint.id} />
+          <Button type="submit">Save</Button>
+        </div>
+      </form>
+    </div>
   );
 };

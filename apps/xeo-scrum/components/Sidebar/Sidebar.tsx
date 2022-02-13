@@ -113,8 +113,8 @@ const SidebarContent = () => {
             <Clickable className="ml-auto">
               <LogoutIcon
                 onClick={() => signOut().then(() => push('/login'))}
-                width={30}
-                height={30}
+                width={25}
+                height={25}
               />
             </Clickable>
           </div>

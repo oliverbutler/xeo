@@ -5,7 +5,7 @@ import {
   RefreshIcon,
 } from '@heroicons/react/outline';
 import { Button, ButtonVariation, CentredLoader, Clickable } from '@xeo/ui';
-import { fetcher } from 'components/DatabaseSelection/DatabaseSelection';
+import { fetcher } from 'components/Connections/Notion/NotionBacklog/NotionBacklog';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { GetSprintHistoryRequest } from 'pages/api/sprint/[sprintId]/history';
