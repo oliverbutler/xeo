@@ -4,7 +4,6 @@ import {
   SprintHistory,
   SprintStatusHistory,
 } from '@prisma/client';
-import dayjs from 'dayjs';
 import Joi from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
@@ -12,7 +11,7 @@ import { APIRequest, parseAPIRequest } from 'utils/api';
 import { prisma } from 'utils/db';
 import { createSprint, CreateSprint } from 'utils/sprint/adapter';
 import { getDataForSprintChart } from 'utils/sprint/chart';
-import { SprintStatus, SprintWithPlotData } from 'utils/sprint/utils';
+import { SprintWithPlotData } from 'utils/sprint/utils';
 
 export type SprintWithHistory = Sprint & {
   sprintHistory: (SprintHistory & {
@@ -96,33 +95,18 @@ export default async function getSprints(
 
     const backlogsUserCanAccess = backlogs.map(
       ({ sprints, ...backlogWithoutSprints }) => {
-        const isSprintActive = (sprint: Sprint) =>
-          dayjs(sprint.endDate).isAfter(dayjs());
-
-        const getSprintWithPlotDataIfActive = (
-          sprint: SprintWithHistory
-        ): SprintWithPlotData => {
-          if (isSprintActive(sprint)) {
-            return {
-              status: SprintStatus.ACTIVE,
-              sprint,
-              plotData: getDataForSprintChart(
-                sprint,
-                sprint.sprintHistory,
-                backlogWithoutSprints.notionStatusLinks
-              ),
-            };
-          } else {
-            return {
-              status: SprintStatus.COMPLETED,
-              sprint,
-            };
-          }
-        };
+        const sprintsWithPlotData = sprints.map((sprint) => ({
+          sprint,
+          plotData: getDataForSprintChart(
+            sprint,
+            sprint.sprintHistory,
+            backlogWithoutSprints.notionStatusLinks
+          ),
+        }));
 
         return {
           backlog: backlogWithoutSprints,
-          sprints: sprints.map(getSprintWithPlotDataIfActive),
+          sprints: sprintsWithPlotData,
         };
       }
     );

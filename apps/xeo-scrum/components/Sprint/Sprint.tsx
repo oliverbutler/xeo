@@ -6,11 +6,7 @@ import Link from 'next/link';
 import { GetSprintsRequest } from 'pages/api/sprint';
 import { toast } from 'react-toastify';
 import useSWR from 'swr';
-import {
-  isActiveSprintWithPlotData,
-  isCompleteSprintWithoutPlotData,
-  SprintWithPlotData,
-} from 'utils/sprint/utils';
+import { SprintWithPlotData } from 'utils/sprint/utils';
 import { PreviousSprints } from './PreviousSprints/PreviousSprints';
 
 export const Sprint: React.FunctionComponent = () => {
@@ -36,8 +32,14 @@ export const Sprint: React.FunctionComponent = () => {
     return [...acc, ...sprints];
   }, [] as SprintWithPlotData[]);
 
-  const activeSprints = usersSprints.filter(isActiveSprintWithPlotData);
-  const completeSprints = usersSprints.filter(isCompleteSprintWithoutPlotData);
+  const isSprintActive = (sprint: SprintWithPlotData) =>
+    dayjs(sprint.sprint.endDate).isAfter(dayjs());
+
+  const isSprintInactive = (sprint: SprintWithPlotData) =>
+    !isSprintActive(sprint);
+
+  const activeSprints = usersSprints.filter(isSprintActive);
+  const completeSprints = usersSprints.filter(isSprintInactive);
 
   if (usersSprints.length === 0) {
     return (
@@ -50,7 +52,7 @@ export const Sprint: React.FunctionComponent = () => {
 
   return (
     <div className="py-5">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {activeSprints.map(({ sprint, plotData }) => (
           <Link
             href="/sprint/[sprintId]"

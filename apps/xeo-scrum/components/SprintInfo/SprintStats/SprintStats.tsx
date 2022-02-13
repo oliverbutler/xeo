@@ -5,11 +5,8 @@ import {
   ExclamationCircleIcon,
 } from '@heroicons/react/outline';
 import classNames from 'classnames';
-import {
-  DataPlotLine,
-  DataPlotType,
-  roundToOneDecimal,
-} from 'utils/sprint/chart';
+import { DataPlotType, roundToOneDecimal } from 'utils/sprint/chart';
+import { getSprintStats } from './getSprintStats';
 import { SprintStat } from './SprintStat';
 
 interface Props {
@@ -20,56 +17,14 @@ interface Props {
 export const SprintStats: React.FunctionComponent<Props> = ({
   sprintHistoryPlotData,
 }) => {
-  const sprintHistoryWithPoints = sprintHistoryPlotData.filter(
-    (x) => x[DataPlotLine.POINTS_LEFT] !== undefined
-  );
+  const stats = getSprintStats(sprintHistoryPlotData);
 
-  const latestSprintHistoryWithPoints =
-    sprintHistoryWithPoints[sprintHistoryWithPoints.length - 1];
-
-  if (!latestSprintHistoryWithPoints) {
+  if (!stats) {
     return null;
   }
 
-  const firstHistoryPoint = sprintHistoryPlotData[0];
-
-  const totalPointsInSprint = firstHistoryPoint[DataPlotLine.EXPECTED_POINTS];
-
-  const pointsLeft = latestSprintHistoryWithPoints[DataPlotLine.POINTS_LEFT];
-
-  const pointsLeftValidated =
-    latestSprintHistoryWithPoints[DataPlotLine.POINTS_DONE_INC_VALIDATE];
-
-  const pointsToValidate =
-    pointsLeft && pointsLeftValidated ? pointsLeft - pointsLeftValidated : 0;
-
-  const pointsExpectedInLatestSprint =
-    latestSprintHistoryWithPoints[DataPlotLine.EXPECTED_POINTS];
-
-  const deltaPoints =
-    pointsExpectedInLatestSprint && pointsLeft
-      ? roundToOneDecimal(pointsExpectedInLatestSprint - pointsLeft)
-      : 0;
-
-  const deltaPointsWithValidation =
-    pointsExpectedInLatestSprint && pointsLeftValidated
-      ? roundToOneDecimal(pointsExpectedInLatestSprint - pointsLeftValidated)
-      : 0;
-
-  const percentDone =
-    pointsLeft && totalPointsInSprint
-      ? Math.round(
-          ((totalPointsInSprint - pointsLeft) / totalPointsInSprint) * 100
-        )
-      : 0;
-
-  const percentDoneValidated =
-    pointsLeftValidated && totalPointsInSprint
-      ? Math.round(
-          ((totalPointsInSprint - pointsLeftValidated) / totalPointsInSprint) *
-            100
-        )
-      : 0;
+  const { deltaPoints, pointsToValidate, percentDone, percentDoneValidated } =
+    stats;
 
   return (
     <div className="flex flex-row flex-wrap">
