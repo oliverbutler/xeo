@@ -98,6 +98,8 @@ model Backlog {
   sprints            Sprint[]
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @default(now()) @updatedAt
+
+  @@index([notionConnectionId])
 }
 
 model MemberOfBacklog {
@@ -109,6 +111,7 @@ model MemberOfBacklog {
   updatedAt DateTime @default(now()) @updatedAt
 
   @@id([userId, backlogId])
+  @@index([userId, backlogId])
 }
 
 model NotionStatusLink {
@@ -121,6 +124,8 @@ model NotionStatusLink {
   SprintStatusHistory SprintStatusHistory[]
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @default(now()) @updatedAt
+
+  @@index([backlogId])
 }
 
 model Sprint {
@@ -139,6 +144,8 @@ model Sprint {
   teamSpeed                   Float
   createdAt                   DateTime        @default(now())
   updatedAt                   DateTime        @default(now()) @updatedAt
+
+  @@index([backlogId])
 }
 
 model SprintHistory {
@@ -149,6 +156,8 @@ model SprintHistory {
   sprintStatusHistory SprintStatusHistory[]
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @default(now()) @updatedAt
+
+  @@index([sprintId])
 }
 
 model SprintStatusHistory {
@@ -160,6 +169,8 @@ model SprintStatusHistory {
   pointsInStatus     Float
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @default(now()) @updatedAt
+
+  @@index([sprintHistoryId])
 }
 
 model NotionConnection {
@@ -171,4 +182,6 @@ model NotionConnection {
   backlogs        Backlog[]
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @default(now()) @updatedAt
+
+  @@index([createdByUserId])
 }
