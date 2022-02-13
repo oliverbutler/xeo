@@ -66,16 +66,16 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
               .startOf('day')
               .format('dddd')}
           </p>
-          {deltaDoneExpected && pointsNotDone && (
+          {deltaDoneExpected && pointsNotDone ? (
             <p className="label" style={{ color: pointsNotDone.color }}>
               Done {roundToOneDecimal(deltaDoneExpected)}
             </p>
-          )}
-          {deltaDoneValidate && pointsValidateOrDone && (
+          ) : null}
+          {deltaDoneValidate && pointsValidateOrDone ? (
             <p className="label" style={{ color: pointsValidateOrDone.color }}>
               Validate {roundToOneDecimal(deltaDoneValidate)}
             </p>
-          )}
+          ) : null}
           {pointsExpectedNotDone && (
             <p className="label" style={{ color: pointsExpectedNotDone.color }}>
               Expected {pointsExpectedNotDone.value}
