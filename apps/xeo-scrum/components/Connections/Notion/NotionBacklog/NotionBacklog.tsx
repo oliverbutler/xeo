@@ -19,10 +19,10 @@ export const NotionBacklog: React.FunctionComponent<NotionBacklogProps> = ({
   notionConnectionId,
   closeModal,
 }) => {
-  const { data, error } = useSWR<GetConnectionNotionDatabasesRequest, string>(
-    `/api/connections/${notionConnectionId}/notion/databases`,
-    fetcher
-  );
+  const { data, error } = useSWR<
+    GetConnectionNotionDatabasesRequest['responseBody'],
+    string
+  >(`/api/connections/${notionConnectionId}/notion/databases`, fetcher);
 
   const { onSubmit, form } = useCreateNotionBacklog(
     notionConnectionId,

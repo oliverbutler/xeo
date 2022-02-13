@@ -1,5 +1,5 @@
 import { SelectField } from '@xeo/ui';
-import { GetNotionDatabasesResponse } from 'pages/api/notion/databases';
+import { GetNotionDatabasesResponse } from 'pages/api/backlog/configure';
 import { UseFormReturn } from 'react-hook-form';
 import {
   DatabaseSelectionForm,
