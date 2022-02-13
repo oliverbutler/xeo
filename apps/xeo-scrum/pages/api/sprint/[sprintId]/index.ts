@@ -71,25 +71,30 @@ export default async function getSprint(
     return res.status(404).json({ message: 'Sprint not found' });
   }
 
-  switch (req.method) {
-    case 'GET':
-      return res.status(200).json({ sprint });
+  if (req.method === 'GET') {
+    return res.status(200).json({ sprint });
+  } else if (req.method === 'PUT') {
+    const { body, error } = parseAPIRequest(req, putSchema);
 
-    case 'PUT':
-      const { body, error } = parseAPIRequest(req, putSchema);
+    if (error || !body) {
+      return res.status(400).json({ message: error?.message });
+    }
 
-      if (error || !body) {
-        return res.status(400).json({ message: error?.message });
-      }
+    const updatedSprint = await updateSprint(
+      req.query.sprintId as string,
+      body.input
+    );
 
-      const updatedSprint = await updateSprint(
-        req.query.sprintId as string,
-        body.input
-      );
+    return res.status(200).json({ updatedSprint });
+  } else if (req.method === 'DELETE') {
+    await prisma.sprint.delete({
+      where: {
+        id: sprint.id,
+      },
+    });
 
-      return res.status(200).json({ updatedSprint });
-
-    default:
-      return res.status(405).json({ message: 'Method not allowed' });
+    return res.status(200).json({ message: 'Sprint deleted' });
   }
+
+  return res.status(405).json({ message: 'Method not allowed' });
 }

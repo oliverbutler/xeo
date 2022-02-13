@@ -1,4 +1,3 @@
-import { Sprint as PrismaSprint } from '@prisma/client';
 import { CentredLoader, Alert } from '@xeo/ui';
 import { fetcher } from 'components/Connections/Notion/NotionBacklog/NotionBacklog';
 import { SprintGraph } from 'components/SprintInfo/SprintGraph/SprintGraph';
@@ -12,28 +11,7 @@ import {
   isCompleteSprintWithoutPlotData,
   SprintWithPlotData,
 } from 'utils/sprint/utils';
-
-interface SprintStatusBadgeProps {
-  sprint: PrismaSprint;
-}
-
-export const SprintStatusBadge: React.FunctionComponent<
-  SprintStatusBadgeProps
-> = ({ sprint }) => {
-  if (dayjs(sprint.endDate).isBefore(dayjs(), 'minute')) {
-    return (
-      <div className="text-dark-900 w-24 rounded-md bg-red-200 text-center">
-        Past
-      </div>
-    );
-  }
-
-  return (
-    <div className="text-dark-900 w-24 rounded-md bg-green-200 text-center">
-      Active
-    </div>
-  );
-};
+import { PreviousSprints } from './PreviousSprints/PreviousSprints';
 
 export const Sprint: React.FunctionComponent = () => {
   const { data, error } = useSWR<GetSprintsRequest['responseBody']>(
@@ -72,9 +50,7 @@ export const Sprint: React.FunctionComponent = () => {
 
   return (
     <div className="py-5">
-      <h2>Active Sprints</h2>
-
-      <div className="flex flex-row flex-wrap gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {activeSprints.map(({ sprint, plotData }) => (
           <Link
             href="/sprint/[sprintId]"
@@ -82,7 +58,7 @@ export const Sprint: React.FunctionComponent = () => {
             key={sprint.id}
             passHref
           >
-            <div className=" bg-dark-50 dark:bg-dark-800 flex cursor-pointer flex-row border-l-4 p-2 lg:w-1/2 xl:w-1/3 2xl:w-1/4">
+            <div className=" bg-dark-50 dark:bg-dark-800 flex cursor-pointer flex-row border-l-4 p-2 ">
               <div className="ml-1 w-fit flex-grow">
                 <h3 className="mt-4">{sprint.name}</h3>
                 <p>
@@ -102,26 +78,7 @@ export const Sprint: React.FunctionComponent = () => {
         ))}
       </div>
       <h2>Past Sprints</h2>
-      <div className="flex flex-row flex-wrap gap-4">
-        {completeSprints.map(({ sprint }) => (
-          <Link
-            href="/sprint/[sprintId]"
-            as={`/sprint/${sprint.id}`}
-            key={sprint.id}
-            passHref
-          >
-            <div className=" bg-dark-50 dark:bg-dark-800 flex cursor-pointer flex-row border-l-4 p-2 lg:w-1/2 xl:w-1/3 2xl:w-1/4">
-              <div className="ml-1 w-fit">
-                <h3 className="mt-4">{sprint.name}</h3>
-                <p>
-                  {dayjs(sprint.startDate).format('DD/MM')} -{' '}
-                  {dayjs(sprint.endDate).format('DD/MM')}
-                </p>
-              </div>
-            </div>
-          </Link>
-        ))}
-      </div>
+      <PreviousSprints sprints={completeSprints} />
     </div>
   );
 };

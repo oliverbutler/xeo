@@ -12,6 +12,7 @@ import dayjs from 'dayjs';
 import { PostCreateSprintRequest } from 'pages/api/sprint';
 import { useRouter } from 'next/router';
 import { BacklogWithNotionStatusLinksAndOwner } from 'pages/api/backlog';
+import { groupBy } from '@xeo/utils';
 
 interface SprintCreateForm {
   backlog: BacklogSelectType;
@@ -35,6 +36,11 @@ interface BacklogSelectType {
   label: string;
 }
 
+interface BacklogGroup {
+  label: string;
+  options: BacklogSelectType[];
+}
+
 export const SprintCreate: React.FunctionComponent<SprintCreateProps> = ({
   backlogs,
 }) => {
@@ -56,10 +62,22 @@ export const SprintCreate: React.FunctionComponent<SprintCreateProps> = ({
 
   const { control, register, watch, handleSubmit } = form;
 
-  const backlogSelectOptions: BacklogSelectType[] = backlogs.map((backlog) => ({
-    value: backlog.id,
-    label: backlog.databaseName,
-  }));
+  const groupedBacklogs = groupBy(
+    backlogs,
+    (b) => b.notionConnection?.connectionName ?? ''
+  );
+
+  const backlogSelectOptions: BacklogGroup[] = Object.keys(groupedBacklogs).map(
+    (key) => {
+      return {
+        label: key,
+        options: groupedBacklogs[key].map((b) => ({
+          value: b.id,
+          label: b.databaseName,
+        })),
+      };
+    }
+  );
 
   const startDate = watch('startDate');
   const endDate = watch('endDate');

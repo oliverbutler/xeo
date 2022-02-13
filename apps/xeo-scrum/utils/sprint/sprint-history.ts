@@ -1,4 +1,5 @@
 import { NotionStatusLink, Sprint } from '@prisma/client';
+import { groupBy } from '@xeo/utils';
 import { logger } from 'utils/api';
 import { prisma } from 'utils/db';
 import {
@@ -6,14 +7,6 @@ import {
   ProductBacklog,
   Ticket,
 } from 'utils/notion/backlog';
-
-const groupBy = <T, K extends keyof any>(list: T[], getKey: (item: T) => K) =>
-  list.reduce((previous, currentItem) => {
-    const group = getKey(currentItem);
-    if (!previous[group]) previous[group] = [];
-    previous[group].push(currentItem);
-    return previous;
-  }, {} as Record<K, T[]>);
 
 const getAggregatedStatusToPoints = (
   tickets: Ticket[]

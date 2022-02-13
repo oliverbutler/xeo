@@ -35,7 +35,7 @@ export const SprintEditPage: React.FunctionComponent = () => {
       <div className="flex flex-row justify-between">
         <h1>Update Sprint - {data.sprint.name}</h1>
         <div>
-          <Button href="/sprint" variation={ButtonVariation.Secondary}>
+          <Button href="/" variation={ButtonVariation.Secondary}>
             Back
           </Button>
         </div>

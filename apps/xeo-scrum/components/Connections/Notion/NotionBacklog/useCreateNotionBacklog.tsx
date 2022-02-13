@@ -73,7 +73,7 @@ export const useCreateNotionBacklog = (
 
     const body: PostCreateBacklog['request'] = {
       notionConnectionId,
-      notionDatabaseId: notionConnectionId,
+      notionDatabaseId: formData.database.value,
       notionDatabaseName: formData.database.label,
       statusColumnName: formData.ticketStatusId.label,
       pointsColumnName: formData.storyPointsId.label,

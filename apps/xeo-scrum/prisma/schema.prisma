@@ -103,8 +103,8 @@ model Backlog {
 model MemberOfBacklog {
   userId    String
   backlogId String
-  user      User     @relation(fields: [userId], references: [id])
-  backlog   Backlog  @relation(fields: [backlogId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  backlog   Backlog  @relation(fields: [backlogId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
@@ -113,7 +113,7 @@ model MemberOfBacklog {
 
 model NotionStatusLink {
   id                  String                @id @default(cuid())
-  backlog             Backlog               @relation(fields: [backlogId], references: [id])
+  backlog             Backlog               @relation(fields: [backlogId], references: [id], onDelete: Cascade)
   backlogId           String
   notionStatusName    String
   notionStatusColor   String
@@ -143,7 +143,7 @@ model Sprint {
 
 model SprintHistory {
   id                  String                @id @default(cuid())
-  sprint              Sprint                @relation(fields: [sprintId], references: [id])
+  sprint              Sprint                @relation(fields: [sprintId], references: [id], onDelete: Cascade)
   sprintId            String
   timestamp           DateTime
   sprintStatusHistory SprintStatusHistory[]
@@ -155,7 +155,7 @@ model SprintStatusHistory {
   id                 String            @id @default(cuid())
   notionStatusLink   NotionStatusLink? @relation(fields: [notionStatusLinkId], references: [id])
   notionStatusLinkId String?
-  sprintHistory      SprintHistory     @relation(fields: [sprintHistoryId], references: [id])
+  sprintHistory      SprintHistory     @relation(fields: [sprintHistoryId], references: [id], onDelete: Cascade)
   sprintHistoryId    String
   pointsInStatus     Float
   createdAt          DateTime          @default(now())

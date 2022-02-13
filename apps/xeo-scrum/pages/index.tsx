@@ -4,8 +4,12 @@ import { Button } from '@xeo/ui';
 function sprint() {
   return (
     <div className="w-full p-10">
-      <h1>All Sprints</h1>
-      <Button href="/sprint/create">Create Sprint</Button>
+      <div className="flex flex-col sm:flex-row justify-between">
+        <h1>All Sprints</h1>
+        <div>
+          <Button href="/sprint/create">Create Sprint</Button>
+        </div>
+      </div>
       <Sprint />
     </div>
   );
