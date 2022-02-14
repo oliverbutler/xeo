@@ -64,13 +64,18 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
         setIsLoading(true);
         await updateSprintHistory(sprintId, mutate);
         setIsLoading(false);
+      } else {
+        toast.warn("You can't update a sprint that's in the past!");
       }
     }
   }, [data, mutate, sprintId]);
 
   useEffect(() => {
-    handleUpdateSprintHistory();
-  }, [handleUpdateSprintHistory]);
+    if (data && !dayjs(data.sprint.endDate).isBefore(dayjs(), 'minute')) {
+      handleUpdateSprintHistory();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [showPointsNotStarted, setShowPointsNotStarted] = useState(true);
 
