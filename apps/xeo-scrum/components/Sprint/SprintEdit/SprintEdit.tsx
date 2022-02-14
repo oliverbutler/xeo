@@ -14,6 +14,7 @@ import {
 import { getBusinessDaysArray } from 'utils/sprint/chart';
 import { DeleteSprint } from '../DeleteSprint/DeleteSprint';
 import { useRouter } from 'next/router';
+import { mutate } from 'swr';
 
 interface Props {
   sprint: Sprint;
@@ -90,6 +91,7 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
 
     toast.success('Sprint updated');
     push(`/sprint/${sprint.id}`);
+    mutate(`/api/sprint/${sprint.id}`);
   };
 
   const startDate = watch('startDate');

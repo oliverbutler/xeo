@@ -90,6 +90,53 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
 
   const isDark = nextTheme.theme === 'dark';
 
+  const lowestValueInPlot = Math.min(
+    ...plotData.map((plot) =>
+      Math.min(
+        plot[DataPlotLine.CAPACITY] ?? 0,
+        plot[DataPlotLine.POINTS_LEFT] ?? 0,
+        plot[DataPlotLine.POINTS_DONE_INC_VALIDATE] ?? 0,
+        plot[DataPlotLine.EXPECTED_POINTS] ?? 0
+      )
+    )
+  );
+
+  const highestValueInPlot = Math.max(
+    ...plotData.map((plot) =>
+      Math.max(
+        plot[DataPlotLine.CAPACITY] ?? 0,
+        plot[DataPlotLine.POINTS_LEFT] ?? 0,
+        plot[DataPlotLine.POINTS_DONE_INC_VALIDATE] ?? 0,
+        plot[DataPlotLine.EXPECTED_POINTS] ?? 0
+      )
+    )
+  );
+
+  const getAllFactorsOf10BetweenValues = (
+    lowestValue: number,
+    highestValue: number,
+    factor: number
+  ): number[] => {
+    const lowestFactor = Math.floor(lowestValue / factor) * factor;
+    const highestFactor = Math.ceil(highestValue / factor) * factor;
+
+    const factors = [];
+
+    for (let i = lowestFactor; i <= highestFactor; i += factor) {
+      factors.push(i);
+    }
+
+    return factors;
+  };
+
+  const axisFactor = highestValueInPlot - lowestValueInPlot < 60 ? 10 : 20;
+
+  const yAxisTicks = getAllFactorsOf10BetweenValues(
+    lowestValueInPlot,
+    highestValueInPlot,
+    axisFactor
+  );
+
   return (
     <div
       className={classNames('relative -ml-6 mt-4', { 'text-sm': smallGraph })}
@@ -132,6 +179,8 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
           <YAxis
             type="number"
             dataKey={DataPlotLine.EXPECTED_POINTS}
+            ticks={yAxisTicks}
+            domain={['dataMin', 'dataMax']}
             stroke={
               isDark
                 ? theme.extend.colors.dark[500]

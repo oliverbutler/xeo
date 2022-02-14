@@ -57,6 +57,7 @@ export const SprintCapacityTable = <T extends FieldValues>({
 
   const sprintCapacityTableRows = useMemo(() => {
     const sprintDays = getBusinessDaysArray(startDate, endDate);
+
     return sprintDays.map((date) => ({
       date,
     }));
