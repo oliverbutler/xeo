@@ -17,13 +17,14 @@ export enum DataPlotLine {
 
 export type DataPlotType = {
   time: number;
+  sprintDay: number;
 } & {
   [key in DataPlotLine]?: number;
 };
 
 export const getDaysArray = function (start: Date, end: Date): Date[] {
-  const s = new Date(start);
-  const e = new Date(end);
+  const s = dayjs(start).startOf('day').toDate();
+  const e = dayjs(end).endOf('day').toDate();
   const a: Date[] = [];
   for (const d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
     a.push(new Date(d));
@@ -38,6 +39,7 @@ export const isBusinessDay = (date: Date): boolean => {
 
 export const getBusinessDaysArray = (start: Date, end: Date): Date[] => {
   const days = getDaysArray(start, end);
+
   return days.filter(isBusinessDay);
 };
 
@@ -91,6 +93,20 @@ export const roundToOneDecimal = (number: number): number => {
   return Math.round(number * 10) / 10;
 };
 
+export const getCumulativeCapacityPerDay = (
+  capacityPerDay: {
+    day: Date;
+    capacity: number;
+  }[]
+) =>
+  capacityPerDay.reduce((acc, { day, capacity }, index) => {
+    const newElement = {
+      day,
+      capacity: (index == 0 ? 0 : acc[index - 1].capacity) + capacity,
+    };
+    return [...acc, newElement];
+  }, [] as { day: Date; capacity: number }[]);
+
 export const getDataForSprintChart = (
   sprint: Sprint,
   sprintHistory: SprintWithHistory['sprintHistory'],
@@ -103,32 +119,26 @@ export const getDataForSprintChart = (
     0
   );
 
-  const cumulativeCapacityPerDay = capacityPerDay.reduce(
-    (acc, { day, capacity }, index) => {
-      const newElement = {
-        day,
-        capacity: (index == 0 ? 0 : acc[index - 1].capacity) + capacity,
-      };
-      return [...acc, newElement];
-    },
-    [] as { day: Date; capacity: number }[]
-  );
+  const cumulativeCapacityPerDay = getCumulativeCapacityPerDay(capacityPerDay);
 
   const plotData: DataPlotType[] = cumulativeCapacityPerDay.map(
-    ({ day, capacity: dailyCapacity }) => {
+    ({ day, capacity: dailyCapacity }, dayIndex) => {
       const sprintHistoriesOnDay = sprintHistory.filter(
         (data) =>
           dayjs(data.timestamp).unix() >= dayjs(day).startOf('day').unix() &&
           dayjs(data.timestamp).unix() < dayjs(day).endOf('day').unix()
       );
 
+      const emptyDay = {
+        time: dayjs(day).endOf('day').valueOf(),
+        sprintDay: dayIndex,
+        [DataPlotLine.EXPECTED_POINTS]: roundToOneDecimal(
+          sprintCapacity - dailyCapacity
+        ),
+      };
+
       if (sprintHistoriesOnDay.length === 0) {
-        return {
-          time: dayjs(day).unix(),
-          [DataPlotLine.EXPECTED_POINTS]: roundToOneDecimal(
-            sprintCapacity - dailyCapacity
-          ),
-        };
+        return emptyDay;
       }
 
       const latestSprintHistoryOnDay =
@@ -140,10 +150,7 @@ export const getDataForSprintChart = (
       );
 
       return {
-        time: dayjs(day).endOf('day').unix(),
-        [DataPlotLine.EXPECTED_POINTS]: roundToOneDecimal(
-          sprintCapacity - dailyCapacity
-        ),
+        ...emptyDay,
         [DataPlotLine.POINTS_LEFT]: roundToOneDecimal(
           sprintCapacity - pointsInDone
         ),
@@ -155,7 +162,8 @@ export const getDataForSprintChart = (
   );
 
   const startOfSprint: DataPlotType = {
-    time: dayjs(sprint.startDate).startOf('day').unix(),
+    time: dayjs(sprint.startDate).subtract(1, 'day').endOf('day').valueOf(),
+    sprintDay: -1,
     [DataPlotLine.EXPECTED_POINTS]: roundToOneDecimal(sprintCapacity),
     [DataPlotLine.POINTS_LEFT]: roundToOneDecimal(sprintCapacity),
     [DataPlotLine.POINTS_DONE_INC_VALIDATE]: roundToOneDecimal(sprintCapacity),
