@@ -5,7 +5,6 @@ import {
   Modal,
   Button,
   ButtonVariation,
-  ModalFooter,
 } from '@xeo/ui';
 import { Connections } from 'components/Connections/Connections';
 import {
@@ -29,6 +28,7 @@ import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { DeleteNotionConnection } from 'components/Connections/Notion/NotionConnection/DeleteNotionConnection';
 import { DeleteNotionBacklog } from 'components/Connections/Notion/NotionBacklog/DeleteNotionBacklog';
+import { ShareBacklog } from 'components/Backlog/ShareBacklog/ShareBacklog';
 
 dayjs.extend(LocalizedFormat);
 
@@ -138,9 +138,7 @@ export function Index() {
                         accessor: 'id',
                         Cell: (cell) => (
                           <div className="flex flex-row ">
-                            <Clickable>
-                              <ShareIcon width={25} height={25} />
-                            </Clickable>
+                            <ShareBacklog backlog={cell.row.original} />
                             <DeleteNotionBacklog backlogId={cell.value} />
                           </div>
                         ),

@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
-import { fetchAvailableDatabasesFromNotion } from 'utils/connections/notion/notion-client';
 import { prisma } from 'utils/db';
 
 export default async function backlog(
