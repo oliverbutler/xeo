@@ -16,12 +16,19 @@ import {
 } from 'utils/sprint/chart';
 import classNames from 'classnames';
 import { useTheme } from 'next-themes';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 interface Props {
   plotData: DataPlotType[];
   showPointsNotStarted?: boolean;
   smallGraph?: boolean;
 }
+
+// FIXME
+// Figure out how best to show labels with different timezones, for now just show in UTC, which is fine for Europe not for Asia America
+const unixToDayjs = (unix: number) => dayjs.utc(unix);
 
 export const SprintGraph: React.FunctionComponent<Props> = ({
   plotData,
@@ -60,7 +67,7 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
 
       return (
         <div className="bg-dark-100 dark:bg-dark-800 dark:border-l-dark-600 ml-4 border-l-4  bg-opacity-80 p-2 dark:bg-opacity-60">
-          <p className="label">End of {dayjs(label * 1000).format('dddd')}</p>
+          <p className="label">End of {unixToDayjs(label).format('dddd')}</p>
           {deltaDoneExpected && pointsNotDone ? (
             <p className="label" style={{ color: pointsNotDone.color }}>
               Done {roundToOneDecimal(deltaDoneExpected)}
@@ -129,7 +136,7 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
     return factors;
   };
 
-  const axisFactor = highestValueInPlot - lowestValueInPlot < 60 ? 10 : 20;
+  const axisFactor = highestValueInPlot - lowestValueInPlot < 80 ? 10 : 20;
 
   const yAxisTicks = getAllFactorsOf10BetweenValues(
     lowestValueInPlot,
@@ -165,9 +172,7 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
             dy={10}
             dataKey="time"
             name="Time"
-            tickFormatter={(unixTime) =>
-              dayjs(unixTime * 1000).format('ddd DD/MM')
-            }
+            tickFormatter={(unix) => unixToDayjs(unix).format('ddd DD/MM')}
             type="category"
             stroke={
               isDark
