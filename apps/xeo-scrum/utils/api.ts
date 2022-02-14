@@ -1,7 +1,9 @@
 import { ObjectSchema, Schema, ValidationError } from 'joi';
-import { NextApiRequest } from 'next';
+import { NextApiRequest, NextApiResponse } from 'next';
 import axios, { AxiosError } from 'axios';
 import pino from 'pino';
+import useSWR from 'swr';
+import { fetcher } from 'components/Connections/Notion/NotionBacklog/NotionBacklog';
 
 export type GenericAPIRequest<T> = {
   error: {
@@ -19,6 +21,71 @@ export type APIRequest<TRequest extends object, TResponse extends object> = {
 export type APIDeleteRequest<TResponse extends object> = {
   type: 'DELETE';
 } & GenericAPIRequest<TResponse>;
+
+export type APIGetRequest<TResponse extends object> = {
+  type: 'GET';
+} & GenericAPIRequest<TResponse>;
+
+export const apiResponse = <T extends GenericAPIRequest<object>>(
+  res: NextApiResponse,
+  data: T['response'],
+  status?: number
+) => {
+  return res.status(status ?? 200).json(data);
+};
+
+export const apiError = <T extends GenericAPIRequest<object>>(
+  res: NextApiResponse,
+  error: T['error'],
+  status?: number
+) => {
+  return res.status(status ?? 400).json(error);
+};
+
+type QueryResponse<T extends APIGetRequest<object>> =
+  | {
+      data: T['response'];
+      error: null;
+      isLoading: false;
+    }
+  | {
+      data: null;
+      error: null;
+      isLoading: true;
+    }
+  | {
+      data: null;
+      error: T['error'];
+      isLoading: false;
+    };
+
+export const useQuery = <T extends APIGetRequest<object>>(
+  url: string
+): QueryResponse<T> => {
+  const { data, error } = useSWR(url, fetcher);
+
+  if (!data && !error) {
+    return {
+      data: null,
+      error: null,
+      isLoading: true,
+    };
+  }
+
+  if (error || !data) {
+    return {
+      data: null,
+      error,
+      isLoading: false,
+    };
+  }
+
+  return {
+    data,
+    error: null,
+    isLoading: false,
+  };
+};
 
 type ParseAPIRequestResponse<T extends object> =
   | {

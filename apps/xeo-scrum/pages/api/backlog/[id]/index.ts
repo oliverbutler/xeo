@@ -1,6 +1,21 @@
+import { Backlog, MemberOfBacklog } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
+import { apiError, APIGetRequest, apiResponse } from 'utils/api';
 import { prisma } from 'utils/db';
+
+export type GetBacklogRequest = APIGetRequest<{
+  backlog: Backlog & {
+    members: (MemberOfBacklog & {
+      user: {
+        id: string;
+        image: string | null;
+        email: string | null;
+        name: string | null;
+      };
+    })[];
+  };
+}>;
 
 export default async function backlog(
   req: NextApiRequest,
@@ -9,7 +24,7 @@ export default async function backlog(
   const session = await getSession({ req });
 
   if (!session) {
-    return res.status(401).json({ message: 'Not authenticated' });
+    return apiError(res, { message: 'Not authenticated' }, 401);
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -18,20 +33,36 @@ export default async function backlog(
 
   const backlogId = req.query.id as string;
 
-  if (req.method === 'DELETE') {
-    const backlog = await prisma.backlog.findFirst({
-      where: {
-        notionConnection: {
-          createdByUserId: userId,
-        },
-        id: backlogId,
+  const backlog = await prisma.backlog.findFirst({
+    where: {
+      notionConnection: {
+        createdByUserId: userId,
       },
-    });
+      id: backlogId,
+    },
+    include: {
+      members: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              image: true,
+              email: true,
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
 
-    if (!backlog) {
-      return res.status(404).json({ message: 'Backlog not found' });
-    }
+  if (!backlog) {
+    return apiError(res, { message: 'Backlog not found' }, 404);
+  }
 
+  if (req.method === 'GET') {
+    return apiResponse<GetBacklogRequest>(res, { backlog });
+  } else if (req.method === 'DELETE') {
     try {
       await prisma.backlog.delete({
         where: {
@@ -39,12 +70,10 @@ export default async function backlog(
         },
       });
 
-      return res.status(200).json({ message: 'Backlog deleted' });
+      return apiResponse(res, { message: 'Backlog deleted' });
     } catch (error) {
-      return res.status(500).json({
-        message: 'Error deleting Backlog',
-      });
+      return apiError(res, { message: 'Error deleting backlog' }, 500);
     }
   }
-  return res.status(400).json({ message: 'Invalid request method' });
+  return apiError(res, { message: 'Method not allowed' }, 405);
 }

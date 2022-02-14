@@ -1,6 +1,7 @@
 import { Backlog, MemberOfBacklog, NotionConnection } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
+import { apiError, APIGetRequest, apiResponse } from 'utils/api';
 import { prisma } from 'utils/db';
 
 enum ConnectionType {
@@ -24,13 +25,9 @@ type Connection = {
   backlogs: BacklogWithMembersRestricted[];
 };
 
-export type GetConnectionsRequest = {
-  method: 'GET';
-  requestBody: undefined;
-  responseBody: {
-    connections: Connection[];
-  };
-};
+export type GetConnectionsRequest = APIGetRequest<{
+  connections: Connection[];
+}>;
 
 export default async function getSprints(
   req: NextApiRequest,
@@ -39,7 +36,7 @@ export default async function getSprints(
   const session = await getSession({ req });
 
   if (!session) {
-    return res.status(401).json({ message: 'Not authenticated' });
+    return apiResponse(res, { message: 'Not authenticated' });
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -79,10 +76,7 @@ export default async function getSprints(
       })
     );
 
-    const returnValue: GetConnectionsRequest['responseBody'] = {
-      connections,
-    };
-    return res.status(200).json(returnValue);
+    return apiResponse<GetConnectionsRequest>(res, { connections });
   }
-  return res.status(400).json({ message: 'Invalid request method' });
+  return apiError(res, { message: 'Invalid request method' });
 }

@@ -1,5 +1,4 @@
-import { TrashIcon } from '@heroicons/react/outline';
-import { ButtonVariation, Clickable, Modal, ModalFooter } from '@xeo/ui';
+import { Button, ButtonVariation, Modal, ModalFooter } from '@xeo/ui';
 import axios, { AxiosError } from 'axios';
 import { toast } from 'react-toastify';
 import { mutate } from 'swr';
@@ -34,9 +33,9 @@ export const DeleteNotionBacklog: React.FunctionComponent<Props> = ({
     <Modal
       mainText="Delete"
       trigger={(setOpen) => (
-        <Clickable onClick={setOpen}>
-          <TrashIcon width={25} height={25} />
-        </Clickable>
+        <Button variation={ButtonVariation.Danger} onClick={setOpen}>
+          Delete
+        </Button>
       )}
       content={(setClosed) => (
         <>

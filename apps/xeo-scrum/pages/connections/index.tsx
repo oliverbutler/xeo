@@ -22,13 +22,11 @@ import {
 } from 'pages/api/connections';
 import useSWR from 'swr';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
-import { LogoutIcon, ShareIcon } from '@heroicons/react/outline';
+import { LogoutIcon } from '@heroicons/react/outline';
 import { SecretText } from 'components/SecretText/SecretText';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { DeleteNotionConnection } from 'components/Connections/Notion/NotionConnection/DeleteNotionConnection';
-import { DeleteNotionBacklog } from 'components/Connections/Notion/NotionBacklog/DeleteNotionBacklog';
-import { ShareBacklog } from 'components/Backlog/ShareBacklog/ShareBacklog';
 
 dayjs.extend(LocalizedFormat);
 
@@ -39,7 +37,7 @@ export function Index() {
   >('/api/backlog', fetcher);
 
   const { data: dataConnections, error: errorConnections } = useSWR<
-    GetConnectionsRequest['responseBody'],
+    GetConnectionsRequest['response'],
     string
   >('/api/connections', fetcher);
 
@@ -137,10 +135,12 @@ export function Index() {
                         Header: 'Actions',
                         accessor: 'id',
                         Cell: (cell) => (
-                          <div className="flex flex-row ">
-                            <ShareBacklog backlog={cell.row.original} />
-                            <DeleteNotionBacklog backlogId={cell.value} />
-                          </div>
+                          <Button
+                            href={`/connections/backlog/notion/${cell.value}`}
+                            variation={ButtonVariation.Secondary}
+                          >
+                            Edit
+                          </Button>
                         ),
                       },
                     ]}
