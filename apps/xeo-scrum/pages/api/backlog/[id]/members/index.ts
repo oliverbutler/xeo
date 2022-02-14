@@ -68,8 +68,8 @@ export default async function backlogMembers(
   if (req.method === 'PUT') {
     const { body, error } = parseAPIRequest(req, schema);
 
-    if (error) {
-      return res.status(400).json({ message: error.message });
+    if (error || !body) {
+      return res.status(400).json({ message: error?.message });
     }
 
     try {

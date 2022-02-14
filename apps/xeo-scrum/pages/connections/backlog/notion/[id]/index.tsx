@@ -20,7 +20,7 @@ export function Index() {
     return <CentredLoader />;
   }
 
-  return <Backlog backlog={data.backlog} />;
+  return data ? <Backlog backlog={data.backlog} /> : null;
 }
 
 export default Index;
