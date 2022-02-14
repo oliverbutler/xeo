@@ -26,25 +26,27 @@ export const getSprintStats = (sprintHistoryPlotData: DataPlotType[]) => {
     latestSprintHistoryWithPoints[DataPlotLine.POINTS_DONE_INC_VALIDATE];
 
   const pointsToValidate =
-    pointsLeft && pointsLeftValidated ? pointsLeft - pointsLeftValidated : 0;
+    pointsLeft !== undefined && pointsLeftValidated
+      ? pointsLeft - pointsLeftValidated
+      : 0;
 
   const pointsExpectedInLatestSprint =
     latestSprintHistoryWithPoints[DataPlotLine.EXPECTED_POINTS];
 
   const deltaPoints =
-    pointsExpectedInLatestSprint && pointsLeft
+    pointsExpectedInLatestSprint !== undefined && pointsLeft !== undefined
       ? roundToOneDecimal(pointsExpectedInLatestSprint - pointsLeft)
       : 0;
 
   const percentDone =
-    pointsLeft && totalPointsInSprint
+    pointsLeft !== undefined && totalPointsInSprint !== undefined
       ? Math.round(
           ((totalPointsInSprint - pointsLeft) / totalPointsInSprint) * 100
         )
       : 0;
 
   const percentDoneValidated =
-    pointsLeftValidated && totalPointsInSprint
+    pointsLeftValidated !== undefined && totalPointsInSprint !== undefined
       ? Math.round(
           ((totalPointsInSprint - pointsLeftValidated) / totalPointsInSprint) *
             100

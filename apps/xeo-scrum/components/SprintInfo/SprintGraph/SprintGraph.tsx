@@ -60,12 +60,7 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
 
       return (
         <div className="bg-dark-100 dark:bg-dark-800 dark:border-l-dark-600 ml-4 border-l-4  bg-opacity-80 p-2 dark:bg-opacity-60">
-          <p className="label">
-            End of{' '}
-            {dayjs(label * 1000)
-              .startOf('day')
-              .format('dddd')}
-          </p>
+          <p className="label">End of {dayjs(label * 1000).format('dddd')}</p>
           {deltaDoneExpected && pointsNotDone ? (
             <p className="label" style={{ color: pointsNotDone.color }}>
               Done {roundToOneDecimal(deltaDoneExpected)}
