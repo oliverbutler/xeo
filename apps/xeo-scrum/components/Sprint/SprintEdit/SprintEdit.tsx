@@ -1,5 +1,5 @@
 import { Sprint } from '@prisma/client';
-import { Button, DateRangePickerField, Input } from '@xeo/ui';
+import { Button, Input } from '@xeo/ui';
 import { useForm } from 'react-hook-form';
 import { v4 } from 'uuid';
 import React from 'react';
@@ -15,6 +15,7 @@ import { getBusinessDaysArray } from 'utils/sprint/chart';
 import { DeleteSprint } from '../DeleteSprint/DeleteSprint';
 import { useRouter } from 'next/router';
 import { mutate } from 'swr';
+import dayjs from 'dayjs';
 
 interface Props {
   sprint: Sprint;
@@ -41,8 +42,8 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
 
   const form = useForm<SprintEditForm>({
     defaultValues: {
-      startDate: new Date(sprint.startDate).toISOString(),
-      endDate: new Date(sprint.endDate).toISOString(),
+      startDate: dayjs(sprint.startDate).format('YYYY-MM-DDTHH:mm'), // datetime-local requires this format
+      endDate: dayjs(sprint.endDate).format('YYYY-MM-DDTHH:mm'), // datetime-local requires this format
       notionSprintValue: sprint.notionSprintValue,
       sprintName: sprint.name,
       sprintGoal: sprint.sprintGoal,
@@ -51,7 +52,7 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
     },
   });
 
-  const { control, register, watch, handleSubmit } = form;
+  const { register, watch, handleSubmit } = form;
 
   const updateSprint = async (data: SprintEditForm) => {
     const daysInSprint = getBusinessDaysArray(
@@ -63,8 +64,8 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
       input: {
         name: data.sprintName,
         goal: data.sprintGoal,
-        startDate: new Date(data.startDate).toISOString(),
-        endDate: new Date(data.endDate).toISOString(),
+        startDate: dayjs(data.startDate).toISOString(),
+        endDate: dayjs(data.endDate).toISOString(),
         teamSpeed: data.teamSpeed,
         notionSprintValue: data.notionSprintValue,
         developers: data.devs.map((dev) => ({
@@ -103,24 +104,30 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
       <form className="gap-4" onSubmit={handleSubmit(updateSprint)}>
         <div className="flex flex-col gap-4 sm:flex-row">
           <Input
-            className="flex-grow"
+            className="sm:w-1/2"
             label="Sprint Name"
             {...register('sprintName')}
           />
-          <DateRangePickerField
-            control={control}
-            startDateFieldName="startDate"
-            endDateFieldName="endDate"
-            label="Sprint Dates"
+          <Input
+            className="sm:w-1/2"
+            label="Sprint Goal"
+            {...register('sprintGoal')}
+            placeholder="AaU I can..."
           />
         </div>
 
         <div className="mt-4 flex flex-grow flex-col gap-4 sm:flex-row">
           <Input
-            className="sm:w-2/4"
-            label="Sprint Goal"
-            {...register('sprintGoal')}
-            placeholder="AaU I can..."
+            className="sm:w-1/4"
+            type="datetime-local"
+            label="Start Time"
+            {...register('startDate')}
+          />
+          <Input
+            className="sm:w-1/4"
+            type="datetime-local"
+            label="End Time"
+            {...register('endDate')}
           />
           <Input
             className="sm:w-1/4"

@@ -1,4 +1,4 @@
-import { Button, DateRangePickerField, Input, SelectField } from '@xeo/ui';
+import { Button, Input, SelectField } from '@xeo/ui';
 import { useForm } from 'react-hook-form';
 import React from 'react';
 import axios from 'axios';
@@ -49,8 +49,8 @@ export const SprintCreate: React.FunctionComponent<SprintCreateProps> = ({
   const form = useForm<SprintCreateForm>({
     defaultValues: {
       sprintGoal: '',
-      startDate: dayjs().toISOString(),
-      endDate: dayjs().add(1, 'week').toISOString(),
+      startDate: dayjs().format('YYYY-MM-DDTHH:mm'), // datetime-local requires this format
+      endDate: dayjs().add(1, 'week').format('YYYY-MM-DDTHH:mm'), // datetime-local requires this format
       teamSpeed: 6,
       devs: [
         { name: '', capacity: [] },
@@ -60,7 +60,7 @@ export const SprintCreate: React.FunctionComponent<SprintCreateProps> = ({
     },
   });
 
-  const { control, register, watch, handleSubmit } = form;
+  const { register, watch, handleSubmit } = form;
 
   const groupedBacklogs = groupBy(
     backlogs,
@@ -88,8 +88,8 @@ export const SprintCreate: React.FunctionComponent<SprintCreateProps> = ({
       input: {
         name: data.sprintName,
         goal: data.sprintGoal,
-        startDate: new Date(data.startDate).toISOString(),
-        endDate: new Date(data.endDate).toISOString(),
+        startDate: dayjs(data.startDate).toISOString(),
+        endDate: dayjs(data.endDate).toISOString(),
         teamSpeed: data.teamSpeed,
         notionSprintValue: data.notionSprintValue,
         developers: data.devs.map((dev) => ({
@@ -141,12 +141,15 @@ export const SprintCreate: React.FunctionComponent<SprintCreateProps> = ({
         />
       </div>
       <div className="mt-4 flex flex-grow flex-row gap-4">
-        <DateRangePickerField
-          control={control}
-          startDateFieldName="startDate"
-          endDateFieldName="endDate"
-          label="Sprint Dates"
-          useControllerOptions={{ rules: { required: true } }}
+        <Input
+          type="datetime-local"
+          label="Start Time"
+          {...register('startDate', { required: true })}
+        />
+        <Input
+          type="datetime-local"
+          label="End Time"
+          {...register('endDate', { required: true })}
         />
         <Input
           className="w-1/3"
