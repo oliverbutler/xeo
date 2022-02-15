@@ -9,6 +9,7 @@ import { getSession } from 'next-auth/react';
 import { APIRequest, parseAPIRequest } from 'utils/api';
 import Joi from 'joi';
 import { prisma } from 'utils/db';
+import { withSentry } from '@sentry/nextjs';
 
 export type PostCreateBacklog = APIRequest<
   {
@@ -51,10 +52,7 @@ const schema: PostCreateBacklog['joiBodySchema'] = Joi.object({
   ),
 });
 
-export default async function createBacklog(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
 
   if (!session) {
@@ -100,4 +98,6 @@ export default async function createBacklog(
   };
 
   return res.status(200).json(returnValue);
-}
+};
+
+export default withSentry(handler);

@@ -5,6 +5,7 @@ import { APIRequest, parseAPIRequest } from 'utils/api';
 import Joi from 'joi';
 import { prisma } from 'utils/db';
 import { Client } from '@notionhq/client/build/src';
+import { withSentry } from '@sentry/nextjs';
 
 export type PostCreateNotionConnection = APIRequest<
   {
@@ -21,10 +22,7 @@ const schema: PostCreateNotionConnection['joiBodySchema'] = Joi.object({
   secretKey: Joi.string().required(),
 });
 
-export default async function createBacklog(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
 
   if (!session) {
@@ -58,4 +56,6 @@ export default async function createBacklog(
   };
 
   return res.status(201).json(returnValue);
-}
+};
+
+export default withSentry(handler);

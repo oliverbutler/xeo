@@ -2,6 +2,7 @@ import Joi from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { APIRequest, parseAPIRequest } from 'utils/api';
 import { updateSprintHistoryIfChanged } from 'utils/sprint/sprint-history';
+import { withSentry } from '@sentry/nextjs';
 
 export type PostUpdateSprintHistory = APIRequest<
   {
@@ -19,10 +20,7 @@ const schema: PostUpdateSprintHistory['joiBodySchema'] = Joi.object({
 /**
  * ⚠️ Public Facing Route
  */
-export default async function updateSprintHistory(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, error } = parseAPIRequest(req, schema);
 
   if (error || !body) {
@@ -44,4 +42,6 @@ export default async function updateSprintHistory(
       .status(500)
       .json({ message: 'Error updating sprint from Notion' });
   }
-}
+};
+
+export default withSentry(handler);

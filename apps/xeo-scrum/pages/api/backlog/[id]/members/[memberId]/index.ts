@@ -2,15 +2,13 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { APIDeleteRequest } from 'utils/api';
 import { prisma } from 'utils/db';
+import { withSentry } from '@sentry/nextjs';
 
 export type DeleteBacklogMember = APIDeleteRequest<{
   message: string;
 }>;
 
-export default async function backlogMembers(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
 
   if (!session) {
@@ -68,4 +66,6 @@ export default async function backlogMembers(
     }
   }
   return res.status(400).json({ message: 'Invalid request method' });
-}
+};
+
+export default withSentry(handler);

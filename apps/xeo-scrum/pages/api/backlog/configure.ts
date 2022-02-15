@@ -3,6 +3,7 @@ import { getSession } from 'next-auth/react';
 import { Client } from '@notionhq/client';
 import { GetDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
 import { isNotNullOrUndefined } from '@xeo/utils';
+import { withSentry } from '@sentry/nextjs';
 
 export type GetNotionDatabasesResponse = {
   databases: {
@@ -13,10 +14,7 @@ export type GetNotionDatabasesResponse = {
   hasMore: boolean;
 };
 
-export default async function getNotionDatabases(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
 
   if (!session) {
@@ -52,4 +50,6 @@ export default async function getNotionDatabases(
     console.error(error);
     res.status(400).json({ message: `Error fetching Notion Databases` });
   }
-}
+};
+
+export default withSentry(handler);

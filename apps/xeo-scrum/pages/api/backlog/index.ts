@@ -3,6 +3,7 @@ import { Backlog, NotionConnection, NotionStatusLink } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { prisma } from 'utils/db';
+import { withSentry } from '@sentry/nextjs';
 
 export type BacklogWithNotionStatusLinksAndOwner = Backlog & {
   notionStatusLinks: NotionStatusLink[];
@@ -25,10 +26,7 @@ export type GetBacklogsRequest = {
   };
 };
 
-export default async function getSprints(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
 
   if (!session) {
@@ -72,4 +70,6 @@ export default async function getSprints(
   }
 
   return res.status(400).json({ message: 'Invalid request method' });
-}
+};
+
+export default withSentry(handler);

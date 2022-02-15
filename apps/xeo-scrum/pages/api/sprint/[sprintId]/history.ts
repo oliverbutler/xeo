@@ -2,6 +2,7 @@ import { Sprint } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { DataPlotType, getDataForSprintChart } from 'utils/sprint/chart';
 import { prisma } from 'utils/db';
+import { withSentry } from '@sentry/nextjs';
 
 export type GetSprintHistoryRequest = {
   method: 'GET';
@@ -14,10 +15,7 @@ export type GetSprintHistoryRequest = {
 /**
  * ⚠️ Public Facing Route
  */
-export default async function getSprintHistoryRequest(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const sprintId = req.query.sprintId as string;
 
   const sprint = await prisma.sprint.findFirst({
@@ -57,4 +55,6 @@ export default async function getSprintHistoryRequest(
   };
 
   return res.status(200).json(returnValue);
-}
+};
+
+export default withSentry(handler);

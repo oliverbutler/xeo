@@ -12,6 +12,7 @@ import { prisma } from 'utils/db';
 import { createSprint, CreateSprint } from 'utils/sprint/adapter';
 import { getDataForSprintChart } from 'utils/sprint/chart';
 import { SprintWithPlotData } from 'utils/sprint/utils';
+import { withSentry } from '@sentry/nextjs';
 
 export type SprintWithHistory = Sprint & {
   sprintHistory: (SprintHistory & {
@@ -55,10 +56,7 @@ const postSchema: PostCreateSprintRequest['joiBodySchema'] = Joi.object({
   backlogId: Joi.string().required(),
 });
 
-export default async function getSprints(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
 
   if (!session) {
@@ -150,4 +148,6 @@ export default async function getSprints(
     return res.status(200).json(postReturn);
   }
   return res.status(400).json({ message: 'Invalid request method' });
-}
+};
+
+export default withSentry(handler);

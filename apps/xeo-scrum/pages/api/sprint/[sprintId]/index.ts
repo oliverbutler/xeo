@@ -6,6 +6,7 @@ import { getSession } from 'next-auth/react';
 import { APIRequest, parseAPIRequest } from 'utils/api';
 import { prisma } from 'utils/db';
 import { updateSprint, UpdateSprint } from 'utils/sprint/adapter';
+import { withSentry } from '@sentry/nextjs';
 
 export type GetSprintRequest = {
   requestBody: undefined;
@@ -38,10 +39,7 @@ const putSchema: PutUpdateSprintRequest['joiBodySchema'] = Joi.object({
   }),
 });
 
-export default async function getSprint(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
 
   if (!session) {
@@ -97,4 +95,6 @@ export default async function getSprint(
   }
 
   return res.status(405).json({ message: 'Method not allowed' });
-}
+};
+
+export default withSentry(handler);
