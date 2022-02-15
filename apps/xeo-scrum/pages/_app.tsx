@@ -9,6 +9,14 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Sidebar } from 'components/Sidebar/Sidebar';
 import { useRouter } from 'next/router';
 import { RouteGuard } from 'components/RouteGuard/RouteGuard';
+import { useEffect } from 'react';
+import { initGA, logPageView } from 'utils/analytics';
+
+declare global {
+  interface Window {
+    GA_INITIALIZED: undefined | boolean;
+  }
+}
 
 function CustomApp({
   Component,
@@ -18,6 +26,14 @@ function CustomApp({
 
   const hideSidebar =
     pathname.startsWith('/login') || pathname.endsWith('/embed');
+
+  useEffect(() => {
+    if (!window.GA_INITIALIZED) {
+      initGA();
+      window.GA_INITIALIZED = true;
+    }
+    logPageView();
+  }, [pathname]);
 
   return (
     <>
