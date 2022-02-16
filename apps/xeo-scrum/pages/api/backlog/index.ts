@@ -33,9 +33,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(401).json({ message: 'Not authenticated' });
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const userId = session?.id as string;
+  const userId = session.id;
 
   if (req.method === 'GET') {
     const backlogs = await prisma.backlog.findMany({

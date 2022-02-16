@@ -4,6 +4,7 @@ import linearLogo from 'public/linear-app.png';
 import { Button, ButtonVariation, Modal } from '@xeo/ui';
 import classNames from 'classnames';
 import { NotionConnection } from './Notion/NotionConnection/NotionConnection';
+import { trackAction, UserAction } from 'utils/analytics';
 
 interface Connection {
   name: string;
@@ -73,7 +74,10 @@ export const Connections: React.FunctionComponent = () => {
                 mainText="Add Backlog"
                 trigger={(setOpen) => (
                   <Button
-                    onClick={setOpen}
+                    onClick={() => {
+                      trackAction(UserAction.CLICK_ADD_NOTION_CONNECTION);
+                      setOpen();
+                    }}
                     disabled={connection.disabled}
                     variation={ButtonVariation.Secondary}
                   >

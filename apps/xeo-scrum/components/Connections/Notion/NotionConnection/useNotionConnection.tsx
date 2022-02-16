@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import axios, { AxiosError } from 'axios';
 import { PostCreateNotionConnection } from 'pages/api/connections/notion';
 import { mutate } from 'swr';
+import { trackAction, UserAction } from 'utils/analytics';
 
 interface Output {
   onSubmit: () => void;
@@ -18,6 +19,8 @@ export const useNotionConnection = (successCallback: () => void): Output => {
   const form = useForm<NotionConnectionForm>({});
 
   const onSubmit = async (formData: NotionConnectionForm) => {
+    trackAction(UserAction.ADD_NOTION_CONNECTION);
+
     const body: PostCreateNotionConnection['request'] = {
       ...formData,
     };

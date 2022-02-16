@@ -18,6 +18,7 @@ import { PostUpdateSprintHistory } from 'pages/api/sprint/[sprintId]/update-hist
 import { ScopedMutator } from 'swr/dist/types';
 import { toast } from 'react-toastify';
 import { DarkModeButton } from 'components/DarkModeButton/DarkModeButton';
+import { UserAction, trackSprintAction } from 'utils/analytics';
 
 dayjs.extend(relativeTime);
 
@@ -50,6 +51,11 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
   sprintId,
   publicMode,
 }) => {
+  useEffect(() => {
+    trackSprintAction({ action: UserAction.SPRINT_VIEW, sprintId: sprintId });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const [isLoading, setIsLoading] = useState(false);
 
   const { data, error } = useSWR<GetSprintHistoryRequest['responseBody']>(
@@ -165,43 +171,6 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
         plotData={sprintHistoryPlotData}
         showPointsNotStarted={showPointsNotStarted}
       />
-      {/* <h2>Tickets</h2>
-      <div>
-        <Table<Ticket>
-          data={productBacklog.tickets.sort((a, b) =>
-            b.updatedAt.localeCompare(a.updatedAt)
-          )}
-          columns={[
-            {
-              Header: 'Title',
-              accessor: 'title',
-              Cell: (cell) => (
-                <span>
-                  <a
-                    href={cell.row.original.notionUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {cell.value}
-                  </a>
-                </span>
-              ),
-            },
-            {
-              Header: 'Status',
-              accessor: (ticket) => ticket?.notionStatusLink?.notionStatusName,
-            },
-            {
-              Header: 'Points',
-              accessor: 'points',
-            },
-            {
-              Header: 'Updated',
-              accessor: (ticket) => dayjs(ticket?.updatedAt).fromNow(),
-            },
-          ]}
-        />
-      </div> */}
     </div>
   );
 };

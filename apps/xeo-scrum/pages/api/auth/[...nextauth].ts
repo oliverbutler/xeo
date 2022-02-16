@@ -12,6 +12,12 @@ if (!process.env.GOOGLE_ID || !process.env.GOOGLE_SECRET) {
   throw new Error('GITHUB_ID and GITHUB_SECRET must be set in .env');
 }
 
+declare module 'next-auth' {
+  export interface Session {
+    id: string;
+  }
+}
+
 export default NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
   adapter: PrismaAdapter(prisma),

@@ -2,7 +2,7 @@ import { Sprint } from '@prisma/client';
 import { Button, Input } from '@xeo/ui';
 import { useForm } from 'react-hook-form';
 import { v4 } from 'uuid';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { isDeveloperWithCapacityArray } from 'utils/sprint/utils';
 import axios from 'axios';
 import { PutUpdateSprintRequest } from 'pages/api/sprint/[sprintId]';
@@ -16,6 +16,7 @@ import { DeleteSprint } from '../DeleteSprint/DeleteSprint';
 import { useRouter } from 'next/router';
 import { mutate } from 'swr';
 import dayjs from 'dayjs';
+import { UserAction, trackSprintAction } from 'utils/analytics';
 
 interface Props {
   sprint: Sprint;
@@ -36,6 +37,14 @@ export const DEFAULT_SPRINT_CAPACITY = 1;
 export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
   const { push } = useRouter();
 
+  useEffect(() => {
+    trackSprintAction({
+      action: UserAction.SPRINT_START_EDIT,
+      sprintId: sprint.id,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const devs = isDeveloperWithCapacityArray(sprint.sprintDevelopersAndCapacity)
     ? sprint.sprintDevelopersAndCapacity
     : [];
@@ -55,6 +64,11 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
   const { register, watch, handleSubmit } = form;
 
   const updateSprint = async (data: SprintEditForm) => {
+    trackSprintAction({
+      action: UserAction.SPRINT_SAVE_EDIT,
+      sprintId: sprint.id,
+    });
+
     const daysInSprint = getBusinessDaysArray(
       new Date(data.startDate),
       new Date(data.endDate)

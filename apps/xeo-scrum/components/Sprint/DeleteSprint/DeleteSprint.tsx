@@ -3,6 +3,7 @@ import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
 import { mutate } from 'swr';
+import { UserAction, trackSprintAction } from 'utils/analytics';
 
 interface Props {
   sprintId: string;
@@ -12,6 +13,7 @@ export const DeleteSprint: React.FunctionComponent<Props> = ({ sprintId }) => {
   const router = useRouter();
 
   const deleteSprint = async (callback: () => void) => {
+    trackSprintAction({ action: UserAction.SPRINT_DELETE, sprintId: sprintId });
     await axios
       .delete(`/api/sprint/${sprintId}`)
       .then((res) => {

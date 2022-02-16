@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+import { trackUserIdentification } from 'utils/analytics';
 
 export const RouteGuard: React.FunctionComponent = ({ children }) => {
   const router = useRouter();
@@ -9,6 +10,12 @@ export const RouteGuard: React.FunctionComponent = ({ children }) => {
   const session = useSession();
 
   useEffect(() => {
+    if (session.status === 'authenticated') {
+      trackUserIdentification(session.data.id);
+    } else if (session.status === 'unauthenticated') {
+      trackUserIdentification(null);
+    }
+
     // on initial load - run auth check
     authCheck(router.asPath);
 

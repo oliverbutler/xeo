@@ -10,7 +10,7 @@ import { Sidebar } from 'components/Sidebar/Sidebar';
 import { useRouter } from 'next/router';
 import { RouteGuard } from 'components/RouteGuard/RouteGuard';
 import { useEffect } from 'react';
-import { initGA, logPageView } from 'utils/analytics';
+import { initGA } from 'utils/analytics';
 
 declare global {
   interface Window {
@@ -32,8 +32,7 @@ function CustomApp({
       initGA();
       window.GA_INITIALIZED = true;
     }
-    logPageView();
-  }, [pathname]);
+  }, []);
 
   return (
     <>
