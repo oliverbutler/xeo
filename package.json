@@ -43,7 +43,7 @@
     "dayjs": "^1.10.7",
     "framer-motion": "5.6.0",
     "fuse.js": "6.5.3",
-    "graphql": "15.6.1",
+    "graphql": "15.8.0",
     "graphql-type-json": "0.3.2",
     "is-hotkey": "0.2.0",
     "joi": "^17.6.0",
