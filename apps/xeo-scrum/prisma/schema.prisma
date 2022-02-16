@@ -30,7 +30,9 @@ model Account {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -41,6 +43,8 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @default(now()) @updatedAt
+
+  @@index([userId])
 }
 
 model User {
@@ -111,7 +115,8 @@ model MemberOfBacklog {
   updatedAt DateTime @default(now()) @updatedAt
 
   @@id([userId, backlogId])
-  @@index([userId, backlogId])
+  @@index([userId])
+  @@index([backlogId])
 }
 
 model NotionStatusLink {
@@ -146,6 +151,7 @@ model Sprint {
   updatedAt                   DateTime        @default(now()) @updatedAt
 
   @@index([backlogId])
+  @@index([userId])
 }
 
 model SprintHistory {
@@ -171,6 +177,7 @@ model SprintStatusHistory {
   updatedAt          DateTime          @default(now()) @updatedAt
 
   @@index([sprintHistoryId])
+  @@index([notionStatusLinkId])
 }
 
 model NotionConnection {
