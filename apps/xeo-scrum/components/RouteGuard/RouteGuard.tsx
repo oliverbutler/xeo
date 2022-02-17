@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { trackUserIdentification } from 'utils/analytics';
+import { isSprintEmbedded } from 'pages/sprint/[sprintId]';
 
 export const RouteGuard: React.FunctionComponent = ({ children }) => {
   const router = useRouter();
@@ -43,7 +44,7 @@ export const RouteGuard: React.FunctionComponent = ({ children }) => {
       return;
     }
 
-    const isPublicPath = path === '/login' || path.endsWith('/embed');
+    const isPublicPath = path === '/login' || isSprintEmbedded(router);
 
     if (session.status !== 'authenticated' && !isPublicPath) {
       setAuthorized(false);

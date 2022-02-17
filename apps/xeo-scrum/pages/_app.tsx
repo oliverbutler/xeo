@@ -11,6 +11,7 @@ import { useRouter } from 'next/router';
 import { RouteGuard } from 'components/RouteGuard/RouteGuard';
 import { useEffect } from 'react';
 import { initGA } from 'utils/analytics';
+import { isSprintEmbedded } from './sprint/[sprintId]';
 
 declare global {
   interface Window {
@@ -22,10 +23,10 @@ function CustomApp({
   Component,
   pageProps: { session, ...pageProps },
 }: AppProps) {
-  const { pathname } = useRouter();
+  const router = useRouter();
 
   const hideSidebar =
-    pathname.startsWith('/login') || pathname.endsWith('/embed');
+    isSprintEmbedded(router) || router.pathname.startsWith('/login');
 
   useEffect(() => {
     if (!window.GA_INITIALIZED) {

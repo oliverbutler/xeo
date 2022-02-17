@@ -27,6 +27,7 @@ import { SecretText } from 'components/SecretText/SecretText';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { DeleteNotionConnection } from 'components/Connections/Notion/NotionConnection/DeleteNotionConnection';
+import { NextSeo } from 'next-seo';
 
 dayjs.extend(LocalizedFormat);
 
@@ -47,6 +48,10 @@ export function Index() {
 
   return (
     <div className="p-10">
+      <NextSeo
+        title={`Xeo Connections`}
+        description={`View current Xeo Connections, and any backlogs shared with you`}
+      />
       <h1>Connections</h1>
 
       {!dataConnections && !errorConnections ? (

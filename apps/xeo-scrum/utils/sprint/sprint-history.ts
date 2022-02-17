@@ -7,6 +7,7 @@ import {
   ProductBacklog,
   Ticket,
 } from 'utils/notion/backlog';
+import { DataPlotType, getDataForSprintChart } from './chart';
 
 const getAggregatedStatusToPoints = (
   tickets: Ticket[]
@@ -162,4 +163,50 @@ export const updateSprintHistoryIfChanged = async (
   );
 
   return updatedHistory;
+};
+
+/**
+ * Used for [id]/history endpoint and for [id]/embed ISG page
+ */
+export const getSprintAndPlotDataForPage = async (
+  sprintId: string
+): Promise<{
+  sprint: Sprint;
+  sprintHistoryPlotData: DataPlotType[];
+} | null> => {
+  const sprint = await prisma.sprint.findUnique({
+    where: {
+      id: sprintId,
+    },
+    include: {
+      backlog: {
+        include: {
+          notionStatusLinks: true,
+        },
+      },
+      sprintHistory: {
+        include: {
+          sprintStatusHistory: true,
+        },
+      },
+    },
+  });
+
+  if (!sprint) {
+    return null;
+  }
+
+  const sprintHistoryPlotData = getDataForSprintChart(
+    sprint,
+    sprint.sprintHistory,
+    sprint.backlog.notionStatusLinks
+  );
+
+  // Remove backlog and sprintHistory from the response to avoid sending unnecessary data
+  const { backlog, sprintHistory, ...restSprint } = sprint;
+
+  return {
+    sprint: restSprint,
+    sprintHistoryPlotData,
+  };
 };

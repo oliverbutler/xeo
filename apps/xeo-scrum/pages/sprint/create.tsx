@@ -2,6 +2,7 @@ import { Button, ButtonVariation, CentredLoader, Alert } from '@xeo/ui';
 import classNames from 'classnames';
 import { fetcher } from 'components/Connections/Notion/NotionBacklog/NotionBacklog';
 import { SprintCreate } from 'components/Sprint/SprintCreate/SprintCreate';
+import { NextSeo } from 'next-seo';
 import { GetBacklogsRequest } from 'pages/api/backlog';
 import { toast } from 'react-toastify';
 import useSWR from 'swr';
@@ -27,6 +28,7 @@ function Create() {
 
   return (
     <div className="w-full p-10">
+      <NextSeo title="Create Sprint" description="Create a new Sprint in Xeo" />
       <div className="flex flex-row justify-between">
         <h1>Create Sprint</h1>
         <div>

@@ -1,8 +1,9 @@
+import { CentredLoader } from '@xeo/ui';
 import { Backlog } from 'components/Backlog/Backlog';
+import { NextSeo } from 'next-seo';
 import { useRouter } from 'next/router';
 import { GetBacklogRequest } from 'pages/api/backlog/[id]';
 import { useQuery } from 'utils/api';
-import { CentredLoader } from '../../../../../../../libs/ui/src/lib/Animate/CentredLoader/CentredLoader';
 
 export function Index() {
   const router = useRouter();
@@ -20,7 +21,15 @@ export function Index() {
     return <CentredLoader />;
   }
 
-  return data ? <Backlog backlog={data.backlog} /> : null;
+  return data ? (
+    <>
+      <NextSeo
+        title={`Xeo Backlog`}
+        description={`View Xeo Backlog and add or remove members`}
+      />
+      <Backlog backlog={data.backlog} />
+    </>
+  ) : null;
 }
 
 export default Index;

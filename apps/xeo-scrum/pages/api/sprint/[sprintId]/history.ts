@@ -1,16 +1,14 @@
 import { Sprint } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { DataPlotType, getDataForSprintChart } from 'utils/sprint/chart';
-import { prisma } from 'utils/db';
+import { DataPlotType } from 'utils/sprint/chart';
 import { withSentry } from '@sentry/nextjs';
+import { apiError, APIGetRequest, apiResponse } from 'utils/api';
+import { getSprintAndPlotDataForPage } from 'utils/sprint/sprint-history';
 
-export type GetSprintHistoryRequest = {
-  method: 'GET';
-  responseBody: {
-    sprint: Sprint;
-    sprintHistoryPlotData: DataPlotType[];
-  };
-};
+export type GetSprintHistoryRequest = APIGetRequest<{
+  sprint: Sprint;
+  sprintHistoryPlotData: DataPlotType[];
+}>;
 
 /**
  * ⚠️ Public Facing Route
@@ -18,43 +16,13 @@ export type GetSprintHistoryRequest = {
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const sprintId = req.query.sprintId as string;
 
-  const sprint = await prisma.sprint.findFirst({
-    where: {
-      id: sprintId,
-    },
-    include: {
-      backlog: {
-        include: {
-          notionStatusLinks: true,
-        },
-      },
-      sprintHistory: {
-        include: {
-          sprintStatusHistory: true,
-        },
-      },
-    },
-  });
+  const sprintAndPlotData = await getSprintAndPlotDataForPage(sprintId);
 
-  if (!sprint) {
-    return res.status(404).json({ message: 'Sprint not found' });
+  if (!sprintAndPlotData) {
+    return apiError(res, { message: 'Sprint not found' }, 404);
   }
 
-  const sprintHistoryPlotData = getDataForSprintChart(
-    sprint,
-    sprint.sprintHistory,
-    sprint.backlog.notionStatusLinks
-  );
-
-  // Remove backlog and sprintHistory from the response to avoid sending unnecessary data
-  const { backlog, sprintHistory, ...restSprint } = sprint;
-
-  const returnValue: GetSprintHistoryRequest['responseBody'] = {
-    sprint: restSprint,
-    sprintHistoryPlotData,
-  };
-
-  return res.status(200).json(returnValue);
+  return apiResponse<GetSprintHistoryRequest>(res, sprintAndPlotData);
 };
 
 export default withSentry(handler);
