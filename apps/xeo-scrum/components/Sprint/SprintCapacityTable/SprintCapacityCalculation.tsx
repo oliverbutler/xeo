@@ -45,7 +45,7 @@ export const SprintCapacityCalculation: React.FunctionComponent<Props> = ({
     ) / 10;
 
   return (
-    <div className="-ml-2 mb-4">
+    <div className="-ml-2 mb-4 w-fit">
       <SprintStat
         icon={<CalculatorIcon width={25} height={25} />}
         title="Total Capacity"

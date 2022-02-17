@@ -45,7 +45,7 @@ function CustomApp({
         <ThemeProvider attribute="class" defaultTheme="light">
           <SessionProvider session={session}>
             <RouteGuard>
-              <main className="prose dark:prose-invert  max-w-none">
+              <main className="prose dark:prose-invert max-w-none">
                 {hideSidebar ? (
                   <div className="max-h-screen min-h-screen">
                     <Component {...pageProps} />

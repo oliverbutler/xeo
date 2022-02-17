@@ -6,6 +6,7 @@ import {
   getDataForSprintChart,
   getDaysArray,
   getSprintCapacityPerDay,
+  isDateOnSprintDay,
 } from './chart';
 
 describe('chart calculation', () => {
@@ -142,7 +143,7 @@ describe('chart calculation', () => {
     ]);
   });
 
-  it('should get plotData for the chart', () => {
+  describe('should get plotData for the chart', () => {
     const BACKLOG_ID = 'ckz8gev3u0247yskjdew53anp';
 
     const sprint: Sprint = {
@@ -154,6 +155,7 @@ describe('chart calculation', () => {
       userId: 'ckzg5t3v40010cskjpqi5kn69',
       backlogId: BACKLOG_ID,
       sprintGoal: 'AaU, I am inside a test',
+      dailyStartTime: '09:00',
       sprintDevelopersAndCapacity: [
         { name: 'Olly', capacity: [0.5, 1, 1, 1, 1, 0.5] },
       ],
@@ -208,56 +210,207 @@ describe('chart calculation', () => {
           },
         ],
       },
+      {
+        id: 'sprint-history-morning-of-next-day',
+        sprintId: sprint.id,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        timestamp: new Date('2022-02-12T08:00:00.000Z'), // On the "forth day", but as sprint day starts at "09:00" should be the "third sprint day"
+        sprintStatusHistory: [
+          {
+            id: '3',
+            sprintHistoryId: 'sprint-history-morning-of-next-day',
+            pointsInStatus: 0,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            notionStatusLinkId: 'link-backlog',
+          },
+          {
+            id: '4',
+            sprintHistoryId: 'sprint-history-morning-of-next-day',
+            pointsInStatus: 10,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            notionStatusLinkId: 'link-done',
+          },
+        ],
+      },
     ];
 
-    const plotData = getDataForSprintChart(
-      sprint,
-      sprintHistory,
-      notionStatusLinkIds
+    it('should get plotDate for normal points', () => {
+      const plotData = getDataForSprintChart(
+        sprint,
+        sprintHistory,
+        notionStatusLinkIds
+      );
+
+      expect(plotData).toStrictEqual([
+        {
+          time: 1644191999999,
+          sprintDay: -1,
+          Expected: 25,
+          Done: 25,
+          'To Validate': 25,
+        },
+        { time: 1644278399999, sprintDay: 0, Expected: 22.5 },
+        { time: 1644364799999, sprintDay: 1, Expected: 17.5 },
+        {
+          time: 1644451199999,
+          sprintDay: 2,
+          Expected: 12.5,
+          Done: 24,
+          'To Validate': 22,
+        },
+        { time: 1644537599999, sprintDay: 3, Expected: 7.5 },
+        {
+          time: 1644623999999,
+          sprintDay: 4,
+          Done: 15,
+          'To Validate': 15,
+          Expected: 2.5,
+        },
+        { time: 1644883199999, sprintDay: 5, Expected: 0 },
+      ]);
+    });
+
+    it('should get plot data for no points', () => {
+      const plotDataNoWorkDone = getDataForSprintChart(
+        sprint,
+        [],
+        notionStatusLinkIds
+      );
+
+      expect(plotDataNoWorkDone).toStrictEqual([
+        {
+          time: 1644191999999,
+          sprintDay: -1,
+          Expected: 25,
+          Done: 25,
+          'To Validate': 25,
+        },
+        { time: 1644278399999, sprintDay: 0, Expected: 22.5 },
+        { time: 1644364799999, sprintDay: 1, Expected: 17.5 },
+        { time: 1644451199999, sprintDay: 2, Expected: 12.5 },
+        { time: 1644537599999, sprintDay: 3, Expected: 7.5 },
+        { time: 1644623999999, sprintDay: 4, Expected: 2.5 },
+        { time: 1644883199999, sprintDay: 5, Expected: 0 },
+      ]);
+    });
+
+    it('should get plot data for points before or after sprint start/end', () => {
+      const sprintHistoryWeirdData: SprintWithHistory['sprintHistory'] = [
+        {
+          // BEFORE start of the sprint (should count towards FIRST day)
+          id: 'sprint-history-1',
+          sprintId: sprint.id,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          timestamp: new Date('2022-02-01 00:00:00.000'),
+          sprintStatusHistory: [
+            {
+              id: '2',
+              sprintHistoryId: 'sprint-history-1',
+              pointsInStatus: 10,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              notionStatusLinkId: 'link-done',
+            },
+          ],
+        },
+        {
+          // EXACTLY on the sprint day time
+          id: 'sprint-history-2',
+          sprintId: sprint.id,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          timestamp: new Date('2022-02-09 09:00:00.000'),
+          sprintStatusHistory: [
+            {
+              id: '2',
+              sprintHistoryId: 'sprint-history-2',
+              pointsInStatus: 15,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              notionStatusLinkId: 'link-done',
+            },
+          ],
+        },
+        {
+          // AFTER end of the sprint (should count towards LAST day)
+          id: 'sprint-history-3',
+          sprintId: sprint.id,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          timestamp: new Date('2022-02-20 00:00:00.000'),
+          sprintStatusHistory: [
+            {
+              id: '2',
+              sprintHistoryId: 'sprint-history-3',
+              pointsInStatus: 25,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              notionStatusLinkId: 'link-done',
+            },
+          ],
+        },
+      ];
+
+      const plotDataBeforeSprintStart = getDataForSprintChart(
+        sprint,
+        sprintHistoryWeirdData,
+        notionStatusLinkIds
+      );
+
+      expect(plotDataBeforeSprintStart).toStrictEqual([
+        {
+          time: 1644191999999,
+          sprintDay: -1,
+          Expected: 25,
+          Done: 25,
+          'To Validate': 25,
+        },
+        {
+          time: 1644278399999,
+          sprintDay: 0,
+          Done: 15,
+          'To Validate': 15,
+          Expected: 22.5,
+        },
+        { time: 1644364799999, sprintDay: 1, Expected: 17.5 },
+        {
+          time: 1644451199999,
+          sprintDay: 2,
+          Done: 10,
+          'To Validate': 10,
+          Expected: 12.5,
+        },
+        { time: 1644537599999, sprintDay: 3, Expected: 7.5 },
+        { time: 1644623999999, sprintDay: 4, Expected: 2.5 },
+        {
+          time: 1644883199999,
+          sprintDay: 5,
+          Done: 0,
+          'To Validate': 0,
+          Expected: 0,
+        },
+      ]);
+    });
+  });
+
+  describe('isDateOnSprintDay', () => {
+    it.each`
+      date                            | dateToCheckIfOn           | sprintDayStartTime | expected
+      ${new Date('2022-01-01 12:00')} | ${new Date('2022-01-01')} | ${'09:00'}         | ${true}
+      ${new Date('2022-01-01 6:00')}  | ${new Date('2022-01-01')} | ${'09:00'}         | ${false}
+      ${new Date('2022-01-02 6:00')}  | ${new Date('2022-01-01')} | ${'09:00'}         | ${true}
+    `(
+      'should return $expected when $dateToCheckIfOn is on sprint day $sprintDayStartTime',
+      ({ date, dateToCheckIfOn, sprintDayStartTime, expected }) => {
+        const result = isDateOnSprintDay(date, dateToCheckIfOn, {
+          dailyStartTime: sprintDayStartTime,
+        });
+        expect(result).toBe(expected);
+      }
     );
-
-    expect(plotData).toStrictEqual([
-      {
-        time: 1644191999999,
-        sprintDay: -1,
-        Expected: 25,
-        Done: 25,
-        'To Validate': 25,
-      },
-      { time: 1644278399999, sprintDay: 0, Expected: 22.5 },
-      { time: 1644364799999, sprintDay: 1, Expected: 17.5 },
-      {
-        time: 1644451199999,
-        sprintDay: 2,
-        Expected: 12.5,
-        Done: 24,
-        'To Validate': 22,
-      },
-      { time: 1644537599999, sprintDay: 3, Expected: 7.5 },
-      { time: 1644623999999, sprintDay: 4, Expected: 2.5 },
-      { time: 1644883199999, sprintDay: 5, Expected: 0 },
-    ]);
-
-    const plotDataNoWorkDone = getDataForSprintChart(
-      sprint,
-      [],
-      notionStatusLinkIds
-    );
-
-    expect(plotDataNoWorkDone).toStrictEqual([
-      {
-        time: 1644191999999,
-        sprintDay: -1,
-        Expected: 25,
-        Done: 25,
-        'To Validate': 25,
-      },
-      { time: 1644278399999, sprintDay: 0, Expected: 22.5 },
-      { time: 1644364799999, sprintDay: 1, Expected: 17.5 },
-      { time: 1644451199999, sprintDay: 2, Expected: 12.5 },
-      { time: 1644537599999, sprintDay: 3, Expected: 7.5 },
-      { time: 1644623999999, sprintDay: 4, Expected: 2.5 },
-      { time: 1644883199999, sprintDay: 5, Expected: 0 },
-    ]);
   });
 });

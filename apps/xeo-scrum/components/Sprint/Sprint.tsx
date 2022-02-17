@@ -70,6 +70,7 @@ export const Sprint: React.FunctionComponent = () => {
               </div>
               <div className="h-52 w-72">
                 <SprintGraph
+                  sprint={sprint}
                   plotData={plotData}
                   showPointsNotStarted
                   smallGraph

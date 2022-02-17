@@ -17,7 +17,8 @@ import {
 import classNames from 'classnames';
 import { useTheme } from 'next-themes';
 import utc from 'dayjs/plugin/utc';
-import { useViewport } from '../../../../../libs/ui/src/hooks/useViewport';
+import { useViewport } from '@xeo/ui';
+import { Sprint } from '@prisma/client';
 
 dayjs.extend(utc);
 
@@ -25,16 +26,14 @@ interface Props {
   plotData: DataPlotType[];
   showPointsNotStarted?: boolean;
   smallGraph?: boolean;
+  sprint: Sprint;
 }
-
-// FIXME
-// Figure out how best to show labels with different timezones, for now just show in UTC, which is fine for Europe not for Asia America
-const unixToDayjs = (unix: number) => dayjs.utc(unix);
 
 export const SprintGraph: React.FunctionComponent<Props> = ({
   plotData,
   showPointsNotStarted,
   smallGraph,
+  sprint,
 }) => {
   const { width } = useViewport();
 
@@ -69,23 +68,37 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
           : undefined;
 
       return (
-        <div className="bg-dark-100 dark:bg-dark-800 dark:border-l-dark-600 ml-4 border-l-4  bg-opacity-80 p-2 dark:bg-opacity-60">
-          <p className="label">End of {unixToDayjs(label).format('dddd')}</p>
-          {deltaDoneExpected && pointsNotDone ? (
-            <p className="label" style={{ color: pointsNotDone.color }}>
-              Done {roundToOneDecimal(deltaDoneExpected)}
-            </p>
-          ) : null}
-          {deltaDoneValidate && pointsValidateOrDone ? (
-            <p className="label" style={{ color: pointsValidateOrDone.color }}>
-              Validate {roundToOneDecimal(deltaDoneValidate)}
-            </p>
-          ) : null}
-          {pointsExpectedNotDone && (
-            <p className="label" style={{ color: pointsExpectedNotDone.color }}>
-              Expected {pointsExpectedNotDone.value}
-            </p>
-          )}
+        <div className="bg-dark-100 dark:bg-dark-800 dark:border-l-dark-600 ml-4 border-l-4  bg-opacity-80 p-2 dark:bg-opacity-60 divide-y divide-gray-300">
+          <div>
+            <p className="label">{dayjs(label).format('dddd HH:mm')}</p>
+            {deltaDoneExpected && pointsNotDone ? (
+              <p className="label" style={{ color: pointsNotDone.color }}>
+                {`Done: ${roundToOneDecimal(
+                  pointsNotDone.value
+                )} (${roundToOneDecimal(deltaDoneExpected)})`}
+              </p>
+            ) : null}
+            {deltaDoneValidate && pointsValidateOrDone ? (
+              <p
+                className="label"
+                style={{ color: pointsValidateOrDone.color }}
+              >
+                {`Validate: ${roundToOneDecimal(
+                  pointsValidateOrDone.value
+                )} (${roundToOneDecimal(deltaDoneValidate)})`}
+              </p>
+            ) : null}
+          </div>
+          <div>
+            {pointsExpectedNotDone && (
+              <p
+                className="label"
+                style={{ color: pointsExpectedNotDone.color }}
+              >
+                Expected: {pointsExpectedNotDone.value}
+              </p>
+            )}
+          </div>
         </div>
       );
     }
@@ -182,7 +195,13 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
             dy={10}
             dataKey="time"
             name="Time"
-            tickFormatter={(unix) => unixToDayjs(unix).format('ddd DD/MM')}
+            tickFormatter={(time, index) =>
+              index === 0
+                ? 'Start'
+                : index === plotData.length - 1
+                ? 'End'
+                : dayjs(time).format('ddd DD/MM')
+            }
             type="category"
             stroke={
               isDark
@@ -205,27 +224,6 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
           {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
           {/* @ts-ignore */}
           <Tooltip content={CustomTooltip} />
-
-          <Line
-            stroke={theme.extend.colors.secondary[400]}
-            name={DataPlotLine.POINTS_LEFT}
-            dataKey={DataPlotLine.POINTS_LEFT}
-            type="monotone"
-            dot={false}
-            connectNulls
-            strokeWidth={2}
-          />
-          <Line
-            hide={!showPointsNotStarted}
-            stroke={theme.extend.colors.primary[400]}
-            name={DataPlotLine.POINTS_DONE_INC_VALIDATE}
-            dataKey={DataPlotLine.POINTS_DONE_INC_VALIDATE}
-            type="monotone"
-            dot={false}
-            strokeDasharray={'3 3'}
-            strokeWidth={2}
-            connectNulls
-          />
           <Line
             stroke={theme.extend.colors.dark[400]}
             name={DataPlotLine.EXPECTED_POINTS}
@@ -233,8 +231,30 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
             type="monotone"
             strokeDasharray={'3 3'}
             strokeWidth={2}
-            dot={false}
             connectNulls
+            dot={false}
+          />
+
+          <Line
+            hide={!showPointsNotStarted}
+            stroke={theme.extend.colors.primary[400]}
+            name={DataPlotLine.POINTS_DONE_INC_VALIDATE}
+            dataKey={DataPlotLine.POINTS_DONE_INC_VALIDATE}
+            type="monotone"
+            strokeDasharray={'3 3'}
+            strokeWidth={2}
+            connectNulls
+            dot={false}
+          />
+
+          <Line
+            stroke={theme.extend.colors.secondary[400]}
+            name={DataPlotLine.POINTS_LEFT}
+            dataKey={DataPlotLine.POINTS_LEFT}
+            type="monotone"
+            connectNulls
+            strokeWidth={2}
+            dot={false}
           />
         </LineChart>
       </ResponsiveContainer>

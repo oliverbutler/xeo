@@ -29,6 +29,7 @@ interface SprintEditForm {
   notionSprintValue: string;
   sprintGoal: string;
   teamSpeed: number;
+  dayStartTime: string;
   devs: SprintCapacityDev[];
 }
 
@@ -54,6 +55,7 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
       startDate: dayjs(sprint.startDate).format('YYYY-MM-DDTHH:mm'), // datetime-local requires this format
       endDate: dayjs(sprint.endDate).format('YYYY-MM-DDTHH:mm'), // datetime-local requires this format
       notionSprintValue: sprint.notionSprintValue,
+      dayStartTime: sprint.dailyStartTime,
       sprintName: sprint.name,
       sprintGoal: sprint.sprintGoal,
       teamSpeed: sprint.teamSpeed,
@@ -82,6 +84,7 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
         endDate: dayjs(data.endDate).toISOString(),
         teamSpeed: data.teamSpeed,
         notionSprintValue: data.notionSprintValue,
+        dayStartTime: data.dayStartTime,
         developers: data.devs.map((dev) => ({
           name: dev.name,
           capacity: dev.capacity
@@ -142,6 +145,12 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
             type="datetime-local"
             label="End Time"
             {...register('endDate')}
+          />
+          <Input
+            className="sm:w-1/5"
+            type="time"
+            label="Daily Start Time"
+            {...register('dayStartTime')}
           />
           <Input
             className="sm:w-1/4"
