@@ -27,7 +27,7 @@ export const SprintStats: React.FunctionComponent<Props> = ({
     stats;
 
   return (
-    <div className="flex flex-row flex-wrap">
+    <div className="grid grid-cols-3 2xl:grid-cols-6 gap-2 sm:gap-4 my-2">
       <SprintStat
         icon={
           <ChartBarIcon height={40} width={40} className="stroke-primary-300" />
@@ -44,14 +44,14 @@ export const SprintStats: React.FunctionComponent<Props> = ({
         icon={
           deltaPoints < 0 ? (
             <ExclamationCircleIcon
-              height={40}
-              width={40}
+              height={35}
+              width={35}
               className="stroke-red-400 dark:stroke-red-300"
             />
           ) : (
             <CheckCircleIcon
-              height={40}
-              width={40}
+              height={35}
+              width={35}
               className="stroke-primary-300"
             />
           )
@@ -72,8 +72,8 @@ export const SprintStats: React.FunctionComponent<Props> = ({
       <SprintStat
         icon={
           <ClipboardCheckIcon
-            height={40}
-            width={40}
+            height={35}
+            width={35}
             className="stroke-primary-300"
           />
         }
