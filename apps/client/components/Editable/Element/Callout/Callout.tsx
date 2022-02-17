@@ -1,6 +1,6 @@
-import { Clickable } from 'components/UI/Clickable/Clickable';
+import { Clickable } from '@xeo/ui';
 import { RenderElementProps } from 'slate-react';
-import { CalloutElement } from '../../../../../../libs/utils/src/lib/slate';
+import { CalloutElement } from '@xeo/utils';
 
 export const Callout: React.FunctionComponent<
   RenderElementProps & { element: CalloutElement }

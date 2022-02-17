@@ -246,30 +246,30 @@ describe('chart calculation', () => {
 
       expect(plotData).toStrictEqual([
         {
-          time: 1644191999999,
+          time: '2022-02-07T16:00:00.000Z',
           sprintDay: -1,
           Expected: 25,
           Done: 25,
           'To Validate': 25,
         },
-        { time: 1644278399999, sprintDay: 0, Expected: 22.5 },
-        { time: 1644364799999, sprintDay: 1, Expected: 17.5 },
+        { time: '2022-02-08T09:00:00.000Z', sprintDay: 0, Expected: 22.5 },
+        { time: '2022-02-09T09:00:00.000Z', sprintDay: 1, Expected: 17.5 },
         {
-          time: 1644451199999,
+          time: '2022-02-10T09:00:00.000Z',
           sprintDay: 2,
           Expected: 12.5,
           Done: 24,
           'To Validate': 22,
         },
-        { time: 1644537599999, sprintDay: 3, Expected: 7.5 },
+        { time: '2022-02-11T09:00:00.000Z', sprintDay: 3, Expected: 7.5 },
         {
-          time: 1644623999999,
+          time: '2022-02-12T09:00:00.000Z',
           sprintDay: 4,
           Done: 15,
           'To Validate': 15,
           Expected: 2.5,
         },
-        { time: 1644883199999, sprintDay: 5, Expected: 0 },
+        { time: '2022-02-14T15:00:00.000Z', sprintDay: 5, Expected: 0 },
       ]);
     });
 
@@ -282,18 +282,18 @@ describe('chart calculation', () => {
 
       expect(plotDataNoWorkDone).toStrictEqual([
         {
-          time: 1644191999999,
+          time: '2022-02-07T16:00:00.000Z',
           sprintDay: -1,
           Expected: 25,
           Done: 25,
           'To Validate': 25,
         },
-        { time: 1644278399999, sprintDay: 0, Expected: 22.5 },
-        { time: 1644364799999, sprintDay: 1, Expected: 17.5 },
-        { time: 1644451199999, sprintDay: 2, Expected: 12.5 },
-        { time: 1644537599999, sprintDay: 3, Expected: 7.5 },
-        { time: 1644623999999, sprintDay: 4, Expected: 2.5 },
-        { time: 1644883199999, sprintDay: 5, Expected: 0 },
+        { time: '2022-02-08T09:00:00.000Z', sprintDay: 0, Expected: 22.5 },
+        { time: '2022-02-09T09:00:00.000Z', sprintDay: 1, Expected: 17.5 },
+        { time: '2022-02-10T09:00:00.000Z', sprintDay: 2, Expected: 12.5 },
+        { time: '2022-02-11T09:00:00.000Z', sprintDay: 3, Expected: 7.5 },
+        { time: '2022-02-12T09:00:00.000Z', sprintDay: 4, Expected: 2.5 },
+        { time: '2022-02-14T15:00:00.000Z', sprintDay: 5, Expected: 0 },
       ]);
     });
 
@@ -363,31 +363,31 @@ describe('chart calculation', () => {
 
       expect(plotDataBeforeSprintStart).toStrictEqual([
         {
-          time: 1644191999999,
+          time: '2022-02-07T16:00:00.000Z',
           sprintDay: -1,
           Expected: 25,
           Done: 25,
           'To Validate': 25,
         },
         {
-          time: 1644278399999,
+          time: '2022-02-08T09:00:00.000Z',
           sprintDay: 0,
           Done: 15,
           'To Validate': 15,
           Expected: 22.5,
         },
-        { time: 1644364799999, sprintDay: 1, Expected: 17.5 },
+        { time: '2022-02-09T09:00:00.000Z', sprintDay: 1, Expected: 17.5 },
         {
-          time: 1644451199999,
+          time: '2022-02-10T09:00:00.000Z',
           sprintDay: 2,
           Done: 10,
           'To Validate': 10,
           Expected: 12.5,
         },
-        { time: 1644537599999, sprintDay: 3, Expected: 7.5 },
-        { time: 1644623999999, sprintDay: 4, Expected: 2.5 },
+        { time: '2022-02-11T09:00:00.000Z', sprintDay: 3, Expected: 7.5 },
+        { time: '2022-02-12T09:00:00.000Z', sprintDay: 4, Expected: 2.5 },
         {
-          time: 1644883199999,
+          time: '2022-02-14T15:00:00.000Z',
           sprintDay: 5,
           Done: 0,
           'To Validate': 0,
