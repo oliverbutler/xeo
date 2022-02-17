@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import xeoImage from 'public/xeo.png';
+import { NextSeo } from 'next-seo';
 
 export function Index() {
   const { push, query } = useRouter();
@@ -25,6 +26,7 @@ export function Index() {
 
   return (
     <div className="flex h-screen w-full items-center justify-center">
+      <NextSeo title="Login" description="Login to Xeo" />
       <div className="dark:bg-dark-800 rounded-lg p-10 shadow-xl transition-all hover:shadow-2xl">
         <div className="relative mx-auto aspect-square h-56">
           <Image

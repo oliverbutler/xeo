@@ -26,6 +26,13 @@ const nextConfig = {
   images: {
     domains: ['avatars.githubusercontent.com', 'lh3.googleusercontent.com'],
   },
+  redirects: () => [
+    {
+      source: '/sprint/:id/embed',
+      destination: '/sprint/:id?embed=1',
+      permanent: true,
+    },
+  ],
 };
 
 module.exports = withSentryConfig(

@@ -1,6 +1,7 @@
 import { Button, ButtonVariation, CentredLoader } from '@xeo/ui';
 import { fetcher } from 'components/Connections/Notion/NotionBacklog/NotionBacklog';
 import { SprintEdit } from 'components/Sprint/SprintEdit/SprintEdit';
+import { NextSeo } from 'next-seo';
 import { useRouter } from 'next/router';
 import { GetSprintRequest } from 'pages/api/sprint/[sprintId]';
 import useSWR from 'swr';
@@ -32,6 +33,10 @@ export const SprintEditPage: React.FunctionComponent = () => {
 
   return (
     <div className="w-full p-10">
+      <NextSeo
+        title={`Edit Sprint - ${data.sprint.name}`}
+        description={`Edit Sprint - ${data.sprint.name}`}
+      />
       <div className="flex flex-row justify-between">
         <h1>Update Sprint - {data.sprint.name}</h1>
         <div>

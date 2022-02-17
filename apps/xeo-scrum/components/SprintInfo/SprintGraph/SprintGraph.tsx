@@ -17,6 +17,7 @@ import {
 import classNames from 'classnames';
 import { useTheme } from 'next-themes';
 import utc from 'dayjs/plugin/utc';
+import { useViewport } from '../../../../../libs/ui/src/hooks/useViewport';
 
 dayjs.extend(utc);
 
@@ -35,6 +36,8 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
   showPointsNotStarted,
   smallGraph,
 }) => {
+  const { width } = useViewport();
+
   const CustomTooltip = ({
     active,
     payload,
@@ -90,7 +93,12 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
     return null;
   };
 
-  const HEIGHT = smallGraph ? 200 : 400;
+  const sm = theme.extend.screens.sm;
+  const smWidth = Number(sm.substring(0, sm.length - 2));
+
+  const isSmallWindow = width <= smWidth;
+
+  const HEIGHT = smallGraph ? 200 : isSmallWindow ? 300 : 400;
   const WIDTH = 1000;
 
   const nextTheme = useTheme();
@@ -146,7 +154,9 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
 
   return (
     <div
-      className={classNames('relative -ml-6 mt-4', { 'text-sm': smallGraph })}
+      className={classNames('relative -ml-6 mt-4', {
+        'text-sm': smallGraph || isSmallWindow,
+      })}
       style={{ height: HEIGHT }}
     >
       <ResponsiveContainer
