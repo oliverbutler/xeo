@@ -1,6 +1,6 @@
 import { SprintInfo } from 'components/SprintInfo/SprintInfo';
 import { NextRouter, useRouter } from 'next/router';
-import { GetSprintHistoryRequest } from 'pages/api/sprint/[sprintId]/history';
+import { GetSprintColumnPlotData } from 'pages/api/sprint/[sprintId]/column-plot-data';
 import { useQuery } from 'utils/api';
 import { CentredLoader } from '@xeo/ui';
 import { Error } from 'components/Error/Error';
@@ -14,8 +14,8 @@ const PrivateSprintPage: React.FunctionComponent = () => {
 
   const isEmbed = isSprintEmbedded(router);
 
-  const { data, error, isLoading } = useQuery<GetSprintHistoryRequest>(
-    `/api/sprint/${sprintId}/history`
+  const { data, error, isLoading } = useQuery<GetSprintColumnPlotData>(
+    `/api/sprint/${sprintId}/column-plot-data`
   );
 
   if (!sprintId || typeof sprintId !== 'string') {

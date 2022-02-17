@@ -7,7 +7,7 @@ import {
 import { Button, ButtonVariation, Clickable } from '@xeo/ui';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { GetSprintHistoryRequest } from 'pages/api/sprint/[sprintId]/history';
+import { GetSprintColumnPlotData } from 'pages/api/sprint/[sprintId]/column-plot-data';
 import { useCallback, useEffect, useState } from 'react';
 import { useSWRConfig } from 'swr';
 import { SprintGraph } from './SprintGraph/SprintGraph';
@@ -19,11 +19,12 @@ import { toast } from 'react-toastify';
 import { DarkModeButton } from 'components/DarkModeButton/DarkModeButton';
 import { UserAction, trackSprintAction } from 'utils/analytics';
 import { NextSeo } from 'next-seo';
+import { SprintHistory } from './SprintHistory/SprintHistory';
 
 dayjs.extend(relativeTime);
 
 interface Props {
-  sprintData: GetSprintHistoryRequest['response'];
+  sprintData: GetSprintColumnPlotData['response'];
   publicMode: boolean;
 }
 
@@ -40,7 +41,7 @@ const updateSprintHistory = async (
     );
 
     if (data.updatedSprintPlotData) {
-      mutate(`/api/sprint/${sprintId}/history`); // Tell SWR to update the data
+      mutate(`/api/sprint/${sprintId}/column-plot-data`); // Tell SWR to update the data
     }
   } catch (error) {
     toast.error('Error fetching latest Sprint history, please try again later');
@@ -167,6 +168,7 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
         plotData={sprintHistoryPlotData}
         showPointsNotStarted={showPointsNotStarted}
       />
+      <SprintHistory sprint={sprint} />
     </div>
   );
 };

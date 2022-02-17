@@ -5,7 +5,7 @@ import { withSentry } from '@sentry/nextjs';
 import { apiError, APIGetRequest, apiResponse } from 'utils/api';
 import { getSprintAndPlotDataForPage } from 'utils/sprint/sprint-history';
 
-export type GetSprintHistoryRequest = APIGetRequest<{
+export type GetSprintColumnPlotData = APIGetRequest<{
   sprint: Sprint;
   sprintHistoryPlotData: DataPlotType[];
 }>;
@@ -22,7 +22,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return apiError(res, { message: 'Sprint not found' }, 404);
   }
 
-  return apiResponse<GetSprintHistoryRequest>(res, sprintAndPlotData);
+  return apiResponse<GetSprintColumnPlotData>(res, sprintAndPlotData);
 };
 
 export default withSentry(handler);
