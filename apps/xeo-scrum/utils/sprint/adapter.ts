@@ -11,6 +11,7 @@ export interface CreateSprint {
   endDate: string;
   notionSprintValue: string;
   teamSpeed: number;
+  dayStartTime: string;
   developers: DeveloperWithCapacity[];
 }
 
@@ -35,6 +36,7 @@ export const updateSprint = async (
       endDate: input.endDate,
       notionSprintValue: input.notionSprintValue,
       teamSpeed: input.teamSpeed,
+      dailyStartTime: input.dayStartTime,
       sprintDevelopersAndCapacity: input.developers,
     },
   });
@@ -63,6 +65,7 @@ export const createSprint = async (
       endDate: input.endDate,
       notionSprintValue: input.notionSprintValue,
       teamSpeed: input.teamSpeed,
+      dailyStartTime: input.dayStartTime,
       sprintDevelopersAndCapacity: input.developers,
       backlog: {
         connect: {

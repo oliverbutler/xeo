@@ -163,6 +163,7 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
       </div>
 
       <SprintGraph
+        sprint={sprint}
         plotData={sprintHistoryPlotData}
         showPointsNotStarted={showPointsNotStarted}
       />

@@ -1,16 +1,25 @@
+import classNames from 'classnames';
+
 interface Props {
   icon: React.ReactNode;
   title: string;
   value: React.ReactNode;
+  className?: string;
 }
 
 export const SprintStat: React.FunctionComponent<Props> = ({
   icon,
   title,
   value,
+  className,
 }) => {
   return (
-    <div className="bg-dark-50 dark:bg-dark-800 dark:border-l-dark-600 flex flex-row border-l-4 text-sm sm:text-base hover:scale-105 transition-all">
+    <div
+      className={classNames(
+        className,
+        'bg-dark-50 dark:bg-dark-800 dark:border-l-dark-600 flex flex-row border-l-4 text-sm sm:text-base hover:scale-105 transition-all'
+      )}
+    >
       <div id="icon-container" className="mx-2 flex items-center">
         {icon}
       </div>

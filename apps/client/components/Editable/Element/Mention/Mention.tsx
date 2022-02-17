@@ -3,7 +3,7 @@ import { useGetPageQuery } from 'generated';
 import Link from 'next/link';
 import { RenderElementProps, useFocused, useSelected } from 'slate-react';
 import { MentionElement } from '@xeo/utils';
-import ConditionalWrapper from '../../../../../../libs/ui/src/lib/ConditionalWrapper/ConditionalWrapper';
+import { ConditionalWrapper } from '@xeo/ui';
 
 export const Mention: React.FunctionComponent<
   RenderElementProps & { element: MentionElement }

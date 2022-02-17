@@ -22,6 +22,8 @@ export type PutUpdateSprintRequest = APIRequest<
   }
 >;
 
+export const TIME_REGEX = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
+
 const putSchema: PutUpdateSprintRequest['joiBodySchema'] = Joi.object({
   input: Joi.object({
     name: Joi.string(),
@@ -30,6 +32,7 @@ const putSchema: PutUpdateSprintRequest['joiBodySchema'] = Joi.object({
     endDate: Joi.date(),
     notionSprintValue: Joi.string(),
     teamSpeed: Joi.number(),
+    dayStartTime: Joi.string().regex(TIME_REGEX),
     developers: Joi.array().items(
       Joi.object({
         name: Joi.string().required(),

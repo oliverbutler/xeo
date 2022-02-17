@@ -16,7 +16,7 @@ export enum DataPlotLine {
 }
 
 export type DataPlotType = {
-  time: number;
+  time: string;
   sprintDay: number;
 } & {
   [key in DataPlotLine]?: number;
@@ -123,14 +123,30 @@ export const getDataForSprintChart = (
 
   const plotData: DataPlotType[] = cumulativeCapacityPerDay.map(
     ({ day, capacity: dailyCapacity }, dayIndex) => {
-      const sprintHistoriesOnDay = sprintHistory.filter(
-        (data) =>
-          dayjs(data.timestamp).unix() >= dayjs(day).startOf('day').unix() &&
-          dayjs(data.timestamp).unix() < dayjs(day).endOf('day').unix()
-      );
+      const sprintHistoriesOnDay = sprintHistory.filter((data) => {
+        const allowBefore = dayIndex === 0;
+        const allowAfter = dayIndex === cumulativeCapacityPerDay.length - 1;
+
+        return isDateOnSprintDay(
+          data.timestamp,
+          day,
+          sprint,
+          allowBefore,
+          allowAfter
+        );
+      });
+
+      const [hours, minutes] = sprint.dailyStartTime.split(':').map(Number);
+      const timeOfDay = dayjs(day)
+        .add(1, 'day')
+        .set('hour', hours)
+        .set('minute', minutes)
+        .toISOString();
+
+      const isLastDay = dayIndex === cumulativeCapacityPerDay.length - 1;
 
       const emptyDay = {
-        time: dayjs(day).endOf('day').valueOf(),
+        time: isLastDay ? dayjs(sprint.endDate).toISOString() : timeOfDay,
         sprintDay: dayIndex,
         [DataPlotLine.EXPECTED_POINTS]: roundToOneDecimal(
           sprintCapacity - dailyCapacity
@@ -162,7 +178,7 @@ export const getDataForSprintChart = (
   );
 
   const startOfSprint: DataPlotType = {
-    time: dayjs(sprint.startDate).subtract(1, 'day').endOf('day').valueOf(),
+    time: dayjs(sprint.startDate).toISOString(),
     sprintDay: -1,
     [DataPlotLine.EXPECTED_POINTS]: roundToOneDecimal(sprintCapacity),
     [DataPlotLine.POINTS_LEFT]: roundToOneDecimal(sprintCapacity),
@@ -204,4 +220,39 @@ const getPointsInStatuses = (
   );
 
   return { pointsInDone, pointsInToValidate };
+};
+
+export const isDateOnSprintDay = (
+  dateToCheck: Date,
+  targetDate: Date,
+  sprint: Pick<Sprint, 'dailyStartTime'>,
+  allowBefore = false,
+  allowAfter = false
+): boolean => {
+  // Daily Start Time is HH:mm
+  const [hours, minutes] = sprint.dailyStartTime.split(':').map(Number);
+
+  const dailyStartTime = dayjs(targetDate)
+    .set('hours', hours)
+    .set('minutes', minutes);
+
+  const dailyEndTime = dayjs(targetDate)
+    .add(1, 'day')
+    .set('hours', hours)
+    .set('minutes', minutes);
+
+  // If date is equal to start time of the day, otherwise it's always missed
+  if (dateToCheck.getTime() === dailyStartTime.valueOf()) {
+    return true;
+  }
+
+  const isAfterStart = allowBefore
+    ? true
+    : dayjs(dateToCheck).isAfter(dailyStartTime);
+
+  const isBeforeEnd = allowAfter
+    ? true
+    : dayjs(dateToCheck).isBefore(dailyEndTime);
+
+  return isAfterStart && isBeforeEnd;
 };

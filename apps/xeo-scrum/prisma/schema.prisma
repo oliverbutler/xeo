@@ -139,6 +139,7 @@ model Sprint {
   startDate                   DateTime
   endDate                     DateTime
   notionSprintValue           String // ID of the Notion Sprint (select ID)
+  dailyStartTime              String          @default("09:00") // HH:mm 
   user                        User            @relation(fields: [userId], references: [id])
   userId                      String
   backlog                     Backlog         @relation(fields: [backlogId], references: [id])

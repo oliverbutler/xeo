@@ -13,6 +13,7 @@ import { createSprint, CreateSprint } from 'utils/sprint/adapter';
 import { getDataForSprintChart } from 'utils/sprint/chart';
 import { SprintWithPlotData } from 'utils/sprint/utils';
 import { withSentry } from '@sentry/nextjs';
+import { TIME_REGEX } from './[sprintId]';
 
 export type SprintWithHistory = Sprint & {
   sprintHistory: (SprintHistory & {
@@ -46,6 +47,7 @@ const postSchema: PostCreateSprintRequest['joiBodySchema'] = Joi.object({
     endDate: Joi.date().required(),
     notionSprintValue: Joi.string().required(),
     teamSpeed: Joi.number().required(),
+    dayStartTime: Joi.string().regex(TIME_REGEX).required(),
     developers: Joi.array().items(
       Joi.object({
         name: Joi.string().required(),
