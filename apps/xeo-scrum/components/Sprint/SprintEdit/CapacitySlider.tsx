@@ -25,9 +25,9 @@ export const CapacitySlider = <T extends FieldValues>({
     value === null || value === undefined ? defaultValue : String(value);
 
   return (
-    <div className="flex flex-row">
+    <div className="flex flex-row w-full">
       <Range
-        className="mr-4 grow"
+        className="mr-4"
         min={0}
         max={1}
         step={0.1}
@@ -40,8 +40,9 @@ export const CapacitySlider = <T extends FieldValues>({
         type="number"
         min={0}
         max={1}
-        step={0.1}
+        step={0.05}
         label=""
+        required={true}
         value={valueToShow}
         onChange={handleOnChange}
       />
