@@ -17,7 +17,7 @@ export const SprintStat: React.FunctionComponent<Props> = ({
     <div
       className={classNames(
         className,
-        'bg-dark-50 dark:bg-dark-800 dark:border-l-dark-600 flex flex-row border-l-4 text-sm sm:text-base hover:scale-105 transition-all'
+        'bg-dark-50 dark:bg-dark-800 dark:border-l-dark-600 flex flex-col sm:flex-row border-l-4  hover:scale-105 transition-all items-center py-3 sm:py-0'
       )}
     >
       <div id="icon-container" className="mx-2 flex items-center">

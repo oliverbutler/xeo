@@ -119,50 +119,46 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
   return (
     <div>
       <form className="gap-4" onSubmit={handleSubmit(updateSprint)}>
-        <div className="flex flex-col gap-4 sm:flex-row">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input
-            className="sm:w-1/2"
             label="Sprint Name"
-            {...register('sprintName')}
+            {...register('sprintName', { required: true })}
           />
           <Input
-            className="sm:w-1/2"
-            label="Sprint Goal"
-            {...register('sprintGoal')}
-            placeholder="AaU I can..."
-          />
-        </div>
-
-        <div className="mt-4 flex flex-grow flex-col gap-4 sm:flex-row">
-          <Input
-            className="sm:w-1/4"
-            type="datetime-local"
-            label="Start Time"
-            {...register('startDate')}
-          />
-          <Input
-            className="sm:w-1/4"
-            type="datetime-local"
-            label="End Time"
-            {...register('endDate')}
-          />
-          <Input
-            className="sm:w-1/5"
-            type="time"
-            label="Daily Start Time"
-            {...register('dayStartTime')}
-          />
-          <Input
-            className="sm:w-1/4"
-            label="Notion Sprint Value"
-            {...register('notionSprintValue')}
-          />
-          <Input
-            className="sm:w-1/4"
             label="Team Speed"
             type="number"
             step={0.1}
-            {...register('teamSpeed')}
+            {...register('teamSpeed', { required: true })}
+          />
+        </div>
+        <Input
+          className="mt-4"
+          label="Sprint Goal"
+          {...register('sprintGoal', { required: true })}
+          placeholder="AaU I can..."
+        />
+
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          <Input
+            className="row-span-2"
+            type="datetime-local"
+            label="Start Time"
+            {...register('startDate', { required: true })}
+          />
+          <Input
+            className="row-span-2"
+            type="datetime-local"
+            label="End Time"
+            {...register('endDate', { required: true })}
+          />
+          <Input
+            type="time"
+            label="Daily Start Time"
+            {...register('dayStartTime', { required: true })}
+          />
+          <Input
+            label="Notion Sprint Value"
+            {...register('notionSprintValue', { required: true })}
           />
         </div>
         <SprintCapacityTable
