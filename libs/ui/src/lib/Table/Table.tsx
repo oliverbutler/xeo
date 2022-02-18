@@ -1,4 +1,4 @@
-import { ArrowSmDownIcon, ArrowSmUpIcon } from '@heroicons/react/outline';
+import { ArrowSmDownIcon } from '@heroicons/react/outline';
 import classNames from 'classnames';
 import { useTable, Column, useSortBy } from 'react-table';
 
@@ -17,9 +17,6 @@ export const Table = <T extends object>({
       {
         columns,
         data,
-        initialState: {
-          sortBy: [{ id: 'timestamp', desc: true }],
-        },
       },
       useSortBy
     );
