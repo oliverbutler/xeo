@@ -4,8 +4,7 @@
   "license": "GNU GPLv3",
   "scripts": {
     "build": "nx affected:build --all",
-    "build:xeo-scrum": "yarn prisma-generate:xeo-scrum && nx build xeo-scrum --prod",
-    "prisma-generate:xeo-scrum": "yarn prisma generate --schema=apps/xeo-scrum/prisma/schema.prisma",
+    "build:xeo-scrum": "yarn prisma generate && nx build xeo-scrum --prod",
     "test": "nx affected:test --all",
     "lint": "nx affected:lint --all",
     "dev:all": "nx run-many --target=serve --all --parallel",
