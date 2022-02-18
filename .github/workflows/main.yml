@@ -19,11 +19,11 @@ jobs:
           fetch-depth: 0
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v2
-      - uses: actions/setup-node@v1 
-        with: 
+      - uses: actions/setup-node@v1
+        with:
           node-version: '14'
       - run: npm install
-      - run: npx nx-cloud start-ci-run    
+      - run: npx nx-cloud start-ci-run
       - run: npx nx affected --target=build --parallel --max-parallel=3
       - run: npx nx affected --target=test --parallel --max-parallel=2
       - run: npx nx-cloud stop-all-agents
@@ -38,25 +38,27 @@ jobs:
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v2
       - uses: actions/setup-node@v1
-        with: 
+        with:
           node-version: '14'
       - run: npm install
       - run: npx nx-cloud start-ci-run
       - run: npx nx affected --target=build --parallel --max-parallel=3
       - run: npx nx affected --target=test --parallel --max-parallel=2
       - run: npx nx-cloud stop-all-agents
+      - name: Codecov
+        uses: codecov/codecov-action@v2.1.0
   agents:
     runs-on: ubuntu-latest
     name: Agent 1
     timeout-minutes: 60
     strategy:
       matrix:
-        agent: [ 1, 2, 3 ]
+        agent: [1, 2, 3]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
-        with: 
+        with:
           node-version: '14'
       - run: npm install
       - name: Start Nx Agent ${{ matrix.agent }}
-        run: npx nx-cloud start-agent  
+        run: npx nx-cloud start-agent
