@@ -1,12 +1,10 @@
-import { SidebarItem } from '../SidebarItem/SidebarItem';
 import { FiMoreHorizontal, FiUser } from 'react-icons/fi';
 import { GetMeQuery } from 'generated';
-import { Dropdown } from 'components/UI/Dropdown/Dropdown';
 import { useRouter } from 'next/dist/client/router';
 import { toast } from 'react-toastify';
 import { useIntl } from 'react-intl';
-import { Clickable } from 'components/UI/Clickable/Clickable';
 import Image from 'next/image';
+import { Clickable, Dropdown } from '@xeo/ui';
 
 interface Props {
   user: GetMeQuery['me'];

@@ -1,5 +1,5 @@
+import { Clickable } from '@xeo/ui';
 import classNames from 'classnames';
-import { Clickable } from 'components/UI/Clickable/Clickable';
 import { useGetPageQuery } from 'generated';
 import { useBlock } from 'hooks/useBlock/useBlock';
 import { useEffect, useState } from 'react';

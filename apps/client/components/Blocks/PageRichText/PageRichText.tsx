@@ -1,10 +1,10 @@
 import { GetPageQuery } from 'generated';
 import { useBlock } from 'hooks/useBlock/useBlock';
-import { useDebounce } from 'hooks/useDebounce';
 import React, { useEffect, useState } from 'react';
 import { Descendant } from 'slate';
 import { slateStateFactory } from '@xeo/utils';
 import { Editable } from 'components/Editable/Editable';
+import { useDebounce } from '@xeo/ui';
 
 interface Props {
   page: GetPageQuery['page'];

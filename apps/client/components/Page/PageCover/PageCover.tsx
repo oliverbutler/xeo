@@ -1,5 +1,4 @@
-import { Clickable } from 'components/UI/Clickable/Clickable';
-import { Popover } from 'components/UI/Popover/Popover';
+import { Clickable, Popover } from '@xeo/ui';
 import { GetPageQuery } from 'generated';
 import { useBlock } from 'hooks/useBlock/useBlock';
 import { useEffect, useState } from 'react';

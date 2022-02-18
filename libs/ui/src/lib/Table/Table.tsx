@@ -2,7 +2,7 @@ import { ArrowSmDownIcon } from '@heroicons/react/outline';
 import classNames from 'classnames';
 import { useTable, Column, useSortBy, useExpanded } from 'react-table';
 
-import '../../../types/react-table-config.d';
+import './react-table-config.d';
 
 interface Props<T extends object> {
   columns: Column<T>[];
@@ -17,7 +17,6 @@ export const Table = <T extends object>({
   columns,
   data,
 }: Props<T>): React.ReactElement => {
-  // Use the state and functions returned from useTable to build your UI
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable(
       {
@@ -28,7 +27,6 @@ export const Table = <T extends object>({
       useExpanded
     );
 
-  // Render the UI for your table
   return (
     <div className="flex flex-col w-full">
       <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
