@@ -7,7 +7,7 @@ import {
   Resolver,
   Parent,
 } from '@nestjs/graphql';
-import { Page } from '@prisma/client';
+import { Page } from '@prisma/client-xeo';
 import { randomUUID } from 'crypto';
 import { CurrentUser, GqlAuthGuard } from '../../auth/auth.guard';
 import { CurrentAuthUser } from '../../auth/strategies/jwt.strategy';

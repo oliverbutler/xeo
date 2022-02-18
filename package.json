@@ -13,6 +13,9 @@
     "storybook": "nx storybook ui",
     "generate-graphql:client": "graphql-codegen --config apps/client/codegen.yml"
   },
+  "prisma": {
+    "schema": "prisma/xeo-scrum.prisma"
+  },
   "private": true,
   "dependencies": {
     "@apollo/client": "3.5.9",
