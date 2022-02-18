@@ -1,6 +1,6 @@
 import { ArrowSmDownIcon } from '@heroicons/react/outline';
 import classNames from 'classnames';
-import { useTable, Column, useSortBy } from 'react-table';
+import { useTable, Column, useSortBy, useExpanded } from 'react-table';
 
 import '../../../types/react-table-config.d';
 
@@ -8,6 +8,10 @@ interface Props<T extends object> {
   columns: Column<T>[];
   data: T[];
 }
+
+export type ExpandableRow<TRow extends object> = TRow & {
+  subRows?: ExpandableRow<TRow>[];
+};
 
 export const Table = <T extends object>({
   columns,
@@ -20,7 +24,8 @@ export const Table = <T extends object>({
         columns,
         data,
       },
-      useSortBy
+      useSortBy,
+      useExpanded
     );
 
   // Render the UI for your table

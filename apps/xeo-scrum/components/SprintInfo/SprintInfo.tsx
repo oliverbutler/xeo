@@ -20,6 +20,7 @@ import { DarkModeButton } from 'components/DarkModeButton/DarkModeButton';
 import { UserAction, trackSprintAction } from 'utils/analytics';
 import { NextSeo } from 'next-seo';
 import { SprintHistory } from './SprintHistory/SprintHistory';
+import { FeatureToggle } from 'components/FeatureToggle/FeatureToggle';
 
 dayjs.extend(relativeTime);
 
@@ -168,7 +169,9 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
         plotData={sprintHistoryPlotData}
         showPointsNotStarted={showPointsNotStarted}
       />
-      <SprintHistory sprint={sprint} />
+      <FeatureToggle>
+        <SprintHistory sprint={sprint} />
+      </FeatureToggle>
     </div>
   );
 };
