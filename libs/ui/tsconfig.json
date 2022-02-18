@@ -11,10 +11,12 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@xeo/utils": ["../utils/src/index.ts"]
-    }
+    },
+    "typeRoots": ["./types", "./node_modules/@types"]
   },
   "files": [],
   "include": [],
+  "exclude": ["node_modules", "types"],
   "references": [
     {
       "path": "./tsconfig.lib.json"

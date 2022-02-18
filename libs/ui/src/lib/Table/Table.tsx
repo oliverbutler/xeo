@@ -2,6 +2,8 @@ import { ArrowSmDownIcon } from '@heroicons/react/outline';
 import classNames from 'classnames';
 import { useTable, Column, useSortBy } from 'react-table';
 
+import '../../../types/react-table-config.d';
+
 interface Props<T extends object> {
   columns: Column<T>[];
   data: T[];
