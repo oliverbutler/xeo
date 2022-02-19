@@ -7,6 +7,9 @@ on:
 
 env:
   NX_CLOUD_DISTRIBUTED_EXECUTION: true
+  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+  SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+  SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
 
 jobs:
   main:
