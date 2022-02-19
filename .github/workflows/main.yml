@@ -27,7 +27,6 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '14'
-      - run: echo ${{ secrets.SENTRY_AUTH_TOKEN }}
       - run: npm install
       - run: npx nx-cloud start-ci-run
       - run: npx nx affected --target=build --exclude=site,client,server --parallel --max-parallel=3
