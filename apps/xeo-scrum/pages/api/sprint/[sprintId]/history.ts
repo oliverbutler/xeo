@@ -1,28 +1,59 @@
-import { Sprint } from '@prisma/client';
+import { SprintHistory, SprintStatusHistory } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { DataPlotType } from 'utils/sprint/chart';
 import { withSentry } from '@sentry/nextjs';
 import { apiError, APIGetRequest, apiResponse } from 'utils/api';
-import { getSprintAndPlotDataForPage } from 'utils/sprint/sprint-history';
+import { getSession } from 'next-auth/react';
 
-export type GetSprintHistoryRequest = APIGetRequest<{
-  sprint: Sprint;
-  sprintHistoryPlotData: DataPlotType[];
+export type GetSprintHistory = APIGetRequest<{
+  sprintHistory: SprintHistoryWithStatus[];
 }>;
 
-/**
- * ⚠️ Public Facing Route
- */
+export type SprintHistoryWithStatus = SprintHistory & {
+  sprintStatusHistory: SprintStatusHistory[];
+};
+
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const sprintId = req.query.sprintId as string;
+  const session = await getSession({ req });
 
-  const sprintAndPlotData = await getSprintAndPlotDataForPage(sprintId);
-
-  if (!sprintAndPlotData) {
-    return apiError(res, { message: 'Sprint not found' }, 404);
+  if (!session) {
+    return res.status(401).json({ message: 'Not authenticated' });
   }
 
-  return apiResponse<GetSprintHistoryRequest>(res, sprintAndPlotData);
+  const sprintId = req.query.sprintId as string;
+  const userId = session.id;
+
+  if (req.method === 'GET') {
+    const sprintHistory = await prisma.sprintHistory.findMany({
+      where: {
+        sprint: {
+          id: sprintId,
+          backlog: {
+            members: {
+              some: {
+                user: {
+                  id: userId,
+                },
+              },
+            },
+          },
+        },
+      },
+      include: {
+        sprintStatusHistory: true,
+      },
+      orderBy: {
+        timestamp: 'desc',
+      },
+    });
+
+    if (!sprintHistory) {
+      return apiError(res, { message: 'Sprint not found' }, 404);
+    }
+
+    return apiResponse(res, { sprintHistory });
+  }
+
+  return apiError(res, { message: 'Not implemented' }, 501);
 };
 
 export default withSentry(handler);

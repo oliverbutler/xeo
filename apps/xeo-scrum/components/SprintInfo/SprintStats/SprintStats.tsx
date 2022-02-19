@@ -27,7 +27,7 @@ export const SprintStats: React.FunctionComponent<Props> = ({
     stats;
 
   return (
-    <div className="grid grid-cols-3 2xl:grid-cols-6 gap-2 sm:gap-4 my-2">
+    <div className="grid grid-cols-3 sm:grid-cols-3 2xl:grid-cols-6 gap-2 sm:gap-4 my-2">
       <SprintStat
         icon={
           <ChartBarIcon height={40} width={40} className="stroke-primary-300" />

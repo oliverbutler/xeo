@@ -1,7 +1,6 @@
-import { RenderElementProps, useFocused, useSelected } from 'slate-react';
+import { RenderElementProps } from 'slate-react';
 import { CalloutElement, MentionElement, SlateBlockType } from '@xeo/utils';
 import { Mention } from './Mention/Mention';
-import { Clickable } from 'components/UI/Clickable/Clickable';
 import { Callout } from './Callout/Callout';
 
 export const Element: React.FunctionComponent<RenderElementProps> = (props) => {

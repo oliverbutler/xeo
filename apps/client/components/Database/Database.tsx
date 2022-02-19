@@ -1,5 +1,4 @@
-import classNames from 'classnames';
-import { Clickable } from 'components/UI/Clickable/Clickable';
+import { Clickable } from '@xeo/ui';
 import { FiMoreHorizontal, FiPlus } from 'react-icons/fi';
 
 const testData: { id: string; fields: Record<string, React.ReactNode> }[] = [
@@ -49,7 +48,6 @@ export const Database: React.FunctionComponent<Props> = ({ database }) => {
   return (
     <div>
       <div className="flex flex-row justify-between mb-2">
-        {/* <DatabaseTitle database={database} /> */}
         <div className="flex flex-row items-center">
           <Clickable className="hover:bg-dark-300">
             <FiPlus />

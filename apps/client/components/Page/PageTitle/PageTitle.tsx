@@ -4,7 +4,7 @@ import { Descendant } from 'slate';
 import { SlateBlockType, slateStateFactory } from '@xeo/utils';
 import { Editable } from 'components/Editable/Editable';
 import { useEffect, useState } from 'react';
-import { useDebounce } from 'hooks/useDebounce';
+import { useDebounce } from '@xeo/ui';
 
 interface Props {
   page: GetPageQuery['page'];

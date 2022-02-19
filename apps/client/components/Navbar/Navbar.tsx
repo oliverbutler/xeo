@@ -1,7 +1,5 @@
-import { Loader } from '@xeo/ui';
+import { Clickable, Dropdown, Loader } from '@xeo/ui';
 import classNames from 'classnames';
-import { Clickable } from 'components/UI/Clickable/Clickable';
-import { Dropdown } from 'components/UI/Dropdown/Dropdown';
 import { usePageContext } from 'context/PageContext';
 import { useSyncContext } from 'context/SyncContext';
 import { useGetPageQuery } from 'generated';

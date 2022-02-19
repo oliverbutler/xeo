@@ -1,7 +1,6 @@
 import { Tab } from '@headlessui/react';
-import { Clickable } from 'components/UI/Clickable/Clickable';
+import { Clickable, useLocalStorage } from '@xeo/ui';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useLocalStorage } from 'hooks/useLocalStorage';
 import { MdOutlineAccountTree } from 'react-icons/md';
 import { RiNodeTree } from 'react-icons/ri';
 import { PageGraph } from './PageGraph/PageGraph';

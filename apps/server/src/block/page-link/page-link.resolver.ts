@@ -1,6 +1,6 @@
-import { BadRequestException, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { PageLink } from '@prisma/client';
+import { PageLink } from '@prisma/client-xeo';
 import { CurrentUser, GqlAuthGuard } from '../../auth/auth.guard';
 import { CurrentAuthUser } from '../../auth/strategies/jwt.strategy';
 import { PageLink as PageLinkGraphQL } from '../../graphql';

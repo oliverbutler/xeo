@@ -1,9 +1,6 @@
-import { Clickable } from 'components/UI/Clickable/Clickable';
-import { Dropdown } from 'components/UI/Dropdown/Dropdown';
-import { Popover } from 'components/UI/Popover/Popover';
+import { Clickable, Popover, useDebounce } from '@xeo/ui';
 import { GetPageQuery } from 'generated';
 import { useBlock } from 'hooks/useBlock/useBlock';
-import { useDebounce } from 'hooks/useDebounce';
 import { useEffect, useState } from 'react';
 import { FiFileText } from 'react-icons/fi';
 import { useIntl } from 'react-intl';

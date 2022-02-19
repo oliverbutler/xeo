@@ -1,11 +1,10 @@
 import { useCurrentUser } from 'hooks/useCurrentUser/useCurrentUser';
-import { useLocalStorage } from 'hooks/useLocalStorage';
 import { UserRow } from './UserRow/UserRow';
 import { SidebarItem } from './SidebarItem/SidebarItem';
 import Link from 'next/link';
 import classNames from 'classnames';
 import { SidebarGraphTabs } from './SidebarGraphTabs/SidebarGraphTabs';
-import { Resize } from '@xeo/ui';
+import { Resize, useLocalStorage } from '@xeo/ui';
 
 export const Sidebar = () => {
   const { user } = useCurrentUser();

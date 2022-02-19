@@ -1,11 +1,11 @@
 import { gql } from '@apollo/client';
 import { useSignInMutation } from 'generated';
-import { useLocalStorage } from 'hooks/useLocalStorage';
 import { useRouter } from 'next/dist/client/router';
 import { BaseSyntheticEvent, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { toast } from 'react-toastify';
 import { FormState, useForm, UseFormRegister } from 'react-hook-form';
+import { useLocalStorage } from '@xeo/ui';
 
 interface Output {
   loading: boolean;

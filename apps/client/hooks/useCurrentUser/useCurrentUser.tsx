@@ -1,5 +1,5 @@
+import { useLocalStorage } from '@xeo/ui';
 import { GetMeQuery, useGetMeQuery } from 'generated';
-import { useLocalStorage } from '../useLocalStorage';
 
 interface Output {
   user: GetMeQuery['me'] | null;

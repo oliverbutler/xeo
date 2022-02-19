@@ -44,7 +44,12 @@ export const SprintCapacityTable = <T extends FieldValues>({
   startDate,
   endDate,
   teamSpeed,
-  form: { control, watch, register },
+  form: {
+    control,
+    watch,
+    register,
+    formState: { errors },
+  },
   defaultCapacity,
   devFieldName,
   devNameFieldNameFactory,
@@ -68,7 +73,9 @@ export const SprintCapacityTable = <T extends FieldValues>({
       {
         Header: 'Date',
         accessor: 'date',
-        Cell: (cell) => dayjs(cell.value).format('ddd DD/MM'),
+        Cell: (cell) => (
+          <div className="w-24">{dayjs(cell.value).format('ddd DD/MM')}</div>
+        ),
       },
       ...fields.map(({ id }, index) => ({
         Header: () => (
@@ -77,6 +84,7 @@ export const SprintCapacityTable = <T extends FieldValues>({
             index={index}
             remove={remove}
             register={register}
+            errors={errors}
             devNameFieldNameFactory={devNameFieldNameFactory}
           />
         ),
@@ -112,7 +120,7 @@ export const SprintCapacityTable = <T extends FieldValues>({
           <UserAddIcon height={25} width={25} />
         </Clickable>
       </div>
-      <div className="overflow-x-auto">
+      <div className="my-4">
         <Table<SprintCapacityTableRow>
           columns={columns}
           data={sprintCapacityTableRows}

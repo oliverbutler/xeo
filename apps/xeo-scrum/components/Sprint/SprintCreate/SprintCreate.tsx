@@ -122,9 +122,8 @@ export const SprintCreate: React.FunctionComponent<SprintCreateProps> = ({
 
   return (
     <form className="gap-4" onSubmit={handleSubmit(createSprint)}>
-      <div className="flex flex-row gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <SelectField
-          className="w-1/3"
           label="Select Backlog"
           control={form.control}
           name="backlog"
@@ -132,47 +131,44 @@ export const SprintCreate: React.FunctionComponent<SprintCreateProps> = ({
           rules={{ required: true }}
         />
         <Input
-          className="w-1/3"
           label="Sprint Name"
           {...register('sprintName', { required: true })}
         />
         <Input
-          className="w-2/3"
-          label="Sprint Goal"
-          {...register('sprintGoal', { required: true })}
-          placeholder="AaU I can..."
+          label="Team Speed"
+          type="number"
+          step={0.1}
+          {...register('teamSpeed', { required: true })}
         />
       </div>
-      <div className="mt-4 flex flex-grow flex-row gap-4">
+      <Input
+        className="mt-4"
+        label="Sprint Goal"
+        {...register('sprintGoal', { required: true })}
+        placeholder="AaU I can..."
+      />
+
+      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <Input
+          className="row-span-2"
           type="datetime-local"
           label="Start Time"
           {...register('startDate', { required: true })}
         />
         <Input
+          className="row-span-2"
           type="datetime-local"
           label="End Time"
           {...register('endDate', { required: true })}
         />
         <Input
-          className="sm:w-1/5"
           type="time"
           label="Daily Start Time"
-          {...register('dayStartTime')}
+          {...register('dayStartTime', { required: true })}
         />
         <Input
-          className="w-1/3"
           label="Notion Sprint Value"
-          placeholder='Notion Select Value e.g. "07-02"'
           {...register('notionSprintValue', { required: true })}
-        />
-
-        <Input
-          className="w-1/3"
-          label="Team Speed"
-          type="number"
-          step={0.1}
-          {...register('teamSpeed', { required: true })}
         />
       </div>
 
