@@ -24,8 +24,8 @@ jobs:
           node-version: '14'
       - run: npm install
       - run: npx nx-cloud start-ci-run
-      - run: npx nx affected --target=build --exclude=server,site --parallel --max-parallel=3
-      - run: npx nx affected --target=test --exclude=server,site --parallel --max-parallel=2
+      - run: npx nx affected --target=build --exclude=site,client,server --parallel --max-parallel=3
+      - run: npx nx affected --target=test --exclude=site,client,server --parallel --max-parallel=2
       - run: npx nx-cloud stop-all-agents
       - name: Codecov
         uses: codecov/codecov-action@v2.1.0
@@ -44,8 +44,8 @@ jobs:
           node-version: '14'
       - run: npm install
       - run: npx nx-cloud start-ci-run
-      - run: npx nx affected --target=build --exclude=server,site --parallel --max-parallel=3
-      - run: npx nx affected --target=test --exclude=server,site --parallel --max-parallel=2
+      - run: npx nx affected --target=build --exclude=site,client,server --parallel --max-parallel=3
+      - run: npx nx affected --target=test --exclude=site,client,server --parallel --max-parallel=2
       - run: npx nx-cloud stop-all-agents
       - name: Codecov
         uses: codecov/codecov-action@v2.1.0
