@@ -21,12 +21,14 @@ import { UserAction, trackSprintAction } from 'utils/analytics';
 import { NextSeo } from 'next-seo';
 import { SprintHistory } from './SprintHistory/SprintHistory';
 import { FeatureToggle } from 'components/FeatureToggle/FeatureToggle';
+import Skeleton from 'react-loading-skeleton';
 
 dayjs.extend(relativeTime);
 
 interface Props {
-  sprintData: GetSprintColumnPlotData['response'];
+  sprintData: GetSprintColumnPlotData['response'] | null;
   publicMode: boolean;
+  sprintId: string;
 }
 
 const updateSprintHistory = async (
@@ -52,11 +54,12 @@ const updateSprintHistory = async (
 export const SprintInfo: React.FunctionComponent<Props> = ({
   sprintData,
   publicMode,
+  sprintId,
 }) => {
   useEffect(() => {
     trackSprintAction({
       action: UserAction.SPRINT_VIEW,
-      sprintId: sprintData.sprint.id,
+      sprintId,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -89,25 +92,26 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
 
   const [showPointsNotStarted, setShowPointsNotStarted] = useState(true);
 
-  const { sprint, sprintHistoryPlotData } = sprintData;
+  const sprint = sprintData?.sprint;
+  const sprintHistoryPlotData = sprintData?.sprintHistoryPlotData;
 
   return (
     <div className="w-full p-4 sm:p-10">
       <NextSeo
-        title={`Sprint - ${sprint.name}`}
-        description={`View ${sprint.name}`}
+        title={`Sprint - ${sprint?.name}`}
+        description={`View ${sprint?.name}`}
       />
 
       <div className="flex flex-row justify-between">
         <div>
-          <h1 className="mb-0">{sprint.name}</h1>
+          <h1 className="mb-0">{sprint?.name ?? <Skeleton width={160} />}</h1>
         </div>
 
         <div>
           {publicMode ? (
             <a
               target={publicMode ? '_blank' : undefined}
-              href={`/sprint/${sprint.id}/edit`}
+              href={`/sprint/${sprintId}/edit`}
               rel="noreferrer"
               className="no-underline"
             >
@@ -118,7 +122,7 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
             </a>
           ) : (
             <Button
-              href={`/sprint/${sprint.id}/edit`}
+              href={`/sprint/${sprintId}/edit`}
               variation={ButtonVariation.Secondary}
             >
               Edit
@@ -126,11 +130,13 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
           )}
         </div>
       </div>
-      <p className="hidden sm:block">{sprint.sprintGoal}</p>
+      <p className="hidden sm:block">
+        {sprint?.sprintGoal ?? <Skeleton width={'100%'} count={2} />}
+      </p>
 
       <SprintStats
         sprintHistoryPlotData={sprintHistoryPlotData}
-        sprintId={sprintData.sprint.id}
+        sprintId={sprintId}
       />
       <div className="flex flex-row items-end justify-between">
         <div className="flex w-full flex-row justify-end gap-2">
@@ -163,14 +169,13 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
           {publicMode && <DarkModeButton />}
         </div>
       </div>
-
       <SprintGraph
         sprint={sprint}
         plotData={sprintHistoryPlotData}
         showPointsNotStarted={showPointsNotStarted}
       />
       <FeatureToggle>
-        <SprintHistory sprint={sprint} />
+        <SprintHistory sprintId={sprintId} />
       </FeatureToggle>
     </div>
   );

@@ -12,6 +12,9 @@ import { RouteGuard } from 'components/RouteGuard/RouteGuard';
 import { useEffect } from 'react';
 import { initGA } from 'utils/analytics';
 import { isSprintEmbedded } from './sprint/[sprintId]';
+import { SkeletonTheme } from 'react-loading-skeleton';
+import { theme } from '../../../tailwind-workspace-preset';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 declare global {
   interface Window {
@@ -44,22 +47,27 @@ function CustomApp({
       <IntlWrapper>
         <ThemeProvider attribute="class" defaultTheme="light">
           <SessionProvider session={session}>
-            <RouteGuard>
-              <main className="prose dark:prose-invert max-w-none">
-                {hideSidebar ? (
-                  <div className="max-h-screen min-h-screen">
-                    <Component {...pageProps} />
-                  </div>
-                ) : (
-                  <div className="app relative z-10 flex max-h-screen min-h-screen flex-row">
-                    <Sidebar />
-                    <div className="w-full overflow-y-scroll ">
+            <SkeletonTheme
+              baseColor={theme.extend.colors.dark[200]}
+              highlightColor={theme.extend.colors.dark[50]}
+            >
+              <RouteGuard>
+                <main className="prose dark:prose-invert max-w-none">
+                  {hideSidebar ? (
+                    <div className="max-h-screen min-h-screen">
                       <Component {...pageProps} />
                     </div>
-                  </div>
-                )}
-              </main>
-            </RouteGuard>
+                  ) : (
+                    <div className="app relative z-10 flex max-h-screen min-h-screen flex-row">
+                      <Sidebar />
+                      <div className="w-full overflow-y-scroll ">
+                        <Component {...pageProps} />
+                      </div>
+                    </div>
+                  )}
+                </main>
+              </RouteGuard>
+            </SkeletonTheme>
           </SessionProvider>
           <ToastContainer autoClose={3000} />
         </ThemeProvider>

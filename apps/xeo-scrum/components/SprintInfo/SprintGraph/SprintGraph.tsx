@@ -23,10 +23,10 @@ import { Sprint } from '@prisma/client';
 dayjs.extend(utc);
 
 interface Props {
-  plotData: DataPlotType[];
+  plotData: DataPlotType[] | undefined;
   showPointsNotStarted?: boolean;
   smallGraph?: boolean;
-  sprint: Sprint;
+  sprint: Sprint | undefined;
 }
 
 export const SprintGraph: React.FunctionComponent<Props> = ({
@@ -118,27 +118,31 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
 
   const isDark = nextTheme.theme === 'dark';
 
-  const lowestValueInPlot = Math.min(
-    ...plotData.map((plot) =>
-      Math.min(
-        plot[DataPlotLine.CAPACITY] ?? 0,
-        plot[DataPlotLine.POINTS_LEFT] ?? 0,
-        plot[DataPlotLine.POINTS_DONE_INC_VALIDATE] ?? 0,
-        plot[DataPlotLine.EXPECTED_POINTS] ?? 0
+  const lowestValueInPlot = plotData
+    ? Math.min(
+        ...plotData.map((plot) =>
+          Math.min(
+            plot[DataPlotLine.CAPACITY] ?? 0,
+            plot[DataPlotLine.POINTS_LEFT] ?? 0,
+            plot[DataPlotLine.POINTS_DONE_INC_VALIDATE] ?? 0,
+            plot[DataPlotLine.EXPECTED_POINTS] ?? 0
+          )
+        )
       )
-    )
-  );
+    : 0;
 
-  const highestValueInPlot = Math.max(
-    ...plotData.map((plot) =>
-      Math.max(
-        plot[DataPlotLine.CAPACITY] ?? 0,
-        plot[DataPlotLine.POINTS_LEFT] ?? 0,
-        plot[DataPlotLine.POINTS_DONE_INC_VALIDATE] ?? 0,
-        plot[DataPlotLine.EXPECTED_POINTS] ?? 0
+  const highestValueInPlot = plotData
+    ? Math.max(
+        ...plotData.map((plot) =>
+          Math.max(
+            plot[DataPlotLine.CAPACITY] ?? 0,
+            plot[DataPlotLine.POINTS_LEFT] ?? 0,
+            plot[DataPlotLine.POINTS_DONE_INC_VALIDATE] ?? 0,
+            plot[DataPlotLine.EXPECTED_POINTS] ?? 0
+          )
+        )
       )
-    )
-  );
+    : 100;
 
   const getAllFactorsOf10BetweenValues = (
     lowestValue: number,
@@ -167,6 +171,7 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
 
   return (
     <div
+      key={plotData ? 'sprint-graph' : 'sprint-graph-loading'}
       className={classNames('relative -ml-6 mt-4', {
         'text-sm': smallGraph || isSmallWindow,
       })}
@@ -180,7 +185,7 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
         <LineChart
           width={WIDTH}
           height={HEIGHT}
-          data={plotData}
+          data={plotData ?? []}
           style={{ position: 'absolute' }}
         >
           <CartesianGrid
@@ -198,7 +203,7 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
             tickFormatter={(time, index) =>
               index === 0
                 ? 'Start'
-                : index === plotData.length - 1
+                : index === (plotData ? plotData.length - 1 : -1)
                 ? 'End'
                 : dayjs(time).format('ddd DD/MM')
             }

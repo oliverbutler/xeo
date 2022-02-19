@@ -19746,6 +19746,11 @@ react-lifecycles-compat@^3.0.4:
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
 
+react-loading-skeleton@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/react-loading-skeleton/-/react-loading-skeleton-3.0.3.tgz#4f45467cf3193fb25456bc02aeb81922b82b8f1f"
+  integrity sha512-HPkEqQGwmbg1ImcYA9n4hDiLC3u92xUdU+sSfrv/9l3lNBChAubcl1azjV2WakapdkbA3gko+hPzZkZGIb/9xA==
+
 react-moment-proptypes@^1.6.0:
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/react-moment-proptypes/-/react-moment-proptypes-1.8.1.tgz#7ba4076147f6b5998f0d4f51d302d6d8c62049fd"

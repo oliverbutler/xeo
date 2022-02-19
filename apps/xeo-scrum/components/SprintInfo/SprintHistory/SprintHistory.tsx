@@ -1,4 +1,3 @@
-import { Sprint } from '@prisma/client';
 import { Error } from 'components/Error/Error';
 import {
   GetSprintHistory,
@@ -9,29 +8,28 @@ import { CentredLoader, ExpandableRow, Input, Table } from '@xeo/ui';
 import dayjs from 'dayjs';
 import { groupBy } from '@xeo/utils';
 import { CellProps } from 'react-table';
+import Skeleton from 'react-loading-skeleton';
 
 interface Props {
-  sprint: Sprint;
+  sprintId: string;
 }
 
-export const SprintHistory: React.FunctionComponent<Props> = ({ sprint }) => {
-  const { data, error, isLoading } = useQuery<GetSprintHistory>(
-    `/api/sprint/${sprint.id}/history`
+export const SprintHistory: React.FunctionComponent<Props> = ({ sprintId }) => {
+  const { data, error } = useQuery<GetSprintHistory>(
+    `/api/sprint/${sprintId}/history`
   );
 
-  if (isLoading) {
-    return <CentredLoader />;
-  }
-
-  if (error || !data) {
+  if (error) {
     return (
       <Error errorMessage="Error fetching sprint history, please try again!" />
     );
   }
 
-  const historyByDay = groupBy(data.sprintHistory, (item) =>
-    dayjs(item.timestamp).format('YYYY-MM-DD')
-  );
+  const historyByDay = data
+    ? groupBy(data.sprintHistory, (item) =>
+        dayjs(item.timestamp).format('YYYY-MM-DD')
+      )
+    : {};
 
   const mapSprintHistoryToRow = (
     history: SprintHistoryWithStatus
@@ -113,7 +111,7 @@ export const SprintHistory: React.FunctionComponent<Props> = ({ sprint }) => {
         ]}
         data={rows}
       />
-      <p> {data.sprintHistory.length} Data Points</p>
+      <p>{data && `${data.sprintHistory.length}  Data Points`}</p>
     </div>
   );
 };

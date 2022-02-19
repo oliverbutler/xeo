@@ -14,7 +14,7 @@ const PrivateSprintPage: React.FunctionComponent = () => {
 
   const isEmbed = isSprintEmbedded(router);
 
-  const { data, error, isLoading } = useQuery<GetSprintColumnPlotData>(
+  const { data, error } = useQuery<GetSprintColumnPlotData>(
     `/api/sprint/${sprintId}/column-plot-data`
   );
 
@@ -22,17 +22,15 @@ const PrivateSprintPage: React.FunctionComponent = () => {
     return <div>No sprint id</div>;
   }
 
-  if (isLoading) {
-    return <CentredLoader />;
-  }
-
-  if (error || !data) {
+  if (error) {
     return (
       <Error errorMessage="Error fetching the sprint, please try again!" />
     );
   }
 
-  return <SprintInfo sprintData={data} publicMode={isEmbed} />;
+  return (
+    <SprintInfo sprintData={data} publicMode={isEmbed} sprintId={sprintId} />
+  );
 };
 
 export default PrivateSprintPage;

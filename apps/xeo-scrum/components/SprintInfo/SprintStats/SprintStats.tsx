@@ -3,28 +3,28 @@ import {
   CheckCircleIcon,
   ClipboardCheckIcon,
   ExclamationCircleIcon,
+  QuestionMarkCircleIcon,
 } from '@heroicons/react/outline';
 import classNames from 'classnames';
+import Skeleton from 'react-loading-skeleton';
 import { DataPlotType, roundToOneDecimal } from 'utils/sprint/chart';
 import { getSprintStats } from './getSprintStats';
 import { SprintStat } from './SprintStat';
 
 interface Props {
-  sprintHistoryPlotData: DataPlotType[];
+  sprintHistoryPlotData: DataPlotType[] | undefined;
   sprintId: string;
 }
 
 export const SprintStats: React.FunctionComponent<Props> = ({
   sprintHistoryPlotData,
 }) => {
-  const stats = getSprintStats(sprintHistoryPlotData);
-
-  if (!stats) {
-    return null;
-  }
+  const stats = sprintHistoryPlotData
+    ? getSprintStats(sprintHistoryPlotData)
+    : undefined;
 
   const { deltaPoints, pointsToValidate, percentDone, percentDoneValidated } =
-    stats;
+    stats || {};
 
   return (
     <div className="grid grid-cols-3 sm:grid-cols-3 2xl:grid-cols-6 gap-2 sm:gap-4 my-2">
@@ -34,39 +34,59 @@ export const SprintStats: React.FunctionComponent<Props> = ({
         }
         title="Progress"
         value={
-          <p>
-            <span>{roundToOneDecimal(percentDone)}% D</span> -{' '}
-            <span>{roundToOneDecimal(percentDoneValidated)}% V</span>
-          </p>
+          percentDone && percentDoneValidated ? (
+            <p>
+              <span>{roundToOneDecimal(percentDone)}% D</span> -{' '}
+              <span>{roundToOneDecimal(percentDoneValidated)}% V</span>
+            </p>
+          ) : (
+            <p>
+              <Skeleton width={100} />
+            </p>
+          )
         }
       />
       <SprintStat
         icon={
-          deltaPoints < 0 ? (
-            <ExclamationCircleIcon
-              height={35}
-              width={35}
-              className="stroke-red-400 dark:stroke-red-300"
-            />
+          deltaPoints ? (
+            deltaPoints < 0 ? (
+              <ExclamationCircleIcon
+                height={35}
+                width={35}
+                className="stroke-red-400 dark:stroke-red-300"
+              />
+            ) : (
+              <CheckCircleIcon
+                height={35}
+                width={35}
+                className="stroke-primary-300"
+              />
+            )
           ) : (
-            <CheckCircleIcon
+            <QuestionMarkCircleIcon
               height={35}
               width={35}
-              className="stroke-primary-300"
+              className="stroke-dark-300"
             />
           )
         }
         title="On Track"
         value={
-          <p
-            className={classNames(
-              { 'text-red-400 dark:text-red-300': deltaPoints < 0 },
-              { 'text-green-400 dark:text-green-300': deltaPoints >= 0 }
-            )}
-          >
-            {roundToOneDecimal(deltaPoints)}{' '}
-            {roundToOneDecimal(deltaPoints) < 0 ? 'Behind' : 'Ahead'}
-          </p>
+          deltaPoints ? (
+            <p
+              className={classNames(
+                { 'text-red-400 dark:text-red-300': deltaPoints < 0 },
+                { 'text-green-400 dark:text-green-300': deltaPoints >= 0 }
+              )}
+            >
+              {roundToOneDecimal(deltaPoints)}{' '}
+              {roundToOneDecimal(deltaPoints) < 0 ? 'Behind' : 'Ahead'}
+            </p>
+          ) : (
+            <p>
+              <Skeleton width={100} />
+            </p>
+          )
         }
       />
       <SprintStat
@@ -78,7 +98,15 @@ export const SprintStats: React.FunctionComponent<Props> = ({
           />
         }
         title="Validation"
-        value={<p>Remaining: {roundToOneDecimal(pointsToValidate)}</p>}
+        value={
+          pointsToValidate ? (
+            <p>Remaining: {roundToOneDecimal(pointsToValidate)}</p>
+          ) : (
+            <p>
+              <Skeleton width={100} />
+            </p>
+          )
+        }
       />
     </div>
   );
