@@ -15,7 +15,7 @@ env:
 jobs:
   main:
     runs-on: ubuntu-latest
-    environment: production
+    environment: Production
     if: ${{ github.event_name != 'pull_request' }}
     steps:
       - uses: actions/checkout@v2
@@ -27,6 +27,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '14'
+      - run: echo ${{ secrets.SENTRY_AUTH_TOKEN }}
       - run: npm install
       - run: npx nx-cloud start-ci-run
       - run: npx nx affected --target=build --exclude=site,client,server --parallel --max-parallel=3
@@ -36,7 +37,7 @@ jobs:
         uses: codecov/codecov-action@v2.1.0
   pr:
     runs-on: ubuntu-latest
-    environment: preview
+    environment: Preview
     if: ${{ github.event_name == 'pull_request' }}
     steps:
       - uses: actions/checkout@v2
