@@ -9,6 +9,7 @@
     "lint": "nx affected:lint --all",
     "dev:all": "nx run-many --target=serve --all --parallel",
     "dev:xeo-scrum": "nx serve xeo-scrum | pino-pretty -c",
+    "dev:site": "nx serve site",
     "storybook": "nx storybook ui",
     "generate-graphql:client": "graphql-codegen --config apps/client/codegen.yml"
   },
@@ -21,6 +22,7 @@
     "@apollo/react-hooks": "4.0.0",
     "@headlessui/react": "1.5.0",
     "@heroicons/react": "1.0.5",
+    "@nestjs/apollo": "^10.0.4",
     "@nestjs/common": "8.3.1",
     "@nestjs/config": "1.2.0",
     "@nestjs/core": "8.3.1",
