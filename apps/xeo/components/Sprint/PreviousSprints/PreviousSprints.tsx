@@ -38,13 +38,13 @@ export const PreviousSprints: React.FunctionComponent<Props> = ({
               const stats = getSprintStats(row.value);
 
               if (!stats) {
-                return <p>Unknown</p>;
+                return <span>Unknown</span>;
               }
 
               const { deltaPoints } = stats;
 
               return (
-                <p
+                <span
                   className={classNames(
                     { 'text-red-400 dark:text-red-300': deltaPoints < 0 },
                     { 'text-green-400 dark:text-green-300': deltaPoints >= 0 }
@@ -52,7 +52,7 @@ export const PreviousSprints: React.FunctionComponent<Props> = ({
                 >
                   {roundToOneDecimal(deltaPoints)}{' '}
                   {roundToOneDecimal(deltaPoints) < 0 ? 'Behind' : 'Ahead'}
-                </p>
+                </span>
               );
             },
           },

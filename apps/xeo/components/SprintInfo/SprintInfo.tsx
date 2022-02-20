@@ -1,10 +1,5 @@
-import {
-  BeakerIcon,
-  ClipboardCopyIcon,
-  ExternalLinkIcon,
-  RefreshIcon,
-} from '@heroicons/react/outline';
-import { Button, ButtonVariation, Clickable } from '@xeo/ui';
+import { ExternalLinkIcon } from '@heroicons/react/outline';
+import { Button, ButtonVariation } from '@xeo/ui';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { GetSprintColumnPlotData } from 'pages/api/sprint/[sprintId]/column-plot-data';
@@ -16,12 +11,10 @@ import axios from 'axios';
 import { PostUpdateSprintHistory } from 'pages/api/sprint/[sprintId]/update-history';
 import { ScopedMutator } from 'swr/dist/types';
 import { toast } from 'react-toastify';
-import { DarkModeButton } from '@xeo/ui';
 import { UserAction, trackSprintAction } from 'utils/analytics';
 import { NextSeo } from 'next-seo';
-import { SprintHistory } from './SprintHistory/SprintHistory';
-import { FeatureToggle } from 'components/FeatureToggle/FeatureToggle';
 import Skeleton from 'react-loading-skeleton';
+import { GraphControls } from './GraphControls/GraphControls';
 
 dayjs.extend(relativeTime);
 
@@ -130,53 +123,36 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
           )}
         </div>
       </div>
-      <p className="hidden sm:block">
-        {sprint?.sprintGoal ?? <Skeleton width={'100%'} count={2} />}
-      </p>
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="md:w-1/3">
+          <p>{sprint?.sprintGoal ?? <Skeleton width={'100%'} count={2} />}</p>
 
-      <SprintStats
-        sprintHistoryPlotData={sprintHistoryPlotData}
-        sprintId={sprintId}
-      />
-      <div className="flex flex-row items-end justify-between">
-        <div className="flex w-full flex-row justify-end gap-2">
-          {!publicMode && (
-            <Clickable
-              onClick={() => {
-                navigator.clipboard.writeText(`${window.location}?embed=1`);
-                toast.info('Embeddable link copied to Clipboard');
-              }}
-            >
-              <ClipboardCopyIcon height={20} width={20} />
-            </Clickable>
-          )}
-          <Clickable
-            showActiveLabel={isLoading}
-            onClick={isLoading ? undefined : handleUpdateSprintHistory}
-          >
-            <RefreshIcon
-              height={20}
-              width={20}
-              className={isLoading ? 'animate-reverse-spin' : ''}
-            />
-          </Clickable>
-          <Clickable
-            showActiveLabel={showPointsNotStarted}
-            onClick={() => setShowPointsNotStarted(!showPointsNotStarted)}
-          >
-            <BeakerIcon height={20} width={20} />
-          </Clickable>
-          {publicMode && <DarkModeButton />}
+          <SprintStats
+            sprintHistoryPlotData={sprintHistoryPlotData}
+            sprintId={sprintId}
+          />
+        </div>
+
+        <div className="md:w-2/3 pt-4">
+          <GraphControls
+            publicMode={publicMode}
+            isLoading={isLoading}
+            setShowPointsNotStarted={setShowPointsNotStarted}
+            showPointsNotStarted={showPointsNotStarted}
+            handleUpdateSprintHistory={handleUpdateSprintHistory}
+          />
+          <SprintGraph
+            sprint={sprint}
+            plotData={sprintHistoryPlotData}
+            showPointsNotStarted={showPointsNotStarted}
+          />
         </div>
       </div>
-      <SprintGraph
-        sprint={sprint}
-        plotData={sprintHistoryPlotData}
-        showPointsNotStarted={showPointsNotStarted}
-      />
-      <FeatureToggle>
-        <SprintHistory sprintId={sprintId} />
-      </FeatureToggle>
+      {/* {publicMode ? null : (
+        <FeatureToggle>
+          <SprintHistory sprintId={sprintId} />
+        </FeatureToggle>
+      )} */}
     </div>
   );
 };

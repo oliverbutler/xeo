@@ -17,14 +17,14 @@ export const SprintStat: React.FunctionComponent<Props> = ({
     <div
       className={classNames(
         className,
-        'bg-dark-50 dark:bg-dark-800 dark:border-l-dark-600 flex flex-col sm:flex-row border-l-4  hover:scale-105 transition-all items-center py-3 sm:py-0'
+        'bg-dark-50 dark:bg-dark-900 dark:border-l-dark-700 flex flex-col sm:flex-row border-l-4  hover:scale-105 transition-all items-center py-3 sm:py-0'
       )}
     >
       <div id="icon-container" className="mx-2 flex items-center">
         {icon}
       </div>
       <div id="text-container" className="-mb-2 flex flex-col justify-center">
-        <h3 className="m-0 mt-2">{title}</h3>
+        <h3 className="m-0 mt-2 mr-2">{title}</h3>
         {value}
       </div>
     </div>

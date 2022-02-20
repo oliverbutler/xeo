@@ -14,7 +14,7 @@ module.exports = {
       colors: {
         primary: colors.sky,
         secondary: colors.pink,
-        dark: colors.zinc,
+        dark: { ...colors.zinc, 950: '#101012' },
       },
       animation: {
         blob: 'blob 7s infinite',

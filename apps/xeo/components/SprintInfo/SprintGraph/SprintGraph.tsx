@@ -111,7 +111,7 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
 
   const isSmallWindow = width <= smWidth;
 
-  const HEIGHT = smallGraph ? 200 : isSmallWindow ? 300 : 400;
+  const HEIGHT = smallGraph ? 200 : isSmallWindow ? 300 : 350;
   const WIDTH = 1000;
 
   const nextTheme = useTheme();

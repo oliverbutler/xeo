@@ -1,21 +1,13 @@
 import { MoonIcon } from '@heroicons/react/outline';
 import classNames from 'classnames';
-import { useTheme } from 'next-themes';
 import { Clickable } from '../Clickable/Clickable';
+import { useDarkMode } from './useDarkMode';
 
 export const DarkModeButton: React.FunctionComponent = () => {
-  const { setTheme, theme } = useTheme();
-
-  const handleThemeChange = () => {
-    if (theme === 'dark') {
-      setTheme('light');
-    } else {
-      setTheme('dark');
-    }
-  };
+  const { theme, toggleTheme } = useDarkMode();
 
   return (
-    <Clickable onClick={handleThemeChange} className="select-none">
+    <Clickable onClick={toggleTheme} className="select-none">
       <MoonIcon
         width={20}
         height={20}

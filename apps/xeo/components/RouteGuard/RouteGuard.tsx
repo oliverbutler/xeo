@@ -44,7 +44,8 @@ export const RouteGuard: React.FunctionComponent = ({ children }) => {
       return;
     }
 
-    const isPublicPath = path === '/login' || isSprintEmbedded(router);
+    const isPublicPath =
+      path === '/' || path === '/login' || isSprintEmbedded(router);
 
     if (session.status !== 'authenticated' && !isPublicPath) {
       setAuthorized(false);

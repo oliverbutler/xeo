@@ -27,19 +27,11 @@ export function Index() {
   return (
     <div className="flex h-screen w-full items-center justify-center">
       <NextSeo title="Login" description="Login to Xeo" />
-      <div className="dark:bg-dark-800 rounded-lg p-10 shadow-xl transition-all hover:shadow-2xl">
-        <div className="relative mx-auto aspect-square h-56">
-          <Image
-            src={xeoImage}
-            alt="Notion Logo"
-            layout="fill"
-            objectFit="cover"
-            className="select-none"
-          />
-        </div>
-        <h1 className="mt-6">Sign in to Xeo</h1>
+      <div className="dark:bg-dark-900 rounded-lg p-10 shadow-xl transition-all hover:shadow-2xl text-center">
+        <h1 className="mt-6">Sign in to Xeo Studio</h1>
         <p>Click below to sign in</p>
         <Button
+          className="mx-auto"
           onClick={() => {
             signIn();
           }}

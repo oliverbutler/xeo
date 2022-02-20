@@ -4,6 +4,7 @@ import { GetSprintColumnPlotData } from 'pages/api/sprint/[sprintId]/column-plot
 import { useQuery } from 'utils/api';
 import { CentredLoader } from '@xeo/ui';
 import { Error } from 'components/Error/Error';
+import { Content } from 'components/Content';
 
 export const isSprintEmbedded = (router: NextRouter) =>
   router.query.embed === '1';
@@ -29,7 +30,15 @@ const PrivateSprintPage: React.FunctionComponent = () => {
   }
 
   return (
-    <SprintInfo sprintData={data} publicMode={isEmbed} sprintId={sprintId} />
+    <div className="min-h-screen ">
+      <Content>
+        <SprintInfo
+          sprintData={data}
+          publicMode={isEmbed}
+          sprintId={sprintId}
+        />
+      </Content>
+    </div>
   );
 };
 

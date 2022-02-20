@@ -1,6 +1,8 @@
 import { Popover as PopoverComponent, Transition } from '@headlessui/react';
 import classNames from 'classnames';
+import Link from 'next/link';
 import { DetailedHTMLProps, InputHTMLAttributes } from 'react';
+import ConditionalWrapper from '../ConditionalWrapper/ConditionalWrapper';
 
 interface Props {
   button: React.ReactNode;
@@ -16,6 +18,7 @@ interface Props {
     disabled?: boolean;
     onClick?: () => void;
     arrow?: boolean;
+    href?: string;
   }[];
 }
 
@@ -26,7 +29,10 @@ export const Popover: React.FunctionComponent<Props> = ({
   direction = 'right',
 }) => {
   return (
-    <PopoverComponent className="relative">
+    <PopoverComponent
+      className="relative"
+      style={{ isolation: 'isolate', zIndex: 1000 }}
+    >
       {({ open }) => (
         <>
           <PopoverComponent.Button as="div">{button}</PopoverComponent.Button>
@@ -57,14 +63,25 @@ export const Popover: React.FunctionComponent<Props> = ({
               )}
               {items &&
                 items.map((item) => (
-                  <a
-                    key={item.title}
-                    className={classNames(
-                      'cursor-pointer hover:bg-dark-100rounded-sm flex items-center w-full px-2 py-1 text-sm text-dark-800 hover:bg-dark-100'
+                  <ConditionalWrapper
+                    condition={!!item.href}
+                    wrapper={(children) => (
+                      <Link href={item.href as string} passHref>
+                        {children}
+                      </Link>
                     )}
                   >
-                    <span className="mr-2">{item.icon}</span> {item.title}
-                  </a>
+                    <div
+                      key={item.title}
+                      onClick={item.onClick}
+                      className={classNames(
+                        'cursor-pointer hover:bg-dark-100rounded-sm flex items-center w-full px-2 py-1 text-sm text-dark-800 dark:text-white hover:bg-dark-100 dark:hover:bg-dark-800'
+                      )}
+                    >
+                      <span className="mr-2">{item.icon}</span> {item.title}{' '}
+                      {item.content}
+                    </div>
+                  </ConditionalWrapper>
                 ))}
             </PopoverComponent.Panel>
           </Transition>
