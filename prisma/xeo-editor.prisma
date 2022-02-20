@@ -1,0 +1,90 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../node_modules/@prisma/client-xeo"
+  binaryTargets = ["native", "rhel-openssl-1.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Page {
+  id             String     @id @default(uuid())
+  emoji          String?
+  coverGradient  String?
+  title          Json       @db.JsonB
+  titlePlainText String
+  body           Json       @db.JsonB
+  fields         Json       @db.JsonB
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  softDeletedAt  DateTime?
+  createdBy      User       @relation("pageCreatedBy", fields: [createdById], references: [id])
+  createdById    String
+  updatedBy      User       @relation("pageUpdatedBy", fields: [updatedById], references: [id])
+  updatedById    String
+  backLinks      PageLink[] @relation("linkFrom")
+  links          PageLink[] @relation("linkTo")
+  Database       Database?  @relation(fields: [databaseId], references: [id])
+  databaseId     String?
+  favourite      Boolean    @default(false)
+}
+
+model Database {
+  id            String    @id @default(uuid())
+  schema        Json
+  pages         Page[]
+  emoji         String
+  richText      Json
+  rawText       String    @default("")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  softDeletedAt DateTime?
+  createdBy     User      @relation(fields: [createdById], references: [id])
+  createdById   String
+}
+
+model PageLink {
+  linkFrom    Page     @relation("linkFrom", fields: [linkFromId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  linkFromId  String
+  linkTo      Page     @relation("linkTo", fields: [linkToId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  linkToId    String
+  count       Int      @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdById String
+
+  @@id([linkFromId, linkToId])
+}
+
+model User {
+  id            String     @id @default(uuid())
+  firstName     String
+  lastName      String
+  username      String     @unique
+  passwordHash  String
+  avatar        String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  softDeletedAt DateTime?
+  databases     Database[]
+  links         PageLink[]
+  createdPages  Page[]     @relation("pageCreatedBy")
+  updatedPages  Page[]     @relation("pageUpdatedBy")
+}
+
+enum block_type_enum {
+  TEXT
+  PAGE_LINK
+  LIST
+  LIST_ITEM
+}
+
+enum variant_enum {
+  PARAGRAPH
+  HEADING_1
+  HEADING_2
+  HEADING_3
+}

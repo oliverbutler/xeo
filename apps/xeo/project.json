@@ -1,6 +1,6 @@
 {
-  "root": "apps/xeo-scrum",
-  "sourceRoot": "apps/xeo-scrum",
+  "root": "apps/xeo",
+  "sourceRoot": "apps/xeo",
   "projectType": "application",
   "targets": {
     "build": {
@@ -8,8 +8,8 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "root": "apps/xeo-scrum",
-        "outputPath": "dist/apps/xeo-scrum"
+        "root": "apps/xeo",
+        "outputPath": "dist/apps/xeo"
       },
       "configurations": {
         "production": {}
@@ -18,12 +18,12 @@
     "serve": {
       "executor": "@nrwl/next:server",
       "options": {
-        "buildTarget": "xeo-scrum:build",
+        "buildTarget": "xeo:build",
         "dev": true
       },
       "configurations": {
         "production": {
-          "buildTarget": "xeo-scrum:build:production",
+          "buildTarget": "xeo:build:production",
           "dev": false
         }
       }
@@ -31,14 +31,14 @@
     "export": {
       "executor": "@nrwl/next:export",
       "options": {
-        "buildTarget": "xeo-scrum:build:production"
+        "buildTarget": "xeo:build:production"
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/xeo-scrum"],
+      "outputs": ["coverage/apps/xeo"],
       "options": {
-        "jestConfig": "apps/xeo-scrum/jest.config.js",
+        "jestConfig": "apps/xeo/jest.config.js",
         "passWithNoTests": true
       }
     },
@@ -46,7 +46,7 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/xeo-scrum/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["apps/xeo/**/*.{ts,tsx,js,jsx}"]
       }
     }
   },

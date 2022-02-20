@@ -4,17 +4,16 @@
   "license": "GNU GPLv3",
   "scripts": {
     "build": "nx affected:build --all",
-    "build:xeo-scrum": "yarn prisma generate && nx build xeo-scrum --prod",
+    "build:xeo": "yarn prisma generate && nx build xeo --prod",
     "test": "nx affected:test --all",
     "lint": "nx affected:lint --all",
     "dev:all": "nx run-many --target=serve --all --parallel",
-    "dev:xeo-scrum": "nx serve xeo-scrum | pino-pretty -c",
-    "dev:site": "nx serve site",
+    "dev:xeo": "nx serve xeo | pino-pretty -c",
     "storybook": "nx storybook ui",
     "generate-graphql:client": "graphql-codegen --config apps/client/codegen.yml"
   },
   "prisma": {
-    "schema": "prisma/xeo-scrum.prisma"
+    "schema": "prisma/xeo.prisma"
   },
   "private": true,
   "dependencies": {
