@@ -90,7 +90,7 @@ export const MainPanel: React.FunctionComponent = () => {
             >
               <div className="mr-5">{panel.icon}</div>
               <div>
-                <h2 className="text-left w-full mt-4">{panel.title}</h2>
+                <h2 className="text-left w-full mt-4 mb-2">{panel.title}</h2>
                 <p className="text-dark-500 text-sm text-left w-full">
                   {panel.text}
                 </p>
@@ -122,7 +122,7 @@ export const MainPanel: React.FunctionComponent = () => {
             </div>
             <div className="flex flex-col">
               <div className="relative max-w-4xl hover:scale-105 transition-all">
-                <div className="absolute -inset-1 bg-gradient-to-r from-secondary-400 to-primary-400 rounded-lg blur-2xl opacity-75"></div>
+                <div className="absolute -inset-1 bg-gradient-to-r from-secondary-400 to-primary-400 rounded-lg blur-2xl opacity-50"></div>
                 <Image
                   className="shadow-lg rounded-lg"
                   src={showcase.image}
