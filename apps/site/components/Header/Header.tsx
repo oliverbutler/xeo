@@ -1,38 +1,28 @@
 import { Button, ButtonVariation } from '@xeo/ui';
-import Image from 'next/image';
-import image from 'public/xeo-home.png';
+import { Background } from 'components/Background/Background';
 
 export const Header: React.FunctionComponent = () => {
   return (
-    <div className="h-full flex flex-col lg:flex-row mt-0 md:mt-12 items-center mx-12 md:mx-24">
-      <div className="flex flex-col w-full lg:w-2/5 justify-center overflow-y-hidden my-8 md:my-16">
-        <h1 className="my-4 text-5xl text-white font-bold leading-tight text-center lg:text-left">
-          Get{' '}
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary-400  to-secondary-500">
-            sh*t
-          </span>{' '}
-          done with Xeo
-        </h1>
-        <p className="leading-normal text-base lg:text-xl mb-8 text-center lg:text-left text-white">
-          Xeo offers a simple, intuitive and powerful way to create and organise
-          your notes.
-        </p>
-        <div className="flex flex-row mx-auto lg:mx-0">
-          <Button className="mr-4">View Demo</Button>
-          <Button variation={ButtonVariation.Dark}>Get Started</Button>
+    <Background>
+      <div className="h-full flex flex-col lg:flex-row pt-0 md:pt-12 items-center mx-12 ">
+        <div className="flex flex-col items-center w-full my-48 text-center">
+          <h1 className="my-4 text-6xl dark:text-white font-bold leading-tight">
+            Discover the{' '}
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary-400  to-secondary-400">
+              full potential
+            </span>{' '}
+            of Xeo
+          </h1>
+          <p className="leading-normal text-base lg:text-xl mb-8dark:text-white">
+            Xeo (_zee-oh_) is the platform for the future of the productivity
+            for you, and your teams.
+          </p>
+          <div className="flex flex-row mx-auto lg:mx-0 gap-4">
+            <Button variation={ButtonVariation.Dark}>Discover More</Button>
+            <Button className="">Get Started</Button>
+          </div>
         </div>
       </div>
-      <div className="flex flex-col w-full lg:w-3/5 justify-center items-center">
-        <div className=" relative lg:ml-24">
-          <div className="absolute -inset-1 bg-gradient-to-r from-secondary-600 to-primary-600 rounded-lg blur opacity-75"></div>
-          <Image
-            className="shadow-lg rounded-lg"
-            src={image}
-            alt="Xeo Home Screen"
-            placeholder="blur"
-          />
-        </div>
-      </div>
-    </div>
+    </Background>
   );
 };

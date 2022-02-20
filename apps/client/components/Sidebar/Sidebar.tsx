@@ -24,7 +24,7 @@ export const Sidebar = () => {
       onSetWidth={setDefaultWidth}
       minWindowWidth={150}
       dragHandleWidth={2}
-      className="bg-dark-50 dark:bg-transparent h-full"
+      className="bg-dark-50 dark:bg-transparent h-screen"
       dragHandleClassName="bg-dark-50 dark:bg-dark-800 hover:bg-dark-200"
     >
       <div className="dark:bg-transparent flex flex-col justify-between h-full">

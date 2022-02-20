@@ -38,6 +38,7 @@ export const PageCover: React.FunctionComponent<Props> = ({ page }) => {
         height: '30vh',
         maxHeight: '20rem',
         background: gradient ?? 'white',
+        opacity: 0.5,
       }}
     >
       <div className="w-full h-full relative">
