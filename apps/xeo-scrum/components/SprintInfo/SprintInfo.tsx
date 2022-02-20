@@ -16,7 +16,7 @@ import axios from 'axios';
 import { PostUpdateSprintHistory } from 'pages/api/sprint/[sprintId]/update-history';
 import { ScopedMutator } from 'swr/dist/types';
 import { toast } from 'react-toastify';
-import { DarkModeButton } from 'components/DarkModeButton/DarkModeButton';
+import { DarkModeButton } from '@xeo/ui';
 import { UserAction, trackSprintAction } from 'utils/analytics';
 import { NextSeo } from 'next-seo';
 import { SprintHistory } from './SprintHistory/SprintHistory';

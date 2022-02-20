@@ -15,7 +15,7 @@ import { SidebarItem } from './SidebarItem/SidebarItem';
 import { motion, Variants } from 'framer-motion';
 import { useState } from 'react';
 import { useWindowDimensions } from '@xeo/ui';
-import { DarkModeButton } from 'components/DarkModeButton/DarkModeButton';
+import { DarkModeButton } from '@xeo/ui';
 
 const sidebar = [
   {

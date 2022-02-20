@@ -1,18 +1,17 @@
-import { Sprint } from 'components/Sprint/Sprint';
-import { Button } from '@xeo/ui';
+import { Footer } from 'components/Footer/Footer';
+import { MainPanel } from 'components/MainPanel/MainPanel';
+import { Navbar } from 'components/Navbar/Navbar';
+import { Header } from '../components/Header/Header';
 
-function sprint() {
+export function Index() {
   return (
-    <div className="w-full p-10">
-      <div className="flex flex-col sm:flex-row justify-between">
-        <h1>All Sprints</h1>
-        <div>
-          <Button href="/sprint/create">Create Sprint</Button>
-        </div>
-      </div>
-      <Sprint />
+    <div>
+      <Navbar />
+      <Header />
+      <MainPanel />
+      <Footer />
     </div>
   );
 }
 
-export default sprint;
+export default Index;

@@ -26,11 +26,6 @@ function CustomApp({
   Component,
   pageProps: { session, ...pageProps },
 }: AppProps) {
-  const router = useRouter();
-
-  const hideSidebar =
-    isSprintEmbedded(router) || router.pathname.startsWith('/login');
-
   useEffect(() => {
     if (!window.GA_INITIALIZED) {
       initGA();
@@ -53,18 +48,7 @@ function CustomApp({
             >
               <RouteGuard>
                 <main className="prose dark:prose-invert max-w-none">
-                  {hideSidebar ? (
-                    <div className="max-h-screen min-h-screen">
-                      <Component {...pageProps} />
-                    </div>
-                  ) : (
-                    <div className="app relative z-10 flex max-h-screen min-h-screen flex-row">
-                      <Sidebar />
-                      <div className="w-full overflow-y-scroll ">
-                        <Component {...pageProps} />
-                      </div>
-                    </div>
-                  )}
+                  <Component {...pageProps} />
                 </main>
               </RouteGuard>
             </SkeletonTheme>
