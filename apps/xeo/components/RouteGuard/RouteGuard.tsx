@@ -45,7 +45,10 @@ export const RouteGuard: React.FunctionComponent = ({ children }) => {
     }
 
     const isPublicPath =
-      path === '/' || path === '/login' || isSprintEmbedded(router);
+      path === '/' ||
+      path === '/login' ||
+      path === '/privacy-policy' ||
+      isSprintEmbedded(router);
 
     if (session.status !== 'authenticated' && !isPublicPath) {
       setAuthorized(false);
