@@ -244,8 +244,6 @@ export const isDateOnSprintDay = (
     .set('hours', hours)
     .set('minutes', minutes);
 
-  console.log(dailyStartTime, dailyEndTime);
-
   // If date is equal to start time of the day, otherwise it's always missed
   if (dateToCheck.getTime() === dailyStartTime.valueOf()) {
     return true;
