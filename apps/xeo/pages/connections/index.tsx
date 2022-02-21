@@ -6,7 +6,6 @@ import {
   Button,
   ButtonVariation,
 } from '@xeo/ui';
-import { Connections } from 'components/Connections/Connections';
 import {
   NotionBacklog,
   fetcher,
@@ -30,6 +29,8 @@ import { DeleteNotionConnection } from 'components/Connections/Notion/NotionConn
 import { NextSeo } from 'next-seo';
 import { Content } from 'components/Content';
 import Skeleton from 'react-loading-skeleton';
+import { trackAction, UserAction } from 'utils/analytics';
+import { NotionConnection } from 'components/Connections/Notion/NotionConnection/NotionConnection';
 
 dayjs.extend(LocalizedFormat);
 
@@ -55,7 +56,26 @@ export function Index() {
           title={`Xeo Connections`}
           description={`View current Xeo Connections, and any backlogs shared with you`}
         />
-        <h1>Connections</h1>
+        <div className="flex flex-row justify-between">
+          <h1>Connections</h1>
+          <div>
+            <Modal
+              mainText="Add Backlog"
+              trigger={(setOpen) => (
+                <Button
+                  onClick={() => {
+                    trackAction(UserAction.CLICK_ADD_NOTION_CONNECTION);
+                    setOpen();
+                  }}
+                  variation={ButtonVariation.Primary}
+                >
+                  Connect to Notion
+                </Button>
+              )}
+              content={(setClose) => <NotionConnection closeModal={setClose} />}
+            />
+          </div>
+        </div>
 
         {errorConnections ? (
           <div>Error Loading Connections</div>
