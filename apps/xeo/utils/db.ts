@@ -1,10 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { PrismaClient } from '@prisma/client';
 
-declare global {
-  // eslint-disable-next-line no-var
-  var prisma: PrismaClient;
-}
+export const prisma = (global as any).prisma || new PrismaClient();
 
-export const prisma = global.prisma || new PrismaClient();
-
-if (process.env.NODE_ENV === 'development') global.prisma = prisma;
+if (process.env.NODE_ENV === 'development') (global as any).prisma = prisma;

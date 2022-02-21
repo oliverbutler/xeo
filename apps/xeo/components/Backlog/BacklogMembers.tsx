@@ -29,10 +29,6 @@ const loadUserOptions = async (
     `/api/user/search?searchString=${inputValue}`
   );
 
-  if (!result?.data?.user) {
-    return;
-  }
-
   const options: UserSelectOption[] = result.data.user
     ? [
         {
@@ -41,8 +37,6 @@ const loadUserOptions = async (
         },
       ]
     : [];
-
-  console.log(options);
 
   callback(options);
 };
