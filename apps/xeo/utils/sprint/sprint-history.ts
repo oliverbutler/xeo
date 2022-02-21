@@ -131,7 +131,7 @@ export const updateSprintHistoryIfChanged = async (
           sprints: true,
           notionConnection: {
             select: {
-              secretKey: true,
+              accessToken: true,
             },
           },
         },
@@ -148,7 +148,7 @@ export const updateSprintHistoryIfChanged = async (
     sprint,
     sprints: sprint.backlog.sprints,
     notionStatusLinks: sprint.backlog.notionStatusLinks,
-    notionSecretKey: sprint.backlog.notionConnection.secretKey,
+    notionSecretKey: sprint.backlog.notionConnection.accessToken,
   });
 
   const updatedHistory = await saveSprintHistoryForBacklogIfChanged(

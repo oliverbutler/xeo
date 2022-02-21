@@ -42,7 +42,7 @@ export const DeleteNotionConnection: React.FunctionComponent<Props> = ({
         <>
           <div className="m-5 flex max-w-none flex-col items-center justify-center text-center">
             <h2>
-              Delete <i>{connection.connectionName}</i>?
+              Delete <i>{connection.notionWorkspaceName}</i>?
             </h2>
             <p>
               This action is irreversible and will delete all associated

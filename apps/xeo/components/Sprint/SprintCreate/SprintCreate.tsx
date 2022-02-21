@@ -66,7 +66,7 @@ export const SprintCreate: React.FunctionComponent<SprintCreateProps> = ({
 
   const groupedBacklogs = groupBy(
     backlogs,
-    (b) => b.notionConnection?.connectionName ?? ''
+    (b) => b.notionConnection?.notionWorkspaceName ?? ''
   );
 
   const backlogSelectOptions: BacklogGroup[] = Object.keys(groupedBacklogs).map(

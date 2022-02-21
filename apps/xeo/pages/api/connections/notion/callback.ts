@@ -29,7 +29,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, error } = parseAPIRequest(req, schema);
 
   if (error || !body) {
-    return apiError(res, { message: error.message }, 400);
+    return apiError(res, { message: error?.message ?? '' }, 400);
   }
 
   const {
