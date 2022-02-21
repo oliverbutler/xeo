@@ -178,6 +178,27 @@ export const apiPut = async <T extends APIRequest<object, object>>(
     });
 };
 
+export const apiPost = async <T extends APIRequest<object, object>>(
+  url: string,
+  request: T['request']
+): Promise<AxiosReturn<T>> => {
+  return await axios
+    .post(url, request)
+    .then((response) => {
+      return {
+        data: response.data,
+        error: null,
+        genericError: null,
+      };
+    })
+    .catch((error: AxiosError) => {
+      return {
+        data: null,
+        ...extractErrorFromAxiosResponse(error),
+      };
+    });
+};
+
 export const apiDelete = async <T extends APIDeleteRequest<object>>(
   url: string
 ): Promise<AxiosReturn<T>> => {

@@ -42,9 +42,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(404).json({ message: 'Notion Connection not found' });
     }
 
-    const { secretKey } = notionConnection;
-
-    const databases = await fetchAvailableDatabasesFromNotion(secretKey);
+    const databases = await fetchAvailableDatabasesFromNotion(
+      notionConnection.accessToken
+    );
 
     const returnValue: GetConnectionNotionDatabasesRequest['responseBody'] =
       databases;
