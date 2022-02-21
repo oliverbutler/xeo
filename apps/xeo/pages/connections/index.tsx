@@ -1,11 +1,5 @@
-import {
-  Loader,
-  Table,
-  Clickable,
-  Modal,
-  Button,
-  ButtonVariation,
-} from '@xeo/ui';
+/* eslint-disable @next/next/no-img-element */
+import { Table, Clickable, Modal, Button, ButtonVariation } from '@xeo/ui';
 import {
   NotionBacklog,
   fetcher,
@@ -22,7 +16,6 @@ import {
 import useSWR from 'swr';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
 import { LogoutIcon } from '@heroicons/react/outline';
-import { SecretText } from 'components/SecretText/SecretText';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { DeleteNotionConnection } from 'components/Connections/Notion/NotionConnection/DeleteNotionConnection';
@@ -94,7 +87,11 @@ export function Index() {
                   <div className="flex w-full flex-row items-center">
                     <div>
                       <h3 className="my-0 mr-4">
-                        {connection?.connectionName ?? <Skeleton width={200} />}
+                        {connection ? (
+                          `${connection.notionWorkspaceName ?? ''}`
+                        ) : (
+                          <Skeleton width={200} />
+                        )}
                       </h3>
                       <div className="my-2">
                         <div>
@@ -103,14 +100,6 @@ export function Index() {
                             dayjs(connection.createdAt).format('LLL')
                           ) : (
                             <Skeleton width={80} />
-                          )}
-                        </div>
-                        <div>
-                          <b>Secret:</b>{' '}
-                          {connection ? (
-                            <SecretText text={connection.secretKey} />
-                          ) : (
-                            <Skeleton width={120} />
                           )}
                         </div>
                       </div>

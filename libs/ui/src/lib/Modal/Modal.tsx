@@ -1,7 +1,7 @@
 import { Dialog, Transition } from '@headlessui/react';
 import classNames from 'classnames';
 import { Fragment, useRef, useState } from 'react';
-import { Button, ButtonVariation } from '../Button/Button';
+import { Button, ButtonProps, ButtonVariation } from '../Button/Button';
 
 export interface ModalContentProps {
   clickPrimary: () => void;
@@ -20,6 +20,7 @@ interface ModalFooterProps {
   clickPrimary?: () => void;
   clickSecondary?: () => void;
   primaryText: string;
+  primaryButtonProps: ButtonProps;
   primaryVariation?: ButtonVariation;
   secondaryText?: string;
   className?: string;
@@ -29,6 +30,7 @@ const ModalFooter: React.FunctionComponent<ModalFooterProps> = ({
   clickPrimary,
   clickSecondary,
   primaryText,
+  primaryButtonProps,
   primaryVariation,
   secondaryText,
   className,
@@ -44,6 +46,7 @@ const ModalFooter: React.FunctionComponent<ModalFooterProps> = ({
         variation={primaryVariation ?? ButtonVariation.Primary}
         onClick={clickPrimary}
         type="submit"
+        {...primaryButtonProps}
       >
         {primaryText}
       </Button>

@@ -1,5 +1,6 @@
-import { Input, ModalFooter } from '@xeo/ui';
-import { useNotionConnection } from './useNotionConnection';
+import { Alert, ModalFooter } from '@xeo/ui';
+import { GetNotionAuthURL } from 'pages/api/connections/notion/auth-url';
+import { useQuery } from 'utils/api';
 
 interface Props {
   closeModal: () => void;
@@ -8,45 +9,33 @@ interface Props {
 export const NotionConnection: React.FunctionComponent<Props> = ({
   closeModal,
 }) => {
-  const {
-    onSubmit,
-    form: {
-      register,
-      formState: { errors },
-    },
-  } = useNotionConnection(closeModal);
+  const { data, isLoading } = useQuery<GetNotionAuthURL>(
+    '/api/connections/notion/auth-url'
+  );
 
   return (
-    <form onSubmit={onSubmit}>
+    <div>
       <div className="mx-10 mb-10 flex flex-col">
         <h2 className="text-center">Connect to Notion</h2>
+        <Alert variation="info">
+          Only one member of the team needs to connect to each Database
+        </Alert>
         <p>
-          Connect to Notion, head to{' '}
-          <a
-            href="https://www.notion.so/my-integrations"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Notion Integrations
-          </a>
-          , Create new integration, only read privileges are needed.
+          By connecting your Notion to Xeo, you accept that we will store a
+          token which allows us to read your selected Notion Tables to extract
+          Sprint information.
         </p>
-        <div className="flex flex-col gap-4">
-          <Input
-            label="Name"
-            error={errors.name}
-            {...register('name', { required: true })}
-          />
-          <Input
-            label="Secret Key"
-            type="password"
-            placeholder="secret_"
-            error={errors.secretKey}
-            {...register('secretKey', { required: true })}
-          />
-        </div>
+        <p>For any questions please contact dev@oliverbutler.uk</p>
       </div>
-      <ModalFooter className="w-full" primaryText="Create Connection" />
-    </form>
+      <ModalFooter
+        className="w-full"
+        primaryText={`Create Connection`}
+        primaryButtonProps={{
+          href: data?.url,
+          hrefNewTab: true,
+          loading: isLoading,
+        }}
+      />
+    </div>
   );
 };

@@ -182,14 +182,17 @@ model SprintStatusHistory {
 }
 
 model NotionConnection {
-  id              String    @id @default(cuid())
-  createdByUserId String
-  createdByUser   User      @relation(fields: [createdByUserId], references: [id])
-  connectionName  String
-  secretKey       String
-  backlogs        Backlog[]
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @default(now()) @updatedAt
+  id                  String    @id @default(cuid())
+  createdByUserId     String
+  createdByUser       User      @relation(fields: [createdByUserId], references: [id])
+  accessToken         String
+  notionWorkspaceId   String
+  notionWorkspaceIcon String?
+  notionWorkspaceName String?
+  notionBotId         String    @unique
+  backlogs            Backlog[]
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @default(now()) @updatedAt
 
   @@index([createdByUserId])
 }

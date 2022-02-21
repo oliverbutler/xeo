@@ -8,6 +8,7 @@ export interface ButtonProps extends React.ComponentPropsWithRef<'button'> {
   loading?: boolean;
   variation?: ButtonVariation;
   href?: string;
+  hrefNewTab?: boolean;
 }
 
 export enum ButtonVariation {
@@ -25,6 +26,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       className,
       variation = ButtonVariation.Primary,
       href,
+      hrefNewTab,
       disabled,
       ...buttonProps
     },
@@ -33,7 +35,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <ConditionalWrapper
         condition={!!href}
-        wrapper={(children) => <Link href={href as string}>{children}</Link>}
+        wrapper={(children) => (
+          <Link
+            href={href as string}
+            {...(hrefNewTab ? { target: '_blank' } : undefined)}
+          >
+            {children}
+          </Link>
+        )}
       >
         <button
           ref={ref}
