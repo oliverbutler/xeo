@@ -236,8 +236,11 @@ export const isDateOnSprintDay = (
     .set('hours', hours)
     .set('minutes', minutes);
 
+  // If the date is friday, set the to the next monday @ start time
+  const isTargetDateAFriday = dayjs(targetDate).day() === 5;
+
   const dailyEndTime = dayjs(targetDate)
-    .add(1, 'day')
+    .add(isTargetDateAFriday ? 3 : 1, 'day')
     .set('hours', hours)
     .set('minutes', minutes);
 

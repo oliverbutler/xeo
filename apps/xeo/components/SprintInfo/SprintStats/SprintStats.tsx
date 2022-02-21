@@ -34,7 +34,7 @@ export const SprintStats: React.FunctionComponent<Props> = ({
         }
         title="Progress"
         value={
-          percentDone && percentDoneValidated ? (
+          percentDone !== undefined && percentDoneValidated !== undefined ? (
             <p>
               <span>{roundToOneDecimal(percentDone)}% D</span> -{' '}
               <span>{roundToOneDecimal(percentDoneValidated)}% V</span>
@@ -48,7 +48,7 @@ export const SprintStats: React.FunctionComponent<Props> = ({
       />
       <SprintStat
         icon={
-          deltaPoints ? (
+          deltaPoints !== undefined ? (
             deltaPoints < 0 ? (
               <ExclamationCircleIcon
                 height={35}
@@ -72,7 +72,7 @@ export const SprintStats: React.FunctionComponent<Props> = ({
         }
         title="On Track"
         value={
-          deltaPoints ? (
+          deltaPoints !== undefined ? (
             <p
               className={classNames(
                 { 'text-red-400 dark:text-red-300': deltaPoints < 0 },
@@ -99,7 +99,7 @@ export const SprintStats: React.FunctionComponent<Props> = ({
         }
         title="Validation"
         value={
-          pointsToValidate ? (
+          pointsToValidate !== undefined ? (
             <p>Remaining: {roundToOneDecimal(pointsToValidate)}</p>
           ) : (
             <p>
