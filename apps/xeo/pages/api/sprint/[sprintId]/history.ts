@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { withSentry } from '@sentry/nextjs';
 import { apiError, APIGetRequest, apiResponse } from 'utils/api';
 import { getSession } from 'next-auth/react';
+import { prisma } from 'utils/db';
 
 export type GetSprintHistory = APIGetRequest<{
   sprintHistory: SprintHistoryWithStatus[];
