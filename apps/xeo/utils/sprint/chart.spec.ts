@@ -400,11 +400,28 @@ describe('chart calculation', () => {
   describe('isDateOnSprintDay', () => {
     it.each`
       date                            | dateToCheckIfOn           | sprintDayStartTime | expected
-      ${new Date('2022-01-01 12:00')} | ${new Date('2022-01-01')} | ${'09:00'}         | ${true}
-      ${new Date('2022-01-01 6:00')}  | ${new Date('2022-01-01')} | ${'09:00'}         | ${false}
-      ${new Date('2022-01-02 6:00')}  | ${new Date('2022-01-01')} | ${'09:00'}         | ${true}
+      ${new Date('2022-01-04 12:00')} | ${new Date('2022-01-04')} | ${'09:00'}         | ${true}
+      ${new Date('2022-01-04 6:00')}  | ${new Date('2022-01-04')} | ${'09:00'}         | ${false}
+      ${new Date('2022-01-05 6:00')}  | ${new Date('2022-01-04')} | ${'09:00'}         | ${true}
     `(
       'should return $expected when $dateToCheckIfOn is on sprint day $sprintDayStartTime',
+      ({ date, dateToCheckIfOn, sprintDayStartTime, expected }) => {
+        const result = isDateOnSprintDay(date, dateToCheckIfOn, {
+          dailyStartTime: sprintDayStartTime,
+        });
+        expect(result).toBe(expected);
+      }
+    );
+
+    it.each`
+      date                            | dateToCheckIfOn           | sprintDayStartTime | expected
+      ${new Date('2022-01-08 12:00')} | ${new Date('2022-01-07')} | ${'09:00'}         | ${true}
+      ${new Date('2022-01-09 12:00')} | ${new Date('2022-01-07')} | ${'09:00'}         | ${true}
+      ${new Date('2022-01-10 08:59')} | ${new Date('2022-01-07')} | ${'09:00'}         | ${true}
+      ${new Date('2022-01-10 09:00')} | ${new Date('2022-01-07')} | ${'09:00'}         | ${false}
+      ${new Date('2022-01-10 09:00')} | ${new Date('2022-01-10')} | ${'09:00'}         | ${true}
+    `(
+      'should COVER WEEKENDS return $expected when $dateToCheckIfOn is on sprint day $sprintDayStartTime',
       ({ date, dateToCheckIfOn, sprintDayStartTime, expected }) => {
         const result = isDateOnSprintDay(date, dateToCheckIfOn, {
           dailyStartTime: sprintDayStartTime,

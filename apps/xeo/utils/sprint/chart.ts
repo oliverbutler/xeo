@@ -236,10 +236,15 @@ export const isDateOnSprintDay = (
     .set('hours', hours)
     .set('minutes', minutes);
 
+  // If the date is friday, set the to the next monday @ start time
+  const isTargetDateAFriday = dayjs(targetDate).day() === 5;
+
   const dailyEndTime = dayjs(targetDate)
-    .add(1, 'day')
+    .add(isTargetDateAFriday ? 3 : 1, 'day')
     .set('hours', hours)
     .set('minutes', minutes);
+
+  console.log(dailyStartTime, dailyEndTime);
 
   // If date is equal to start time of the day, otherwise it's always missed
   if (dateToCheck.getTime() === dailyStartTime.valueOf()) {
