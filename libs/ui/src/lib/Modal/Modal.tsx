@@ -20,7 +20,7 @@ interface ModalFooterProps {
   clickPrimary?: () => void;
   clickSecondary?: () => void;
   primaryText: string;
-  primaryButtonProps: ButtonProps;
+  primaryButtonProps?: ButtonProps;
   primaryVariation?: ButtonVariation;
   secondaryText?: string;
   className?: string;
