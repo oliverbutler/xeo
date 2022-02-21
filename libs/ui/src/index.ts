@@ -21,3 +21,4 @@ export * from './lib/Modal/Modal';
 export * from './lib/Select/AsyncSelect';
 export * from './hooks/useDebounce';
 export * from './hooks/useViewport';
+export * from './lib/DarkModeButton';

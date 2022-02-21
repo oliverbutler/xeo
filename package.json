@@ -4,16 +4,16 @@
   "license": "GNU GPLv3",
   "scripts": {
     "build": "nx affected:build --all",
-    "build:xeo-scrum": "yarn prisma generate && nx build xeo-scrum --prod",
+    "build:xeo": "yarn prisma generate && nx build xeo --prod",
     "test": "nx affected:test --all",
     "lint": "nx affected:lint --all",
     "dev:all": "nx run-many --target=serve --all --parallel",
-    "dev:xeo-scrum": "nx serve xeo-scrum | pino-pretty -c",
+    "dev:xeo": "nx serve xeo | pino-pretty -c",
     "storybook": "nx storybook ui",
     "generate-graphql:client": "graphql-codegen --config apps/client/codegen.yml"
   },
   "prisma": {
-    "schema": "prisma/xeo-scrum.prisma"
+    "schema": "prisma/xeo.prisma"
   },
   "private": true,
   "dependencies": {
@@ -21,6 +21,7 @@
     "@apollo/react-hooks": "4.0.0",
     "@headlessui/react": "1.5.0",
     "@heroicons/react": "1.0.5",
+    "@nestjs/apollo": "^10.0.4",
     "@nestjs/common": "8.3.1",
     "@nestjs/config": "1.2.0",
     "@nestjs/core": "8.3.1",

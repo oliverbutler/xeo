@@ -34,9 +34,12 @@ export const Table = <T extends object>({
     <div className="flex flex-col w-full">
       <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-          <div className="shadow overflow-hidden border-b border-dark-200 sm:rounded-lg">
-            <table {...getTableProps()} className="my-0">
-              <thead className="bg-dark-50 dark:bg-dark-800">
+          <div className="shadow overflow-hidden border-b border-dark-200 dark:border-dark-800 sm:rounded-lg">
+            <table
+              {...getTableProps()}
+              className="my-0 bg-white dark:bg-dark-900"
+            >
+              <thead className="bg-dark-100 dark:bg-dark-900">
                 {headerGroups.map((headerGroup) => (
                   <tr {...headerGroup.getHeaderGroupProps()}>
                     {headerGroup.headers.map((column) => (
@@ -69,12 +72,7 @@ export const Table = <T extends object>({
                 {rows.map((row, i) => {
                   prepareRow(row);
                   return (
-                    <tr
-                      {...row.getRowProps()}
-                      className={classNames({
-                        'dark:bg-dark-800 bg-dark-50': i % 2 === 1,
-                      })}
-                    >
+                    <tr {...row.getRowProps()}>
                       {row.cells.map((cell) => {
                         return (
                           <td className="px-3" {...cell.getCellProps()}>

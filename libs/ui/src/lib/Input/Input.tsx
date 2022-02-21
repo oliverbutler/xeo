@@ -16,7 +16,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         <input
           ref={ref}
           className={classNames(
-            'dark:bg-dark-800 dark:ring-dark-800  ring-dark-200 focus:ring-primary-300 dark:focus:ring-dark-600  w-full  appearance-none rounded bg-white py-2  px-3 leading-tight outline-0 ring-2 dark:ring-2 ',
+            'dark:bg-dark-900 dark:ring-dark-800  ring-dark-200 focus:ring-primary-300 dark:focus:ring-dark-600  w-full  appearance-none rounded bg-white py-2  px-3 leading-tight outline-0 ring-2 dark:ring-2 ',
             { 'ring-red-500': error }
           )}
           aria-label={label}
