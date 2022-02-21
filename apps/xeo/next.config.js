@@ -33,7 +33,6 @@ const nextConfig = {
       permanent: true,
     },
   ],
-  swcMinify: true,
 };
 
 module.exports = withSentryConfig(
