@@ -51,7 +51,7 @@ function CustomApp({
                 <main className="prose dark:prose-invert max-w-none">
                   {isEmbedded ? null : <Navbar />}
                   <Component {...pageProps} />
-                  <Footer />
+                  {isEmbedded ? null : <Footer />}
                 </main>
               </RouteGuard>
             </SkeletonWrapper>
