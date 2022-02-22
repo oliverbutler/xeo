@@ -10,6 +10,10 @@
   }
 }
 
+.Select-menu-outer {
+  z-index: 999 !important;
+}
+
 .DateInput_input__focused {
   @apply border-b-primary-400;
 }

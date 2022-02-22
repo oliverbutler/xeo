@@ -73,11 +73,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // All Backlogs a user has access to
     const backlogs = await prisma.backlog.findMany({
       where: {
-        members: {
-          some: {
-            userId: userId,
+        OR: [
+          {
+            members: {
+              some: {
+                userId,
+              },
+            },
           },
-        },
+          { notionConnection: { createdByUserId: userId } },
+        ],
       },
       include: {
         sprints: {
@@ -121,7 +126,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     );
 
     if (errorPost || !bodyPost) {
-      return res.status(400).json({ message: errorPost?.message });
+      return apiError(res, { message: errorPost?.message ?? '' }, 400);
     }
 
     const backlog = await prisma.backlog.findUnique({
@@ -131,7 +136,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     if (!backlog) {
-      return apiError(res, { message: 'Backlog not found' }, 400);
+      return apiError(res, { message: 'Backlog not found' }, 404);
     }
 
     console.log(userId, backlog, bodyPost);
@@ -146,7 +151,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       sprint: createdSprint,
     });
   }
-  return res.status(400).json({ message: 'Invalid request method' });
+
+  return apiError(res, { message: 'Method not allowed' }, 405);
 };
 
 export default withSentry(handler);

@@ -206,3 +206,22 @@ export const apiDelete = async <T extends APIDeleteRequest<object>>(
       };
     });
 };
+
+export const apiGet = async <T extends APIGetRequest<object>>(
+  url: string
+): Promise<AxiosReturn<T>> => {
+  return await axios
+    .get(url)
+    .then((response) => {
+      return {
+        data: response.data,
+        error: null,
+      };
+    })
+    .catch((error: AxiosError) => {
+      return {
+        data: null,
+        error: extractErrorFromAxiosResponse(error),
+      };
+    });
+};
