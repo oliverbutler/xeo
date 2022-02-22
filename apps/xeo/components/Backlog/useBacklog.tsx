@@ -9,6 +9,7 @@ interface Output {
   leaveBacklog: (backlogId: string) => Promise<void>;
   deleteMember: (backlogId: string, memberId: string) => Promise<void>;
   addMember: (backlogId: string, userId: string) => Promise<void>;
+  deleteBacklog: (backlogId: string) => Promise<boolean>;
 }
 
 export const useBacklog = (): Output => {
@@ -46,5 +47,20 @@ export const useBacklog = (): Output => {
     }
   };
 
-  return { deleteMember, leaveBacklog, addMember };
+  const deleteBacklog = async (backlogId: string) => {
+    const { data, error, genericError } = await apiDelete<DeleteBacklogMember>(
+      `/api/backlog/${backlogId}`
+    );
+
+    if (error || !data) {
+      toast.error(error?.message || genericError);
+      return false;
+    }
+
+    toast.success('Backlog deleted');
+    mutate('/api/connections');
+    return true;
+  };
+
+  return { deleteMember, leaveBacklog, addMember, deleteBacklog };
 };

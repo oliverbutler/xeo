@@ -1,8 +1,6 @@
 import { Button, ButtonVariation, Modal, ModalFooter } from '@xeo/ui';
-import axios, { AxiosError } from 'axios';
+import { useBacklog } from 'components/Backlog/useBacklog';
 import { BacklogWithMembersAndRestrictedUsers } from 'pages/api/backlog/[id]';
-import { toast } from 'react-toastify';
-import { mutate } from 'swr';
 
 interface Props {
   backlog: BacklogWithMembersAndRestrictedUsers;
@@ -11,23 +9,14 @@ interface Props {
 export const DeleteNotionBacklog: React.FunctionComponent<Props> = ({
   backlog,
 }) => {
-  const deleteBacklog = async (callback: () => void) => {
-    await axios
-      .delete(`/api/backlog/${backlog}`)
-      .then((res) => {
-        if (res.status === 200) {
-          toast.success('Notion Backlog Deleted!');
-          mutate('/api/connections');
-          callback();
-        }
-      })
-      .catch((err: Error | AxiosError) => {
-        if (axios.isAxiosError(err)) {
-          toast.error(err.response?.data.message);
-        } else {
-          toast.error(err.message);
-        }
-      });
+  const { deleteBacklog } = useBacklog();
+
+  const handleDeleteBacklog = async (callback: () => void) => {
+    const result = await deleteBacklog(backlog.id);
+
+    if (result) {
+      callback();
+    }
   };
 
   return (
@@ -50,7 +39,7 @@ export const DeleteNotionBacklog: React.FunctionComponent<Props> = ({
           <ModalFooter
             primaryText="Delete"
             primaryVariation={ButtonVariation.Danger}
-            clickPrimary={() => deleteBacklog(setClosed)}
+            clickPrimary={() => handleDeleteBacklog(setClosed)}
             clickSecondary={setClosed}
             secondaryText="Cancel"
           />
