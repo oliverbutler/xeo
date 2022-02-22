@@ -7,7 +7,13 @@ import {
 import Joi from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
-import { APIRequest, parseAPIRequest } from 'utils/api';
+import {
+  apiError,
+  APIGetRequest,
+  APIRequest,
+  apiResponse,
+  parseAPIRequest,
+} from 'utils/api';
 import { prisma } from 'utils/db';
 import { createSprint, CreateSprint } from 'utils/sprint/adapter';
 import { getDataForSprintChart } from 'utils/sprint/chart';
@@ -21,16 +27,12 @@ export type SprintWithHistory = Sprint & {
   })[];
 };
 
-export type GetSprintsRequest = {
-  method: 'GET';
-  requestBody: undefined;
-  responseBody: {
-    backlogs: {
-      backlog: Backlog;
-      sprints: SprintWithPlotData[];
-    }[];
-  };
-};
+export type GetSprintsRequest = APIGetRequest<{
+  backlogs: {
+    backlog: Backlog;
+    sprints: SprintWithPlotData[];
+  }[];
+}>;
 
 export type PostCreateSprintRequest = APIRequest<
   { input: CreateSprint; backlogId: string },
@@ -62,12 +64,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
 
   if (!session) {
-    return res.status(401).json({ message: 'Not authenticated' });
+    return apiError(res, { message: 'Not authenticated' }, 401);
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const userId = session?.id as string;
+  const userId = session.id;
 
   if (req.method === 'GET') {
     // All Backlogs a user has access to
@@ -111,10 +111,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     );
 
-    const returnValue: GetSprintsRequest['responseBody'] = {
+    return apiResponse<GetSprintsRequest>(res, {
       backlogs: backlogsUserCanAccess,
-    };
-    return res.status(200).json(returnValue);
+    });
   } else if (req.method === 'POST') {
     const { body: bodyPost, error: errorPost } = parseAPIRequest(
       req,
@@ -132,7 +131,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     if (!backlog) {
-      return res.status(400).json({ message: 'Backlog not found' });
+      return apiError(res, { message: 'Backlog not found' }, 400);
     }
 
     console.log(userId, backlog, bodyPost);
@@ -143,11 +142,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       bodyPost.input
     );
 
-    const postReturn: PostCreateSprintRequest['response'] = {
+    return apiResponse<PostCreateSprintRequest>(res, {
       sprint: createdSprint,
-    };
-
-    return res.status(200).json(postReturn);
+    });
   }
   return res.status(400).json({ message: 'Invalid request method' });
 };

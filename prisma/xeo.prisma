@@ -106,13 +106,19 @@ model Backlog {
   @@index([notionConnectionId])
 }
 
+enum BacklogRole {
+  ADMIN
+  MEMBER
+}
+
 model MemberOfBacklog {
   userId    String
   backlogId String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  backlog   Backlog  @relation(fields: [backlogId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  backlog   Backlog     @relation(fields: [backlogId], references: [id], onDelete: Cascade)
+  role      BacklogRole @default(MEMBER)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @default(now()) @updatedAt
 
   @@id([userId, backlogId])
   @@index([userId])

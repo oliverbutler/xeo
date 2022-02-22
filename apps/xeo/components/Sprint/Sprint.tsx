@@ -1,22 +1,18 @@
-import { Input, Select, Button, ButtonVariation } from '@xeo/ui';
-import { fetcher } from 'components/Connections/Notion/NotionBacklog/NotionBacklog';
+import { Input, Button, ButtonVariation, Alert } from '@xeo/ui';
 import dayjs from 'dayjs';
 import { GetSprintsRequest } from 'pages/api/sprint';
 import { toast } from 'react-toastify';
-import useSWR from 'swr';
+import { useQuery } from 'utils/api';
 import { SprintWithPlotData } from 'utils/sprint/utils';
 import { PreviousSprints } from './PreviousSprints/PreviousSprints';
 import { SprintPreview } from './SprintPreview/SprintPreview';
 
 export const Sprint: React.FunctionComponent = () => {
-  const { data, error } = useSWR<GetSprintsRequest['responseBody']>(
-    '/api/sprint',
-    fetcher
-  );
+  const { data, error, isLoading } = useQuery<GetSprintsRequest>('/api/sprint');
 
   if (error) {
     toast.error("Couldn't fetch sprints");
-    return <div>Error Loading Sprints</div>;
+    return null;
   }
 
   const usersSprints =
@@ -44,9 +40,8 @@ export const Sprint: React.FunctionComponent = () => {
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {(activeSprints.length === 0
+        {(activeSprints.length === 0 && isLoading
           ? [
-              { sprint: undefined, plotData: [] },
               { sprint: undefined, plotData: [] },
               { sprint: undefined, plotData: [] },
             ]

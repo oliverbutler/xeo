@@ -1,13 +1,21 @@
 import { Button, ButtonVariation } from '@xeo/ui';
 import { DeleteNotionBacklog } from 'components/Connections/Notion/NotionBacklog/DeleteNotionBacklog';
-import { BacklogWithMembersRestricted } from 'pages/api/connections';
+import { useSession } from 'next-auth/react';
+import { BacklogWithMembersAndRestrictedUsers } from 'pages/api/backlog/[id]';
+
 import { BacklogMembers } from './BacklogMembers';
 
 interface Props {
-  backlog: BacklogWithMembersRestricted;
+  backlog: BacklogWithMembersAndRestrictedUsers;
 }
 
 export const Backlog: React.FunctionComponent<Props> = ({ backlog }) => {
+  const { data } = useSession();
+  const userId = data?.id;
+
+  const isUserOwnerOfBacklog =
+    backlog.notionConnection.createdByUserId === userId;
+
   return (
     <div className="p-10">
       <div className="flex flex-row justify-between">
@@ -19,8 +27,12 @@ export const Backlog: React.FunctionComponent<Props> = ({ backlog }) => {
         </div>
       </div>
       <BacklogMembers backlog={backlog} />
-      <h2>Actions</h2>
-      <DeleteNotionBacklog backlogId={backlog.id} />
+      {isUserOwnerOfBacklog ? (
+        <div>
+          <h2>Actions</h2>
+          <DeleteNotionBacklog backlog={backlog} />
+        </div>
+      ) : null}
     </div>
   );
 };

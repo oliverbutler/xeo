@@ -1,21 +1,26 @@
-import { Backlog, MemberOfBacklog } from '@prisma/client';
+import { Backlog, BacklogRole, MemberOfBacklog } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { apiError, APIGetRequest, apiResponse } from 'utils/api';
 import { prisma } from 'utils/db';
 import { withSentry } from '@sentry/nextjs';
 
-export type GetBacklogRequest = APIGetRequest<{
-  backlog: Backlog & {
-    members: (MemberOfBacklog & {
-      user: {
-        id: string;
-        image: string | null;
-        email: string | null;
-        name: string | null;
-      };
-    })[];
+export type BacklogWithMembersAndRestrictedUsers = Backlog & {
+  notionConnection: {
+    createdByUserId: string;
   };
+  members: (MemberOfBacklog & {
+    user: {
+      id: string;
+      image: string | null;
+      name: string | null;
+      email: string | null;
+    };
+  })[];
+};
+
+export type GetBacklogRequest = APIGetRequest<{
+  backlog: BacklogWithMembersAndRestrictedUsers;
 }>;
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -25,18 +30,28 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return apiError(res, { message: 'Not authenticated' }, 401);
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const userId = session?.id as string;
+  const callingUserId = session.id;
 
   const backlogId = req.query.id as string;
 
+  if (!backlogId) {
+    return apiError(res, { message: 'Missing required query parameters' });
+  }
+
   const backlog = await prisma.backlog.findFirst({
     where: {
-      notionConnection: {
-        createdByUserId: userId,
-      },
-      id: backlogId,
+      OR: [
+        {
+          members: {
+            some: {
+              role: BacklogRole.ADMIN,
+              userId: callingUserId,
+              backlogId: backlogId,
+            },
+          },
+        },
+        { notionConnection: { createdByUserId: callingUserId } },
+      ],
     },
     include: {
       members: {
@@ -45,21 +60,28 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             select: {
               id: true,
               image: true,
-              email: true,
               name: true,
+              email: true,
             },
           },
+        },
+      },
+      notionConnection: {
+        select: {
+          createdByUserId: true,
         },
       },
     },
   });
 
   if (!backlog) {
-    return apiError(res, { message: 'Backlog not found' }, 404);
+    return apiError(res, { message: 'Backlog not found' }, 400);
   }
 
   if (req.method === 'GET') {
-    return apiResponse<GetBacklogRequest>(res, { backlog });
+    return apiResponse<GetBacklogRequest>(res, {
+      backlog: backlog,
+    });
   } else if (req.method === 'DELETE') {
     try {
       await prisma.backlog.delete({

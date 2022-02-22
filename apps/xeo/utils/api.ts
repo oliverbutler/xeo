@@ -13,7 +13,7 @@ export type GenericAPIRequest<T> = {
 };
 
 export type APIRequest<TRequest extends object, TResponse extends object> = {
-  type: 'POST';
+  type: 'POST' | 'PUT';
   request: TRequest;
   joiBodySchema: ObjectSchema<TRequest>;
 } & GenericAPIRequest<TResponse>;
@@ -124,35 +124,26 @@ type AxiosReturn<T extends GenericAPIRequest<object>> =
   | {
       data: T['response'];
       error: null;
-      genericError: null;
     }
   | {
       data: null;
-      error: T['error'];
-      genericError: string;
-    }
-  | {
-      data: null;
-      error: null;
-      genericError: string;
+      error: { body: T['error'] | null; generic: string };
     };
 
 const extractErrorFromAxiosResponse = <T extends object>(
   response: AxiosError<T>
-):
-  | { error: null; genericError: string }
-  | { error: T; genericError: string } => {
-  const genericError = 'Something went wrong, please try again!';
+): { body: T | null; generic: string } => {
+  const generic = 'Something went wrong, please try again!';
 
   if (response.response?.data) {
     return {
-      error: response.response.data,
-      genericError,
+      body: response.response.data,
+      generic,
     };
   } else {
     return {
-      error: null,
-      genericError,
+      body: null,
+      generic,
     };
   }
 };
@@ -167,13 +158,12 @@ export const apiPut = async <T extends APIRequest<object, object>>(
       return {
         data: response.data,
         error: null,
-        genericError: null,
       };
     })
     .catch((error: AxiosError) => {
       return {
         data: null,
-        ...extractErrorFromAxiosResponse(error),
+        error: extractErrorFromAxiosResponse(error),
       };
     });
 };
@@ -188,13 +178,12 @@ export const apiPost = async <T extends APIRequest<object, object>>(
       return {
         data: response.data,
         error: null,
-        genericError: null,
       };
     })
     .catch((error: AxiosError) => {
       return {
         data: null,
-        ...extractErrorFromAxiosResponse(error),
+        error: extractErrorFromAxiosResponse(error),
       };
     });
 };
@@ -208,13 +197,12 @@ export const apiDelete = async <T extends APIDeleteRequest<object>>(
       return {
         data: response.data,
         error: null,
-        genericError: null,
       };
     })
     .catch((error: AxiosError) => {
       return {
         data: null,
-        ...extractErrorFromAxiosResponse(error),
+        error: extractErrorFromAxiosResponse(error),
       };
     });
 };

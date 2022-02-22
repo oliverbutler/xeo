@@ -29,7 +29,12 @@ export const Select = ({
     >
       <label className="mb-2 block text-sm font-bold">{label}</label>
       <ReactSelect
-        styles={{ option: (styles) => ({ ...styles, color: 'black' }) }}
+        styles={{
+          option: (styles) => ({
+            ...styles,
+            color: 'black',
+          }),
+        }}
         isDisabled={isDisabled}
         {...selectProps}
       />

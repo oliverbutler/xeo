@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { Table, Clickable, Modal, Button, ButtonVariation } from '@xeo/ui';
+import { Table, Modal, Button, ButtonVariation } from '@xeo/ui';
 import {
   NotionBacklog,
   fetcher,
@@ -9,13 +9,9 @@ import {
   BacklogWithNotionStatusLinksAndOwner,
   GetBacklogsRequest,
 } from 'pages/api/backlog';
-import {
-  BacklogWithMembersRestricted,
-  GetConnectionsRequest,
-} from 'pages/api/connections';
+import { GetConnectionsRequest } from 'pages/api/connections';
 import useSWR from 'swr';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
-import { LogoutIcon } from '@heroicons/react/outline';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { DeleteNotionConnection } from 'components/Connections/Notion/NotionConnection/DeleteNotionConnection';
@@ -24,6 +20,9 @@ import { Content } from 'components/Content';
 import Skeleton from 'react-loading-skeleton';
 import { trackAction, UserAction } from 'utils/analytics';
 import { NotionConnection } from 'components/Connections/Notion/NotionConnection/NotionConnection';
+import { Backlog, BacklogRole } from '@prisma/client';
+import { CellProps } from 'react-table';
+import { useBacklog } from 'components/Backlog/useBacklog';
 
 dayjs.extend(LocalizedFormat);
 
@@ -38,9 +37,14 @@ export function Index() {
     string
   >('/api/connections', fetcher);
 
-  const session = useSession();
+  const { data } = useSession();
+  const userId = data?.id;
 
-  const userId = session?.data?.id as string | undefined;
+  const { leaveBacklog } = useBacklog();
+
+  const getCurrentRoleInBacklog = (
+    backlog: BacklogWithNotionStatusLinksAndOwner
+  ) => backlog.members.find((member) => member.user.id === userId)?.role;
 
   return (
     <div className="bg-dark-50 dark:bg-dark-900 min-h-screen">
@@ -128,7 +132,7 @@ export function Index() {
                     ) : null}
                   </div>
                   <div>
-                    <Table<BacklogWithMembersRestricted>
+                    <Table<Backlog>
                       columns={[
                         { Header: 'Name', accessor: 'databaseName' },
                         {
@@ -136,26 +140,7 @@ export function Index() {
                           accessor: 'createdAt',
                           Cell: (cell) => dayjs(cell.value).format('LLL'),
                         },
-                        {
-                          Header: 'Users',
-                          accessor: 'members',
-                          Cell: (cell) => (
-                            <div className="flex flex-row">
-                              {cell.value.map((member) => {
-                                return member.user.image ? (
-                                  <Image
-                                    className="rounded-full"
-                                    key={member.userId}
-                                    src={member.user.image}
-                                    height={30}
-                                    width={30}
-                                    alt={member.user?.name ?? ''}
-                                  />
-                                ) : null;
-                              })}
-                            </div>
-                          ),
-                        },
+
                         {
                           Header: 'Actions',
                           accessor: 'id',
@@ -209,12 +194,36 @@ export function Index() {
                 ),
               },
               {
+                Header: 'Role',
+                accessor: 'id',
+                Cell: (cell) => (
+                  <span>{getCurrentRoleInBacklog(cell.row.original)}</span>
+                ),
+              },
+              {
                 Header: 'Actions',
-                Cell: () => (
-                  <div className="flex flex-row">
-                    <Clickable>
-                      <LogoutIcon width={25} height={25} />
-                    </Clickable>
+                Cell: (
+                  cell: React.PropsWithChildren<
+                    CellProps<BacklogWithNotionStatusLinksAndOwner, unknown>
+                  >
+                ) => (
+                  <div className="flex flex-row gap-2">
+                    <Button
+                      href={`/connections/backlog/notion/${cell.row.original.id}`}
+                      variation={ButtonVariation.Secondary}
+                      disabled={
+                        getCurrentRoleInBacklog(cell.row.original) !==
+                        BacklogRole.ADMIN
+                      }
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      onClick={() => leaveBacklog(cell.row.original.id)}
+                      variation={ButtonVariation.Danger}
+                    >
+                      Leave
+                    </Button>
                   </div>
                 ),
               },

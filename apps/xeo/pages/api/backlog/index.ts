@@ -1,22 +1,27 @@
 /* eslint-disable no-case-declarations */
-import { Backlog, NotionConnection, NotionStatusLink } from '@prisma/client';
+import { Backlog, BacklogRole, NotionStatusLink } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { prisma } from 'utils/db';
 import { withSentry } from '@sentry/nextjs';
 
+export type UserRestricted = {
+  id: string;
+  image: string | null;
+  email: string | null;
+  name: string | null;
+};
+
 export type BacklogWithNotionStatusLinksAndOwner = Backlog & {
   notionStatusLinks: NotionStatusLink[];
-  notionConnection:
-    | (NotionConnection & {
-        createdByUser: {
-          id: string;
-          image: string | null;
-          email: string | null;
-          name: string | null;
-        };
-      })
-    | null;
+  members: {
+    role: BacklogRole;
+    user: UserRestricted;
+  }[];
+  notionConnection: {
+    notionWorkspaceName: string | null;
+    createdByUser: UserRestricted;
+  };
 };
 
 export type GetBacklogsRequest = {
@@ -46,8 +51,22 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
       include: {
         notionStatusLinks: true,
+        members: {
+          select: {
+            user: {
+              select: {
+                id: true,
+                image: true,
+                email: true,
+                name: true,
+              },
+            },
+            role: true,
+          },
+        },
         notionConnection: {
-          include: {
+          select: {
+            notionWorkspaceName: true,
             createdByUser: {
               select: {
                 id: true,
