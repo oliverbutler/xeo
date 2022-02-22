@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { APIRequest, parseAPIRequest } from 'utils/api';
+import { apiError, APIRequest, apiResponse, parseAPIRequest } from 'utils/api';
 import { updateSprintHistoryIfChanged } from 'utils/sprint/sprint-history';
 import { withSentry } from '@sentry/nextjs';
 
@@ -24,7 +24,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, error } = parseAPIRequest(req, schema);
 
   if (error || !body) {
-    return res.status(400).json({ message: error?.message });
+    return apiError(res, { message: error?.message ?? '' }, 400);
   }
 
   const { sprintId } = body;
@@ -32,15 +32,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const updatedHistory = await updateSprintHistoryIfChanged(sprintId);
 
-    const returnData: PostUpdateSprintHistory['response'] = {
+    return apiResponse<PostUpdateSprintHistory>(res, {
       updatedSprintPlotData: updatedHistory,
-    };
-
-    return res.status(200).json(returnData);
+    });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: 'Error updating sprint from Notion' });
+    return apiError(res, { message: 'Error updating sprint from Notion' }, 500);
   }
 };
 

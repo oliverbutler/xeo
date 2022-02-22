@@ -31,6 +31,9 @@ export type GetBacklogsRequest = {
   };
 };
 
+/**
+ * Only returns backlogs that the user is a member of, not owner of.
+ */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
 

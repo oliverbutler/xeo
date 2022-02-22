@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { AsyncSelect, Clickable, Button, Table } from '@xeo/ui';
-import axios from 'axios';
 import { GetUserSearchRequest } from 'pages/api/user/search';
 import { TrashIcon } from '@heroicons/react/outline';
 import Image from 'next/image';
@@ -9,6 +8,8 @@ import { BacklogSelectRole } from './BacklogSelectRole';
 import { useSession } from 'next-auth/react';
 import { BacklogWithMembersAndRestrictedUsers } from 'pages/api/backlog/[id]';
 import { useBacklog } from './useBacklog';
+import { apiGet } from 'utils/api';
+import { toast } from 'react-toastify';
 
 interface Props {
   backlog: BacklogWithMembersAndRestrictedUsers;
@@ -23,15 +24,21 @@ const loadUserOptions = async (
   inputValue: string,
   callback: (options: UserSelectOption[]) => void
 ) => {
-  const result = await axios.get<GetUserSearchRequest['responseBody']>(
+  const { data, error } = await apiGet<GetUserSearchRequest>(
     `/api/user/search?searchString=${inputValue}`
   );
 
-  const options: UserSelectOption[] = result.data.user
+  if (error) {
+    toast.error(error.body?.message || error.generic);
+    callback([]);
+    return;
+  }
+
+  const options: UserSelectOption[] = data?.user
     ? [
         {
-          value: result.data.user.id,
-          label: `${result.data.user.name} - ${result.data.user.email}`,
+          value: data.user.id,
+          label: `${data.user.name} - ${data.user.email}`,
         },
       ]
     : [];
@@ -66,6 +73,7 @@ export const BacklogMembers: React.FunctionComponent<Props> = ({ backlog }) => {
         <div>
           <AsyncSelect<UserSelectOption>
             cacheOptions
+            className="w-64"
             label=""
             loadOptions={debouncedFetch}
             onChange={(e) => setCurrentSearch(e ?? undefined)}

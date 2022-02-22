@@ -17,7 +17,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
 
   if (!session) {
-    return res.status(401).json({ message: 'Not authenticated' });
+    return apiError(res, { message: 'Not authenticated' }, 401);
   }
 
   const sprintId = req.query.sprintId as string;
@@ -51,7 +51,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return apiError(res, { message: 'Sprint not found' }, 404);
     }
 
-    return apiResponse(res, { sprintHistory });
+    return apiResponse<GetSprintHistory>(res, { sprintHistory });
   }
 
   return apiError(res, { message: 'Not implemented' }, 501);

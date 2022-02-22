@@ -2,7 +2,6 @@ import { SprintInfo } from 'components/SprintInfo/SprintInfo';
 import { NextRouter, useRouter } from 'next/router';
 import { GetSprintColumnPlotData } from 'pages/api/sprint/[sprintId]/column-plot-data';
 import { useQuery } from 'utils/api';
-import { CentredLoader } from '@xeo/ui';
 import { Error } from 'components/Error/Error';
 import { Content } from 'components/Content';
 

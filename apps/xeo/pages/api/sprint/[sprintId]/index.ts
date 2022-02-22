@@ -3,7 +3,14 @@ import { Sprint } from '@prisma/client';
 import Joi from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
-import { APIGetRequest, APIRequest, parseAPIRequest } from 'utils/api';
+import {
+  APIDeleteRequest,
+  apiError,
+  APIGetRequest,
+  APIRequest,
+  apiResponse,
+  parseAPIRequest,
+} from 'utils/api';
 import { prisma } from 'utils/db';
 import { updateSprint, UpdateSprint } from 'utils/sprint/adapter';
 import { withSentry } from '@sentry/nextjs';
@@ -18,6 +25,8 @@ export type PutUpdateSprintRequest = APIRequest<
     sprint: Sprint;
   }
 >;
+
+export type DeleteSprintRequest = APIDeleteRequest<{ message: string }>;
 
 export const TIME_REGEX = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
 
@@ -43,7 +52,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
 
   if (!session) {
-    return res.status(401).json({ message: 'Not authenticated' });
+    return apiError(res, { message: 'Not authenticated' }, 401);
   }
 
   const userId = session.id;
@@ -52,28 +61,33 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     where: {
       id: req.query.sprintId as string,
       backlog: {
-        members: {
-          some: {
-            user: {
-              id: userId,
+        OR: [
+          {
+            members: {
+              some: {
+                userId,
+              },
             },
           },
-        },
+          { notionConnection: { createdByUserId: userId } },
+        ],
       },
     },
   });
 
   if (!sprint) {
-    return res.status(404).json({ message: 'Sprint not found' });
+    return apiError(res, { message: 'Sprint not found' }, 404);
   }
 
   if (req.method === 'GET') {
-    return res.status(200).json({ sprint });
+    return apiResponse<GetSprintRequest>(res, {
+      sprint,
+    });
   } else if (req.method === 'PUT') {
     const { body, error } = parseAPIRequest(req, putSchema);
 
     if (error || !body) {
-      return res.status(400).json({ message: error?.message });
+      return apiError(res, { message: error?.message ?? '' }, 400);
     }
 
     const updatedSprint = await updateSprint(
@@ -81,7 +95,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       body.input
     );
 
-    return res.status(200).json({ updatedSprint });
+    return apiResponse<PutUpdateSprintRequest>(res, {
+      sprint: updatedSprint,
+    });
   } else if (req.method === 'DELETE') {
     await prisma.sprint.delete({
       where: {
@@ -89,10 +105,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
-    return res.status(200).json({ message: 'Sprint deleted' });
+    return apiResponse<DeleteSprintRequest>(res, {
+      message: 'Sprint deleted',
+    });
   }
 
-  return res.status(405).json({ message: 'Method not allowed' });
+  return apiError(res, { message: 'Method not allowed' }, 405);
 };
 
 export default withSentry(handler);
