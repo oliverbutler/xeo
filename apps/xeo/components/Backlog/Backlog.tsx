@@ -1,10 +1,11 @@
 import { Button, ButtonVariation } from '@xeo/ui';
 import { DeleteNotionBacklog } from 'components/Connections/Notion/NotionBacklog/DeleteNotionBacklog';
-import { BacklogWithMembersRestricted } from 'pages/api/connections';
+import { BacklogWithMembersAndRestrictedUsers } from 'pages/api/backlog/[id]';
+
 import { BacklogMembers } from './BacklogMembers';
 
 interface Props {
-  backlog: BacklogWithMembersRestricted;
+  backlog: BacklogWithMembersAndRestrictedUsers;
 }
 
 export const Backlog: React.FunctionComponent<Props> = ({ backlog }) => {

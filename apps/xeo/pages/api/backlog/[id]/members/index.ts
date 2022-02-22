@@ -1,8 +1,8 @@
-import { MemberOfBacklog } from '@prisma/client';
+import { BacklogRole, MemberOfBacklog } from '@prisma/client';
 import Joi from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
-import { APIRequest, parseAPIRequest } from 'utils/api';
+import { apiError, APIRequest, apiResponse, parseAPIRequest } from 'utils/api';
 import { prisma } from 'utils/db';
 import { withSentry } from '@sentry/nextjs';
 
@@ -27,18 +27,31 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(401).json({ message: 'Not authenticated' });
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const userId = session?.id as string;
-
+  const callingUserId = session.id;
   const backlogId = req.query.id as string;
 
-  // Get the backlog and check if the user is allowed to access it
+  if (!backlogId) {
+    return apiError(res, { message: 'Missing required query parameters' });
+  }
+
   const backlog = await prisma.backlog.findFirst({
-    where: { id: backlogId, notionConnection: { createdByUserId: userId } },
+    where: {
+      OR: [
+        { notionConnection: { createdByUserId: callingUserId } },
+        {
+          members: {
+            some: {
+              role: BacklogRole.ADMIN,
+              userId: callingUserId,
+              backlogId: backlogId,
+            },
+          },
+        },
+      ],
+    },
     include: {
       members: {
-        select: {
+        include: {
           user: {
             select: {
               id: true,
@@ -49,18 +62,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           },
         },
       },
-      notionConnection: true,
     },
   });
 
   if (!backlog) {
-    return res.status(404).json({ message: 'Backlog not found' });
-  }
-
-  if (backlog.notionConnection.createdByUserId !== userId) {
-    return res
-      .status(403)
-      .json({ message: "You don't have permission to access this backlog" });
+    return apiError(res, { message: 'Backlog not found' }, 400);
   }
 
   if (req.method === 'PUT') {
@@ -75,15 +81,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         data: {
           userId: body.userId,
           backlogId: backlogId,
+          role: BacklogRole.MEMBER,
         },
       });
 
-      const returnData: PutCreateBacklogMember['response'] = {
+      return apiResponse<PutCreateBacklogMember>(res, {
         message: 'Member added',
         member,
-      };
-
-      return res.status(200).json(returnData);
+      });
     } catch (error) {
       return res
         .status(400)

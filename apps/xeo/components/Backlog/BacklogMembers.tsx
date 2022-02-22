@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { AsyncSelect, Clickable, Button, Table } from '@xeo/ui';
 import axios from 'axios';
 import { GetUserSearchRequest } from 'pages/api/user/search';
-import { BacklogWithMembersRestricted } from 'pages/api/connections';
 import { TrashIcon } from '@heroicons/react/outline';
 import Image from 'next/image';
 import _ from 'lodash';
@@ -11,9 +10,12 @@ import { apiDelete, apiPut } from 'utils/api';
 import { toast } from 'react-toastify';
 import { mutate } from 'swr';
 import { DeleteBacklogMember } from 'pages/api/backlog/[id]/members/[memberId]';
+import { BacklogSelectRole } from './BacklogSelectRole';
+import { useSession } from 'next-auth/react';
+import { BacklogWithMembersAndRestrictedUsers } from 'pages/api/backlog/[id]';
 
 interface Props {
-  backlog: BacklogWithMembersRestricted;
+  backlog: BacklogWithMembersAndRestrictedUsers;
 }
 
 type UserSelectOption = {
@@ -69,6 +71,8 @@ const handleDeleteMember = async (backlogId: string, userId: string) => {
 };
 
 export const BacklogMembers: React.FunctionComponent<Props> = ({ backlog }) => {
+  const { data } = useSession();
+
   const [currentSearch, setCurrentSearch] = useState<
     UserSelectOption | undefined
   >();
@@ -80,6 +84,10 @@ export const BacklogMembers: React.FunctionComponent<Props> = ({ backlog }) => {
   const handleAddMemberClick = () => {
     if (currentSearch) handleAddMember(backlog.id, currentSearch.value);
   };
+
+  const currentUserMember = backlog.members.find(
+    (member) => member.userId === data?.id
+  );
 
   return (
     <div>
@@ -103,7 +111,7 @@ export const BacklogMembers: React.FunctionComponent<Props> = ({ backlog }) => {
       </div>
       <h2>Edit Backlog Members</h2>
       <div>
-        <Table<BacklogWithMembersRestricted['members'][0]>
+        <Table<BacklogWithMembersAndRestrictedUsers['members'][0]>
           data={backlog.members}
           columns={[
             {
@@ -127,6 +135,19 @@ export const BacklogMembers: React.FunctionComponent<Props> = ({ backlog }) => {
               ),
             },
             { Header: 'Email', accessor: (row) => row.user.email ?? '' },
+            {
+              Header: 'Role',
+              accessor: 'role',
+              Cell: (row) => (
+                <BacklogSelectRole
+                  backlog={backlog}
+                  member={row.row.original}
+                  disabled={
+                    row.row.original.userId === currentUserMember?.userId
+                  }
+                />
+              ),
+            },
             {
               Header: 'Actions',
               accessor: 'userId',

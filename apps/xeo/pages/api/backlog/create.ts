@@ -65,8 +65,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(400).json({ message: error?.message });
   }
 
-  const userId = session?.id as string;
-
   const result = await prisma.backlog.create({
     data: {
       notionConnectionId: body.notionConnectionId,
@@ -83,11 +81,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             notionStatusColor: mapping.notionStatusColor,
             status: mapping.status,
           })),
-        },
-      },
-      members: {
-        create: {
-          userId,
         },
       },
     },

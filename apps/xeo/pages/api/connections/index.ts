@@ -9,27 +9,20 @@ enum ConnectionType {
   NOTION_CONNECTION = 'notion-connection',
 }
 
-export type BacklogWithMembersRestricted = Backlog & {
-  members: (MemberOfBacklog & {
-    user: {
-      id: string;
-      image: string | null;
-      email: string | null;
-      name: string | null;
-    };
-  })[];
-};
-
 type Connection = {
   type: ConnectionType.NOTION_CONNECTION;
   connection: NotionConnection;
-  backlogs: BacklogWithMembersRestricted[];
+  backlogs: Backlog[];
 };
 
 export type GetConnectionsRequest = APIGetRequest<{
   connections: Connection[];
 }>;
 
+/**
+ * ⚠️ Return contains Notion access token.
+ *
+ */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
 
@@ -37,9 +30,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return apiResponse(res, { message: 'Not authenticated' });
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const userId = session?.id as string;
+  const userId = session.id;
 
   if (req.method === 'GET') {
     const notionConnections = await prisma.notionConnection.findMany({
@@ -47,22 +38,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         createdByUserId: userId,
       },
       include: {
-        backlogs: {
-          include: {
-            members: {
-              include: {
-                user: {
-                  select: {
-                    id: true,
-                    image: true,
-                    email: true,
-                    name: true,
-                  },
-                },
-              },
-            },
-          },
-        },
+        backlogs: true,
       },
     });
 

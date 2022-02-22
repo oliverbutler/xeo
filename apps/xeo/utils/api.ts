@@ -13,7 +13,7 @@ export type GenericAPIRequest<T> = {
 };
 
 export type APIRequest<TRequest extends object, TResponse extends object> = {
-  type: 'POST';
+  type: 'POST' | 'PUT';
   request: TRequest;
   joiBodySchema: ObjectSchema<TRequest>;
 } & GenericAPIRequest<TResponse>;
