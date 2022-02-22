@@ -40,6 +40,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const backlog = await prisma.backlog.findFirst({
     where: {
+      id: backlogId,
       OR: [
         {
           members: {
