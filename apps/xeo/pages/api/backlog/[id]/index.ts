@@ -6,6 +6,9 @@ import { prisma } from 'utils/db';
 import { withSentry } from '@sentry/nextjs';
 
 export type BacklogWithMembersAndRestrictedUsers = Backlog & {
+  notionConnection: {
+    createdByUserId: string;
+  };
   members: (MemberOfBacklog & {
     user: {
       id: string;
@@ -61,6 +64,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               email: true,
             },
           },
+        },
+      },
+      notionConnection: {
+        select: {
+          createdByUserId: true,
         },
       },
     },

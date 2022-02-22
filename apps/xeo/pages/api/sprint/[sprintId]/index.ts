@@ -3,17 +3,14 @@ import { Sprint } from '@prisma/client';
 import Joi from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
-import { APIRequest, parseAPIRequest } from 'utils/api';
+import { APIGetRequest, APIRequest, parseAPIRequest } from 'utils/api';
 import { prisma } from 'utils/db';
 import { updateSprint, UpdateSprint } from 'utils/sprint/adapter';
 import { withSentry } from '@sentry/nextjs';
 
-export type GetSprintRequest = {
-  requestBody: undefined;
-  responseBody: {
-    sprint: Sprint;
-  };
-};
+export type GetSprintRequest = APIGetRequest<{
+  sprint: Sprint;
+}>;
 
 export type PutUpdateSprintRequest = APIRequest<
   { input: UpdateSprint },

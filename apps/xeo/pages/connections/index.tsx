@@ -22,7 +22,7 @@ import { trackAction, UserAction } from 'utils/analytics';
 import { NotionConnection } from 'components/Connections/Notion/NotionConnection/NotionConnection';
 import { Backlog, BacklogRole } from '@prisma/client';
 import { CellProps } from 'react-table';
-import { toast } from 'react-toastify';
+import { useBacklog } from 'components/Backlog/useBacklog';
 
 dayjs.extend(LocalizedFormat);
 
@@ -38,8 +38,9 @@ export function Index() {
   >('/api/connections', fetcher);
 
   const { data } = useSession();
-
   const userId = data?.id;
+
+  const { leaveBacklog } = useBacklog();
 
   const getCurrentRoleInBacklog = (
     backlog: BacklogWithNotionStatusLinksAndOwner
@@ -208,7 +209,7 @@ export function Index() {
                 ) => (
                   <div className="flex flex-row gap-2">
                     <Button
-                      href={`/connections/backlog/notion/${cell.value}`}
+                      href={`/connections/backlog/notion/${cell.row.original.id}`}
                       variation={ButtonVariation.Secondary}
                       disabled={
                         getCurrentRoleInBacklog(cell.row.original) !==
@@ -218,7 +219,7 @@ export function Index() {
                       Edit
                     </Button>
                     <Button
-                      onClick={() => toast.warning('Not implemented yet!')}
+                      onClick={() => leaveBacklog(cell.row.original.id)}
                       variation={ButtonVariation.Danger}
                     >
                       Leave

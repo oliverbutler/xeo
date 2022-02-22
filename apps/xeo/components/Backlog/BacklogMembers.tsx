@@ -5,14 +5,10 @@ import { GetUserSearchRequest } from 'pages/api/user/search';
 import { TrashIcon } from '@heroicons/react/outline';
 import Image from 'next/image';
 import _ from 'lodash';
-import { PutCreateBacklogMember } from 'pages/api/backlog/[id]/members';
-import { apiDelete, apiPut } from 'utils/api';
-import { toast } from 'react-toastify';
-import { mutate } from 'swr';
-import { DeleteBacklogMember } from 'pages/api/backlog/[id]/members/[memberId]';
 import { BacklogSelectRole } from './BacklogSelectRole';
 import { useSession } from 'next-auth/react';
 import { BacklogWithMembersAndRestrictedUsers } from 'pages/api/backlog/[id]';
+import { useBacklog } from './useBacklog';
 
 interface Props {
   backlog: BacklogWithMembersAndRestrictedUsers;
@@ -43,35 +39,9 @@ const loadUserOptions = async (
   callback(options);
 };
 
-const handleAddMember = async (backlogId: string, userId: string) => {
-  const result = await apiPut<PutCreateBacklogMember>(
-    `/api/backlog/${backlogId}/members`,
-    { userId }
-  );
-
-  if (result.genericError) {
-    toast.error(result.error?.message || result.genericError);
-  } else {
-    toast.success('Member added');
-    mutate(`/api/backlog/${backlogId}`);
-  }
-};
-
-const handleDeleteMember = async (backlogId: string, userId: string) => {
-  const result = await apiDelete<DeleteBacklogMember>(
-    `/api/backlog/${backlogId}/members/${userId}`
-  );
-
-  if (result.genericError) {
-    toast.error(result.error?.message || result.genericError);
-  } else {
-    toast.success('Member deleted');
-    mutate(`/api/backlog/${backlogId}`);
-  }
-};
-
 export const BacklogMembers: React.FunctionComponent<Props> = ({ backlog }) => {
   const { data } = useSession();
+  const { deleteMember, addMember } = useBacklog();
 
   const [currentSearch, setCurrentSearch] = useState<
     UserSelectOption | undefined
@@ -82,7 +52,7 @@ export const BacklogMembers: React.FunctionComponent<Props> = ({ backlog }) => {
   }, 500);
 
   const handleAddMemberClick = () => {
-    if (currentSearch) handleAddMember(backlog.id, currentSearch.value);
+    if (currentSearch) addMember(backlog.id, currentSearch.value);
   };
 
   const currentUserMember = backlog.members.find(
@@ -151,15 +121,16 @@ export const BacklogMembers: React.FunctionComponent<Props> = ({ backlog }) => {
             {
               Header: 'Actions',
               accessor: 'userId',
-              Cell: (row) => (
-                <div>
-                  <Clickable
-                    onClick={() => handleDeleteMember(backlog.id, row.value)}
-                  >
-                    <TrashIcon width={25} height={25} />
-                  </Clickable>
-                </div>
-              ),
+              Cell: (row) =>
+                row.row.original.userId === currentUserMember?.userId ? null : (
+                  <div>
+                    <Clickable
+                      onClick={() => deleteMember(backlog.id, row.value)}
+                    >
+                      <TrashIcon width={25} height={25} />
+                    </Clickable>
+                  </div>
+                ),
             },
           ]}
         />
