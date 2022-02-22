@@ -47,7 +47,7 @@ export const BacklogSelectRole: React.FunctionComponent<Props> = ({
       return toast.error(error.body?.message || error.generic);
     }
 
-    toast.success(data.message);
+    toast.success(data?.message);
     mutate(`/api/backlog/${backlog.id}`);
   };
 

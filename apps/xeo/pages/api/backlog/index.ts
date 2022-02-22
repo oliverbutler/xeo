@@ -19,6 +19,7 @@ export type BacklogWithNotionStatusLinksAndOwner = Backlog & {
     user: UserRestricted;
   }[];
   notionConnection: {
+    notionWorkspaceName: string | null;
     createdByUser: UserRestricted;
   };
 };
@@ -65,6 +66,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
         notionConnection: {
           select: {
+            notionWorkspaceName: true,
             createdByUser: {
               select: {
                 id: true,

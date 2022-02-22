@@ -76,7 +76,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { body, error } = parseAPIRequest(req, putSchema);
 
     if (error || !body) {
-      return apiError(res, { message: error?.message }, 400);
+      return apiError(res, { message: error?.message || '' }, 400);
     }
 
     if (callingMember?.role === BacklogRole.MEMBER) {
