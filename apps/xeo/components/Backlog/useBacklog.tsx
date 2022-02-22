@@ -21,12 +21,12 @@ export const useBacklog = (): Output => {
   };
 
   const deleteMember = async (backlogId: string, memberId: string) => {
-    const result = await apiDelete<DeleteBacklogMember>(
+    const { error } = await apiDelete<DeleteBacklogMember>(
       `/api/backlog/${backlogId}/members/${memberId}`
     );
 
-    if (result.genericError) {
-      toast.error(result.error?.message || result.genericError);
+    if (error) {
+      toast.error(error.body?.message || error.generic);
     } else {
       toast.success('Member deleted');
       mutate(`/api/backlog`);
@@ -34,13 +34,13 @@ export const useBacklog = (): Output => {
   };
 
   const addMember = async (backlogId: string, userId: string) => {
-    const result = await apiPut<PutCreateBacklogMember>(
+    const { error } = await apiPut<PutCreateBacklogMember>(
       `/api/backlog/${backlogId}/members`,
       { userId }
     );
 
-    if (result.genericError) {
-      toast.error(result.error?.message || result.genericError);
+    if (error) {
+      toast.error(error.body?.message || error.generic);
     } else {
       toast.success('Member added');
       mutate(`/api/backlog/${backlogId}`);
@@ -48,12 +48,12 @@ export const useBacklog = (): Output => {
   };
 
   const deleteBacklog = async (backlogId: string) => {
-    const { data, error, genericError } = await apiDelete<DeleteBacklogMember>(
+    const { error } = await apiDelete<DeleteBacklogMember>(
       `/api/backlog/${backlogId}`
     );
 
-    if (error || !data) {
-      toast.error(error?.message || genericError);
+    if (error) {
+      toast.error(error.body?.message || error.generic);
       return false;
     }
 

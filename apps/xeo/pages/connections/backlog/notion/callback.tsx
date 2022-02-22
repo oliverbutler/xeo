@@ -17,7 +17,7 @@ const handleCallback = async (router: NextRouter) => {
   );
 
   if (error) {
-    toast.error(error?.message);
+    toast.error(error.body?.message || error.generic);
     router.push('/connections');
     return;
   }

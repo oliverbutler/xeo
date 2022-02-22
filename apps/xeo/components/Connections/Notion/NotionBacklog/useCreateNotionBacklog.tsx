@@ -1,6 +1,5 @@
 import { GetDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
 import { useForm, UseFormReturn } from 'react-hook-form';
-import axios from 'axios';
 import { toast } from 'react-toastify';
 import { PostCreateBacklog } from 'pages/api/backlog/create';
 import {
@@ -8,8 +7,8 @@ import {
   NotionColumnType,
   NotionConnection,
 } from '@prisma/client';
-import { useRouter } from 'next/router';
 import { mutate } from 'swr';
+import { apiPost } from 'utils/api';
 
 export type DatabaseSelectionOption = {
   label: string;
@@ -103,13 +102,13 @@ export const useCreateNotionBacklog = (
       ],
     };
 
-    const { status } = await axios.post<PostCreateBacklog['response']>(
+    const { error } = await apiPost<PostCreateBacklog>(
       '/api/backlog/create',
       body
     );
 
-    if (status !== 200) {
-      return toast.error('Error Creating Backlog!');
+    if (error) {
+      return toast.error(error.body?.message || error.generic);
     }
 
     toast.success('Backlog Created!');

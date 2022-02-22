@@ -38,16 +38,16 @@ export const BacklogSelectRole: React.FunctionComponent<Props> = ({
   );
 
   const handleSelectChange = async (value: RoleOptionType) => {
-    const result = await apiPut<UpdateBacklogMember>(
+    const { data, error } = await apiPut<UpdateBacklogMember>(
       `/api/backlog/${backlog.id}/members/${member.userId}`,
       { role: value.value }
     );
 
-    if (result.error || result.genericError) {
-      return toast.error(result.error?.message || result.genericError);
+    if (error) {
+      return toast.error(error.body?.message || error.generic);
     }
 
-    toast.success(result.data?.message);
+    toast.success(data.message);
     mutate(`/api/backlog/${backlog.id}`);
   };
 
