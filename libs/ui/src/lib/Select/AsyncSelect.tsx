@@ -26,7 +26,11 @@ export const AsyncSelect = <T extends object>({
     >
       <label className="mb-2 block text-sm font-bold">{label}</label>
       <AsyncReactSelect
-        styles={{ option: (styles) => ({ ...styles, color: 'black' }) }}
+        menuPortalTarget={document.body}
+        styles={{
+          option: (styles) => ({ ...styles, color: 'black' }),
+          menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+        }}
         isDisabled={isDisabled}
         {...selectProps}
       />
