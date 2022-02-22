@@ -100,7 +100,7 @@ export const BacklogMembers: React.FunctionComponent<Props> = ({ backlog }) => {
                       />
                     </div>
                   ) : null}
-                  <p>{cell.value.name}</p>
+                  <span>{cell.value.name}</span>
                 </div>
               ),
             },
@@ -123,7 +123,7 @@ export const BacklogMembers: React.FunctionComponent<Props> = ({ backlog }) => {
               accessor: 'userId',
               Cell: (row) =>
                 row.row.original.userId === currentUserMember?.userId ? null : (
-                  <div>
+                  <div className="flex flex-row items-center">
                     <Clickable
                       onClick={() => deleteMember(backlog.id, row.value)}
                     >

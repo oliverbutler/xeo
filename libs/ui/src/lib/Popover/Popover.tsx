@@ -31,7 +31,7 @@ export const Popover: React.FunctionComponent<Props> = ({
   return (
     <PopoverComponent
       className="relative"
-      style={{ isolation: 'isolate', zIndex: 1000 }}
+      style={{ isolation: 'isolate', zIndex: 10 }}
     >
       {({ open }) => (
         <>

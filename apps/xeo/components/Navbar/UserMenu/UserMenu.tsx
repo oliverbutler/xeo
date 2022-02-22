@@ -49,12 +49,12 @@ export const UserMenu: React.FunctionComponent = () => {
         },
       ]}
       button={
-        <div className="cursor-pointer">
+        <div className="cursor-pointer flex flex-row items-center justify-center">
           <Image
             src={userImage}
             alt="Your Profile Picture"
-            height={40}
-            width={40}
+            height={35}
+            width={35}
             className="rounded-full"
           />
         </div>
