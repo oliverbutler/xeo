@@ -1,4 +1,4 @@
-import { Backlog, MemberOfBacklog, NotionConnection } from '@prisma/client';
+import { Backlog, NotionConnection } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { apiError, APIGetRequest, apiResponse } from 'utils/api';
@@ -9,7 +9,7 @@ enum ConnectionType {
   NOTION_CONNECTION = 'notion-connection',
 }
 
-type Connection = {
+export type Connection = {
   type: ConnectionType.NOTION_CONNECTION;
   connection: NotionConnection;
   backlogs: Backlog[];
