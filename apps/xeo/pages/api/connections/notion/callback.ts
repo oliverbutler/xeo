@@ -48,9 +48,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     );
   }
 
-  console.log(notionAccessResponse);
-
-  const existingNotionConnection = await prisma.notionConnection.findUnique({
+  // If the user already has the connection, update it
+  const existingNotionConnection = await prisma.notionConnection.findFirst({
     where: { notionBotId: notionAccessResponse.botId },
   });
 
@@ -69,7 +68,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     return apiResponse<PostNotionCallback>(res, {
-      successMessage: 'Refreshed existing Notion Connection',
+      successMessage: 'Updated existing Notion Connection',
     });
   }
 
