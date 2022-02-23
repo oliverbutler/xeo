@@ -89,7 +89,7 @@ model Backlog {
   id                 String             @id @default(cuid())
   members            MemberOfBacklog[]
   // Notion Connection
-  notionConnection   NotionConnection   @relation(fields: [notionConnectionId], references: [id])
+  notionConnection   NotionConnection   @relation(fields: [notionConnectionId], references: [id], onUpdate: NoAction)
   notionConnectionId String
   // Notion Related Fields
   databaseId         String
@@ -195,7 +195,7 @@ model NotionConnection {
   notionWorkspaceId   String
   notionWorkspaceIcon String?
   notionWorkspaceName String?
-  notionBotId         String    @unique
+  notionBotId         String
   backlogs            Backlog[]
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @default(now()) @updatedAt

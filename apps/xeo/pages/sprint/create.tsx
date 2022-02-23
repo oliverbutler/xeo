@@ -10,7 +10,7 @@ import useSWR from 'swr';
 
 function Create() {
   const { data: dataBacklogs, error: errorBacklogs } = useSWR<
-    GetBacklogsRequest['responseBody'],
+    GetBacklogsRequest['response'],
     string
   >('/api/backlog', fetcher);
 
