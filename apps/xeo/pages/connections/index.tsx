@@ -28,7 +28,7 @@ dayjs.extend(LocalizedFormat);
 
 export function Index() {
   const { data: dataBacklogs, error: errorBacklogs } = useSWR<
-    GetBacklogsRequest['responseBody'],
+    GetBacklogsRequest['response'],
     string
   >('/api/backlog', fetcher);
 

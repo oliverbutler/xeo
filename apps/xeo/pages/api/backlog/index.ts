@@ -4,6 +4,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { prisma } from 'utils/db';
 import { withSentry } from '@sentry/nextjs';
+import { apiError, APIGetRequest, apiResponse } from 'utils/api';
 
 export type UserRestricted = {
   id: string;
@@ -24,21 +25,15 @@ export type BacklogWithNotionStatusLinksAndOwner = Backlog & {
   };
 };
 
-export type GetBacklogsRequest = {
-  method: 'GET';
-  responseBody: {
-    backlogs: BacklogWithNotionStatusLinksAndOwner[];
-  };
-};
+export type GetBacklogsRequest = APIGetRequest<{
+  backlogs: BacklogWithNotionStatusLinksAndOwner[];
+}>;
 
-/**
- * Only returns backlogs that the user is a member of, not owner of.
- */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
 
   if (!session) {
-    return res.status(401).json({ message: 'Not authenticated' });
+    return apiError(res, { message: 'Not authenticated' }, 401);
   }
 
   const userId = session.id;
@@ -46,11 +41,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
     const backlogs = await prisma.backlog.findMany({
       where: {
-        members: {
-          some: {
-            userId,
+        OR: [
+          {
+            members: {
+              some: {
+                userId,
+              },
+            },
           },
-        },
+          { notionConnection: { createdByUserId: userId } },
+        ],
       },
       include: {
         notionStatusLinks: true,
@@ -83,13 +83,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
-    const returnValue: GetBacklogsRequest['responseBody'] = {
+    return apiResponse<GetBacklogsRequest>(res, {
       backlogs,
-    };
-    return res.status(200).json(returnValue);
+    });
   }
 
-  return res.status(400).json({ message: 'Invalid request method' });
+  return apiError(res, { message: 'Method not allowed' }, 405);
 };
 
 export default withSentry(handler);
