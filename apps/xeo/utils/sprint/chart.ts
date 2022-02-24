@@ -106,6 +106,11 @@ export const getCumulativeCapacityPerDay = (
     return [...acc, newElement];
   }, [] as { day: Date; capacity: number }[]);
 
+// TODO Cleanup this function.
+//
+// - getSprintDaysArrayWithSprintHistory works perfectly, but the length of this is not equal to the length of the capacityPerDay array.
+// - There is some weirdness with fridays and mondays, I've patched it but it's not clean
+// -
 export const getDataForSprintChart = (
   sprint: Sprint,
   sprintHistory: SprintWithHistory['sprintHistory'],
@@ -149,18 +154,12 @@ export const getDataForSprintChart = (
           )
         )?.capacity ?? defaultExpectedCapacity;
 
-      const emptyDay = {
-        time: dayjs(date).toISOString(),
-        [DataPlotLine.EXPECTED_POINTS]: roundToOneDecimal(
-          isLastDay ? 0 : sprintCapacity - expectedDailyCapacity
-        ),
-      };
-
       if (sprintHistories.length === 0) {
         // if no history on the first day, return full capacity
         if (dayIndex === 0) {
           return {
-            ...emptyDay,
+            time: dayjs(date).toISOString(),
+            [DataPlotLine.EXPECTED_POINTS]: roundToOneDecimal(sprintCapacity),
             [DataPlotLine.EXPECTED_POINTS]: roundToOneDecimal(sprintCapacity),
             [DataPlotLine.POINTS_LEFT]: roundToOneDecimal(sprintCapacity),
             [DataPlotLine.POINTS_DONE_INC_VALIDATE]:
@@ -168,7 +167,12 @@ export const getDataForSprintChart = (
           };
         }
 
-        return emptyDay;
+        return {
+          time: dayjs(date).toISOString(),
+          [DataPlotLine.EXPECTED_POINTS]: roundToOneDecimal(
+            isLastDay ? 0 : sprintCapacity - expectedDailyCapacity
+          ),
+        };
       }
 
       const latestSprintHistoryOnDay =
@@ -180,7 +184,10 @@ export const getDataForSprintChart = (
       );
 
       return {
-        ...emptyDay,
+        time: dayjs(date).toISOString(),
+        [DataPlotLine.EXPECTED_POINTS]: roundToOneDecimal(
+          sprintCapacity - expectedDailyCapacity
+        ),
         [DataPlotLine.POINTS_LEFT]: roundToOneDecimal(
           sprintCapacity - pointsInDone
         ),
