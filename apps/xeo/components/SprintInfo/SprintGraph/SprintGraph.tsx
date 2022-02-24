@@ -214,7 +214,6 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
                 : theme.extend.colors.dark[800]
             }
           />
-
           <YAxis
             type="number"
             dataKey={DataPlotLine.EXPECTED_POINTS}
@@ -233,32 +232,53 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
             stroke={theme.extend.colors.dark[400]}
             name={DataPlotLine.EXPECTED_POINTS}
             dataKey={DataPlotLine.EXPECTED_POINTS}
-            type="monotone"
+            type="linear"
             strokeDasharray={'3 3'}
             strokeWidth={2}
             connectNulls
             dot={false}
           />
-
           <Line
             hide={!showPointsNotStarted}
             stroke={theme.extend.colors.primary[400]}
             name={DataPlotLine.POINTS_DONE_INC_VALIDATE}
             dataKey={DataPlotLine.POINTS_DONE_INC_VALIDATE}
-            type="monotone"
-            strokeDasharray={'3 3'}
+            type="linear"
             strokeWidth={2}
             connectNulls
             dot={false}
           />
-
           <Line
             stroke={theme.extend.colors.secondary[400]}
             name={DataPlotLine.POINTS_LEFT}
             dataKey={DataPlotLine.POINTS_LEFT}
-            type="monotone"
+            type="linear"
             connectNulls
             strokeWidth={2}
+            dot={false}
+          />
+          {/* Pending Lines */}
+          <Line
+            stroke={theme.extend.colors.secondary[400]}
+            name={DataPlotLine.PENDING_POINTS_LEFT}
+            dataKey={DataPlotLine.PENDING_POINTS_LEFT}
+            strokeDasharray={'3 3'}
+            type="linear"
+            connectNulls
+            strokeWidth={2}
+            strokeOpacity={0.3}
+            dot={false}
+          />
+          <Line
+            stroke={theme.extend.colors.primary[400]}
+            hide={!showPointsNotStarted}
+            name={DataPlotLine.PENDING_POINTS_DONE_INC_VALIDATE}
+            dataKey={DataPlotLine.PENDING_POINTS_DONE_INC_VALIDATE}
+            strokeDasharray={'3 3'}
+            type="linear"
+            strokeWidth={2}
+            strokeOpacity={0.3}
+            connectNulls
             dot={false}
           />
         </LineChart>

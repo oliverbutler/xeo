@@ -11,7 +11,9 @@ import { isDeveloperWithCapacityArray } from './utils';
 export enum DataPlotLine {
   CAPACITY = 'Capacity',
   POINTS_LEFT = 'Done',
+  PENDING_POINTS_LEFT = 'Pending',
   POINTS_DONE_INC_VALIDATE = 'To Validate',
+  PENDING_POINTS_DONE_INC_VALIDATE = 'Pending To Validate',
   EXPECTED_POINTS = 'Expected',
 }
 
@@ -198,7 +200,31 @@ export const getDataForSprintChart = (
     }
   );
 
-  return plotData;
+  // Add a secondary line which is lower opacity, to reflect future capacity
+  const plotDataWithPendingData: DataPlotType[] | undefined = plotData?.map(
+    (data) => {
+      const isPointTomorrow = dayjs(data.time).isAfter(dayjs(), 'day');
+
+      if (isPointTomorrow) {
+        return {
+          time: data.time,
+          [DataPlotLine.EXPECTED_POINTS]: data[DataPlotLine.EXPECTED_POINTS],
+          [DataPlotLine.PENDING_POINTS_LEFT]: data[DataPlotLine.POINTS_LEFT],
+          [DataPlotLine.PENDING_POINTS_DONE_INC_VALIDATE]:
+            data[DataPlotLine.POINTS_DONE_INC_VALIDATE],
+        };
+      }
+
+      return {
+        ...data,
+        [DataPlotLine.PENDING_POINTS_LEFT]: data[DataPlotLine.POINTS_LEFT],
+        [DataPlotLine.PENDING_POINTS_DONE_INC_VALIDATE]:
+          data[DataPlotLine.POINTS_DONE_INC_VALIDATE],
+      };
+    }
+  );
+
+  return plotDataWithPendingData;
 };
 
 const getPointsInStatuses = (
