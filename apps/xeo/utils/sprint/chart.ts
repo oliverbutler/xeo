@@ -17,7 +17,6 @@ export enum DataPlotLine {
 
 export type DataPlotType = {
   time: string;
-  sprintDay: number;
 } & {
   [key in DataPlotLine]?: number;
 };
@@ -107,6 +106,11 @@ export const getCumulativeCapacityPerDay = (
     return [...acc, newElement];
   }, [] as { day: Date; capacity: number }[]);
 
+// TODO Cleanup this function.
+//
+// - getSprintDaysArrayWithSprintHistory works perfectly, but the length of this is not equal to the length of the capacityPerDay array.
+// - There is some weirdness with fridays and mondays, I've patched it but it's not clean
+// -
 export const getDataForSprintChart = (
   sprint: Sprint,
   sprintHistory: SprintWithHistory['sprintHistory'],
@@ -121,44 +125,58 @@ export const getDataForSprintChart = (
 
   const cumulativeCapacityPerDay = getCumulativeCapacityPerDay(capacityPerDay);
 
-  const plotData: DataPlotType[] = cumulativeCapacityPerDay.map(
-    ({ day, capacity: dailyCapacity }, dayIndex) => {
-      const sprintHistoriesOnDay = sprintHistory.filter((data) => {
-        const allowBefore = dayIndex === 0;
-        const allowAfter = dayIndex === cumulativeCapacityPerDay.length - 1;
+  const sprintDaysWithHistory = getSprintDaysArrayWithSprintHistory(
+    getSprintDaysArray(sprint),
+    sprintHistory
+  );
 
-        return isDateOnSprintDay(
-          data.timestamp,
-          day,
-          sprint,
-          allowBefore,
-          allowAfter
-        );
-      });
+  const [hours, minutes] = sprint.dailyStartTime.split(':').map(Number);
 
-      const [hours, minutes] = sprint.dailyStartTime.split(':').map(Number);
-      const timeOfDay = dayjs(day)
-        .add(1, 'day')
-        .set('hour', hours)
-        .set('minute', minutes)
-        .toISOString();
+  const plotData: DataPlotType[] = sprintDaysWithHistory.map(
+    ({ date, sprintHistories }, dayIndex) => {
+      // if date is monday, at dailyStartTime, keep the same expected capacity as the start time
+      const numberOfDaysToSubtract =
+        date.getDay() === 1 &&
+        date.getHours() === hours &&
+        date.getMinutes() === minutes
+          ? 3
+          : 1;
 
-      const isLastDay = dayIndex === cumulativeCapacityPerDay.length - 1;
+      const isLastDay = dayIndex === sprintDaysWithHistory.length - 1;
 
-      const emptyDay = {
-        time: isLastDay ? dayjs(sprint.endDate).toISOString() : timeOfDay,
-        sprintDay: dayIndex,
-        [DataPlotLine.EXPECTED_POINTS]: roundToOneDecimal(
-          sprintCapacity - dailyCapacity
-        ),
-      };
+      const defaultExpectedCapacity = dayIndex === 0 ? 0 : sprintCapacity;
 
-      if (sprintHistoriesOnDay.length === 0) {
-        return emptyDay;
+      const expectedDailyCapacity =
+        cumulativeCapacityPerDay.find((cumDate) =>
+          dayjs(cumDate.day).isSame(
+            dayjs(date).subtract(numberOfDaysToSubtract, 'day'),
+            'day'
+          )
+        )?.capacity ?? defaultExpectedCapacity;
+
+      if (sprintHistories.length === 0) {
+        // if no history on the first day, return full capacity
+        if (dayIndex === 0) {
+          return {
+            time: dayjs(date).toISOString(),
+            [DataPlotLine.EXPECTED_POINTS]: roundToOneDecimal(sprintCapacity),
+            [DataPlotLine.EXPECTED_POINTS]: roundToOneDecimal(sprintCapacity),
+            [DataPlotLine.POINTS_LEFT]: roundToOneDecimal(sprintCapacity),
+            [DataPlotLine.POINTS_DONE_INC_VALIDATE]:
+              roundToOneDecimal(sprintCapacity),
+          };
+        }
+
+        return {
+          time: dayjs(date).toISOString(),
+          [DataPlotLine.EXPECTED_POINTS]: roundToOneDecimal(
+            isLastDay ? 0 : sprintCapacity - expectedDailyCapacity
+          ),
+        };
       }
 
       const latestSprintHistoryOnDay =
-        sprintHistoriesOnDay[sprintHistoriesOnDay.length - 1];
+        sprintHistories[sprintHistories.length - 1];
 
       const { pointsInDone, pointsInToValidate } = getPointsInStatuses(
         latestSprintHistoryOnDay.sprintStatusHistory,
@@ -166,7 +184,10 @@ export const getDataForSprintChart = (
       );
 
       return {
-        ...emptyDay,
+        time: dayjs(date).toISOString(),
+        [DataPlotLine.EXPECTED_POINTS]: roundToOneDecimal(
+          sprintCapacity - expectedDailyCapacity
+        ),
         [DataPlotLine.POINTS_LEFT]: roundToOneDecimal(
           sprintCapacity - pointsInDone
         ),
@@ -177,15 +198,7 @@ export const getDataForSprintChart = (
     }
   );
 
-  const startOfSprint: DataPlotType = {
-    time: dayjs(sprint.startDate).toISOString(),
-    sprintDay: -1,
-    [DataPlotLine.EXPECTED_POINTS]: roundToOneDecimal(sprintCapacity),
-    [DataPlotLine.POINTS_LEFT]: roundToOneDecimal(sprintCapacity),
-    [DataPlotLine.POINTS_DONE_INC_VALIDATE]: roundToOneDecimal(sprintCapacity),
-  };
-
-  return [startOfSprint, ...plotData];
+  return plotData;
 };
 
 const getPointsInStatuses = (
@@ -222,40 +235,73 @@ const getPointsInStatuses = (
   return { pointsInDone, pointsInToValidate };
 };
 
-export const isDateOnSprintDay = (
-  dateToCheck: Date,
-  targetDate: Date,
-  sprint: Pick<Sprint, 'dailyStartTime'>,
-  allowBefore = false,
-  allowAfter = false
-): boolean => {
-  // Daily Start Time is HH:mm
+/**
+ * Get the xAxis ticks for the sprint chart
+ */
+export const getSprintDaysArray = (
+  sprint: Pick<Sprint, 'startDate' | 'endDate' | 'dailyStartTime'>
+) => {
   const [hours, minutes] = sprint.dailyStartTime.split(':').map(Number);
 
-  const dailyStartTime = dayjs(targetDate)
-    .set('hours', hours)
-    .set('minutes', minutes);
+  const businessDays = getBusinessDaysArray(sprint.startDate, sprint.endDate);
 
-  // If the date is friday, set the to the next monday @ start time
-  const isTargetDateAFriday = dayjs(targetDate).day() === 5;
+  const days = businessDays
+    .map((sprintDay, dayIndex) => {
+      const startTimeOnDay = dayjs(sprintDay)
+        .set('hours', hours)
+        .set('minutes', minutes);
 
-  const dailyEndTime = dayjs(targetDate)
-    .add(isTargetDateAFriday ? 3 : 1, 'day')
-    .set('hours', hours)
-    .set('minutes', minutes);
+      if (dayIndex === 0) {
+        return sprint.startDate;
+      }
 
-  // If date is equal to start time of the day, otherwise it's always missed
-  if (dateToCheck.getTime() === dailyStartTime.valueOf()) {
-    return true;
+      if (dayIndex === businessDays.length - 1) {
+        if (dayjs(sprint.endDate).isAfter(startTimeOnDay)) {
+          return [startTimeOnDay.toDate(), sprint.endDate];
+        } else {
+          return sprint.endDate;
+        }
+      }
+
+      return startTimeOnDay.toDate();
+    })
+    .flat();
+
+  return days;
+};
+
+/**
+ * Assign the sprint history to an array of days
+ */
+export const getSprintDaysArrayWithSprintHistory = (
+  days: Date[],
+  sprintHistory: SprintWithHistory['sprintHistory']
+) => {
+  const sprintDaysWithHistory = [];
+
+  for (let i = 0; i < days.length; i++) {
+    const currentDay = days[i];
+    const previousDay = days[i - 1];
+
+    if (i === 0) {
+      sprintDaysWithHistory.push({
+        date: currentDay,
+        sprintHistories: sprintHistory.filter(
+          (history) => history.timestamp.getTime() < currentDay.getTime()
+        ),
+      });
+      continue;
+    }
+
+    sprintDaysWithHistory.push({
+      date: currentDay,
+      sprintHistories: sprintHistory.filter(
+        (history) =>
+          history.timestamp.getTime() >= previousDay.getTime() &&
+          history.timestamp.getTime() < currentDay.getTime()
+      ),
+    });
   }
 
-  const isAfterStart = allowBefore
-    ? true
-    : dayjs(dateToCheck).isAfter(dailyStartTime);
-
-  const isBeforeEnd = allowAfter
-    ? true
-    : dayjs(dateToCheck).isBefore(dailyEndTime);
-
-  return isAfterStart && isBeforeEnd;
+  return sprintDaysWithHistory;
 };
