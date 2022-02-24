@@ -137,8 +137,9 @@ export const getDataForSprintChart = (
           ? 3
           : 1;
 
-      // const defaultExpectedCapacity =
-      //   dayIndex === sprintDaysWithHistory.length - 1 ? 0 : sprintCapacity;
+      const isLastDay = dayIndex === sprintDaysWithHistory.length - 1;
+
+      const defaultExpectedCapacity = dayIndex === 0 ? 0 : sprintCapacity;
 
       const expectedDailyCapacity =
         cumulativeCapacityPerDay.find((cumDate) =>
@@ -146,12 +147,12 @@ export const getDataForSprintChart = (
             dayjs(date).subtract(numberOfDaysToSubtract, 'day'),
             'day'
           )
-        )?.capacity ?? (dayIndex === 0 ? 0 : sprintCapacity);
+        )?.capacity ?? defaultExpectedCapacity;
 
       const emptyDay = {
         time: dayjs(date).toISOString(),
         [DataPlotLine.EXPECTED_POINTS]: roundToOneDecimal(
-          sprintCapacity - expectedDailyCapacity
+          isLastDay ? 0 : sprintCapacity - expectedDailyCapacity
         ),
       };
 
