@@ -6,7 +6,8 @@ import {
   getDataForSprintChart,
   getDaysArray,
   getSprintCapacityPerDay,
-  isDateOnSprintDay,
+  getSprintDaysArray,
+  getSprintDaysArrayWithSprintHistory,
 } from './chart';
 
 describe('chart calculation', () => {
@@ -247,29 +248,26 @@ describe('chart calculation', () => {
       expect(plotData).toStrictEqual([
         {
           time: '2022-02-07T16:00:00.000Z',
-          sprintDay: -1,
           Expected: 25,
           Done: 25,
           'To Validate': 25,
         },
-        { time: '2022-02-08T09:00:00.000Z', sprintDay: 0, Expected: 22.5 },
-        { time: '2022-02-09T09:00:00.000Z', sprintDay: 1, Expected: 17.5 },
+        { time: '2022-02-08T09:00:00.000Z', Expected: 22.5 },
+        { time: '2022-02-09T09:00:00.000Z', Expected: 17.5 },
         {
           time: '2022-02-10T09:00:00.000Z',
-          sprintDay: 2,
           Expected: 12.5,
           Done: 24,
           'To Validate': 22,
         },
-        { time: '2022-02-11T09:00:00.000Z', sprintDay: 3, Expected: 7.5 },
+        { time: '2022-02-11T09:00:00.000Z', Expected: 7.5 },
         {
-          time: '2022-02-12T09:00:00.000Z',
-          sprintDay: 4,
+          time: '2022-02-14T09:00:00.000Z',
           Done: 15,
           'To Validate': 15,
           Expected: 2.5,
         },
-        { time: '2022-02-14T15:00:00.000Z', sprintDay: 5, Expected: 0 },
+        { time: '2022-02-14T15:00:00.000Z', Expected: 0 },
       ]);
     });
 
@@ -283,17 +281,16 @@ describe('chart calculation', () => {
       expect(plotDataNoWorkDone).toStrictEqual([
         {
           time: '2022-02-07T16:00:00.000Z',
-          sprintDay: -1,
           Expected: 25,
           Done: 25,
           'To Validate': 25,
         },
-        { time: '2022-02-08T09:00:00.000Z', sprintDay: 0, Expected: 22.5 },
-        { time: '2022-02-09T09:00:00.000Z', sprintDay: 1, Expected: 17.5 },
-        { time: '2022-02-10T09:00:00.000Z', sprintDay: 2, Expected: 12.5 },
-        { time: '2022-02-11T09:00:00.000Z', sprintDay: 3, Expected: 7.5 },
-        { time: '2022-02-12T09:00:00.000Z', sprintDay: 4, Expected: 2.5 },
-        { time: '2022-02-14T15:00:00.000Z', sprintDay: 5, Expected: 0 },
+        { time: '2022-02-08T09:00:00.000Z', Expected: 22.5 },
+        { time: '2022-02-09T09:00:00.000Z', Expected: 17.5 },
+        { time: '2022-02-10T09:00:00.000Z', Expected: 12.5 },
+        { time: '2022-02-11T09:00:00.000Z', Expected: 7.5 },
+        { time: '2022-02-14T09:00:00.000Z', Expected: 2.5 },
+        { time: '2022-02-14T15:00:00.000Z', Expected: 0 },
       ]);
     });
 
@@ -336,7 +333,7 @@ describe('chart calculation', () => {
           ],
         },
         {
-          // AFTER end of the sprint (should count towards LAST day)
+          // AFTER end of the sprint (should NOT COUNT)
           id: 'sprint-history-3',
           sprintId: sprint.id,
           createdAt: new Date(),
@@ -364,70 +361,190 @@ describe('chart calculation', () => {
       expect(plotDataBeforeSprintStart).toStrictEqual([
         {
           time: '2022-02-07T16:00:00.000Z',
-          sprintDay: -1,
           Expected: 25,
-          Done: 25,
-          'To Validate': 25,
+          Done: 15,
+          'To Validate': 15,
         },
         {
           time: '2022-02-08T09:00:00.000Z',
-          sprintDay: 0,
-          Done: 15,
-          'To Validate': 15,
+
           Expected: 22.5,
         },
-        { time: '2022-02-09T09:00:00.000Z', sprintDay: 1, Expected: 17.5 },
+        { time: '2022-02-09T09:00:00.000Z', Expected: 17.5 },
         {
           time: '2022-02-10T09:00:00.000Z',
-          sprintDay: 2,
+
           Done: 10,
           'To Validate': 10,
           Expected: 12.5,
         },
-        { time: '2022-02-11T09:00:00.000Z', sprintDay: 3, Expected: 7.5 },
-        { time: '2022-02-12T09:00:00.000Z', sprintDay: 4, Expected: 2.5 },
+        { time: '2022-02-11T09:00:00.000Z', Expected: 7.5 },
+        { time: '2022-02-14T09:00:00.000Z', Expected: 2.5 },
         {
           time: '2022-02-14T15:00:00.000Z',
-          sprintDay: 5,
-          Done: 0,
-          'To Validate': 0,
           Expected: 0,
         },
       ]);
     });
   });
 
-  describe('isDateOnSprintDay', () => {
-    it.each`
-      date                            | dateToCheckIfOn           | sprintDayStartTime | expected
-      ${new Date('2022-01-04 12:00')} | ${new Date('2022-01-04')} | ${'09:00'}         | ${true}
-      ${new Date('2022-01-04 6:00')}  | ${new Date('2022-01-04')} | ${'09:00'}         | ${false}
-      ${new Date('2022-01-05 6:00')}  | ${new Date('2022-01-04')} | ${'09:00'}         | ${true}
-    `(
-      'should return $expected when $dateToCheckIfOn is on sprint day $sprintDayStartTime',
-      ({ date, dateToCheckIfOn, sprintDayStartTime, expected }) => {
-        const result = isDateOnSprintDay(date, dateToCheckIfOn, {
-          dailyStartTime: sprintDayStartTime,
-        });
-        expect(result).toBe(expected);
-      }
-    );
+  describe('getSprintDaysArray', () => {
+    it('starts and ends after daily start time', () => {
+      const result = getSprintDaysArray({
+        startDate: new Date('2022-01-10 16:00'),
+        endDate: new Date('2022-01-18 16:00'),
+        dailyStartTime: '09:00',
+      });
 
-    it.each`
-      date                            | dateToCheckIfOn           | sprintDayStartTime | expected
-      ${new Date('2022-01-08 12:00')} | ${new Date('2022-01-07')} | ${'09:00'}         | ${true}
-      ${new Date('2022-01-09 12:00')} | ${new Date('2022-01-07')} | ${'09:00'}         | ${true}
-      ${new Date('2022-01-10 08:59')} | ${new Date('2022-01-07')} | ${'09:00'}         | ${true}
-      ${new Date('2022-01-10 09:00')} | ${new Date('2022-01-07')} | ${'09:00'}         | ${false}
-      ${new Date('2022-01-10 09:00')} | ${new Date('2022-01-10')} | ${'09:00'}         | ${true}
-    `(
-      'should COVER WEEKENDS return $expected when $dateToCheckIfOn is on sprint day $sprintDayStartTime',
-      ({ date, dateToCheckIfOn, sprintDayStartTime, expected }) => {
-        const result = isDateOnSprintDay(date, dateToCheckIfOn, {
-          dailyStartTime: sprintDayStartTime,
-        });
-        expect(result).toBe(expected);
-      }
-    );
+      expect(result).toStrictEqual([
+        new Date('2022-01-10T16:00:00.000Z'),
+        new Date('2022-01-11T09:00:00.000Z'),
+        new Date('2022-01-12T09:00:00.000Z'),
+        new Date('2022-01-13T09:00:00.000Z'),
+        new Date('2022-01-14T09:00:00.000Z'),
+        new Date('2022-01-17T09:00:00.000Z'),
+        new Date('2022-01-18T09:00:00.000Z'),
+        new Date('2022-01-18T16:00:00.000Z'),
+      ]);
+    });
+
+    it('starts before the daily sprint time', () => {
+      const result = getSprintDaysArray({
+        startDate: new Date('2022-01-10 05:00'),
+        endDate: new Date('2022-01-18 16:00'),
+        dailyStartTime: '09:00',
+      });
+
+      expect(result).toStrictEqual([
+        new Date('2022-01-10T05:00:00.000Z'),
+        new Date('2022-01-11T09:00:00.000Z'),
+        new Date('2022-01-12T09:00:00.000Z'),
+        new Date('2022-01-13T09:00:00.000Z'),
+        new Date('2022-01-14T09:00:00.000Z'),
+        new Date('2022-01-17T09:00:00.000Z'),
+        new Date('2022-01-18T09:00:00.000Z'),
+        new Date('2022-01-18T16:00:00.000Z'),
+      ]);
+    });
+
+    it('ends before daily sprint time', () => {
+      const result = getSprintDaysArray({
+        startDate: new Date('2022-01-10 16:00'),
+        endDate: new Date('2022-01-18 05:00'),
+        dailyStartTime: '09:00',
+      });
+
+      expect(result).toStrictEqual([
+        new Date('2022-01-10T16:00:00.000Z'),
+        new Date('2022-01-11T09:00:00.000Z'),
+        new Date('2022-01-12T09:00:00.000Z'),
+        new Date('2022-01-13T09:00:00.000Z'),
+        new Date('2022-01-14T09:00:00.000Z'),
+        new Date('2022-01-17T09:00:00.000Z'),
+        new Date('2022-01-18T05:00:00.000Z'),
+      ]);
+    });
+
+    it('sprints end on a friday', () => {
+      const result = getSprintDaysArray({
+        startDate: new Date('2022-01-12 12:00'),
+        endDate: new Date('2022-01-14 18:00'),
+        dailyStartTime: '09:00',
+      });
+
+      expect(result).toStrictEqual([
+        new Date('2022-01-12T12:00:00.000Z'),
+        new Date('2022-01-13T09:00:00.000Z'),
+        new Date('2022-01-14T09:00:00.000Z'),
+        new Date('2022-01-14T18:00:00.000Z'),
+      ]);
+    });
+
+    it('"A User Enters a Bar" and puts in some really stupid data', () => {
+      const result = getSprintDaysArray({
+        startDate: new Date('2022-01-10 01:00'),
+        endDate: new Date('2022-01-18 01:00'),
+        dailyStartTime: '12:00',
+      });
+
+      expect(result).toStrictEqual([
+        new Date('2022-01-10T01:00:00.000Z'),
+        new Date('2022-01-11T12:00:00.000Z'),
+        new Date('2022-01-12T12:00:00.000Z'),
+        new Date('2022-01-13T12:00:00.000Z'),
+        new Date('2022-01-14T12:00:00.000Z'),
+        new Date('2022-01-17T12:00:00.000Z'),
+        new Date('2022-01-18T01:00:00.000Z'),
+      ]);
+    });
+
+    it('real sprint data', () => {
+      const result = getSprintDaysArray({
+        startDate: new Date('2022-02-21 16:00'),
+        endDate: new Date('2022-02-28 15:50'),
+        dailyStartTime: '09:00',
+      });
+
+      expect(result).toStrictEqual([
+        new Date('2022-02-21T16:00:00.000Z'),
+        new Date('2022-02-22T09:00:00.000Z'),
+        new Date('2022-02-23T09:00:00.000Z'),
+        new Date('2022-02-24T09:00:00.000Z'),
+        new Date('2022-02-25T09:00:00.000Z'),
+        new Date('2022-02-28T09:00:00.000Z'),
+        new Date('2022-02-28T15:50:00.000Z'),
+      ]);
+    });
+  });
+
+  describe('getSprintDaysArrayWithSprintHistory', () => {
+    it('should group sprint histories on the right day', () => {
+      const result = getSprintDaysArrayWithSprintHistory(
+        [
+          new Date('2020-01-10T09:00:00.000Z'), // day 1
+          new Date('2020-01-11T09:00:00.000Z'), // day 2
+          new Date('2020-01-12T09:00:00.000Z'), // day 3
+        ],
+        [
+          {
+            timestamp: new Date('2020-01-01T15:00:00.000Z'), // before the first day -> day 1
+          },
+          {
+            timestamp: new Date('2020-01-10T15:00:00.000Z'), // on the second day -> day 2
+          },
+          {
+            timestamp: new Date('2020-01-11T09:01:00.000Z'), // on the third day -> day 3
+          },
+          {
+            timestamp: new Date('2020-01-15T09:01:00.000Z'), // after the last day -> not included
+          },
+        ] as SprintWithHistory['sprintHistory']
+      );
+
+      expect(result).toStrictEqual([
+        {
+          date: new Date('2020-01-10T09:00:00.000Z'), // day 1
+          sprintHistories: [
+            { timestamp: new Date('2020-01-01T15:00:00.000Z') },
+          ],
+        },
+        {
+          date: new Date('2020-01-11T09:00:00.000Z'), // day 2
+          sprintHistories: [
+            {
+              timestamp: new Date('2020-01-10T15:00:00.000Z'),
+            },
+          ],
+        },
+        {
+          date: new Date('2020-01-12T09:00:00.000Z'), // day 3
+          sprintHistories: [
+            {
+              timestamp: new Date('2020-01-11T09:01:00.000Z'),
+            },
+          ],
+        },
+      ]);
+    });
   });
 });
