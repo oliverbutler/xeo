@@ -2,7 +2,7 @@ import { ObjectSchema, Schema, ValidationError } from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import axios, { AxiosError } from 'axios';
 import pino from 'pino';
-import useSWR from 'swr';
+import useSWR, { SWRConfiguration } from 'swr';
 import { fetcher } from 'components/Connections/Notion/NotionBacklog/NotionBacklog';
 
 export type GenericAPIRequest<T> = {
@@ -60,9 +60,15 @@ type QueryResponse<T extends APIGetRequest<object>> =
     };
 
 export const useQuery = <T extends APIGetRequest<object>>(
-  url: string
+  url: string,
+  skip?: boolean,
+  options?: SWRConfiguration<QueryResponse<T>>
 ): QueryResponse<T> => {
-  const { data, error } = useSWR(url, fetcher);
+  const { data, error } = useSWR(
+    url,
+    skip ? () => undefined : fetcher,
+    options
+  );
 
   if (!data && !error) {
     return {

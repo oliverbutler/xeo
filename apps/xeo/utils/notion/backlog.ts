@@ -1,5 +1,9 @@
 import { Client } from '@notionhq/client/build/src';
-import { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
+import {
+  GetDatabaseResponse,
+  QueryDatabaseResponse,
+  QueryDatabaseParameters,
+} from '@notionhq/client/build/src/api-endpoints';
 import {
   Backlog,
   NotionColumnType,
@@ -8,6 +12,7 @@ import {
 } from '@prisma/client';
 import { logger } from 'utils/api';
 import { performance } from 'perf_hooks';
+import { isNotNullOrUndefined } from '@xeo/utils';
 
 export type Ticket = {
   notionId: string;
@@ -158,6 +163,35 @@ const getIconFromNotionPage = (page: NotionDatabaseItem): TicketIcon | null => {
   }
 };
 
+const getNotionFilterForNotionColumnType = (
+  backlog: Backlog,
+  sprint: Sprint
+): QueryDatabaseParameters['filter'] => {
+  switch (backlog.notionColumnType) {
+    case NotionColumnType.MULTI_SELECT:
+      return {
+        property: backlog.sprintColumnName,
+        multi_select: {
+          contains: sprint.notionSprintValue,
+        },
+      };
+    case NotionColumnType.RELATIONSHIP_ID:
+      return {
+        property: backlog.sprintColumnName,
+        relation: {
+          contains: sprint.notionSprintValue,
+        },
+      };
+    case NotionColumnType.SELECT:
+      return {
+        property: backlog.sprintColumnName,
+        select: {
+          equals: sprint.notionSprintValue,
+        },
+      };
+  }
+};
+
 export const getProductBacklogForSprint = async ({
   notionBacklog,
   sprint,
@@ -178,26 +212,12 @@ export const getProductBacklogForSprint = async ({
     `getProductBacklogForSprint > Query Notion for  ${sprint.notionSprintValue} in db ${notionBacklog.databaseName}`
   );
 
-  const filter =
-    notionBacklog.notionColumnType === NotionColumnType.SELECT
-      ? {
-          select: {
-            equals: sprint.notionSprintValue,
-          },
-        }
-      : {
-          multi_select: {
-            contains: sprint.notionSprintValue,
-          },
-        };
+  const filter = getNotionFilterForNotionColumnType(notionBacklog, sprint);
 
   try {
     const databaseResponse = await notion.databases.query({
       database_id: notionBacklog.databaseId,
-      filter: {
-        property: notionBacklog.sprintColumnName,
-        ...filter,
-      },
+      filter,
     });
 
     const endTime = performance.now();
@@ -230,4 +250,91 @@ export const getProductBacklogForSprint = async ({
       'Failed to query Notion for your Backlog, please try again later'
     );
   }
+};
+
+export type NotionAPIColumnType = GetDatabaseResponse['properties'][0]['type'];
+
+export const getAvailableColumnOptions = async ({
+  accessToken,
+  databaseId,
+  columnName,
+  searchString,
+}: {
+  accessToken: string;
+  databaseId: string;
+  columnName: string;
+  searchString: string;
+}): Promise<{
+  type: NotionColumnType;
+  options: { label: string; value: string }[];
+}> => {
+  const notion = new Client({ auth: accessToken });
+
+  const databaseResponse = await notion.databases.retrieve({
+    database_id: databaseId,
+  });
+
+  const column = databaseResponse.properties[columnName];
+
+  if (!column) {
+    throw new Error(
+      `Could not find column ${columnName} in database ${databaseId}`
+    );
+  }
+
+  if (column.type === 'select') {
+    return {
+      type: NotionColumnType.SELECT,
+      options: column.select.options.map((option) => ({
+        label: option.name,
+        value: option.name, // Notion uses the name "PEX 22-04" as the properties key
+      })),
+    };
+  }
+
+  if (column.type === 'multi_select') {
+    return {
+      type: NotionColumnType.MULTI_SELECT,
+      options: column.multi_select.options.map((option) => ({
+        label: option.name,
+        value: option.name, // Notion uses the name "PEX 22-04" as the properties key
+      })),
+    };
+  }
+
+  if (column.type !== 'relation') {
+    throw new Error(
+      `Column ${columnName} in database ${databaseId}, ${column.type} is not supported`
+    );
+  }
+
+  // Find options for relation
+  const relationDatabaseResponse = await notion.databases.query({
+    database_id: column.relation.database_id,
+    filter: {
+      property: 'title',
+      title: {
+        contains: searchString,
+      },
+    },
+  });
+
+  const relationColumn = relationDatabaseResponse.results.map((result) => {
+    if (!isNotionDatabaseItem(result)) {
+      throw new Error('Not a notion database item');
+    }
+
+    const titleColumn = Object.values(result.properties).find(
+      (p) => p.type === 'title'
+    );
+
+    return titleColumn?.type === 'title' && titleColumn.title.length > 0
+      ? { label: titleColumn.title[0].plain_text, value: result.id }
+      : null;
+  });
+
+  return {
+    type: NotionColumnType.RELATIONSHIP_ID,
+    options: relationColumn.filter(isNotNullOrUndefined),
+  };
 };

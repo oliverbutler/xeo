@@ -13,13 +13,14 @@ import { PostCreateSprintRequest } from 'pages/api/sprint';
 import { useRouter } from 'next/router';
 import { BacklogWithNotionStatusLinksAndOwner } from 'pages/api/backlog';
 import { groupBy } from '@xeo/utils';
+import { NotionSprintSelector } from './NotionSprintSelector';
 
-interface SprintCreateForm {
+export interface SprintCreateForm {
   backlog: BacklogSelectType;
   startDate: string;
   endDate: string;
   sprintName: string;
-  notionSprintValue: string;
+  notionSprintValue: SprintSelectOption | null | undefined;
   sprintGoal: string;
   teamSpeed: number;
   dayStartTime: string;
@@ -36,6 +37,11 @@ interface BacklogSelectType {
   value: string;
   label: string;
 }
+
+export type SprintSelectOption = {
+  value: string;
+  label: string;
+};
 
 interface BacklogGroup {
   label: string;
@@ -86,6 +92,10 @@ export const SprintCreate: React.FunctionComponent<SprintCreateProps> = ({
   const teamSpeed = watch('teamSpeed');
 
   const createSprint = async (data: SprintCreateForm) => {
+    if (!data.notionSprintValue) {
+      return toast.error('Please select a Notion Sprint');
+    }
+
     const body: PostCreateSprintRequest['request'] = {
       input: {
         name: data.sprintName,
@@ -93,7 +103,7 @@ export const SprintCreate: React.FunctionComponent<SprintCreateProps> = ({
         startDate: dayjs(data.startDate).toISOString(),
         endDate: dayjs(data.endDate).toISOString(),
         teamSpeed: data.teamSpeed,
-        notionSprintValue: data.notionSprintValue,
+        notionSprintValue: data.notionSprintValue.value,
         dayStartTime: data.dayStartTime,
         developers: data.devs.map((dev) => ({
           name: dev.name,
@@ -122,7 +132,8 @@ export const SprintCreate: React.FunctionComponent<SprintCreateProps> = ({
 
   return (
     <form className="gap-4" onSubmit={handleSubmit(createSprint)}>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <h2>Notion Options</h2>
+      <div className="grid grid-cols-3 gap-4">
         <SelectField
           label="Select Backlog"
           control={form.control}
@@ -130,6 +141,10 @@ export const SprintCreate: React.FunctionComponent<SprintCreateProps> = ({
           options={backlogSelectOptions}
           rules={{ required: true }}
         />
+        <NotionSprintSelector form={form} backlogs={backlogs} />
+      </div>
+      <h2>Sprint Details</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Input
           label="Sprint Name"
           {...register('sprintName', { required: true })}
@@ -165,10 +180,6 @@ export const SprintCreate: React.FunctionComponent<SprintCreateProps> = ({
           type="time"
           label="Daily Start Time"
           {...register('dayStartTime', { required: true })}
-        />
-        <Input
-          label="Notion Sprint Value"
-          {...register('notionSprintValue', { required: true })}
         />
       </div>
 
