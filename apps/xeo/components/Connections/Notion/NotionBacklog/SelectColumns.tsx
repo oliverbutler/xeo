@@ -10,6 +10,7 @@ import {
 interface Props {
   form: UseFormReturn<DatabaseSelectionForm>;
 }
+
 export const SelectColumns: React.FunctionComponent<Props> = ({
   form: { control, watch },
 }) => {
@@ -19,6 +20,21 @@ export const SelectColumns: React.FunctionComponent<Props> = ({
   const availableDatabaseProperties = currentDatabaseSelected
     ? Object.values(currentDatabaseSelected.properties)
     : [];
+
+  const isNotionPropertyColumn = (
+    property: DatabasePropertyOption,
+    notionColumnType: NotionColumnType | undefined
+  ) => {
+    switch (notionColumnType) {
+      case NotionColumnType.MULTI_SELECT:
+        return property.type === 'multi_select';
+      case NotionColumnType.SELECT:
+        return property.type === 'select';
+      case NotionColumnType.RELATIONSHIP_ID:
+        return property.type === 'relation';
+    }
+    return false;
+  };
 
   const propertiesOptions: DatabasePropertyOption[] =
     availableDatabaseProperties.map((property) => ({
@@ -35,6 +51,10 @@ export const SelectColumns: React.FunctionComponent<Props> = ({
     {
       value: NotionColumnType.MULTI_SELECT,
       label: 'Multi Select',
+    },
+    {
+      value: NotionColumnType.RELATIONSHIP_ID,
+      label: 'Relationship',
     },
   ];
 
@@ -77,9 +97,7 @@ export const SelectColumns: React.FunctionComponent<Props> = ({
           name="sprintId"
           // error={errors.sprintId}
           options={propertiesOptions.filter((o) =>
-            currentSprintSelectType?.value === NotionColumnType.SELECT
-              ? o.type === 'select'
-              : o.type === 'multi_select'
+            isNotionPropertyColumn(o, currentSprintSelectType?.value)
           )}
           rules={{ required: true }}
           isDisabled={!currentDatabaseSelected || !currentSprintSelectType}

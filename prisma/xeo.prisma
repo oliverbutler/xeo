@@ -83,6 +83,7 @@ enum BacklogStatus {
 enum NotionColumnType {
   SELECT
   MULTI_SELECT
+  RELATIONSHIP_ID
 }
 
 model Backlog {
@@ -97,7 +98,7 @@ model Backlog {
   pointsColumnName   String
   statusColumnName   String
   sprintColumnName   String
-  notionColumnType   NotionColumnType   @default(SELECT)
+  notionColumnType   NotionColumnType
   notionStatusLinks  NotionStatusLink[]
   sprints            Sprint[]
   createdAt          DateTime           @default(now())

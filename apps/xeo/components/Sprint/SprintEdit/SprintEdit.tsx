@@ -119,6 +119,21 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
   return (
     <div>
       <form className="gap-4" onSubmit={handleSubmit(updateSprint)}>
+        <h2>Notion Options</h2>
+        <p>These properties are not adjustable</p>
+        <div className="grid grid-cols-3 gap-4">
+          <Input
+            label="Backlog"
+            disabled={true}
+            defaultValue={sprint.backlogId}
+          />
+          <Input
+            label="Notion Sprint"
+            disabled={true}
+            defaultValue={sprint.notionSprintValue}
+          />
+        </div>
+        <h2>Sprint Details</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input
             label="Sprint Name"
@@ -137,16 +152,13 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
           {...register('sprintGoal', { required: true })}
           placeholder="AaU I can..."
         />
-
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Input
-            className="row-span-2"
             type="datetime-local"
             label="Start Time"
             {...register('startDate', { required: true })}
           />
           <Input
-            className="row-span-2"
             type="datetime-local"
             label="End Time"
             {...register('endDate', { required: true })}
@@ -155,10 +167,6 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
             type="time"
             label="Daily Start Time"
             {...register('dayStartTime', { required: true })}
-          />
-          <Input
-            label="Notion Sprint Value"
-            {...register('notionSprintValue', { required: true })}
           />
         </div>
         <SprintCapacityTable
