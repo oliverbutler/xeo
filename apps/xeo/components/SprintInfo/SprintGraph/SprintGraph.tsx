@@ -169,6 +169,13 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
     axisFactor
   );
 
+  const xAxisTicks = smallGraph
+    ? [
+        dayjs(sprint?.startDate).toISOString(),
+        dayjs(sprint?.endDate).toISOString(),
+      ]
+    : undefined;
+
   return (
     <div
       key={plotData ? 'sprint-graph' : 'sprint-graph-loading'}
@@ -201,13 +208,16 @@ export const SprintGraph: React.FunctionComponent<Props> = ({
             dataKey="time"
             name="Time"
             tickFormatter={(time, index) =>
-              index === 0
+              smallGraph
+                ? dayjs(time).format('ddd DD/MM')
+                : index === 0
                 ? 'Start'
                 : index === (plotData ? plotData.length - 1 : -1)
                 ? 'End'
                 : dayjs(time).format('ddd DD/MM')
             }
             type="category"
+            ticks={xAxisTicks}
             stroke={
               isDark
                 ? theme.extend.colors.dark[500]
