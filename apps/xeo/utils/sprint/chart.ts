@@ -217,9 +217,18 @@ export const getDataForSprintChart = (
 
       return {
         ...data,
-        [DataPlotLine.PENDING_POINTS_LEFT]: data[DataPlotLine.POINTS_LEFT],
-        [DataPlotLine.PENDING_POINTS_DONE_INC_VALIDATE]:
-          data[DataPlotLine.POINTS_DONE_INC_VALIDATE],
+        ...(data[DataPlotLine.POINTS_LEFT]
+          ? {
+              [DataPlotLine.PENDING_POINTS_LEFT]:
+                data[DataPlotLine.POINTS_LEFT],
+            }
+          : undefined),
+        ...(data[DataPlotLine.POINTS_DONE_INC_VALIDATE]
+          ? {
+              [DataPlotLine.PENDING_POINTS_DONE_INC_VALIDATE]:
+                data[DataPlotLine.POINTS_DONE_INC_VALIDATE],
+            }
+          : undefined),
       };
     }
   );
