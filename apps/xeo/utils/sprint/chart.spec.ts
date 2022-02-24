@@ -1,6 +1,7 @@
 import { BacklogStatus, NotionStatusLink, Sprint } from '@prisma/client';
 import { SprintWithHistory } from 'pages/api/sprint';
 import {
+  DataPlotLine,
   getBusinessDaysArray,
   getCumulativeCapacityPerDay,
   getDataForSprintChart,
@@ -9,6 +10,15 @@ import {
   getSprintDaysArray,
   getSprintDaysArrayWithSprintHistory,
 } from './chart';
+import MockDate from 'mockdate';
+
+beforeEach(() => {
+  MockDate.set(new Date('2022-03-01T00:00:00.000Z'));
+});
+
+afterEach(() => {
+  MockDate.reset();
+});
 
 describe('chart calculation', () => {
   it('should calculate getDaysArray correctly', () => {
@@ -248,26 +258,44 @@ describe('chart calculation', () => {
       expect(plotData).toStrictEqual([
         {
           time: '2022-02-07T16:00:00.000Z',
-          Expected: 25,
-          Done: 25,
-          'To Validate': 25,
+          [DataPlotLine.EXPECTED_POINTS]: 25,
+          [DataPlotLine.POINTS_LEFT]: 25,
+          [DataPlotLine.POINTS_DONE_INC_VALIDATE]: 25,
+          [DataPlotLine.PENDING_POINTS_LEFT]: 25,
+          [DataPlotLine.PENDING_POINTS_DONE_INC_VALIDATE]: 25,
         },
-        { time: '2022-02-08T09:00:00.000Z', Expected: 22.5 },
-        { time: '2022-02-09T09:00:00.000Z', Expected: 17.5 },
+        {
+          time: '2022-02-08T09:00:00.000Z',
+          [DataPlotLine.EXPECTED_POINTS]: 22.5,
+        },
+        {
+          time: '2022-02-09T09:00:00.000Z',
+          [DataPlotLine.EXPECTED_POINTS]: 17.5,
+        },
         {
           time: '2022-02-10T09:00:00.000Z',
-          Expected: 12.5,
-          Done: 24,
-          'To Validate': 22,
+          [DataPlotLine.EXPECTED_POINTS]: 12.5,
+          [DataPlotLine.POINTS_LEFT]: 24,
+          [DataPlotLine.POINTS_DONE_INC_VALIDATE]: 22,
+          [DataPlotLine.PENDING_POINTS_LEFT]: 24,
+          [DataPlotLine.PENDING_POINTS_DONE_INC_VALIDATE]: 22,
         },
-        { time: '2022-02-11T09:00:00.000Z', Expected: 7.5 },
+        {
+          time: '2022-02-11T09:00:00.000Z',
+          [DataPlotLine.EXPECTED_POINTS]: 7.5,
+        },
         {
           time: '2022-02-14T09:00:00.000Z',
-          Done: 15,
-          'To Validate': 15,
-          Expected: 2.5,
+          [DataPlotLine.POINTS_LEFT]: 15,
+          [DataPlotLine.POINTS_DONE_INC_VALIDATE]: 15,
+          [DataPlotLine.EXPECTED_POINTS]: 2.5,
+          [DataPlotLine.PENDING_POINTS_LEFT]: 15,
+          [DataPlotLine.PENDING_POINTS_DONE_INC_VALIDATE]: 15,
         },
-        { time: '2022-02-14T15:00:00.000Z', Expected: 0 },
+        {
+          time: '2022-02-14T15:00:00.000Z',
+          [DataPlotLine.EXPECTED_POINTS]: 0,
+        },
       ]);
     });
 
@@ -281,16 +309,36 @@ describe('chart calculation', () => {
       expect(plotDataNoWorkDone).toStrictEqual([
         {
           time: '2022-02-07T16:00:00.000Z',
-          Expected: 25,
-          Done: 25,
-          'To Validate': 25,
+          [DataPlotLine.EXPECTED_POINTS]: 25,
+          [DataPlotLine.POINTS_LEFT]: 25,
+          [DataPlotLine.POINTS_DONE_INC_VALIDATE]: 25,
+          [DataPlotLine.PENDING_POINTS_LEFT]: 25,
+          [DataPlotLine.PENDING_POINTS_DONE_INC_VALIDATE]: 25,
         },
-        { time: '2022-02-08T09:00:00.000Z', Expected: 22.5 },
-        { time: '2022-02-09T09:00:00.000Z', Expected: 17.5 },
-        { time: '2022-02-10T09:00:00.000Z', Expected: 12.5 },
-        { time: '2022-02-11T09:00:00.000Z', Expected: 7.5 },
-        { time: '2022-02-14T09:00:00.000Z', Expected: 2.5 },
-        { time: '2022-02-14T15:00:00.000Z', Expected: 0 },
+        {
+          time: '2022-02-08T09:00:00.000Z',
+          [DataPlotLine.EXPECTED_POINTS]: 22.5,
+        },
+        {
+          time: '2022-02-09T09:00:00.000Z',
+          [DataPlotLine.EXPECTED_POINTS]: 17.5,
+        },
+        {
+          time: '2022-02-10T09:00:00.000Z',
+          [DataPlotLine.EXPECTED_POINTS]: 12.5,
+        },
+        {
+          time: '2022-02-11T09:00:00.000Z',
+          [DataPlotLine.EXPECTED_POINTS]: 7.5,
+        },
+        {
+          time: '2022-02-14T09:00:00.000Z',
+          [DataPlotLine.EXPECTED_POINTS]: 2.5,
+        },
+        {
+          time: '2022-02-14T15:00:00.000Z',
+          [DataPlotLine.EXPECTED_POINTS]: 0,
+        },
       ]);
     });
 
@@ -361,28 +409,40 @@ describe('chart calculation', () => {
       expect(plotDataBeforeSprintStart).toStrictEqual([
         {
           time: '2022-02-07T16:00:00.000Z',
-          Expected: 25,
-          Done: 15,
-          'To Validate': 15,
+          [DataPlotLine.EXPECTED_POINTS]: 25,
+          [DataPlotLine.POINTS_LEFT]: 15,
+          [DataPlotLine.POINTS_DONE_INC_VALIDATE]: 15,
+          [DataPlotLine.PENDING_POINTS_LEFT]: 15,
+          [DataPlotLine.PENDING_POINTS_DONE_INC_VALIDATE]: 15,
         },
         {
           time: '2022-02-08T09:00:00.000Z',
 
-          Expected: 22.5,
+          [DataPlotLine.EXPECTED_POINTS]: 22.5,
         },
-        { time: '2022-02-09T09:00:00.000Z', Expected: 17.5 },
+        {
+          time: '2022-02-09T09:00:00.000Z',
+          [DataPlotLine.EXPECTED_POINTS]: 17.5,
+        },
         {
           time: '2022-02-10T09:00:00.000Z',
-
-          Done: 10,
-          'To Validate': 10,
-          Expected: 12.5,
+          [DataPlotLine.POINTS_LEFT]: 10,
+          [DataPlotLine.POINTS_DONE_INC_VALIDATE]: 10,
+          [DataPlotLine.EXPECTED_POINTS]: 12.5,
+          [DataPlotLine.PENDING_POINTS_LEFT]: 10,
+          [DataPlotLine.PENDING_POINTS_DONE_INC_VALIDATE]: 10,
         },
-        { time: '2022-02-11T09:00:00.000Z', Expected: 7.5 },
-        { time: '2022-02-14T09:00:00.000Z', Expected: 2.5 },
+        {
+          time: '2022-02-11T09:00:00.000Z',
+          [DataPlotLine.EXPECTED_POINTS]: 7.5,
+        },
+        {
+          time: '2022-02-14T09:00:00.000Z',
+          [DataPlotLine.EXPECTED_POINTS]: 2.5,
+        },
         {
           time: '2022-02-14T15:00:00.000Z',
-          Expected: 0,
+          [DataPlotLine.EXPECTED_POINTS]: 0,
         },
       ]);
     });
