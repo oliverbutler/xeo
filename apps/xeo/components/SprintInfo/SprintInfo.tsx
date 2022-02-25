@@ -15,6 +15,7 @@ import { UserAction, trackSprintAction } from 'utils/analytics';
 import { NextSeo } from 'next-seo';
 import Skeleton from 'react-loading-skeleton';
 import { GraphControls } from './GraphControls/GraphControls';
+import classNames from 'classnames';
 
 dayjs.extend(relativeTime);
 
@@ -89,7 +90,7 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
   const sprintHistoryPlotData = sprintData?.sprintHistoryPlotData;
 
   return (
-    <div className="w-full p-4 sm:p-10">
+    <div className={classNames('w-full p-4', { 'p-4 sm:p-10': !publicMode })}>
       <NextSeo
         title={`Sprint - ${sprint?.name}`}
         description={`View ${sprint?.name}`}
