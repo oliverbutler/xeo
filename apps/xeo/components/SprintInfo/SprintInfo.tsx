@@ -4,7 +4,6 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { GetSprintColumnPlotData } from 'pages/api/sprint/[sprintId]/column-plot-data';
 import { useCallback, useEffect, useState } from 'react';
 import { useSWRConfig } from 'swr';
-import { SprintGraph } from './SprintGraph/SprintGraph';
 import { SprintStats } from './SprintStats/SprintStats';
 import axios from 'axios';
 import { PostUpdateSprintHistory } from 'pages/api/sprint/[sprintId]/update-history';
@@ -16,6 +15,7 @@ import Skeleton from 'react-loading-skeleton';
 import { GraphControls } from './GraphControls/GraphControls';
 import classNames from 'classnames';
 import Button, { ButtonVariation } from '@xeo/ui/lib/Button/Button';
+import { SprintGraphDynamic } from './SprintGraph/SprintGraphDynamic';
 
 dayjs.extend(relativeTime);
 
@@ -142,7 +142,7 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
             showPointsNotStarted={showPointsNotStarted}
             handleUpdateSprintHistory={handleUpdateSprintHistory}
           />
-          <SprintGraph
+          <SprintGraphDynamic
             sprint={sprint}
             plotData={sprintHistoryPlotData}
             showPointsNotStarted={showPointsNotStarted}
