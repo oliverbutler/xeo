@@ -8,7 +8,7 @@ import {
   parseAPIRequest,
 } from 'utils/api';
 import { prisma } from 'utils/db';
-import { withSentry } from '@sentry/nextjs';
+
 import { BacklogRole } from '@prisma/client';
 import Joi from 'joi';
 
@@ -142,4 +142,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return apiError(res, { message: 'Invalid method' }, 400);
 };
 
-export default withSentry(handler);
+export default handler;

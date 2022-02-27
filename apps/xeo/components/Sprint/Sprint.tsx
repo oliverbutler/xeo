@@ -1,4 +1,5 @@
-import { Input, Button, ButtonVariation, Alert } from '@xeo/ui';
+import Button, { ButtonVariation } from '@xeo/ui/lib/Button/Button';
+import { Input } from '@xeo/ui/lib/Input/Input';
 import dayjs from 'dayjs';
 import { GetSprintsRequest } from 'pages/api/sprint';
 import { toast } from 'react-toastify';

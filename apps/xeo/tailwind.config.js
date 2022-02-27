@@ -28,6 +28,7 @@ module.exports = {
   content: [
     join(__dirname, './pages/**/*.{ts,tsx}'),
     join(__dirname, './components/**/*.{ts,tsx}'),
+    join(__dirname, '../../libs/ui/src/**/*.{ts,tsx}'),
     ...createGlobPatternsForDependenciesLocal(__dirname),
   ],
   darkMode: 'class',

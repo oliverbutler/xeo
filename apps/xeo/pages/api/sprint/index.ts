@@ -18,7 +18,7 @@ import { prisma } from 'utils/db';
 import { createSprint, CreateSprint } from 'utils/sprint/adapter';
 import { getDataForSprintChart } from 'utils/sprint/chart';
 import { SprintWithPlotData } from 'utils/sprint/utils';
-import { withSentry } from '@sentry/nextjs';
+
 import { TIME_REGEX } from './[sprintId]';
 
 export type SprintWithHistory = Sprint & {
@@ -155,4 +155,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return apiError(res, { message: 'Method not allowed' }, 405);
 };
 
-export default withSentry(handler);
+export default handler;

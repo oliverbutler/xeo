@@ -1,4 +1,5 @@
-import { Alert, ModalFooter } from '@xeo/ui';
+import { Alert } from '@xeo/ui/lib/Alert/Alert';
+import { ModalFooter } from '@xeo/ui/lib/Modal/Modal';
 import { GetNotionAuthURL } from 'pages/api/connections/notion/auth-url';
 import { useQuery } from 'utils/api';
 

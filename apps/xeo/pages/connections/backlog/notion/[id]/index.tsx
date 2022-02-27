@@ -1,4 +1,4 @@
-import { CentredLoader } from '@xeo/ui';
+import { CentredLoader } from '@xeo/ui/lib/Animate/CentredLoader/CentredLoader';
 import { Backlog } from 'components/Backlog/Backlog';
 import { Content } from 'components/Content';
 import { NextSeo } from 'next-seo';

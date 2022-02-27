@@ -1,4 +1,4 @@
-import { Table } from '@xeo/ui';
+import { Table } from '@xeo/ui/lib/Table/Table';
 import classNames from 'classnames';
 import { getSprintStats } from 'components/SprintInfo/SprintStats/getSprintStats';
 import dayjs from 'dayjs';

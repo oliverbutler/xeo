@@ -13,7 +13,6 @@ import {
 } from 'utils/api';
 import { prisma } from 'utils/db';
 import { updateSprint, UpdateSprint } from 'utils/sprint/adapter';
-import { withSentry } from '@sentry/nextjs';
 
 export type GetSprintRequest = APIGetRequest<{
   sprint: Sprint;
@@ -113,4 +112,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return apiError(res, { message: 'Method not allowed' }, 405);
 };
 
-export default withSentry(handler);
+export default handler;

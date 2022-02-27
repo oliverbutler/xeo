@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { apiError, APIGetRequest, apiResponse } from 'utils/api';
 import { prisma } from 'utils/db';
-import { withSentry } from '@sentry/nextjs';
+
 import { getAvailableColumnOptions } from 'utils/notion/backlog';
 
 export type GetBacklogSprintOptions = APIGetRequest<{
@@ -64,4 +64,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return apiError(res, { message: 'Method not allowed' }, 405);
 };
 
-export default withSentry(handler);
+export default handler;

@@ -3,7 +3,6 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { fetchAvailableDatabasesFromNotion } from 'utils/connections/notion/notion-client';
 import { prisma } from 'utils/db';
-import { withSentry } from '@sentry/nextjs';
 
 export type GetConnectionNotionDatabasesRequest = {
   method: 'GET';
@@ -79,4 +78,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(400).json({ message: 'Invalid request method' });
 };
 
-export default withSentry(handler);
+export default handler;

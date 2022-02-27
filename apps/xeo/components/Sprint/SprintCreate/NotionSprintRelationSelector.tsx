@@ -1,11 +1,11 @@
 import { GetBacklogSprintOptions } from 'pages/api/backlog/[id]/sprint-options';
 import { useController, UseFormReturn } from 'react-hook-form';
 import { apiGet } from 'utils/api';
-import { AsyncSelect } from '@xeo/ui';
 import { SprintCreateForm, SprintSelectOption } from './SprintCreate';
 import { toast } from 'react-toastify';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import { Backlog } from '@prisma/client';
+import { AsyncSelect } from '@xeo/ui/lib/Select/AsyncSelect';
 
 interface Props {
   form: UseFormReturn<SprintCreateForm, unknown>;

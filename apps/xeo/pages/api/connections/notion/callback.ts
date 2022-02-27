@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import { withSentry } from '@sentry/nextjs';
 import { apiError, APIRequest, apiResponse, parseAPIRequest } from 'utils/api';
 import Joi from 'joi';
 import { exchangeCodeForAccessToken } from 'utils/connections/notion/notion-client';
@@ -87,4 +86,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   });
 };
 
-export default withSentry(handler);
+export default handler;

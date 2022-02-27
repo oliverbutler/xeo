@@ -3,7 +3,7 @@ import { Backlog, BacklogRole, NotionStatusLink } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { prisma } from 'utils/db';
-import { withSentry } from '@sentry/nextjs';
+
 import { apiError, APIGetRequest, apiResponse } from 'utils/api';
 
 export type UserRestricted = {
@@ -91,4 +91,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return apiError(res, { message: 'Method not allowed' }, 405);
 };
 
-export default withSentry(handler);
+export default handler;

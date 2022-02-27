@@ -50,14 +50,11 @@ export const Dropdown: React.FunctionComponent<Props> = ({
                   onClick={item.onClick}
                 >
                   {({ active }) => (
-                    <Clickable active={active}>
-                      <a
-                        className={classNames(
-                          'flex items-center w-full px-2 py-1 text-sm'
-                        )}
-                      >
-                        <span className="mr-2">{item.logo}</span> {item.text}
-                      </a>
+                    <Clickable
+                      active={active}
+                      className="flex items-center w-full px-2 py-1 text-sm"
+                    >
+                      <span className="mr-2">{item.logo}</span> {item.text}
                     </Clickable>
                   )}
                 </Menu.Item>

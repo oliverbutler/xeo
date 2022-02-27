@@ -1,5 +1,5 @@
 import { BacklogRole } from '@prisma/client';
-import { Select } from '@xeo/ui';
+import { Select } from '@xeo/ui/lib/Select/Select';
 import { BacklogWithMembersAndRestrictedUsers } from 'pages/api/backlog/[id]';
 import { UpdateBacklogMember } from 'pages/api/backlog/[id]/members/[memberId]';
 import { toast } from 'react-toastify';

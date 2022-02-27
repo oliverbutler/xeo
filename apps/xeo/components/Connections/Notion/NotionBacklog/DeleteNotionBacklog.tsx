@@ -1,4 +1,5 @@
-import { Button, ButtonVariation, Modal, ModalFooter } from '@xeo/ui';
+import Button, { ButtonVariation } from '@xeo/ui/lib/Button/Button';
+import { Modal, ModalFooter } from '@xeo/ui/lib/Modal/Modal';
 import { useBacklog } from 'components/Backlog/useBacklog';
 import { BacklogWithMembersAndRestrictedUsers } from 'pages/api/backlog/[id]';
 

@@ -1,5 +1,6 @@
 import { UserAddIcon } from '@heroicons/react/outline';
-import { Clickable, Table } from '@xeo/ui';
+import { Clickable } from '@xeo/ui/lib/Clickable/Clickable';
+import { Table } from '@xeo/ui/lib/Table/Table';
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
 import {

@@ -1,7 +1,7 @@
 import { Sprint } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { DataPlotType } from 'utils/sprint/chart';
-import { withSentry } from '@sentry/nextjs';
+
 import { apiError, APIGetRequest, apiResponse } from 'utils/api';
 import { getSprintAndPlotDataForPage } from 'utils/sprint/sprint-history';
 
@@ -25,4 +25,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return apiResponse<GetSprintColumnPlotData>(res, sprintAndPlotData);
 };
 
-export default withSentry(handler);
+export default handler;

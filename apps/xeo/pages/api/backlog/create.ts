@@ -9,7 +9,6 @@ import { getSession } from 'next-auth/react';
 import { APIRequest, parseAPIRequest } from 'utils/api';
 import Joi from 'joi';
 import { prisma } from 'utils/db';
-import { withSentry } from '@sentry/nextjs';
 
 export type PostCreateBacklog = APIRequest<
   {
@@ -93,4 +92,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(200).json(returnValue);
 };
 
-export default withSentry(handler);
+export default handler;

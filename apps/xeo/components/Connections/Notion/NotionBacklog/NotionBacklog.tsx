@@ -3,9 +3,9 @@ import { SelectStatusMapping } from './SelectStatusMapping';
 import { SelectColumns } from './SelectColumns';
 import { SelectDatabase } from './SelectDatabase';
 import { useCreateNotionBacklog } from './useCreateNotionBacklog';
-import { ModalFooter } from '@xeo/ui';
 import { NotionConnection } from '@prisma/client';
 import { GetConnectionNotionDatabasesRequest } from 'pages/api/connections/[id]/notion/databases';
+import { ModalFooter } from '@xeo/ui/lib/Modal/Modal';
 
 export const fetcher = (input: any, init: any) =>
   fetch(input, init).then((res) => res.json());

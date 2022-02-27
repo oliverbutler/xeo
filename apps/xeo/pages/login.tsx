@@ -1,9 +1,9 @@
-import { Button } from '@xeo/ui';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { NextSeo } from 'next-seo';
 import Link from 'next/link';
+import Button from '@xeo/ui/lib/Button/Button';
 
 export function Index() {
   const { push, query } = useRouter();

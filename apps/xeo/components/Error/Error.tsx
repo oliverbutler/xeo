@@ -1,4 +1,4 @@
-import { Alert } from '@xeo/ui';
+import { Alert } from '@xeo/ui/lib/Alert/Alert';
 
 interface Props {
   errorMessage: string | React.ReactNode;

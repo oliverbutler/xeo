@@ -1,5 +1,5 @@
 import { NotionColumnType } from '@prisma/client';
-import { SelectField } from '@xeo/ui';
+import { SelectField } from '@xeo/ui/lib/Select/SelectField';
 import { UseFormReturn } from 'react-hook-form';
 import {
   DatabasePropertyOption,

@@ -1,8 +1,9 @@
 import { FormattedMessage, useIntl } from 'react-intl';
-import { Input, Button } from '@xeo/ui';
 import Image from 'next/image';
 import image from 'public/xeo.png';
 import { useLogin } from './useLogin';
+import { Input } from '@xeo/ui/lib/Input/Input';
+import { Button } from '@xeo/ui/lib/Button/Button';
 
 export const Login: React.FunctionComponent = () => {
   const { formatMessage } = useIntl();

@@ -5,7 +5,6 @@ import {
   UserIcon,
   ViewGridAddIcon,
 } from '@heroicons/react/outline';
-import { CentredLoader, Clickable, Resize, useLocalStorage } from '@xeo/ui';
 import classNames from 'classnames';
 import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
@@ -14,8 +13,12 @@ import { useRouter } from 'next/router';
 import { SidebarItem } from './SidebarItem/SidebarItem';
 import { motion, Variants } from 'framer-motion';
 import { useState } from 'react';
-import { useWindowDimensions } from '@xeo/ui';
-import { DarkModeButton } from '@xeo/ui';
+import { useLocalStorage } from '@xeo/ui/hooks/useLocalStorage';
+import { useWindowDimensions } from '@xeo/ui/hooks/useWindowDimensions';
+import { Resize } from '@xeo/ui/lib/Resize/Resize';
+import { Clickable } from '@xeo/ui/lib/Clickable/Clickable';
+import { CentredLoader } from '@xeo/ui/lib/Animate/CentredLoader/CentredLoader';
+import { DarkModeButton } from '@xeo/ui/lib/DarkModeButton/DarkModeButton';
 
 const sidebar = [
   {

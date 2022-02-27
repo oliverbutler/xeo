@@ -1,6 +1,6 @@
 import { Sprint } from '@prisma/client';
-import { ConditionalWrapper } from '@xeo/ui';
-import { SprintGraph } from 'components/SprintInfo/SprintGraph/SprintGraph';
+import { ConditionalWrapper } from '@xeo/ui/lib/ConditionalWrapper/ConditionalWrapper';
+import { SprintGraphDynamic } from 'components/SprintInfo/SprintGraph/SprintGraphDynamic';
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import Skeleton from 'react-loading-skeleton';
@@ -39,7 +39,7 @@ export const SprintPreview: React.FunctionComponent<Props> = ({
           </small>
         </div>
         <div className="h-52 w-full">
-          <SprintGraph
+          <SprintGraphDynamic
             sprint={sprint}
             plotData={plotData}
             showPointsNotStarted

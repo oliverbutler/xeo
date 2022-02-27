@@ -1,4 +1,3 @@
-import { Button, Input, SelectField } from '@xeo/ui';
 import { useForm } from 'react-hook-form';
 import React from 'react';
 import axios from 'axios';
@@ -14,6 +13,9 @@ import { useRouter } from 'next/router';
 import { BacklogWithNotionStatusLinksAndOwner } from 'pages/api/backlog';
 import { groupBy } from '@xeo/utils';
 import { NotionSprintSelector } from './NotionSprintSelector';
+import { SelectField } from '@xeo/ui/lib/Select/SelectField';
+import { Input } from '@xeo/ui/lib/Input/Input';
+import { Button } from '@xeo/ui/lib/Button/Button';
 
 export interface SprintCreateForm {
   backlog: BacklogSelectType;

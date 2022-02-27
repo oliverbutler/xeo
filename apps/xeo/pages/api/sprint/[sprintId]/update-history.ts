@@ -2,7 +2,6 @@ import Joi from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { apiError, APIRequest, apiResponse, parseAPIRequest } from 'utils/api';
 import { updateSprintHistoryIfChanged } from 'utils/sprint/sprint-history';
-import { withSentry } from '@sentry/nextjs';
 
 export type PostUpdateSprintHistory = APIRequest<
   {
@@ -40,4 +39,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default withSentry(handler);
+export default handler;

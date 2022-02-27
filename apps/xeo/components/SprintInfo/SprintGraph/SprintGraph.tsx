@@ -17,19 +17,19 @@ import {
 import classNames from 'classnames';
 import { useTheme } from 'next-themes';
 import utc from 'dayjs/plugin/utc';
-import { useViewport } from '@xeo/ui';
 import { Sprint } from '@prisma/client';
+import { useViewport } from '@xeo/ui/hooks/useViewport';
 
 dayjs.extend(utc);
 
-interface Props {
+export interface SprintGraphProps {
   plotData: DataPlotType[] | undefined;
   showPointsNotStarted?: boolean;
   smallGraph?: boolean;
   sprint: Sprint | undefined;
 }
 
-export const SprintGraph: React.FunctionComponent<Props> = ({
+export const SprintGraph: React.FunctionComponent<SprintGraphProps> = ({
   plotData,
   showPointsNotStarted,
   smallGraph,
