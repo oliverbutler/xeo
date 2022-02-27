@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { prisma } from 'utils/db';
-import { withSentry } from '@sentry/nextjs';
+
 import { apiError, APIGetRequest, apiResponse } from 'utils/api';
 
 export type GetUserSearchRequest = APIGetRequest<{
@@ -43,4 +43,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return apiError(res, { message: 'Method not supported' }, 405);
 };
 
-export default withSentry(handler);
+export default handler;

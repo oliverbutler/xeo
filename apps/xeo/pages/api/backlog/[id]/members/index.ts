@@ -4,7 +4,6 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { apiError, APIRequest, apiResponse, parseAPIRequest } from 'utils/api';
 import { prisma } from 'utils/db';
-import { withSentry } from '@sentry/nextjs';
 
 export type PutCreateBacklogMember = APIRequest<
   {
@@ -99,4 +98,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(400).json({ message: 'Invalid request method' });
 };
 
-export default withSentry(handler);
+export default handler;

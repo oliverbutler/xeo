@@ -3,7 +3,6 @@ import { getSession } from 'next-auth/react';
 import { Client } from '@notionhq/client';
 import { GetDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
 import { isNotNullOrUndefined } from '@xeo/utils';
-import { withSentry } from '@sentry/nextjs';
 
 export type GetNotionDatabasesResponse = {
   databases: {
@@ -52,4 +51,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default withSentry(handler);
+export default handler;

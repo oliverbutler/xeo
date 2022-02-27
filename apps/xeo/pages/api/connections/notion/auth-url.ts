@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import { withSentry } from '@sentry/nextjs';
 import { getSession } from 'next-auth/react';
 import { apiError, APIGetRequest, apiResponse } from 'utils/api';
 
@@ -40,4 +39,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return apiResponse<GetNotionAuthURL>(res, { url: notionOauthUrl }, 200);
 };
 
-export default withSentry(handler);
+export default handler;

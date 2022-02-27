@@ -1,6 +1,6 @@
 import { SprintHistory, SprintStatusHistory } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { withSentry } from '@sentry/nextjs';
+
 import { apiError, APIGetRequest, apiResponse } from 'utils/api';
 import { getSession } from 'next-auth/react';
 import { prisma } from 'utils/db';
@@ -57,4 +57,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return apiError(res, { message: 'Not implemented' }, 501);
 };
 
-export default withSentry(handler);
+export default handler;

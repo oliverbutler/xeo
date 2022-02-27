@@ -5,8 +5,8 @@ export const Header: React.FunctionComponent = () => {
   return (
     <Background>
       <div className="h-full flex flex-col lg:flex-row pt-0 md:pt-12 items-center mx-12 ">
-        <div className="flex flex-col items-center w-full my-40 text-center">
-          <h1 className="my-4 text-6xl dark:text-white font-bold leading-tight">
+        <div className="flex flex-col items-center w-full my-20 sm:my-40 text-center">
+          <h1 className="my-4 text-5xl sm:text-6xl dark:text-white font-bold leading-tight">
             Discover the{' '}
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary-400  to-secondary-400">
               full potential
