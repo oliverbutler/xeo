@@ -1,4 +1,4 @@
-import { Tab } from '@headlessui/react';
+import { Tab } from '@headlessui/react/dist/components/tabs/tabs';
 import { Clickable, useLocalStorage } from '@xeo/ui';
 import { AnimatePresence, motion } from 'framer-motion';
 import { MdOutlineAccountTree } from 'react-icons/md';

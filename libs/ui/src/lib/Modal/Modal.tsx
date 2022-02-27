@@ -1,4 +1,5 @@
-import { Dialog, Transition } from '@headlessui/react';
+import { Dialog } from '@headlessui/react/dist/components/dialog/dialog';
+import { Transition } from '@headlessui/react/dist/components/transitions/transition';
 import classNames from 'classnames';
 import { Fragment, useRef, useState } from 'react';
 import { Button, ButtonProps, ButtonVariation } from '../Button/Button';

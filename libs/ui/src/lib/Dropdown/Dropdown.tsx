@@ -1,4 +1,5 @@
-import { Menu, Transition } from '@headlessui/react';
+import { Menu } from '@headlessui/react/dist/components/menu/menu';
+import { Transition } from '@headlessui/react/dist/components/transitions/transition';
 import classNames from 'classnames';
 import { Fragment } from 'react';
 import { Clickable } from '../Clickable/Clickable';

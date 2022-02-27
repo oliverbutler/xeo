@@ -1,4 +1,5 @@
-import { Popover as PopoverComponent, Transition } from '@headlessui/react';
+import { Popover as PopoverComponent } from '@headlessui/react/dist/components/popover/popover';
+import { Transition } from '@headlessui/react/dist/components/transitions/transition';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { DetailedHTMLProps, InputHTMLAttributes } from 'react';

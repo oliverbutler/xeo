@@ -1,9 +1,9 @@
-import { useRouter } from 'next/dist/client/router';
 import { BaseSyntheticEvent, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { toast } from 'react-toastify';
 import { FormState, useForm, UseFormRegister } from 'react-hook-form';
 import { useLocalStorage } from '@xeo/ui/hooks/useLocalStorage';
+import { useRouter } from 'next/router';
 
 interface Output {
   loading: boolean;

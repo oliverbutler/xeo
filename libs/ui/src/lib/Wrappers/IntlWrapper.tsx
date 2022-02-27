@@ -1,7 +1,7 @@
 import { useRouter } from 'next/dist/client/router';
-import { en } from '@xeo/utils';
 import { useMemo } from 'react';
 import { IntlProvider } from 'react-intl';
+import { en } from '../../locales';
 
 export const IntlWrapper: React.FunctionComponent = ({ children }) => {
   const { locale } = useRouter();

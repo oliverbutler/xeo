@@ -8,10 +8,7 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "paths": {
-      "@xeo/utils": ["../utils/src/index.ts"]
-    }
+    "noFallthroughCasesInSwitch": true
   },
   "files": [],
   "include": [],
