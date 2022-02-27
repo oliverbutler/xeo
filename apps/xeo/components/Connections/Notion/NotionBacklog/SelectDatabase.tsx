@@ -1,4 +1,4 @@
-import { SelectField } from '@xeo/ui';
+import { SelectField } from '@xeo/ui/lib/Select/SelectField';
 import { GetNotionDatabasesResponse } from 'pages/api/backlog/configure';
 import { UseFormReturn } from 'react-hook-form';
 import {

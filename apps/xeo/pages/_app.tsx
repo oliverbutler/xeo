@@ -1,6 +1,5 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import { IntlWrapper } from '@xeo/ui';
 import { ThemeProvider } from 'next-themes';
 import { SessionProvider } from 'next-auth/react';
 import './styles.css';
@@ -15,6 +14,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import { Navbar } from 'components/Navbar/Navbar';
 import { Footer } from 'components/Footer/Footer';
 import { SkeletonWrapper } from 'components/SkeletonWrapper/SkeletonWrapper';
+import { IntlWrapper } from '@xeo/ui/lib/Wrappers/IntlWrapper';
 
 declare global {
   interface Window {

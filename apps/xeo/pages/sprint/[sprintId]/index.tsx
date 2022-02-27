@@ -4,7 +4,7 @@ import { GetSprintColumnPlotData } from 'pages/api/sprint/[sprintId]/column-plot
 import { useQuery } from 'utils/api';
 import { Error } from 'components/Error/Error';
 import { Content } from 'components/Content';
-import { ConditionalWrapper } from '@xeo/ui';
+import { ConditionalWrapper } from '@xeo/ui/lib/ConditionalWrapper/ConditionalWrapper';
 
 export const isSprintEmbedded = (router: NextRouter) =>
   router.query.embed === '1';

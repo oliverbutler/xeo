@@ -1,5 +1,7 @@
 import { Backlog } from '@prisma/client';
-import { Button, ButtonVariation, Modal, Table } from '@xeo/ui';
+import Button, { ButtonVariation } from '@xeo/ui/lib/Button/Button';
+import { Modal } from '@xeo/ui/lib/Modal/Modal';
+import { Table } from '@xeo/ui/lib/Table/Table';
 import dayjs from 'dayjs';
 import { Connection } from 'pages/api/connections';
 import Skeleton from 'react-loading-skeleton';

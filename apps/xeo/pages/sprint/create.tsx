@@ -1,4 +1,6 @@
-import { Button, ButtonVariation, CentredLoader, Alert } from '@xeo/ui';
+import { Alert } from '@xeo/ui/lib/Alert/Alert';
+import { CentredLoader } from '@xeo/ui/lib/Animate/CentredLoader/CentredLoader';
+import Button, { ButtonVariation } from '@xeo/ui/lib/Button/Button';
 import classNames from 'classnames';
 import { fetcher } from 'components/Connections/Notion/NotionBacklog/NotionBacklog';
 import { Content } from 'components/Content';

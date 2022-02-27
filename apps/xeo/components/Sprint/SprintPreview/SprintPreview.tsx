@@ -1,5 +1,5 @@
 import { Sprint } from '@prisma/client';
-import { ConditionalWrapper } from '@xeo/ui';
+import { ConditionalWrapper } from '@xeo/ui/lib/ConditionalWrapper/ConditionalWrapper';
 import { SprintGraph } from 'components/SprintInfo/SprintGraph/SprintGraph';
 import dayjs from 'dayjs';
 import Link from 'next/link';

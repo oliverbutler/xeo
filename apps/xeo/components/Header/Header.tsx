@@ -1,4 +1,4 @@
-import { Button } from '@xeo/ui';
+import { Button } from '@xeo/ui/lib/Button/Button';
 import { Background } from 'components/Background/Background';
 
 export const Header: React.FunctionComponent = () => {

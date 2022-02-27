@@ -1,15 +1,19 @@
 import { useState } from 'react';
-import { AsyncSelect, Clickable, Button, Table } from '@xeo/ui';
+import { AsyncSelect } from '@xeo/ui/lib/Select/AsyncSelect';
+
 import { GetUserSearchRequest } from 'pages/api/user/search';
 import { TrashIcon } from '@heroicons/react/outline';
 import Image from 'next/image';
-import _ from 'lodash';
+import debounce from 'lodash/debounce';
 import { BacklogSelectRole } from './BacklogSelectRole';
 import { useSession } from 'next-auth/react';
 import { BacklogWithMembersAndRestrictedUsers } from 'pages/api/backlog/[id]';
 import { useBacklog } from './useBacklog';
 import { apiGet } from 'utils/api';
 import { toast } from 'react-toastify';
+import { Button } from '@xeo/ui/lib/Button/Button';
+import { Table } from '@xeo/ui/lib/Table/Table';
+import { Clickable } from '@xeo/ui/lib/Clickable/Clickable';
 
 interface Props {
   backlog: BacklogWithMembersAndRestrictedUsers;
@@ -54,7 +58,7 @@ export const BacklogMembers: React.FunctionComponent<Props> = ({ backlog }) => {
     UserSelectOption | undefined
   >();
 
-  const debouncedFetch = _.debounce((searchTerm, callback) => {
+  const debouncedFetch = debounce((searchTerm, callback) => {
     loadUserOptions(searchTerm, callback);
   }, 500);
 

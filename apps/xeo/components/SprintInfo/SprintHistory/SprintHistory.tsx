@@ -4,11 +4,11 @@ import {
   SprintHistoryWithStatus,
 } from 'pages/api/sprint/[sprintId]/history';
 import { useQuery } from 'utils/api';
-import { CentredLoader, ExpandableRow, Input, Table } from '@xeo/ui';
 import dayjs from 'dayjs';
 import { groupBy } from '@xeo/utils';
 import { CellProps } from 'react-table';
-import Skeleton from 'react-loading-skeleton';
+import { ExpandableRow, Table } from '@xeo/ui/lib/Table/Table';
+import { Input } from '@xeo/ui/lib/Input/Input';
 
 interface Props {
   sprintId: string;

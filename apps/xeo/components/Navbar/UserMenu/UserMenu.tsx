@@ -1,5 +1,6 @@
 import { HomeIcon, LogoutIcon, MoonIcon } from '@heroicons/react/outline';
-import { Popover, useDarkMode } from '@xeo/ui';
+import { useDarkMode } from '@xeo/ui/lib/DarkModeButton/useDarkMode';
+import { Popover } from '@xeo/ui/lib/Popover/Popover';
 import classNames from 'classnames';
 import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';

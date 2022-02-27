@@ -1,5 +1,6 @@
 import { NotionConnection } from '@prisma/client';
-import { Button, ButtonVariation, Modal, ModalFooter } from '@xeo/ui';
+import { Button, ButtonVariation } from '@xeo/ui/lib/Button/Button';
+import { Modal, ModalFooter } from '@xeo/ui/lib/Modal/Modal';
 import axios, { AxiosError } from 'axios';
 import { toast } from 'react-toastify';
 import { mutate } from 'swr';

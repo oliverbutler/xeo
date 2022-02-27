@@ -1,4 +1,3 @@
-import { CentredLoader } from '@xeo/ui';
 import { Content } from 'components/Content';
 import { NextSeo } from 'next-seo';
 import { NextRouter, useRouter } from 'next/router';
@@ -6,6 +5,7 @@ import { useEffect } from 'react';
 import { apiPost } from 'utils/api';
 import { PostNotionCallback } from 'pages/api/connections/notion/callback';
 import { toast } from 'react-toastify';
+import { CentredLoader } from '@xeo/ui/lib/Animate/CentredLoader/CentredLoader';
 
 const handleCallback = async (router: NextRouter) => {
   const { data, error } = await apiPost<PostNotionCallback>(

@@ -14,6 +14,10 @@ const sentryWebpackPluginOptions = {
   // https://github.com/getsentry/sentry-webpack-plugin#options.
 };
 
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+});
+
 /**
  * @type {import('@nrwl/next/plugins/with-nx').WithNxOptions}
  **/
@@ -36,6 +40,6 @@ const nextConfig = {
 };
 
 module.exports = withSentryConfig(
-  withNx(nextConfig),
+  withNx(withBundleAnalyzer(nextConfig)),
   sentryWebpackPluginOptions
 );

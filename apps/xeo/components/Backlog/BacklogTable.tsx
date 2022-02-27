@@ -1,4 +1,3 @@
-import { Button, ButtonVariation, Table } from '@xeo/ui';
 import dayjs from 'dayjs';
 import { useSession } from 'next-auth/react';
 import { BacklogWithNotionStatusLinksAndOwner } from 'pages/api/backlog';
@@ -6,6 +5,8 @@ import { useBacklog } from './useBacklog';
 import Image from 'next/image';
 import { CellProps } from 'react-table';
 import { BacklogRole } from '@prisma/client';
+import { Table } from '@xeo/ui/lib/Table/Table';
+import Button, { ButtonVariation } from '@xeo/ui/lib/Button/Button';
 
 interface Props {
   backlogs: BacklogWithNotionStatusLinksAndOwner[] | undefined;

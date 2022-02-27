@@ -1,5 +1,4 @@
 /* eslint-disable @next/next/no-img-element */
-import { Modal, Button, ButtonVariation } from '@xeo/ui';
 import { fetcher } from 'components/Connections/Notion/NotionBacklog/NotionBacklog';
 import dayjs from 'dayjs';
 import { GetBacklogsRequest } from 'pages/api/backlog';
@@ -13,6 +12,8 @@ import { trackAction, UserAction } from 'utils/analytics';
 import { NotionConnection } from 'components/Connections/Notion/NotionConnection/NotionConnection';
 import { NotionConnectionsTable } from 'components/Connections/Notion/NotionConnection/NotionConnectionsTable';
 import { BacklogTable } from 'components/Backlog/BacklogTable';
+import Button, { ButtonVariation } from '@xeo/ui/lib/Button/Button';
+import { Modal } from '@xeo/ui/lib/Modal/Modal';
 
 dayjs.extend(LocalizedFormat);
 

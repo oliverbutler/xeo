@@ -1,4 +1,4 @@
-import { Button, ButtonVariation } from '@xeo/ui';
+import { Button, ButtonVariation } from '@xeo/ui/lib/Button/Button';
 import { DeleteNotionBacklog } from 'components/Connections/Notion/NotionBacklog/DeleteNotionBacklog';
 import { useSession } from 'next-auth/react';
 import { BacklogWithMembersAndRestrictedUsers } from 'pages/api/backlog/[id]';

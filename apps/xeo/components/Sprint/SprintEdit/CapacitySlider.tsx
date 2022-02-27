@@ -1,4 +1,5 @@
-import { Range, Input } from '@xeo/ui';
+import Input from '@xeo/ui/lib/Input/Input';
+import Range from '@xeo/ui/lib/Range/Range';
 import { ChangeEventHandler } from 'react';
 import { Control, FieldValues, Path, useController } from 'react-hook-form';
 

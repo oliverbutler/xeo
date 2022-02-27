@@ -3,7 +3,8 @@ import {
   ClipboardCopyIcon,
   RefreshIcon,
 } from '@heroicons/react/outline';
-import { Clickable, DarkModeButton } from '@xeo/ui';
+import { Clickable } from '@xeo/ui/lib/Clickable/Clickable';
+import { DarkModeButton } from '@xeo/ui/lib/DarkModeButton/DarkModeButton';
 import { toast } from 'react-toastify';
 
 interface Props {

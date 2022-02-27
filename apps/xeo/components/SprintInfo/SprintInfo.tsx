@@ -1,5 +1,4 @@
 import { ExternalLinkIcon } from '@heroicons/react/outline';
-import { Button, ButtonVariation } from '@xeo/ui';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { GetSprintColumnPlotData } from 'pages/api/sprint/[sprintId]/column-plot-data';
@@ -16,6 +15,7 @@ import { NextSeo } from 'next-seo';
 import Skeleton from 'react-loading-skeleton';
 import { GraphControls } from './GraphControls/GraphControls';
 import classNames from 'classnames';
+import Button, { ButtonVariation } from '@xeo/ui/lib/Button/Button';
 
 dayjs.extend(relativeTime);
 

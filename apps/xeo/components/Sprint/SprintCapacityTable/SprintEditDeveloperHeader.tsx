@@ -1,5 +1,6 @@
 import { TrashIcon } from '@heroicons/react/outline';
-import { Clickable, Input } from '@xeo/ui';
+import { Clickable } from '@xeo/ui/lib/Clickable/Clickable';
+import { Input } from '@xeo/ui/lib/Input/Input';
 import {
   DeepMap,
   DeepPartial,

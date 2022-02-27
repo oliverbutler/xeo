@@ -1,4 +1,5 @@
-import { Button, ButtonVariation, CentredLoader } from '@xeo/ui';
+import { CentredLoader } from '@xeo/ui/lib/Animate/CentredLoader/CentredLoader';
+import Button, { ButtonVariation } from '@xeo/ui/lib/Button/Button';
 import { Content } from 'components/Content';
 import { SprintEdit } from 'components/Sprint/SprintEdit/SprintEdit';
 import { NextSeo } from 'next-seo';

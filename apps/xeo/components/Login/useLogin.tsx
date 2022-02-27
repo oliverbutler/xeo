@@ -3,7 +3,7 @@ import { BaseSyntheticEvent, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { toast } from 'react-toastify';
 import { FormState, useForm, UseFormRegister } from 'react-hook-form';
-import { useLocalStorage } from '@xeo/ui';
+import { useLocalStorage } from '@xeo/ui/hooks/useLocalStorage';
 
 interface Output {
   loading: boolean;
