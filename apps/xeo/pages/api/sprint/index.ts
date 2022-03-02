@@ -16,8 +16,6 @@ import {
 } from 'utils/api';
 import { prisma } from 'utils/db';
 import { createSprint, CreateSprint } from 'utils/sprint/adapter';
-import { getDataForSprintChart } from 'utils/sprint/chart';
-import { SprintWithPlotData } from 'utils/sprint/utils';
 
 import { TIME_REGEX } from './[sprintId]';
 
@@ -30,7 +28,7 @@ export type SprintWithHistory = Sprint & {
 export type GetSprintsRequest = APIGetRequest<{
   backlogs: {
     backlog: Backlog;
-    sprints: SprintWithPlotData[];
+    sprints: Sprint[];
   }[];
 }>;
 
@@ -85,33 +83,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         ],
       },
       include: {
-        sprints: {
-          include: {
-            sprintHistory: {
-              include: {
-                sprintStatusHistory: true,
-              },
-            },
-          },
-        },
-        notionStatusLinks: true,
+        sprints: true,
       },
     });
 
     const backlogsUserCanAccess = backlogs.map(
       ({ sprints, ...backlogWithoutSprints }) => {
-        const sprintsWithPlotData = sprints.map((sprint) => ({
-          sprint,
-          plotData: getDataForSprintChart(
-            sprint,
-            sprint.sprintHistory,
-            backlogWithoutSprints.notionStatusLinks
-          ),
-        }));
-
         return {
           backlog: backlogWithoutSprints,
-          sprints: sprintsWithPlotData,
+          sprints: sprints,
         };
       }
     );
