@@ -62,26 +62,27 @@ export const Popover: React.FunctionComponent<Props> = ({
                 />
               )}
               {items &&
-                items.map((item) => (
-                  <ConditionalWrapper
-                    condition={!!item.href}
-                    wrapper={(children) => (
-                      <Link href={item.href as string} passHref>
-                        {children}
-                      </Link>
-                    )}
-                  >
-                    <div
-                      key={item.title}
-                      onClick={item.onClick}
-                      className={classNames(
-                        'cursor-pointer hover:bg-dark-100rounded-sm flex items-center w-full px-2 py-1 text-sm text-dark-800 dark:text-white hover:bg-dark-100 dark:hover:bg-dark-800'
+                items.map((item, index) => (
+                  <div key={index}>
+                    <ConditionalWrapper
+                      condition={!!item.href}
+                      wrapper={(children) => (
+                        <Link href={item.href as string} passHref>
+                          {children}
+                        </Link>
                       )}
                     >
-                      <span className="mr-2">{item.icon}</span> {item.title}{' '}
-                      {item.content}
-                    </div>
-                  </ConditionalWrapper>
+                      <div
+                        onClick={item.onClick}
+                        className={classNames(
+                          'cursor-pointer hover:bg-dark-100rounded-sm flex items-center w-full px-2 py-1 text-sm text-dark-800 dark:text-white hover:bg-dark-100 dark:hover:bg-dark-800'
+                        )}
+                      >
+                        <span className="mr-2">{item.icon}</span> {item.title}{' '}
+                        {item.content}
+                      </div>
+                    </ConditionalWrapper>
+                  </div>
                 ))}
             </PopoverComponent.Panel>
           </Transition>

@@ -7,7 +7,11 @@ import { CellProps } from 'react-table';
 import { BacklogRole } from '@prisma/client';
 import { Table } from '@xeo/ui/lib/Table/Table';
 import Button, { ButtonVariation } from '@xeo/ui/lib/Button/Button';
-
+import Link from 'next/link';
+import { Clickable } from '@xeo/ui/lib/Clickable/Clickable';
+import PencilIcon from '@heroicons/react/outline/PencilIcon';
+import { ConditionalWrapper } from '@xeo/ui/lib/ConditionalWrapper/ConditionalWrapper';
+import { LogoutIcon } from '@heroicons/react/outline';
 interface Props {
   backlogs: BacklogWithNotionStatusLinksAndOwner[] | undefined;
 }
@@ -65,22 +69,30 @@ export const BacklogTable: React.FunctionComponent<Props> = ({ backlogs }) => {
             >
           ) => (
             <div className="flex flex-row gap-2">
-              <Button
-                href={`/connections/backlog/notion/${cell.row.original.id}`}
-                variation={ButtonVariation.Secondary}
-                disabled={
-                  getCurrentRoleInBacklog(cell.row.original) !==
-                  BacklogRole.ADMIN
-                }
-              >
-                Edit
-              </Button>
-              <Button
-                onClick={() => leaveBacklog(cell.row.original.id)}
-                variation={ButtonVariation.Danger}
-              >
-                Leave
-              </Button>
+              <Button variation={ButtonVariation.Secondary}>Edit</Button>
+              <div>
+                <ConditionalWrapper
+                  condition={
+                    getCurrentRoleInBacklog(cell.row.original) !==
+                    BacklogRole.ADMIN
+                  }
+                  wrapper={(c) => (
+                    <Link
+                      href={`/connections/backlog/notion/${cell.row.original.id}`}
+                      passHref
+                    >
+                      {c}
+                    </Link>
+                  )}
+                >
+                  <Clickable>
+                    <PencilIcon height={25} width={25} />
+                  </Clickable>
+                </ConditionalWrapper>
+              </div>
+              <Clickable onClick={() => leaveBacklog(cell.row.original.id)}>
+                <LogoutIcon height={25} width={25} />
+              </Clickable>
             </div>
           ),
         },

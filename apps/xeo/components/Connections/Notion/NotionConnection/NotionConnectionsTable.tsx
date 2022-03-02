@@ -1,8 +1,11 @@
+import { PencilIcon } from '@heroicons/react/outline';
 import { Backlog } from '@prisma/client';
 import Button, { ButtonVariation } from '@xeo/ui/lib/Button/Button';
+import { Clickable } from '@xeo/ui/lib/Clickable/Clickable';
 import { Modal } from '@xeo/ui/lib/Modal/Modal';
 import { Table } from '@xeo/ui/lib/Table/Table';
 import dayjs from 'dayjs';
+import Link from 'next/link';
 import { Connection } from 'pages/api/connections';
 import Skeleton from 'react-loading-skeleton';
 import { NotionBacklog } from '../NotionBacklog/NotionBacklog';
@@ -82,17 +85,20 @@ export const NotionConnectionsTable: React.FunctionComponent<Props> = ({
                       accessor: 'createdAt',
                       Cell: (cell) => dayjs(cell.value).format('LLL'),
                     },
-
                     {
                       Header: 'Actions',
                       accessor: 'id',
                       Cell: (cell) => (
-                        <Button
-                          href={`/connections/backlog/notion/${cell.value}`}
-                          variation={ButtonVariation.Secondary}
-                        >
-                          Edit
-                        </Button>
+                        <div>
+                          <Link
+                            href={`/connections/backlog/notion/${cell.value}`}
+                            passHref
+                          >
+                            <Clickable>
+                              <PencilIcon height={25} width={25} />
+                            </Clickable>
+                          </Link>
+                        </div>
                       ),
                     },
                   ]}
