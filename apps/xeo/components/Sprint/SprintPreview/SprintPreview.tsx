@@ -4,17 +4,15 @@ import { SprintGraphDynamic } from 'components/SprintInfo/SprintGraph/SprintGrap
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import Skeleton from 'react-loading-skeleton';
-import { DataPlotType } from 'utils/sprint/chart';
+import { useSprintPlotData } from '../useSprint';
 
 interface Props {
   sprint: Sprint | undefined;
-  plotData: DataPlotType[];
 }
 
-export const SprintPreview: React.FunctionComponent<Props> = ({
-  sprint,
-  plotData,
-}) => {
+export const SprintPreview: React.FunctionComponent<Props> = ({ sprint }) => {
+  const { plotData } = useSprintPlotData(sprint?.id);
+
   return (
     <ConditionalWrapper
       condition={!!sprint}

@@ -1,39 +1,48 @@
+import { Sprint as PrismaSprint } from '@prisma/client';
 import Button, { ButtonVariation } from '@xeo/ui/lib/Button/Button';
 import { Input } from '@xeo/ui/lib/Input/Input';
 import dayjs from 'dayjs';
 import { GetSprintsRequest } from 'pages/api/sprint';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useQuery } from 'utils/api';
-import { SprintWithPlotData } from 'utils/sprint/utils';
 import { PreviousSprints } from './PreviousSprints/PreviousSprints';
 import { SprintPreview } from './SprintPreview/SprintPreview';
 
 export const Sprint: React.FunctionComponent = () => {
-  const { data, error, isLoading } = useQuery<GetSprintsRequest>('/api/sprint');
+  const { data, error } = useQuery<GetSprintsRequest>('/api/sprint');
+
+  const [searchText, setSearchText] = useState('');
 
   if (error) {
     toast.error("Couldn't fetch sprints");
     return null;
   }
 
-  const usersSprints =
-    data?.backlogs.reduce((acc, { sprints }) => {
-      return [...acc, ...sprints];
-    }, [] as SprintWithPlotData[]) ?? [];
+  const userSprints = data?.backlogs.map(({ sprints }) => sprints).flat() ?? [];
 
-  const isSprintActive = (sprint: SprintWithPlotData) =>
-    dayjs(sprint.sprint.endDate).isAfter(dayjs());
+  const isSprintActive = (sprint: PrismaSprint) =>
+    dayjs(sprint.endDate).isAfter(dayjs());
 
-  const isSprintInactive = (sprint: SprintWithPlotData) =>
-    !isSprintActive(sprint);
+  const isSprintInactive = (sprint: PrismaSprint) => !isSprintActive(sprint);
 
-  const activeSprints = usersSprints.filter(isSprintActive);
-  const completeSprints = usersSprints.filter(isSprintInactive);
+  const filteredSprints = userSprints.filter((sprint) =>
+    sprint.name.toLowerCase().includes(searchText.toLowerCase())
+  );
+
+  const activeSprints = filteredSprints.filter(isSprintActive);
+  const completeSprints = filteredSprints.filter(isSprintInactive);
 
   return (
     <div className="pb-24">
       <div className="py-6 flex flex-row gap-4 items-center">
-        <Input className="flex-grow" label="" placeholder="Search..." />
+        <Input
+          className="flex-grow"
+          label=""
+          placeholder="Search..."
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+        />
         <div>
           <Button href="/sprint/create" variation={ButtonVariation.Dark}>
             Create Sprint
@@ -41,18 +50,8 @@ export const Sprint: React.FunctionComponent = () => {
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {(activeSprints.length === 0 && isLoading
-          ? [
-              { sprint: undefined, plotData: [] },
-              { sprint: undefined, plotData: [] },
-            ]
-          : activeSprints
-        ).map(({ sprint, plotData }, index) => (
-          <SprintPreview
-            sprint={sprint}
-            plotData={plotData}
-            key={sprint?.id ?? index}
-          />
+        {(activeSprints ?? [undefined, undefined]).map((sprint, index) => (
+          <SprintPreview sprint={sprint} key={sprint?.id ?? index} />
         ))}
       </div>
       <h2>Past Sprints</h2>
