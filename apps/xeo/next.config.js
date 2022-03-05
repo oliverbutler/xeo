@@ -7,10 +7,10 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 const nextConfig = {
   pwa: {
     dest: 'public',
+    register: true,
+    skipWaiting: true,
   },
   nx: {
-    // Set this to true if you would like to to use SVGR
-    // See: https://github.com/gregberge/svgr
     svgr: false,
   },
   images: {
@@ -25,4 +25,4 @@ const nextConfig = {
   ],
 };
 
-module.exports = withNx(withPWA(withBundleAnalyzer(nextConfig)));
+module.exports = withPWA(withNx(withBundleAnalyzer(nextConfig)));

@@ -40,3 +40,8 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# PWA files
+sw.js
+sw.js.map
+workbox-*
