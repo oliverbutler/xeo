@@ -5,6 +5,18 @@
   </a>
 </p>
 
+<p align="center">
+   <a href="">
+    <img alt="" src="https://img.shields.io/github/issues/xeo-labs/xeo?style=for-the-badge&labelColor=000000">
+  </a>
+   <a href="">
+    <img alt="" src="https://img.shields.io/github/stars/xeo-labs/xeo?style=for-the-badge&labelColor=000000">
+  </a>
+  <a href="">
+    <img alt="" src="https://img.shields.io/github/forks/xeo-labs/xeo?style=for-the-badge&labelColor=000000">
+  </a>
+</p>
+
 Xeo (_zee-oh_ is a web application at which allows you to connect to your (for now just) Notion Databases, and extract the data required to draw continuously updating burn down charts!
 
 - Connect to Notion Databases
