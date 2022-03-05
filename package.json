@@ -43,7 +43,7 @@
     "react-toastify": "8.2.0",
     "recharts": "^2.1.9",
     "swr": "1.2.2",
-    "uuid": "8.3.2"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@babel/core": "7.17.5",
@@ -56,9 +56,11 @@
     "@nrwl/workspace": "13.8.3",
     "@tailwindcss/typography": "0.5.2",
     "@types/jest": "27.4.1",
+    "@types/lodash": "^4.14.179",
     "@types/node": "17.0.21",
     "@types/react": "17.0.39",
     "@types/react-table": "^7.7.9",
+    "@types/uuid": "^8.3.4",
     "@typescript-eslint/parser": "~5.12.1",
     "autoprefixer": "10.4.2",
     "babel-jest": "27.5.1",
