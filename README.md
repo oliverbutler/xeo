@@ -25,9 +25,11 @@ Xeo (_zee-oh_ is a web application at which allows you to connect to your (for n
 
 https://user-images.githubusercontent.com/47489826/153592241-e9fee334-999c-4482-af18-c5b10e155662.mov
 
-# Contributions
+# Contributing
 
-We are always open to contributions and PR, however as we are currently in early alpha there is no licence or Contribution guidance.
+We'd really appreciate the help! Please
+
+Checkout the [contributing and setup docs](CONTRIBUTING.md)
 
 # Contact
 
