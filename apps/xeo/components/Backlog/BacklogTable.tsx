@@ -69,26 +69,15 @@ export const BacklogTable: React.FunctionComponent<Props> = ({ backlogs }) => {
             >
           ) => (
             <div className="flex flex-row gap-2">
-              <Button variation={ButtonVariation.Secondary}>Edit</Button>
               <div>
-                <ConditionalWrapper
-                  condition={
-                    getCurrentRoleInBacklog(cell.row.original) !==
-                    BacklogRole.ADMIN
-                  }
-                  wrapper={(c) => (
-                    <Link
-                      href={`/connections/backlog/notion/${cell.row.original.id}`}
-                      passHref
-                    >
-                      {c}
-                    </Link>
-                  )}
+                <Link
+                  href={`/connections/backlog/notion/${cell.row.original.id}`}
+                  passHref
                 >
                   <Clickable>
                     <PencilIcon height={25} width={25} />
                   </Clickable>
-                </ConditionalWrapper>
+                </Link>
               </div>
               <Clickable onClick={() => leaveBacklog(cell.row.original.id)}>
                 <LogoutIcon height={25} width={25} />
