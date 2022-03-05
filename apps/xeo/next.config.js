@@ -1,14 +1,13 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const withNx = require('@nrwl/next/plugins/with-nx');
-
+const withPWA = require('next-pwa');
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
 
-/**
- * @type {import('@nrwl/next/plugins/with-nx').WithNxOptions}
- **/
 const nextConfig = {
+  pwa: {
+    dest: 'public',
+  },
   nx: {
     // Set this to true if you would like to to use SVGR
     // See: https://github.com/gregberge/svgr
@@ -26,4 +25,4 @@ const nextConfig = {
   ],
 };
 
-module.exports = withNx(withBundleAnalyzer(nextConfig));
+module.exports = withNx(withPWA(withBundleAnalyzer(nextConfig)));

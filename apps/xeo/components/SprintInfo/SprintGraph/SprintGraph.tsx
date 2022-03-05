@@ -242,7 +242,7 @@ export const SprintGraph: React.FunctionComponent<SprintGraphProps> = ({
             stroke={theme.extend.colors.dark[400]}
             name={DataPlotLine.EXPECTED_POINTS}
             dataKey={DataPlotLine.EXPECTED_POINTS}
-            type="linear"
+            type="monotone"
             strokeDasharray={'3 3'}
             strokeWidth={2}
             connectNulls
@@ -253,7 +253,8 @@ export const SprintGraph: React.FunctionComponent<SprintGraphProps> = ({
             stroke={theme.extend.colors.primary[400]}
             name={DataPlotLine.POINTS_DONE_INC_VALIDATE}
             dataKey={DataPlotLine.POINTS_DONE_INC_VALIDATE}
-            type="linear"
+            type="monotone"
+            opacity={0.3}
             strokeWidth={2}
             connectNulls
             dot={false}
@@ -262,7 +263,7 @@ export const SprintGraph: React.FunctionComponent<SprintGraphProps> = ({
             stroke={theme.extend.colors.secondary[400]}
             name={DataPlotLine.POINTS_LEFT}
             dataKey={DataPlotLine.POINTS_LEFT}
-            type="linear"
+            type="monotone"
             connectNulls
             strokeWidth={2}
             dot={false}
@@ -273,7 +274,7 @@ export const SprintGraph: React.FunctionComponent<SprintGraphProps> = ({
             name={DataPlotLine.PENDING_POINTS_LEFT}
             dataKey={DataPlotLine.PENDING_POINTS_LEFT}
             strokeDasharray={'3 3'}
-            type="linear"
+            type="monotone"
             connectNulls
             strokeWidth={2}
             strokeOpacity={0.3}
@@ -285,7 +286,7 @@ export const SprintGraph: React.FunctionComponent<SprintGraphProps> = ({
             name={DataPlotLine.PENDING_POINTS_DONE_INC_VALIDATE}
             dataKey={DataPlotLine.PENDING_POINTS_DONE_INC_VALIDATE}
             strokeDasharray={'3 3'}
-            type="linear"
+            type="monotone"
             strokeWidth={2}
             strokeOpacity={0.3}
             connectNulls

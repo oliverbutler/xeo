@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE "Page" ADD COLUMN     "body" JSONB NOT NULL DEFAULT E'{}',
-ALTER COLUMN "fields" SET DEFAULT E'{}';

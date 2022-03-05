@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { forwardRef } from 'react';
-import { FieldError } from '../../../../../node_modules/react-hook-form/dist';
+import { FieldError } from 'react-hook-form';
 
 export interface InputProps extends React.ComponentPropsWithRef<'input'> {
   label: string;

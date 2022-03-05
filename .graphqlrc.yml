@@ -1,7 +1,0 @@
-xeo:
-  schema: 'http://localhost:3333/graphql'
-  documents: 'apps/client/**/*.{graphql,js,ts,jsx,tsx}'
-  extensions:
-    endpoints:
-      default:
-        url: 'http://localhost:3333/graphql'

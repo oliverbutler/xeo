@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { DetailedHTMLProps, forwardRef, InputHTMLAttributes } from 'react';
-import { FieldError } from '../../../../../node_modules/react-hook-form/dist';
+import { FieldError } from 'react-hook-form';
 
 /* eslint-disable-next-line */
 export interface RangeProps

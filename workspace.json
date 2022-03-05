@@ -1,8 +1,6 @@
 {
   "version": 2,
   "projects": {
-    "client": "apps/client",
-    "server": "apps/server",
     "ui": "libs/ui",
     "utils": "libs/utils",
     "xeo": "apps/xeo",

@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export const Footer: React.FunctionComponent = () => {
   return (
-    <footer className="mb-6">
+    <footer className="pb-6">
       <div className="w-full flex justify-center items-center  flex-col text-center px-4">
         <p>
           Xeo is an open source project, created and developed by{' '}
