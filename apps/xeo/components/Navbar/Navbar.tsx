@@ -16,11 +16,6 @@ export const Navbar: React.FunctionComponent = () => {
       ? []
       : [
           {
-            option: 'Dashboard',
-            href: '/dashboard',
-            active: pathname === '/dashboard' || pathname.startsWith('/sprint'),
-          },
-          {
             option: 'Connections',
             href: '/connections',
             active: pathname === '/connections',
