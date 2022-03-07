@@ -7230,6 +7230,11 @@ duplexify@^4.1.2:
     readable-stream "^3.1.1"
     stream-shift "^1.0.0"
 
+dynamodb-toolbox@^0.3.5:
+  version "0.3.5"
+  resolved "https://registry.yarnpkg.com/dynamodb-toolbox/-/dynamodb-toolbox-0.3.5.tgz#ebc73a26c488b16874d4f09fc382e0a3864ba051"
+  integrity sha512-UNuBwTwJwWIZQLz+STdl3xeJyxqk0vMxieUD1AO7VEpbYvGGrLxuvJzzK1ng8Gak0e8xHZlcapuj6a5Zl5pqUw==
+
 ee-first@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
