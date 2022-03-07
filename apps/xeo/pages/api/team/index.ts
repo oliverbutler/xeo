@@ -8,7 +8,8 @@ import {
   apiResponse,
   parseAPIRequest,
 } from 'utils/api';
-import { createTeam, CreateTeam, getTeams, Team } from 'utils/db/dynamodb';
+import { Team } from 'utils/db';
+import { createTeam, CreateTeam } from 'utils/db/dynamodb';
 
 export type PostCreateTeamRequest = APIRequest<
   { input: CreateTeam },
@@ -21,7 +22,7 @@ export type GetTeamsRequest = APIGetRequest<{ teams: Team[] }>;
 
 const postSchema: PostCreateTeamRequest['joiBodySchema'] = Joi.object({
   input: Joi.object({
-    teamName: Joi.string().required(),
+    name: Joi.string().required(),
   }),
 });
 
@@ -37,8 +38,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return await postHandler(req, res);
     case 'DELETE':
       return await deleteHandler(req, res);
-    case 'GET':
-      return await getHandler(req, res);
     default:
       return apiError(res, { message: 'Method not allowed' }, 405);
   }
@@ -57,16 +56,6 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     return apiError(res, { message: 'Failed to create team' }, 400);
   }
   return apiResponse<PostCreateTeamRequest>(res, { team });
-};
-
-const getHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const teams = await getTeams();
-
-  if (!teams) {
-    return apiError(res, { message: 'Failed to get teams' }, 400);
-  }
-
-  return apiResponse<GetTeamsRequest>(res, { teams });
 };
 
 const deleteHandler = async (req: NextApiRequest, res: NextApiResponse) => {
