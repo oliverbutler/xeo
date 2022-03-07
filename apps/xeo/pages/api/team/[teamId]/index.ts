@@ -9,8 +9,8 @@ import {
   apiResponse,
   parseAPIRequest,
 } from 'utils/api';
-import { Team } from 'utils/db';
-import { CreateTeam, deleteTeam, getTeam, updateTeam } from 'utils/db/dynamodb';
+import { Team, CreateTeam } from 'utils/db';
+import { deleteTeam, getTeam, updateTeam } from 'utils/db/dynamodb';
 
 export type DeleteTeamRequest = APIDeleteRequest<{
   success: boolean;

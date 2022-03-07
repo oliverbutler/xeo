@@ -3,7 +3,6 @@
 import { PrismaClient } from '@prisma/client';
 import { DynamoDB } from 'aws-sdk';
 import { Entity, Table } from 'dynamodb-toolbox';
-import { v4 } from 'uuid';
 
 export const prisma: PrismaClient =
   (global as any).prisma || new PrismaClient();
@@ -20,21 +19,28 @@ export const client = new DynamoDB.DocumentClient({
 });
 
 const XeoTable = new Table({
-  // Specify table name (used by DynamoDB)
   name: 'xeo',
-
-  // Define partition and sort keys
   partitionKey: 'pk',
   sortKey: 'sk',
-
-  // Add the DocumentClient
   DocumentClient: client,
 });
+
+export type CreateTeam = {
+  name: string;
+  notionAccessToken: string;
+  notionBotId: string;
+  notionWorkspaceId: string;
+  notionWorkspaceIcon: string;
+};
 
 export type Team = {
   entity: 'Team';
   id: string;
   name: string;
+  notionAccessToken: string;
+  notionBotId: string;
+  notionWorkspaceId: string;
+  notionWorkspaceIcon: string;
 } & BaseEntity;
 
 export type BaseEntity = {
@@ -46,7 +52,6 @@ export const TeamEntity = new Entity({
   name: 'Team',
   table: XeoTable,
 
-  // Define the entity's schema
   attributes: {
     id: {
       partitionKey: true,
@@ -56,6 +61,18 @@ export const TeamEntity = new Entity({
       hidden: true,
     },
     name: {
+      type: 'string',
+    },
+    notionAccessToken: {
+      type: 'string',
+    },
+    notionBotId: {
+      type: 'string',
+    },
+    notionWorkspaceId: {
+      type: 'string',
+    },
+    notionWorkspaceIcon: {
       type: 'string',
     },
   },

@@ -1,9 +1,5 @@
-import { client, Team, TeamEntity } from 'utils/db';
+import { client, CreateTeam, Team, TeamEntity } from 'utils/db';
 import { v4 } from 'uuid';
-
-export type CreateTeam = {
-  name: string;
-};
 
 const tableName = process.env.NEXT_AUTH_AWS_TABLE as string;
 

@@ -18,7 +18,7 @@ export const Header: React.FunctionComponent = () => {
             improve their performance.
           </p>
           <div className="flex flex-row mx-auto lg:mx-0 gap-4">
-            <Button className="" href="/dashboard">
+            <Button className="" href="/login">
               Get Started
             </Button>
           </div>
