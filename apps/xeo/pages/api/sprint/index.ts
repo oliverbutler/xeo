@@ -14,7 +14,7 @@ import {
   apiResponse,
   parseAPIRequest,
 } from 'utils/api';
-import { prisma } from 'utils/db';
+import { prisma } from 'utils/db/db';
 import { createSprint, CreateSprint } from 'utils/sprint/adapter';
 
 import { TIME_REGEX } from './[sprintId]';

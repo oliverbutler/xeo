@@ -11,7 +11,7 @@ import {
   apiResponse,
   parseAPIRequest,
 } from 'utils/api';
-import { prisma } from 'utils/db';
+import { prisma } from 'utils/db/db';
 import { updateSprint, UpdateSprint } from 'utils/sprint/adapter';
 
 export type GetSprintRequest = APIGetRequest<{

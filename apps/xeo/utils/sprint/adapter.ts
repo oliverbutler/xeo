@@ -1,5 +1,5 @@
 import { Sprint } from '@prisma/client';
-import { prisma } from 'utils/db';
+import { prisma } from 'utils/db/db';
 import { DeveloperWithCapacity, isDeveloperWithCapacityArray } from './utils';
 
 export type UpdateSprint = Partial<CreateSprint>;

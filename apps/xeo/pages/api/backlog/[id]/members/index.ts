@@ -3,7 +3,7 @@ import Joi from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { apiError, APIRequest, apiResponse, parseAPIRequest } from 'utils/api';
-import { prisma } from 'utils/db';
+import { prisma } from 'utils/db/db';
 
 export type PutCreateBacklogMember = APIRequest<
   {

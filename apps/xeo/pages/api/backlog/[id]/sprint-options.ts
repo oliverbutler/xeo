@@ -2,7 +2,7 @@ import { NotionColumnType } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { apiError, APIGetRequest, apiResponse } from 'utils/api';
-import { prisma } from 'utils/db';
+import { prisma } from 'utils/db/db';
 
 import { getAvailableColumnOptions } from 'utils/notion/backlog';
 

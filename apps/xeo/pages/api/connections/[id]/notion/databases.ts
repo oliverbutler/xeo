@@ -2,7 +2,7 @@ import { GetDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { fetchAvailableDatabasesFromNotion } from 'utils/connections/notion/notion-client';
-import { prisma } from 'utils/db';
+import { prisma } from 'utils/db/db';
 
 export type GetConnectionNotionDatabasesRequest = {
   method: 'GET';
