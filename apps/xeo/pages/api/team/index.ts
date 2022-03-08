@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { apiError, APIGetRequest } from 'utils/api';
-import { Team } from 'utils/db';
+import { Team } from 'utils/db/db';
 
 export type GetTeamsRequest = APIGetRequest<{ teams: Team[] }>;
 

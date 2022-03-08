@@ -5,7 +5,7 @@ import Joi from 'joi';
 import { exchangeCodeForAccessToken } from 'utils/connections/notion/notion-client';
 import { NotionOAuthCallbackState } from './auth-url';
 import { getSession } from 'next-auth/react';
-import { prisma } from 'utils/db';
+import { prisma } from 'utils/db/db';
 
 export type PostNotionCallback = APIRequest<
   { code: string; state: NotionOAuthCallbackState },

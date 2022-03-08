@@ -9,7 +9,7 @@ import {
   apiResponse,
   parseAPIRequest,
 } from 'utils/api';
-import { Team, CreateTeam } from 'utils/db';
+import { Team, CreateTeam } from 'utils/db/db';
 import { deleteTeam, getTeam, updateTeam } from 'utils/db/dynamodb';
 
 export type DeleteTeamRequest = APIDeleteRequest<{
