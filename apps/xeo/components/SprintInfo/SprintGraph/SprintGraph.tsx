@@ -7,6 +7,7 @@ import {
   Line,
   LineChart,
   CartesianGrid,
+  Legend,
 } from 'recharts';
 import dayjs from 'dayjs';
 import { theme } from '../../../../../tailwind-workspace-preset';
@@ -68,6 +69,12 @@ export const SprintGraph: React.FunctionComponent<SprintGraphProps> = ({
           data={plotData ?? []}
           style={{ position: 'absolute' }}
         >
+          <Legend
+            iconSize={16}
+            layout="horizontal"
+            verticalAlign="top"
+            align="center"
+          />
           <CartesianGrid
             stroke={
               isDark
@@ -120,6 +127,7 @@ export const SprintGraph: React.FunctionComponent<SprintGraphProps> = ({
             strokeWidth={2}
             connectNulls
             dot={false}
+            legendType="plainline"
           />
           <Line
             hide={!showPointsNotStarted}
@@ -151,6 +159,7 @@ export const SprintGraph: React.FunctionComponent<SprintGraphProps> = ({
             strokeWidth={2}
             strokeOpacity={0.3}
             dot={false}
+            legendType="none"
           />
           <Line
             stroke={theme.extend.colors.primary[400]}
@@ -163,6 +172,7 @@ export const SprintGraph: React.FunctionComponent<SprintGraphProps> = ({
             strokeOpacity={0.3}
             connectNulls
             dot={false}
+            legendType="none"
           />
         </LineChart>
       </ResponsiveContainer>
