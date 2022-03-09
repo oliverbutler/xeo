@@ -9,8 +9,8 @@ import {
   apiResponse,
   parseAPIRequest,
 } from 'utils/api';
-import { Team, CreateTeam } from 'utils/db/db';
-import { deleteTeam, getTeam, updateTeam } from 'utils/db/dynamodb';
+import { deleteTeam, getTeam, updateTeam } from 'utils/db/adapters/team';
+import { CreateTeam, Team, UpdateTeam } from 'utils/db/models/team';
 
 export type DeleteTeamRequest = APIDeleteRequest<{
   success: boolean;
@@ -72,7 +72,7 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 };
 
 export type UpdateTeamRequest = APIRequest<
-  { input: Partial<CreateTeam> },
+  { input: UpdateTeam },
   {
     team: Team;
   }
@@ -81,6 +81,14 @@ export type UpdateTeamRequest = APIRequest<
 const putSchema: UpdateTeamRequest['joiBodySchema'] = Joi.object({
   input: Joi.object({
     name: Joi.string(),
+    shortName: Joi.string(),
+    companyName: Joi.string(),
+    notionConnection: Joi.object({
+      notionAccessToken: Joi.string().required(),
+      notionBotId: Joi.string().required(),
+      notionWorkspaceId: Joi.string().required(),
+      notionWorkspaceIcon: Joi.string().required(),
+    }),
   }),
 });
 

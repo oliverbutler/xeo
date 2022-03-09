@@ -1,15 +1,19 @@
 /* eslint-disable no-case-declarations */
-import { Sprint } from '@prisma/client';
-import Joi from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { apiError, APIGetRequest, apiResponse } from 'utils/api';
-import { UserMetadata } from 'utils/db/db';
-import { getUserMetadata } from 'utils/db/userMetadata';
+import { getUserMetadata } from 'utils/db/adapters/userMetadata';
+import { UserMetadata } from 'utils/db/models/userMetadata';
 
-export type GetUserRequest = APIGetRequest<{
-  user: UserMetadata;
-}>;
+export type GetMeRequest = APIGetRequest<
+  | {
+      hasMetaData: true;
+      user: UserMetadata;
+    }
+  | {
+      hasMetaData: false;
+    }
+>;
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
 
@@ -21,12 +25,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const user = await getUserMetadata(userId);
 
-  if (!user) {
-    return apiError(res, { message: 'User not found' }, 400);
-  }
-
   if (req.method === 'GET') {
-    return apiResponse(res, { user });
+    if (!user) {
+      return apiResponse<GetMeRequest>(res, {
+        hasMetaData: false,
+      });
+    }
+    return apiResponse<GetMeRequest>(res, { hasMetaData: true, user });
   }
 
   return apiError(res, { message: 'Method not allowed' }, 405);

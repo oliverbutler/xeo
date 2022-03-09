@@ -1,42 +1,58 @@
-import { Alert } from '@xeo/ui/lib/Alert/Alert';
+import Input from '@xeo/ui/lib/Input/Input';
 import { ModalFooter } from '@xeo/ui/lib/Modal/Modal';
-import { GetNotionAuthURL } from 'pages/api/connections/notion/auth-url';
-import { useQuery } from 'utils/api';
+import { useTeam } from 'hooks/useTeam';
+import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 interface Props {
   closeModal: () => void;
 }
 
+type TeamCreationForm = {
+  name: string;
+  shortName: string;
+  companyName: string;
+};
+
 export const NotionConnection: React.FunctionComponent<Props> = ({
   closeModal,
 }) => {
-  const { data, isLoading } = useQuery<GetNotionAuthURL>(
-    '/api/connections/notion/auth-url'
-  );
+  const { createTeam } = useTeam();
+
+  const { handleSubmit, register } = useForm<TeamCreationForm>();
+
+  const onSubmit = async (values: TeamCreationForm) => {
+    const team = await createTeam(values);
+
+    if (team) {
+      toast.success('Team created');
+      closeModal();
+    }
+  };
 
   return (
-    <div>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <div className="mx-10 mb-10 flex flex-col">
-        <h2 className="text-center">Connect to Notion</h2>
-        <Alert variation="info">
-          Only one member of the team needs to connect to each Database
-        </Alert>
-        <p>
-          By connecting your Notion to Xeo, you accept that we will store a
-          token which allows us to read your selected Notion Tables to extract
-          Sprint information.
-        </p>
-        <p>For any questions please contact dev@oliverbutler.uk</p>
+        <h2 className="text-center">Create a Team</h2>
+        <div className="space-y-4">
+          <Input
+            label="Team Name"
+            placeholder="The Best Team"
+            {...register('name')}
+          />
+          <Input
+            label="Short Team Name"
+            placeholder="TBT"
+            {...register('shortName')}
+          />
+          <Input
+            label="Company Name"
+            placeholder="My Awesome Company"
+            {...register('companyName')}
+          />
+        </div>
       </div>
-      <ModalFooter
-        className="w-full"
-        primaryText={`Create Connection`}
-        primaryButtonProps={{
-          href: data?.url,
-          hrefNewTab: true,
-          loading: isLoading,
-        }}
-      />
-    </div>
+      <ModalFooter className="w-full" primaryText={`Create Team`} />
+    </form>
   );
 };

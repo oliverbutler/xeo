@@ -2,8 +2,15 @@ import Joi from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { apiError, APIRequest, apiResponse, parseAPIRequest } from 'utils/api';
-import { CreateUserMetadata, UserMetadata, UserRole } from 'utils/db/db';
-import { createUserMetadata, getUserMetadata } from 'utils/db/userMetadata';
+import {
+  createUserMetadata,
+  getUserMetadata,
+} from 'utils/db/adapters/userMetadata';
+import {
+  CreateUserMetadata,
+  UserMetadata,
+  UserRole,
+} from 'utils/db/models/userMetadata';
 
 export type PostCreateUserRequest = APIRequest<
   {

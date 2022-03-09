@@ -5,6 +5,7 @@ import {
   ViewBoardsIcon,
   ViewGridIcon,
 } from '@heroicons/react/outline';
+import { UserMenu } from 'components/Navbar/UserMenu/UserMenu';
 import Image from 'next/image';
 import Link from 'next/link';
 import xeoIcon from 'public/xeo.png';
@@ -71,16 +72,17 @@ const NavbarSection: React.FunctionComponent<{
 
 export const Sidebar: React.FunctionComponent<Props> = (props) => {
   return (
-    <div className="h-full bg-dark-900 w-72 text-white">
+    <div className="h-full bg-dark-900 dark:bg-dark-950 w-72 text-white">
       <div className="font-bold flex flex-rows items-center p-4">
         <Image src={xeoIcon} height={25} width={25} />
         <span className="ml-2">Xeo</span>
       </div>
-      <ul className="space-y-12 pl-0">
+      <ul className="space-y-12 pl-0 grow">
         {NAVBAR_OPTIONS.map((section) => (
           <NavbarSection {...section} />
         ))}
       </ul>
+      <UserMenu />
     </div>
   );
 };

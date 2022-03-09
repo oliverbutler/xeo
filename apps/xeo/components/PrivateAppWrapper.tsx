@@ -9,7 +9,10 @@ export const PrivateAppWrapper: React.FunctionComponent = ({ children }) => {
       <Sidebar />
       <div className="grow h-screen overflow-y-auto">
         <Navbar />
-        <div id="app-body-container" className="h-full bg-dark-200 p-4">
+        <div
+          id="app-body-container"
+          className="h-full bg-dark-200 dark:bg-dark-800 p-4"
+        >
           {children}
         </div>
         <Footer />

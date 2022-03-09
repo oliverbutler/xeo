@@ -7,7 +7,7 @@ export const initGA = () => {
 };
 
 export enum UserAction {
-  CLICK_ADD_NOTION_CONNECTION = 'click_add_notion_connection',
+  CLICK_CREATE_TEAM = 'click_create_team',
   ADD_NOTION_CONNECTION = 'add_notion_connection',
   LOGIN = 'login',
   LOGOUT = 'logout',
