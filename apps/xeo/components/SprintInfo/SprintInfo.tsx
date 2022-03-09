@@ -96,52 +96,26 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
         description={`View ${sprint?.name}`}
       />
 
-      <div className="flex flex-row justify-between">
-        <div>
-          <h1 className="mb-0">{sprint?.name ?? <Skeleton width={160} />}</h1>
-        </div>
-
-        <div>
-          {publicMode ? (
-            <a
-              target={publicMode ? '_blank' : undefined}
-              href={`/sprint/${sprintId}/edit`}
-              rel="noreferrer"
-              className="no-underline"
-            >
-              <Button variation={ButtonVariation.Secondary}>
-                Edit
-                <ExternalLinkIcon className="ml-2" height={25} width={25} />
-              </Button>
-            </a>
-          ) : (
-            <Button
-              href={`/sprint/${sprintId}/edit`}
-              variation={ButtonVariation.Secondary}
-            >
-              Edit
-            </Button>
-          )}
-        </div>
+      <div>
+        <h1 className="mb-0">{sprint?.name ?? <Skeleton width={160} />}</h1>
+        <p>{sprint?.sprintGoal ?? <Skeleton width={'70%'} count={1} />}</p>
       </div>
       <div className="flex flex-col md:flex-row gap-4">
         <div className="md:w-1/3">
-          <p>{sprint?.sprintGoal ?? <Skeleton width={'100%'} count={2} />}</p>
-
           <SprintStats
             sprintHistoryPlotData={sprintHistoryPlotData}
             sprintId={sprintId}
           />
         </div>
 
-        <div className="md:w-2/3 pt-4">
-          <GraphControls
+        <div className="md:w-2/3">
+          {/* <GraphControls
             publicMode={publicMode}
             isLoading={isLoading}
             setShowPointsNotStarted={setShowPointsNotStarted}
             showPointsNotStarted={showPointsNotStarted}
             handleUpdateSprintHistory={handleUpdateSprintHistory}
-          />
+          /> */}
           <SprintGraphDynamic
             sprint={sprint}
             plotData={sprintHistoryPlotData}

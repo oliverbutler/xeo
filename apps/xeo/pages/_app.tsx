@@ -34,19 +34,19 @@ function CustomApp({
         <title>Xeo Scrum</title>
         <link rel="icon" href="/xeo.ico" />
       </Head>
-      <IntlWrapper>
-        <ThemeProvider attribute="class" defaultTheme="light">
-          <SkeletonWrapper>
-            <SessionProvider session={session}>
-              <PrivateRoute>
-                <main className="prose dark:prose-invert max-w-none">
+      <main className="prose dark:prose-invert max-w-none">
+        <IntlWrapper>
+          <ThemeProvider attribute="class" defaultTheme="light">
+            <SkeletonWrapper>
+              <SessionProvider session={session}>
+                <PrivateRoute>
                   <Component {...pageProps} />
-                </main>
-              </PrivateRoute>
-            </SessionProvider>
-          </SkeletonWrapper>
-        </ThemeProvider>
-      </IntlWrapper>
+                </PrivateRoute>
+              </SessionProvider>
+            </SkeletonWrapper>
+          </ThemeProvider>
+        </IntlWrapper>
+      </main>
     </>
   );
 }

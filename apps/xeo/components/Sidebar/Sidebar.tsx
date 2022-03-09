@@ -1,143 +1,86 @@
 import {
-  ChevronRightIcon,
-  DatabaseIcon,
-  LogoutIcon,
-  UserIcon,
-  ViewGridAddIcon,
+  CogIcon,
+  TemplateIcon,
+  UserGroupIcon,
+  ViewBoardsIcon,
+  ViewGridIcon,
 } from '@heroicons/react/outline';
-import classNames from 'classnames';
-import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { SidebarItem } from './SidebarItem/SidebarItem';
-import { motion, Variants } from 'framer-motion';
-import { useState } from 'react';
-import { useLocalStorage } from '@xeo/ui/hooks/useLocalStorage';
-import { useWindowDimensions } from '@xeo/ui/hooks/useWindowDimensions';
-import { Resize } from '@xeo/ui/lib/Resize/Resize';
-import { Clickable } from '@xeo/ui/lib/Clickable/Clickable';
-import { CentredLoader } from '@xeo/ui/lib/Animate/CentredLoader/CentredLoader';
-import { DarkModeButton } from '@xeo/ui/lib/DarkModeButton/DarkModeButton';
+import xeoIcon from 'public/xeo.png';
+import React from 'react';
 
-const sidebar = [
+interface Props {}
+
+const NAVBAR_OPTIONS = [
   {
-    title: 'Connections',
-    url: '/connections',
-    icon: <ViewGridAddIcon width={20} height={20} />,
+    title: 'Overview',
+    options: [{ title: 'Dashboard', icon: TemplateIcon, path: '/' }],
   },
   {
-    title: 'All Sprints',
-    url: '/',
-    icon: <DatabaseIcon height={20} width={20} />,
+    title: 'Current Sprint',
+    options: [
+      { title: 'Sprint', icon: ViewBoardsIcon, path: '/sprint' },
+      { title: 'Dependencies', icon: ViewGridIcon, path: '/dependencies' },
+    ],
+  },
+  {
+    title: 'Team',
+    options: [
+      { title: 'Members', icon: UserGroupIcon, path: '/sprint' },
+      { title: 'Sprints', icon: ViewBoardsIcon, path: '/dependencies' },
+      { title: 'Settings', icon: CogIcon, path: '/dependencies' },
+    ],
+  },
+  {
+    title: 'Teams',
+    options: [{ title: 'Manage Teams', icon: UserGroupIcon, path: '/sprint' }],
   },
 ];
 
-export const Sidebar = () => {
-  const [defaultWidth, setDefaultWidth] = useLocalStorage<number>(
-    'sidebar-width',
-    192
-  );
-  const [isOpen, setIsOpen] = useState(false);
+const isCurrentPath = (path: string) => {
+  return window.location.pathname === path;
+};
 
-  const { width } = useWindowDimensions();
-
-  const variants: Variants = {
-    open: { x: 0 },
-    closed: { x: -(0.666 * width) + 30 },
-  };
-
-  const chevronVariants: Variants = {
-    open: { rotate: 180 },
-    closed: { rotate: 0 },
-  };
-
+const NavbarSection: React.FunctionComponent<{
+  title: string;
+  options: { title: string; icon: any; path: string }[];
+}> = ({ title, options }) => {
   return (
-    <div className="h-screen ">
-      <div className="bg-dark-100 dark:bg-dark-800 hidden h-screen bg-opacity-80  backdrop-blur-md md:block">
-        <Resize
-          defaultWindowWidth={defaultWidth}
-          onSetWidth={setDefaultWidth}
-          minWindowWidth={200}
-          dragHandleWidth={2}
-          className="h-full"
-          dragHandleClassName="bg-dark-200 dark:bg-dark-700 hover:bg-dark-200 "
+    <div className="">
+      <p className="uppercase font-bold text-sm text-dark-500 mb-1 pl-6">
+        {title}
+      </p>
+      {options.map((option) => (
+        <div
+          className={`${
+            isCurrentPath(option.path) ? 'border-white' : 'border-transparent'
+          } border-l-4 px-4`}
         >
-          <SidebarContent />
-        </Resize>
-      </div>
-      <motion.div
-        className="absolute z-50 flex h-screen w-2/3 flex-row md:hidden"
-        variants={variants}
-        animate={isOpen ? 'open' : 'closed'}
-        transition={{ type: 'easeInOut', delay: 0, stiffness: 0 }}
-        initial={isOpen}
-      >
-        <div className="dark:bg-dark-800 dark:border-r-dark-700 bg-dark-100 w-full border-r-4 bg-opacity-60 backdrop-blur-md dark:bg-opacity-80">
-          <SidebarContent />
+          <Link href={option.path}>
+            <li className="list-none hover:bg-dark-800 cursor-pointer p-2 rounded-xl pl-2 flex flex-row gap-2 items-center ">
+              <option.icon height={25} width={25} />
+              {option.title}
+            </li>
+          </Link>
         </div>
-        <Clickable
-          className="bg-dark-100 dark:bg-dark-800 h-min w-min rounded-r-md"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <motion.div
-            variants={chevronVariants}
-            animate={isOpen ? 'open' : 'closed'}
-          >
-            <ChevronRightIcon height={25} width={25} />
-          </motion.div>
-        </Clickable>
-      </motion.div>
+      ))}
     </div>
   );
 };
 
-const SidebarContent = () => {
-  const session = useSession();
-  const { push } = useRouter();
-
+export const Sidebar: React.FunctionComponent<Props> = (props) => {
   return (
-    <div className="flex h-full flex-col">
-      <div>
-        {session?.data?.user ? (
-          <div className="flex flex-row items-center p-2">
-            {session.data.user.image ? (
-              <Image
-                src={session.data.user.image}
-                height={30}
-                width={30}
-                alt="User Image"
-                className="rounded-full"
-              />
-            ) : (
-              <UserIcon height={30} width={30} />
-            )}
-            <div className="pl-2">{session.data?.user?.name}</div>
-            <Clickable className="ml-auto">
-              <LogoutIcon
-                onClick={() => signOut().then(() => push('/login'))}
-                width={25}
-                height={25}
-              />
-            </Clickable>
-          </div>
-        ) : (
-          <CentredLoader />
-        )}
+    <div className="h-full bg-dark-900 w-72 text-white">
+      <div className="font-bold flex flex-rows items-center p-4">
+        <Image src={xeoIcon} height={25} width={25} />
+        <span className="ml-2">Xeo</span>
       </div>
-      <div>
-        {sidebar.map((item, index) => (
-          <Link href={item.url} key={index} passHref>
-            <SidebarItem className="text-dark-700 mt-1 flex items-center py-2 text-sm dark:text-white">
-              {item.icon}
-              <span className={classNames('ml-2')}>{item.title}</span>
-            </SidebarItem>
-          </Link>
+      <ul className="space-y-12 pl-0">
+        {NAVBAR_OPTIONS.map((section) => (
+          <NavbarSection {...section} />
         ))}
-      </div>
-      <div className="mt-auto w-fit">
-        <DarkModeButton />
-      </div>
+      </ul>
     </div>
   );
 };
