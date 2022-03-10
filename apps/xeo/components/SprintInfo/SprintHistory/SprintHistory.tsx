@@ -2,7 +2,7 @@ import { Error } from 'components/Error/Error';
 import {
   GetSprintHistory,
   SprintHistoryWithStatus,
-} from 'pages/api/sprint/[sprintId]/history';
+} from 'pages/api/team/[teamId]/sprint/[sprintId]/history';
 import { useQuery } from 'utils/api';
 import dayjs from 'dayjs';
 import { groupBy } from '@xeo/utils';

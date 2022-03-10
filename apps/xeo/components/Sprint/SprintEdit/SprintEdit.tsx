@@ -4,7 +4,7 @@ import { v4 } from 'uuid';
 import React, { useEffect } from 'react';
 import { isDeveloperWithCapacityArray } from 'utils/sprint/utils';
 import axios from 'axios';
-import { PutUpdateSprintRequest } from 'pages/api/sprint/[sprintId]';
+import { PutUpdateSprintRequest } from 'pages/api/team/[teamId]/sprint/[sprintId]';
 import { toast } from 'react-toastify';
 import {
   SprintCapacityDev,

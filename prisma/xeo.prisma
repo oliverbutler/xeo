@@ -6,7 +6,6 @@ generator client {
 datasource db {
   provider             = "mysql"
   url                  = env("PLANETSCALE_PRISMA_DATABASE_URL")
-  shadowDatabaseUrl    = env("XEO_SCRUM_SHADOW_DB_URL")
   referentialIntegrity = "prisma"
 }
 
@@ -48,18 +47,16 @@ model Session {
 }
 
 model User {
-  id                       String             @id @default(cuid())
-  name                     String?
-  email                    String?            @unique
-  emailVerified            DateTime?
-  image                    String?
-  accounts                 Account[]
-  sessions                 Session[]
-  backlogsMemberOf         MemberOfBacklog[]
-  notionConnectionsCreated NotionConnection[]
-  sprints                  Sprint[]
-  createdAt                DateTime           @default(now())
-  updatedAt                DateTime           @default(now()) @updatedAt
+  id            String       @id @default(cuid())
+  name          String?
+  email         String?      @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  teamsMemberOf TeamMember[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @default(now()) @updatedAt
 }
 
 model VerificationToken {
@@ -72,74 +69,6 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-enum BacklogStatus {
-  DONE
-  IN_PROGRESS
-  TO_VALIDATE
-  SPRINT_BACKLOG
-  UNKNOWN
-}
-
-enum NotionColumnType {
-  SELECT
-  MULTI_SELECT
-  RELATIONSHIP_ID
-}
-
-model Backlog {
-  id                 String             @id @default(cuid())
-  members            MemberOfBacklog[]
-  // Notion Connection
-  notionConnection   NotionConnection   @relation(fields: [notionConnectionId], references: [id], onUpdate: NoAction)
-  notionConnectionId String
-  // Notion Related Fields
-  databaseId         String
-  databaseName       String
-  pointsColumnName   String
-  statusColumnName   String
-  sprintColumnName   String
-  notionColumnType   NotionColumnType
-  notionStatusLinks  NotionStatusLink[]
-  sprints            Sprint[]
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @default(now()) @updatedAt
-
-  @@index([notionConnectionId])
-}
-
-enum BacklogRole {
-  ADMIN
-  MEMBER
-}
-
-model MemberOfBacklog {
-  userId    String
-  backlogId String
-  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  backlog   Backlog     @relation(fields: [backlogId], references: [id], onDelete: Cascade)
-  role      BacklogRole @default(MEMBER)
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @default(now()) @updatedAt
-
-  @@id([userId, backlogId])
-  @@index([userId])
-  @@index([backlogId])
-}
-
-model NotionStatusLink {
-  id                  String                @id @default(cuid())
-  backlog             Backlog               @relation(fields: [backlogId], references: [id], onDelete: Cascade)
-  backlogId           String
-  notionStatusName    String
-  notionStatusColor   String
-  status              BacklogStatus
-  SprintStatusHistory SprintStatusHistory[]
-  createdAt           DateTime              @default(now())
-  updatedAt           DateTime              @default(now()) @updatedAt
-
-  @@index([backlogId])
-}
-
 model Sprint {
   id                          String          @id @default(cuid())
   name                        String
@@ -147,19 +76,16 @@ model Sprint {
   endDate                     DateTime
   notionSprintValue           String // ID of the Notion Sprint (select ID)
   dailyStartTime              String          @default("09:00") // HH:mm 
-  user                        User            @relation(fields: [userId], references: [id])
-  userId                      String
-  backlog                     Backlog         @relation(fields: [backlogId], references: [id])
-  backlogId                   String
+  teamId                      String
+  team                        Team            @relation(fields: [teamId], references: [id], onDelete: NoAction)
   sprintHistory               SprintHistory[]
   sprintGoal                  String
-  sprintDevelopersAndCapacity Json // temporarily a JSON, eventually a join table from User to Capacity
+  sprintDevelopersAndCapacity Json
   teamSpeed                   Float
   createdAt                   DateTime        @default(now())
   updatedAt                   DateTime        @default(now()) @updatedAt
 
-  @@index([backlogId])
-  @@index([userId])
+  @@index([teamId])
 }
 
 model SprintHistory {
@@ -188,18 +114,84 @@ model SprintStatusHistory {
   @@index([notionStatusLinkId])
 }
 
+enum TeamRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+model TeamMember {
+  userId    String
+  teamId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  backlog   Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  role      TeamRole @default(MEMBER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@id([userId, teamId])
+  @@index([userId])
+  @@index([teamId])
+}
+
+enum NotionColumnType {
+  SELECT
+  MULTI_SELECT
+  RELATIONSHIP_ID
+}
+
+model Team {
+  id                 String            @id @default(cuid())
+  name               String
+  shortName          String
+  companyName        String
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @default(now()) @updatedAt
+  // Relations
+  members            TeamMember[]
+  sprints            Sprint[]
+  notionConnection   NotionConnection?
+  notionConncetionId String?
+}
+
 model NotionConnection {
-  id                  String    @id @default(cuid())
-  createdByUserId     String
-  createdByUser       User      @relation(fields: [createdByUserId], references: [id])
+  id                  String             @id @default(cuid())
+  team                Team               @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId              String
+  // Notion Connection
   accessToken         String
   notionWorkspaceId   String
-  notionWorkspaceIcon String?
-  notionWorkspaceName String?
+  notionWorkspaceIcon String
+  notionWorkspaceName String
   notionBotId         String
-  backlogs            Backlog[]
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @default(now()) @updatedAt
+  // Notion Database Configuration
+  databaseId          String
+  databaseName        String
+  pointsColumnName    String
+  statusColumnName    String
+  sprintColumnName    String
+  notionColumnType    NotionColumnType
+  notionStatusLinks   NotionStatusLink[]
+}
 
-  @@index([createdByUserId])
+enum BacklogStatus {
+  DONE
+  IN_PROGRESS
+  TO_VALIDATE
+  SPRINT_BACKLOG
+  UNKNOWN
+}
+
+model NotionStatusLink {
+  id                  String                @id @default(cuid())
+  teamId              String
+  team                NotionConnection      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  notionStatusName    String
+  notionStatusColor   String
+  status              BacklogStatus
+  SprintStatusHistory SprintStatusHistory[]
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @default(now()) @updatedAt
+
+  @@index([teamId])
 }

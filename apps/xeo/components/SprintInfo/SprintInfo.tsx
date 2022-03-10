@@ -1,12 +1,12 @@
 import { ExternalLinkIcon } from '@heroicons/react/outline';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { GetSprintColumnPlotData } from 'pages/api/sprint/[sprintId]/column-plot-data';
+import { GetSprintColumnPlotData } from 'pages/api/team/[teamId]/sprint/[sprintId]/column-plot-data';
 import { useCallback, useEffect, useState } from 'react';
 import { useSWRConfig } from 'swr';
 import { SprintStats } from './SprintStats/SprintStats';
 import axios from 'axios';
-import { PostUpdateSprintHistory } from 'pages/api/sprint/[sprintId]/update-history';
+import { PostUpdateSprintHistory } from 'pages/api/team/[teamId]/sprint/[sprintId]/update-history';
 import { ScopedMutator } from 'swr/dist/types';
 import { toast } from 'react-toastify';
 import { UserAction, trackSprintAction } from 'utils/analytics';

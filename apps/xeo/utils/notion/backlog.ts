@@ -5,7 +5,7 @@ import {
   QueryDatabaseParameters,
 } from '@notionhq/client/build/src/api-endpoints';
 import {
-  Backlog,
+  NotionConnection,
   NotionColumnType,
   NotionStatusLink,
   Sprint,
@@ -70,14 +70,15 @@ const getStatusOfTicket = ({
   return statusLink;
 };
 
+// TODO why does this need ALL sprints for a team?
 export const getTicketFromNotionObject = ({
   sprints,
-  notionBacklog,
+  notionConnection,
   notionStatusLinks,
   page,
 }: {
   sprints: Sprint[];
-  notionBacklog: Backlog;
+  notionConnection: NotionConnection;
   notionStatusLinks: NotionStatusLink[];
   page: QueryDatabaseResponse['results'][0];
 }): Ticket => {
@@ -90,9 +91,9 @@ export const getTicketFromNotionObject = ({
   const titleProperty = Object.values(page.properties).find(
     (property) => property.id === 'title'
   );
-  const pointsProperty = getPropertyByName(notionBacklog.pointsColumnName);
-  const statusProperty = getPropertyByName(notionBacklog.statusColumnName);
-  const sprintProperty = getPropertyByName(notionBacklog.sprintColumnName);
+  const pointsProperty = getPropertyByName(notionConnection.pointsColumnName);
+  const statusProperty = getPropertyByName(notionConnection.statusColumnName);
+  const sprintProperty = getPropertyByName(notionConnection.sprintColumnName);
 
   const titleValue =
     titleProperty?.type === 'title'
@@ -164,27 +165,27 @@ const getIconFromNotionPage = (page: NotionDatabaseItem): TicketIcon | null => {
 };
 
 const getNotionFilterForNotionColumnType = (
-  backlog: Backlog,
+  notionConnection: NotionConnection,
   sprint: Sprint
 ): QueryDatabaseParameters['filter'] => {
-  switch (backlog.notionColumnType) {
+  switch (notionConnection.notionColumnType) {
     case NotionColumnType.MULTI_SELECT:
       return {
-        property: backlog.sprintColumnName,
+        property: notionConnection.sprintColumnName,
         multi_select: {
           contains: sprint.notionSprintValue,
         },
       };
     case NotionColumnType.RELATIONSHIP_ID:
       return {
-        property: backlog.sprintColumnName,
+        property: notionConnection.sprintColumnName,
         relation: {
           contains: sprint.notionSprintValue,
         },
       };
     case NotionColumnType.SELECT:
       return {
-        property: backlog.sprintColumnName,
+        property: notionConnection.sprintColumnName,
         select: {
           equals: sprint.notionSprintValue,
         },
@@ -193,30 +194,28 @@ const getNotionFilterForNotionColumnType = (
 };
 
 export const getProductBacklogForSprint = async ({
-  notionBacklog,
+  notionConnection,
   sprint,
   sprints,
   notionStatusLinks,
-  notionSecretKey,
 }: {
-  notionBacklog: Backlog;
+  notionConnection: NotionConnection;
   sprint: Sprint;
   sprints: Sprint[];
   notionStatusLinks: NotionStatusLink[];
-  notionSecretKey: string;
 }): Promise<ProductBacklog> => {
-  const notion = new Client({ auth: notionSecretKey });
+  const notion = new Client({ auth: notionConnection.accessToken });
 
   const startTime = performance.now();
   logger.info(
-    `getProductBacklogForSprint > Query Notion for  ${sprint.notionSprintValue} in db ${notionBacklog.databaseName}`
+    `getProductBacklogForSprint > Query Notion for  ${sprint.notionSprintValue} in db ${notionConnection.databaseName}`
   );
 
-  const filter = getNotionFilterForNotionColumnType(notionBacklog, sprint);
+  const filter = getNotionFilterForNotionColumnType(notionConnection, sprint);
 
   try {
     const databaseResponse = await notion.databases.query({
-      database_id: notionBacklog.databaseId,
+      database_id: notionConnection.databaseId,
       filter,
     });
 
@@ -225,13 +224,13 @@ export const getProductBacklogForSprint = async ({
       `getProductBacklogForSprint > Successfully queried (${
         endTime - startTime
       }ms) Notion for ${sprint.notionSprintValue} in db ${
-        notionBacklog.databaseName
+        notionConnection.databaseName
       }`
     );
 
     const tickets = databaseResponse.results.map((object) =>
       getTicketFromNotionObject({
-        notionBacklog,
+        notionConnection: notionConnection,
         page: object,
         notionStatusLinks,
         sprints,
@@ -243,7 +242,7 @@ export const getProductBacklogForSprint = async ({
     };
   } catch (error) {
     logger.error(
-      `getProductBacklogForSprint > Failed to query Notion for ${sprint.notionSprintValue} in db ${notionBacklog.databaseName}`,
+      `getProductBacklogForSprint > Failed to query Notion for ${sprint.notionSprintValue} in db ${notionConnection.databaseName}`,
       error
     );
     throw new Error(

@@ -2,7 +2,7 @@ import { Sprint as PrismaSprint } from '@prisma/client';
 import Button, { ButtonVariation } from '@xeo/ui/lib/Button/Button';
 import { Input } from '@xeo/ui/lib/Input/Input';
 import dayjs from 'dayjs';
-import { GetSprintsRequest } from 'pages/api/sprint';
+import { GetSprintsRequest } from 'pages/api/team/[teamId]/sprint';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useQuery } from 'utils/api';

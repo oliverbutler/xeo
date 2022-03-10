@@ -125,13 +125,12 @@ export const updateSprintHistoryIfChanged = async (
       id: sprintId,
     },
     include: {
-      backlog: {
-        include: {
-          notionStatusLinks: true,
+      team: {
+        select: {
           sprints: true,
           notionConnection: {
-            select: {
-              accessToken: true,
+            include: {
+              notionStatusLinks: true,
             },
           },
         },
@@ -143,12 +142,15 @@ export const updateSprintHistoryIfChanged = async (
     throw new Error('Sprint not found');
   }
 
+  if (!sprint.team?.notionConnection) {
+    throw new Error('Team has no Notion connection');
+  }
+
   const productBacklog = await getProductBacklogForSprint({
-    notionBacklog: sprint.backlog,
+    notionConnection: sprint.team.notionConnection,
     sprint,
-    sprints: sprint.backlog.sprints,
-    notionStatusLinks: sprint.backlog.notionStatusLinks,
-    notionSecretKey: sprint.backlog.notionConnection.accessToken,
+    sprints: sprint.team.sprints,
+    notionStatusLinks: sprint.team.notionConnection.notionStatusLinks,
   });
 
   const updatedHistory = await saveSprintHistoryForBacklogIfChanged(
@@ -179,9 +181,13 @@ export const getSprintAndPlotDataForPage = async (
       id: sprintId,
     },
     include: {
-      backlog: {
-        include: {
-          notionStatusLinks: true,
+      team: {
+        select: {
+          notionConnection: {
+            select: {
+              notionStatusLinks: true,
+            },
+          },
         },
       },
       sprintHistory: {
@@ -192,18 +198,18 @@ export const getSprintAndPlotDataForPage = async (
     },
   });
 
-  if (!sprint) {
+  if (!sprint || !sprint.team.notionConnection) {
     return null;
   }
 
   const sprintHistoryPlotData = getDataForSprintChart(
     sprint,
     sprint.sprintHistory,
-    sprint.backlog.notionStatusLinks
+    sprint.team.notionConnection.notionStatusLinks
   );
 
   // Remove backlog and sprintHistory from the response to avoid sending unnecessary data
-  const { backlog, sprintHistory, ...restSprint } = sprint;
+  const { team, sprintHistory, ...restSprint } = sprint;
 
   return {
     sprint: restSprint,

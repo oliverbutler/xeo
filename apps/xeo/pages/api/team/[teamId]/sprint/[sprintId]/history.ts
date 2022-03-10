@@ -1,9 +1,9 @@
 import { SprintHistory, SprintStatusHistory } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
-
 import { apiError, APIGetRequest, apiResponse } from 'utils/api';
 import { getSession } from 'next-auth/react';
-import { prisma } from 'utils/db/db';
+import { getUserRoleInTeam } from 'utils/team/adapter';
+import { getSprintWithHistory } from 'utils/sprint/adapter';
 
 export type GetSprintHistory = APIGetRequest<{
   sprintHistory: SprintHistoryWithStatus[];
@@ -21,40 +21,36 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   const sprintId = req.query.sprintId as string;
+  const teamId = req.query.teamId as string;
   const userId = session.id;
 
-  if (req.method === 'GET') {
-    const sprintHistory = await prisma.sprintHistory.findMany({
-      where: {
-        sprint: {
-          id: sprintId,
-          backlog: {
-            members: {
-              some: {
-                user: {
-                  id: userId,
-                },
-              },
-            },
-          },
-        },
-      },
-      include: {
-        sprintStatusHistory: true,
-      },
-      orderBy: {
-        timestamp: 'desc',
-      },
-    });
+  const userRole = await getUserRoleInTeam(userId, teamId);
 
-    if (!sprintHistory) {
-      return apiError(res, { message: 'Sprint not found' }, 404);
-    }
+  if (!userRole) {
+    return apiError(res, { message: 'User is not a member of this team' }, 403);
+  }
 
-    return apiResponse<GetSprintHistory>(res, { sprintHistory });
+  switch (req.method) {
+    case 'GET':
+      return await getHandler(req, res, teamId, sprintId);
   }
 
   return apiError(res, { message: 'Not implemented' }, 501);
+};
+
+const getHandler = async (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  teamId: string,
+  sprintId: string
+) => {
+  const sprintWithHistory = await getSprintWithHistory(sprintId, teamId);
+
+  if (!sprintWithHistory) {
+    return apiError(res, { message: 'Sprint not found' }, 404);
+  }
+
+  return apiResponse(res, { sprintHistory: sprintWithHistory.sprintHistory });
 };
 
 export default handler;

@@ -4,9 +4,7 @@ import { apiError, APIRequest, apiResponse, parseAPIRequest } from 'utils/api';
 import { updateSprintHistoryIfChanged } from 'utils/sprint/sprint-history';
 
 export type PostUpdateSprintHistory = APIRequest<
-  {
-    sprintId: string;
-  },
+  {},
   {
     updatedSprintPlotData: boolean;
   }
@@ -26,7 +24,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return apiError(res, { message: error?.message ?? '' }, 400);
   }
 
-  const { sprintId } = body;
+  const sprintId = req.query.sprintId as string;
 
   try {
     const updatedHistory = await updateSprintHistoryIfChanged(sprintId);

@@ -1,5 +1,5 @@
 import { BacklogStatus, NotionStatusLink, Sprint } from '@prisma/client';
-import { SprintWithHistory } from 'pages/api/sprint';
+import { SprintWithHistory } from 'pages/api/team/[teamId]/sprint';
 import {
   DataPlotLine,
   getBusinessDaysArray,

@@ -1,14 +1,14 @@
 import { useForm } from 'react-hook-form';
 import React from 'react';
 import axios from 'axios';
-import { PutUpdateSprintRequest } from 'pages/api/sprint/[sprintId]';
+import { PutUpdateSprintRequest } from 'pages/api/team/[teamId]/sprint/[sprintId]';
 import { toast } from 'react-toastify';
 import {
   SprintCapacityDev,
   SprintCapacityTable,
 } from '../SprintCapacityTable/SprintCapacityTable';
 import dayjs from 'dayjs';
-import { PostCreateSprintRequest } from 'pages/api/sprint';
+import { PostCreateSprintRequest } from 'pages/api/team/[teamId]/sprint';
 import { useRouter } from 'next/router';
 import { BacklogWithNotionStatusLinksAndOwner } from 'pages/api/backlog';
 import { groupBy } from '@xeo/utils';

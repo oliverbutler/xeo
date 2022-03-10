@@ -5,7 +5,7 @@ import {
   SprintStatusHistory,
 } from '@prisma/client';
 import dayjs from 'dayjs';
-import { SprintWithHistory } from 'pages/api/sprint';
+import { SprintWithHistory } from 'pages/api/team/[teamId]/sprint';
 import { isDeveloperWithCapacityArray } from './utils';
 
 export enum DataPlotLine {

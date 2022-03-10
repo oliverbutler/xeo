@@ -1,5 +1,5 @@
 import { Sprint } from '@prisma/client';
-import { GetSprintColumnPlotData } from 'pages/api/sprint/[sprintId]/column-plot-data';
+import { GetSprintColumnPlotData } from 'pages/api/team/[teamId]/sprint/[sprintId]/column-plot-data';
 import { toast } from 'react-toastify';
 import { useQuery } from 'utils/api';
 import { DataPlotType } from 'utils/sprint/chart';
