@@ -3,7 +3,7 @@ import { User } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { apiError, APIGetRequest, apiResponse } from 'utils/api';
-import { getUser } from 'utils/user/adapter';
+import { getUser } from 'utils/db/user/adapter';
 
 export type GetMeRequest = APIGetRequest<{ user: User }>;
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {

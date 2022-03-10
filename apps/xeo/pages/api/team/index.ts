@@ -9,7 +9,7 @@ import {
   apiResponse,
   parseAPIRequest,
 } from 'utils/api';
-import { createTeam, CreateTeam, getTeamsForUser } from 'utils/team/adapter';
+import { createTeam, CreateTeam, getTeamsForUser } from 'utils/db/team/adapter';
 
 export type CreateTeamRequest = APIRequest<
   { input: CreateTeam },

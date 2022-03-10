@@ -1,5 +1,5 @@
 import { Sprint, Team, TeamMember, TeamRole } from '@prisma/client';
-import { prisma } from 'utils/db/db';
+import { prisma } from 'utils/db';
 
 export type CreateTeam = {
   name: string;

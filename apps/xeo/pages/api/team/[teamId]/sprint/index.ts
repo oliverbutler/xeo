@@ -3,8 +3,8 @@ import Joi from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { apiError, APIRequest, apiResponse, parseAPIRequest } from 'utils/api';
-import { createSprint, CreateSprint } from 'utils/sprint/adapter';
-import { getUserRoleInTeam } from 'utils/team/adapter';
+import { createSprint, CreateSprint } from 'utils/db/sprint/adapter';
+import { getUserRoleInTeam } from 'utils/db/team/adapter';
 
 import { TIME_REGEX } from './[sprintId]';
 

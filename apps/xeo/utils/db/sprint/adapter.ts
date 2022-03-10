@@ -1,6 +1,9 @@
 import { Sprint, SprintHistory, SprintStatusHistory } from '@prisma/client';
-import { prisma } from 'utils/db/db';
-import { DeveloperWithCapacity, isDeveloperWithCapacityArray } from './utils';
+import { prisma } from 'utils/db';
+import {
+  DeveloperWithCapacity,
+  isDeveloperWithCapacityArray,
+} from '../../sprint/utils';
 
 export type UpdateSprint = Partial<CreateSprint>;
 

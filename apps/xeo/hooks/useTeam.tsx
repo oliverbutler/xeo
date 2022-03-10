@@ -2,7 +2,7 @@ import { Team } from '@prisma/client';
 import { CreateTeamRequest } from 'pages/api/team';
 import { toast } from 'react-toastify';
 import { apiPost } from 'utils/api';
-import { CreateTeam } from 'utils/team/adapter';
+import { CreateTeam } from 'utils/db/team/adapter';
 
 interface Output {
   createTeam: (input: CreateTeam) => Promise<Team | undefined>;

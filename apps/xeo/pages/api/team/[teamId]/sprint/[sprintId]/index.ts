@@ -16,8 +16,8 @@ import {
   getSprintForTeam,
   updateSprint,
   UpdateSprint,
-} from 'utils/sprint/adapter';
-import { getUserRoleInTeam } from 'utils/team/adapter';
+} from 'utils/db/sprint/adapter';
+import { getUserRoleInTeam } from 'utils/db/team/adapter';
 
 export type GetSprintRequest = APIGetRequest<{
   sprint: Sprint;

@@ -2,7 +2,7 @@ import NextAuth from 'next-auth';
 import GithubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
-import { prisma } from 'utils/db/db';
+import { prisma } from 'utils/db';
 
 if (!process.env.GITHUB_ID || !process.env.GITHUB_SECRET) {
   throw new Error('GITHUB_ID and GITHUB_SECRET must be set in .env');

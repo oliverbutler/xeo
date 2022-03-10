@@ -17,7 +17,7 @@ import {
   getUserRoleInTeam,
   TeamWithSprintsAndMembers,
   updateTeam,
-} from 'utils/team/adapter';
+} from 'utils/db/team/adapter';
 
 export type DeleteTeamRequest = APIDeleteRequest<{
   success: boolean;

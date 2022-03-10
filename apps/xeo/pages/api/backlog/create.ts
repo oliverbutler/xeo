@@ -8,7 +8,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { APIRequest, parseAPIRequest } from 'utils/api';
 import Joi from 'joi';
-import { prisma } from 'utils/db/db';
+import { prisma } from 'utils/db';
 
 export type PostCreateBacklog = APIRequest<
   {

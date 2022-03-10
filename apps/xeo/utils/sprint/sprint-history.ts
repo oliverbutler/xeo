@@ -1,7 +1,7 @@
 import { NotionStatusLink, Sprint } from '@prisma/client';
 import { groupBy } from '@xeo/utils';
 import { logger } from 'utils/api';
-import { prisma } from 'utils/db/db';
+import { prisma } from 'utils/db';
 import {
   getProductBacklogForSprint,
   ProductBacklog,

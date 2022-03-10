@@ -7,7 +7,7 @@ import {
   apiResponse,
   parseAPIRequest,
 } from 'utils/api';
-import { prisma } from 'utils/db/db';
+import { prisma } from 'utils/db';
 
 import { BacklogRole } from '@prisma/client';
 import Joi from 'joi';

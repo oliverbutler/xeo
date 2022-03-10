@@ -2,8 +2,8 @@ import { SprintHistory, SprintStatusHistory } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { apiError, APIGetRequest, apiResponse } from 'utils/api';
 import { getSession } from 'next-auth/react';
-import { getUserRoleInTeam } from 'utils/team/adapter';
-import { getSprintWithHistory } from 'utils/sprint/adapter';
+import { getUserRoleInTeam } from 'utils/db/team/adapter';
+import { getSprintWithHistory } from 'utils/db/sprint/adapter';
 
 export type GetSprintHistory = APIGetRequest<{
   sprintHistory: SprintHistoryWithStatus[];
