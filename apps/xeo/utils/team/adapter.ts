@@ -11,6 +11,7 @@ export const createTeam = async (
   userId: string,
   input: CreateTeam
 ): Promise<Team> => {
+  console.log(userId, input);
   const team = await prisma.team.create({
     data: {
       name: input.name,
