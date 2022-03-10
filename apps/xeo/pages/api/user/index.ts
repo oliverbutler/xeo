@@ -1,23 +1,20 @@
+import { UserMetadata, UserRole } from '@prisma/client';
 import Joi from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { apiError, APIRequest, apiResponse, parseAPIRequest } from 'utils/api';
 import {
   createUserMetadata,
-  getUserMetadata,
-} from 'utils/db/adapters/userMetadata';
-import {
   CreateUserMetadata,
-  UserMetadata,
-  UserRole,
-} from 'utils/db/models/userMetadata';
+  getUserWithMetadata,
+} from 'utils/db/user/adapter';
 
 export type PostCreateUserRequest = APIRequest<
   {
     input: CreateUserMetadata;
   },
   {
-    user: UserMetadata;
+    userMetadata: UserMetadata;
   }
 >;
 
@@ -53,9 +50,13 @@ const postHandler = async (
   res: NextApiResponse,
   userId: string
 ) => {
-  const user = await getUserMetadata(userId);
+  const user = await getUserWithMetadata(userId);
 
-  if (user) {
+  if (!user) {
+    return apiError(res, { message: 'User not found' }, 404);
+  }
+
+  if (user?.metadata) {
     return apiError(res, { message: 'You already have User Metadata' }, 400);
   }
 
@@ -71,5 +72,5 @@ const postHandler = async (
     return apiError(res, { message: 'Failed to create User Metadata' }, 500);
   }
 
-  return apiResponse<PostCreateUserRequest>(res, { user: result });
+  return apiResponse<PostCreateUserRequest>(res, { userMetadata: result });
 };

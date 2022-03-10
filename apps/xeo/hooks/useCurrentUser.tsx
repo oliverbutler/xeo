@@ -2,17 +2,18 @@ import { Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import { GetMeRequest } from 'pages/api/user/me';
 import { useQuery } from 'utils/api';
+import { UserWithMetadata } from 'utils/db/user/adapter';
 
 type Output =
   | {
-      userMetadata: GetMeRequest['response'];
+      me: UserWithMetadata;
       session: Session;
       status: 'authenticated';
     }
   | {
       status: 'authenticated' | 'loading' | 'unauthenticated';
       session: null;
-      userMetadata: null;
+      me: null;
     };
 
 export const useCurrentUser = (): Output => {
@@ -27,7 +28,7 @@ export const useCurrentUser = (): Output => {
   if (status === 'authenticated' && meResponse.data && sessionResponse.data) {
     return {
       status: 'authenticated',
-      userMetadata: meResponse.data,
+      me: meResponse.data.user,
       session: sessionResponse.data,
     };
   }
@@ -35,6 +36,6 @@ export const useCurrentUser = (): Output => {
   return {
     status,
     session: null,
-    userMetadata: null,
+    me: null,
   };
 };

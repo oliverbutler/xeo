@@ -1,9 +1,17 @@
+import { useCurrentUser } from 'hooks/useCurrentUser';
 import { ToastContainer } from 'react-toastify';
 import { Footer } from './Footer/Footer';
 import { Navbar } from './Navbar/Navbar';
+import { Onboarding } from './Onboarding/Onboarding';
 import { Sidebar } from './Sidebar/Sidebar';
 
 export const PrivateAppWrapper: React.FunctionComponent = ({ children }) => {
+  const { me, status } = useCurrentUser();
+
+  if (status !== 'loading' && !me?.metadata) {
+    return <Onboarding />;
+  }
+
   return (
     <div className="h-screen flex flex-row">
       <Sidebar />

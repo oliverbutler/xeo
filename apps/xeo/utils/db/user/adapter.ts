@@ -1,8 +1,36 @@
-import { User } from '@prisma/client';
+import { User, UserMetadata } from '@prisma/client';
 import { prisma } from 'utils/db';
 
-export const getUser = async (userId: string): Promise<User | null> => {
-  const user = await prisma.user.findUnique({ where: { id: userId } });
+export type UserWithMetadata = User & {
+  metadata: UserMetadata | null;
+};
+
+export const getUserWithMetadata = async (
+  userId: string
+): Promise<UserWithMetadata | null> => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    include: { metadata: true },
+  });
 
   return user;
+};
+
+export type CreateUserMetadata = Pick<UserMetadata, 'role' | 'preferredName'>;
+
+export const createUserMetadata = async (
+  userId: string,
+  metadata: CreateUserMetadata
+): Promise<UserMetadata | null> => {
+  console.log(userId, metadata);
+
+  const created = await prisma.userMetadata.create({
+    data: {
+      userId: userId,
+      role: metadata.role,
+      preferredName: metadata.preferredName,
+    },
+  });
+
+  return created;
 };
