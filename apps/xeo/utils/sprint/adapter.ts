@@ -1,4 +1,4 @@
-import { Sprint } from '@prisma/client';
+import { Sprint, SprintHistory, SprintStatusHistory } from '@prisma/client';
 import { prisma } from 'utils/db/db';
 import { DeveloperWithCapacity, isDeveloperWithCapacityArray } from './utils';
 
@@ -45,8 +45,7 @@ export const updateSprint = async (
 };
 
 export const createSprint = async (
-  userId: string,
-  backlogId: string,
+  teamId: string,
   input: CreateSprint
 ): Promise<Sprint> => {
   if (!isDeveloperWithCapacityArray(input.developers)) {
@@ -67,18 +66,45 @@ export const createSprint = async (
       teamSpeed: input.teamSpeed,
       dailyStartTime: input.dayStartTime,
       sprintDevelopersAndCapacity: input.developers,
-      backlog: {
+      team: {
         connect: {
-          id: backlogId,
-        },
-      },
-      user: {
-        connect: {
-          id: userId,
+          id: teamId,
         },
       },
     },
   });
+  return sprint;
+};
 
+export const getSprintForTeam = async (
+  sprintId: string,
+  teamId: string
+): Promise<Sprint | null> => {
+  const sprint = await prisma.sprint.findFirst({
+    where: { id: sprintId, teamId },
+  });
+  return sprint;
+};
+
+export const deleteSprint = async (sprintId: string): Promise<void> => {
+  await prisma.sprint.delete({
+    where: { id: sprintId },
+  });
+};
+
+export type SprintWitHistory = Sprint & {
+  sprintHistory: (SprintHistory & {
+    sprintStatusHistory: SprintStatusHistory[];
+  })[];
+};
+
+export const getSprintWithHistory = async (
+  sprintId: string,
+  teamId: string
+): Promise<SprintWitHistory | null> => {
+  const sprint = await prisma.sprint.findFirst({
+    where: { teamId, id: sprintId },
+    include: { sprintHistory: { include: { sprintStatusHistory: true } } },
+  });
   return sprint;
 };
