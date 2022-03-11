@@ -3,10 +3,10 @@ import { SprintInfo } from './SprintInfo/SprintInfo';
 export const IndexApp: React.FunctionComponent = () => {
   return (
     <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-      <div className="rounded-lg shadow-lg bg-white dark:bg-dark-800 col-span-2">
+      <div className="rounded-lg shadow-lg bg-white dark:bg-dark-900 col-span-2">
         <SprintInfo sprintData={null} sprintId="" publicMode={false} />
       </div>
-      <div className="rounded-lg shadow-lg bg-white dark:bg-dark-800"></div>
+      <div className="rounded-lg shadow-lg bg-white dark:bg-dark-900"></div>
     </div>
   );
 };

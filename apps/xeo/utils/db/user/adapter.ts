@@ -34,3 +34,15 @@ export const createUserMetadata = async (
 
   return created;
 };
+
+export const updateUserMetadata = async (
+  userId: string,
+  metadata: Partial<UserMetadata>
+): Promise<UserMetadata | null> => {
+  const updated = await prisma.userMetadata.update({
+    where: { userId: userId },
+    data: metadata,
+  });
+
+  return updated;
+};

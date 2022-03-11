@@ -74,6 +74,8 @@ model UserMetadata {
   preferredName String
   userId        String
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  defaultTeam   Team?    @relation(fields: [defaultTeamId], references: [id], onDelete: Cascade)
+  defaultTeamId String?
   //
   createdAt     DateTime @default(now())
   updatedAt     DateTime @default(now()) @updatedAt
@@ -166,17 +168,18 @@ enum NotionColumnType {
 }
 
 model Team {
-  id               String            @id @default(cuid())
-  name             String
-  shortName        String
-  companyName      String
+  id                     String            @id @default(cuid())
+  name                   String
+  shortName              String
+  companyName            String
   // Relations
-  members          TeamMember[]
-  sprints          Sprint[]
-  notionConnection NotionConnection?
+  members                TeamMember[]
+  sprints                Sprint[]
+  usersWithTeamAsDefault UserMetadata[]
+  notionConnection       NotionConnection?
   //
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @default(now()) @updatedAt
+  createdAt              DateTime          @default(now())
+  updatedAt              DateTime          @default(now()) @updatedAt
 }
 
 model NotionConnection {
