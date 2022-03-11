@@ -1,20 +1,20 @@
+import { UserMetadata } from '@prisma/client';
 import { Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import { GetMeRequest } from 'pages/api/user/me';
-import { useQuery } from 'utils/api';
+import { PutUpdateUserMetadata } from 'pages/api/user/me/metadata';
+import { toast } from 'react-toastify';
+import { apiPut, useQuery } from 'utils/api';
 import { UserWithMetadata } from 'utils/db/user/adapter';
 
-type Output =
-  | {
-      me: UserWithMetadata;
-      session: Session;
-      status: 'authenticated';
-    }
-  | {
-      status: 'authenticated' | 'loading' | 'unauthenticated';
-      session: null;
-      me: null;
-    };
+type Output = {
+  me: UserWithMetadata | null;
+  session: Session | null;
+  status: 'authenticated' | 'loading' | 'unauthenticated';
+  updateUserMetadata: (
+    input: PutUpdateUserMetadata['request']['input']
+  ) => Promise<boolean>;
+};
 
 export const useCurrentUser = (): Output => {
   const sessionResponse = useSession();
@@ -25,17 +25,26 @@ export const useCurrentUser = (): Output => {
 
   const status = isLoading ? 'loading' : sessionResponse.status;
 
-  if (status === 'authenticated' && meResponse.data && sessionResponse.data) {
-    return {
-      status: 'authenticated',
-      me: meResponse.data.user,
-      session: sessionResponse.data,
-    };
-  }
+  const updateUserMetadata = async (
+    input: PutUpdateUserMetadata['request']['input']
+  ) => {
+    const { data, error } = await apiPut<PutUpdateUserMetadata>(
+      '/api/user/me/metadata',
+      { input }
+    );
+
+    if (error || !data) {
+      toast.error(error.body?.message ?? error.generic);
+      return false;
+    }
+
+    return true;
+  };
 
   return {
-    status,
-    session: null,
-    me: null,
+    status: status,
+    me: meResponse?.data?.user ?? null,
+    session: sessionResponse.data ?? null,
+    updateUserMetadata,
   };
 };

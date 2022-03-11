@@ -1,7 +1,7 @@
 import { Team } from '@prisma/client';
 import { CreateTeamRequest } from 'pages/api/team';
 import { toast } from 'react-toastify';
-import { apiPost } from 'utils/api';
+import { apiGet, apiPost } from 'utils/api';
 import { CreateTeam } from 'utils/db/team/adapter';
 
 interface Output {

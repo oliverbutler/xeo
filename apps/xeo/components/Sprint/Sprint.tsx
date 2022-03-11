@@ -1,50 +1,34 @@
 import { Sprint as PrismaSprint } from '@prisma/client';
 import Button, { ButtonVariation } from '@xeo/ui/lib/Button/Button';
-import { Input } from '@xeo/ui/lib/Input/Input';
 import dayjs from 'dayjs';
-import { GetSprintsRequest } from 'pages/api/team/[teamId]/sprint';
-import { useState } from 'react';
-import { toast } from 'react-toastify';
-import { useQuery } from 'utils/api';
+import { useCurrentUser } from 'hooks/useCurrentUser';
 import { PreviousSprints } from './PreviousSprints/PreviousSprints';
 import { SprintPreview } from './SprintPreview/SprintPreview';
 
-export const Sprint: React.FunctionComponent = () => {
-  const { data, error } = useQuery<GetSprintsRequest>('/api/sprint');
+type SprintsProps = {
+  sprints: PrismaSprint[];
+};
 
-  const [searchText, setSearchText] = useState('');
-
-  if (error) {
-    toast.error("Couldn't fetch sprints");
-    return null;
-  }
-
-  const userSprints = data?.backlogs.map(({ sprints }) => sprints).flat() ?? [];
+export const Sprints: React.FunctionComponent<SprintsProps> = ({ sprints }) => {
+  const { me } = useCurrentUser();
+  const currentTeam = me?.metadata?.defaultTeamId;
 
   const isSprintActive = (sprint: PrismaSprint) =>
     dayjs(sprint.endDate).isAfter(dayjs());
 
   const isSprintInactive = (sprint: PrismaSprint) => !isSprintActive(sprint);
 
-  const filteredSprints = userSprints.filter((sprint) =>
-    sprint.name.toLowerCase().includes(searchText.toLowerCase())
-  );
-
-  const activeSprints = filteredSprints.filter(isSprintActive);
-  const completeSprints = filteredSprints.filter(isSprintInactive);
+  const activeSprints = sprints.filter(isSprintActive);
+  const completeSprints = sprints.filter(isSprintInactive);
 
   return (
     <div className="pb-24">
       <div className="py-6 flex flex-row gap-4 items-center">
-        <Input
-          className="flex-grow"
-          label=""
-          placeholder="Search..."
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-        />
         <div>
-          <Button href="/sprint/create" variation={ButtonVariation.Dark}>
+          <Button
+            href={`/team/${currentTeam}/sprint/create`}
+            variation={ButtonVariation.Dark}
+          >
             Create Sprint
           </Button>
         </div>

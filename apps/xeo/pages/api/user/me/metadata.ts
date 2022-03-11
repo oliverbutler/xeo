@@ -1,3 +1,4 @@
+import { UserMetadata } from '@prisma/client';
 import Joi from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
@@ -9,12 +10,24 @@ import {
   UserWithMetadata,
 } from 'utils/db/user/adapter';
 
-export type PostUpdateUserDefaultTeamRequest = APIRequest<
-  {},
+export type PutUpdateUserMetadata = APIRequest<
+  {
+    input: {
+      defaultTeamId?: string;
+      preferredName?: string;
+    };
+  },
   {
     user: UserWithMetadata;
   }
 >;
+
+const putSchema: PutUpdateUserMetadata['joiBodySchema'] = Joi.object({
+  input: Joi.object({
+    defaultTeamId: Joi.string(),
+    preferredName: Joi.string(),
+  }),
+});
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
@@ -25,31 +38,38 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const userId = session.id;
 
-  const teamId = req.query.teamId as string;
-
   switch (req.method) {
-    case 'POST':
-      return postHandler(req, res, userId, teamId);
+    case 'PUT':
+      return putHandler(req, res, userId);
   }
 
   return apiError(res, { message: 'Method not allowed' }, 405);
 };
 
-const postHandler = async (
+const putHandler = async (
   req: NextApiRequest,
   res: NextApiResponse,
-  userId: string,
-  teamId: string
+  userId: string
 ) => {
-  const teamRole = await getUserRoleInTeam(userId, teamId);
+  const { error, body } = parseAPIRequest(req, putSchema);
 
-  if (!teamRole) {
-    return apiError(res, { message: 'User is not a member of the team' }, 404);
+  if (error) {
+    return apiError(res, error);
   }
 
-  await updateUserMetadata(userId, {
-    defaultTeamId: teamId,
-  });
+  // If they want to update the team info, check that they have the right role
+  if (body.input.defaultTeamId) {
+    const teamRole = await getUserRoleInTeam(userId, body.input.defaultTeamId);
+    if (!teamRole) {
+      return apiError(
+        res,
+        { message: 'User is not a member of the team' },
+        404
+      );
+    }
+  }
+
+  await updateUserMetadata(userId, body.input);
 
   const updatedUser = await getUserWithMetadata(userId);
 
@@ -57,7 +77,7 @@ const postHandler = async (
     return apiError(res, { message: 'User not found' }, 404);
   }
 
-  return apiResponse<PostUpdateUserDefaultTeamRequest>(res, {
+  return apiResponse<PutUpdateUserMetadata>(res, {
     user: updatedUser,
   });
 };

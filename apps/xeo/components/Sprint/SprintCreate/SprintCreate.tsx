@@ -10,12 +10,10 @@ import {
 import dayjs from 'dayjs';
 import { PostCreateSprintRequest } from 'pages/api/team/[teamId]/sprint';
 import { useRouter } from 'next/router';
-import { BacklogWithNotionStatusLinksAndOwner } from 'pages/api/backlog';
-import { groupBy } from '@xeo/utils';
 import { NotionSprintSelector } from './NotionSprintSelector';
-import { SelectField } from '@xeo/ui/lib/Select/SelectField';
 import { Input } from '@xeo/ui/lib/Input/Input';
 import { Button } from '@xeo/ui/lib/Button/Button';
+import { useCurrentTeam } from 'hooks/useCurrentTeam';
 
 export interface SprintCreateForm {
   backlog: BacklogSelectType;
@@ -31,10 +29,6 @@ export interface SprintCreateForm {
 
 const DEFAULT_CAPACITY = 1;
 
-interface SprintCreateProps {
-  backlogs: BacklogWithNotionStatusLinksAndOwner[];
-}
-
 interface BacklogSelectType {
   value: string;
   label: string;
@@ -45,14 +39,9 @@ export type SprintSelectOption = {
   label: string;
 };
 
-interface BacklogGroup {
-  label: string;
-  options: BacklogSelectType[];
-}
+export const SprintCreate: React.FunctionComponent = () => {
+  const { team } = useCurrentTeam();
 
-export const SprintCreate: React.FunctionComponent<SprintCreateProps> = ({
-  backlogs,
-}) => {
   const { push } = useRouter();
 
   const form = useForm<SprintCreateForm>({
@@ -71,23 +60,6 @@ export const SprintCreate: React.FunctionComponent<SprintCreateProps> = ({
   });
 
   const { register, watch, handleSubmit } = form;
-
-  const groupedBacklogs = groupBy(
-    backlogs,
-    (b) => b.notionConnection?.notionWorkspaceName ?? ''
-  );
-
-  const backlogSelectOptions: BacklogGroup[] = Object.keys(groupedBacklogs).map(
-    (key) => {
-      return {
-        label: key,
-        options: groupedBacklogs[key].map((b) => ({
-          value: b.id,
-          label: b.databaseName,
-        })),
-      };
-    }
-  );
 
   const startDate = watch('startDate');
   const endDate = watch('endDate');
@@ -136,14 +108,7 @@ export const SprintCreate: React.FunctionComponent<SprintCreateProps> = ({
     <form className="gap-4" onSubmit={handleSubmit(createSprint)}>
       <h2>Notion Options</h2>
       <div className="grid grid-cols-3 gap-4">
-        <SelectField
-          label="Select Backlog"
-          control={form.control}
-          name="backlog"
-          options={backlogSelectOptions}
-          rules={{ required: true }}
-        />
-        <NotionSprintSelector form={form} backlogs={backlogs} />
+        {/* <NotionSprintSelector form={form} backlogs={backlogs} /> */}
       </div>
       <h2>Sprint Details</h2>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
