@@ -2,7 +2,7 @@ import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { ThemeProvider } from 'next-themes';
 import { SessionProvider } from 'next-auth/react';
-import './styles.css';
+import '../styles.css';
 import 'react-toastify/dist/ReactToastify.css';
 import { useEffect } from 'react';
 import { initGA } from 'utils/analytics';

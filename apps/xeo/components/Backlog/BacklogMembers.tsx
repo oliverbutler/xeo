@@ -8,15 +8,16 @@ import debounce from 'lodash/debounce';
 import { BacklogSelectRole } from './BacklogSelectRole';
 import { useSession } from 'next-auth/react';
 import { BacklogWithMembersAndRestrictedUsers } from 'pages/api/backlog/[id]';
-import { useBacklog } from './useBacklog';
 import { apiGet } from 'utils/api';
 import { toast } from 'react-toastify';
 import { Button } from '@xeo/ui/lib/Button/Button';
 import { Table } from '@xeo/ui/lib/Table/Table';
 import { Clickable } from '@xeo/ui/lib/Clickable/Clickable';
+import { TeamWithSprintsAndMembers } from 'utils/db/team/adapter';
+import { useTeam } from 'hooks/useTeam';
 
 interface Props {
-  backlog: BacklogWithMembersAndRestrictedUsers;
+  team: TeamWithSprintsAndMembers;
 }
 
 type UserSelectOption = {
@@ -50,9 +51,9 @@ const loadUserOptions = async (
   callback(options);
 };
 
-export const BacklogMembers: React.FunctionComponent<Props> = ({ backlog }) => {
+export const BacklogMembers: React.FunctionComponent<Props> = ({ team }) => {
   const { data } = useSession();
-  const { deleteMember, addMember } = useBacklog();
+  const { deleteMember, addMember } = useTeam();
 
   const [currentSearch, setCurrentSearch] = useState<
     UserSelectOption | undefined
@@ -63,16 +64,15 @@ export const BacklogMembers: React.FunctionComponent<Props> = ({ backlog }) => {
   }, 500);
 
   const handleAddMemberClick = () => {
-    if (currentSearch) addMember(backlog.id, currentSearch.value);
+    if (currentSearch) addMember(team.id, currentSearch.value);
   };
 
-  const currentUserMember = backlog.members.find(
+  const currentUserMember = team.members.find(
     (member) => member.userId === data?.id
   );
 
   return (
-    <div>
-      <h2>Invite Member to Backlog</h2>
+    <div className="space-y-4 bg-dark-950 p-4 mt-4 rounded-md">
       <div className="flex flex-row gap-2 w-full">
         <div>
           <AsyncSelect<UserSelectOption>
@@ -91,10 +91,10 @@ export const BacklogMembers: React.FunctionComponent<Props> = ({ backlog }) => {
           </Button>
         </div>
       </div>
-      <h2>Edit Backlog Members</h2>
+      <h2>Edit Team Members</h2>
       <div>
         <Table<BacklogWithMembersAndRestrictedUsers['members'][0]>
-          data={backlog.members}
+          data={team.members}
           columns={[
             {
               Header: 'Name',
@@ -122,7 +122,7 @@ export const BacklogMembers: React.FunctionComponent<Props> = ({ backlog }) => {
               accessor: 'role',
               Cell: (row) => (
                 <BacklogSelectRole
-                  backlog={backlog}
+                  team={team}
                   member={row.row.original}
                   disabled={
                     row.row.original.userId === currentUserMember?.userId
@@ -136,9 +136,7 @@ export const BacklogMembers: React.FunctionComponent<Props> = ({ backlog }) => {
               Cell: (row) =>
                 row.row.original.userId === currentUserMember?.userId ? null : (
                   <div className="flex flex-row items-center">
-                    <Clickable
-                      onClick={() => deleteMember(backlog.id, row.value)}
-                    >
+                    <Clickable onClick={() => deleteMember(team.id, row.value)}>
                       <TrashIcon width={25} height={25} />
                     </Clickable>
                   </div>

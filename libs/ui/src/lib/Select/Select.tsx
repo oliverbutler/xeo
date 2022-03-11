@@ -22,7 +22,7 @@ export const Select = ({
   return (
     <div
       className={classNames(
-        'text-dark-700 dark:text-white',
+        'my-react-select-container my-react-select text-dark-700 dark:text-white',
         { 'opacity-50': isDisabled },
         className
       )}

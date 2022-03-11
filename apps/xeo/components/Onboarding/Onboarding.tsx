@@ -114,21 +114,7 @@ export const Onboarding: React.FunctionComponent = () => {
               If you are the Project Manager, Lead Developer or your team
               leader, feel free to connect to Notion to make a new Xeo Team!
             </p>
-            <Modal
-              mainText="Create Team"
-              trigger={(setOpen) => (
-                <Button
-                  onClick={() => {
-                    trackAction(UserAction.CLICK_CREATE_TEAM);
-                    setOpen();
-                  }}
-                  variation={ButtonVariation.Primary}
-                >
-                  Create a Team
-                </Button>
-              )}
-              content={(setClose) => <NotionConnection closeModal={setClose} />}
-            />
+           
           </div>
         </div> */}
       </div>

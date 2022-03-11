@@ -1,18 +1,7 @@
-import { Sprints } from 'components/Sprint/Sprint';
-import { useCurrentTeam } from 'hooks/useCurrentTeam';
+import { Dashboard } from 'components/Dashboard/Dashboard';
 
 export function Index() {
-  const { team } = useCurrentTeam();
-
-  if (!team) {
-    return <div>Loading</div>;
-  }
-
-  return (
-    <div>
-      <Sprints sprints={team.sprints} />
-    </div>
-  );
+  return <Dashboard />;
 }
 
 export default Index;

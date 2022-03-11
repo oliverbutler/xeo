@@ -1,35 +1,33 @@
-import { BacklogRole } from '@prisma/client';
+import { TeamRole } from '@prisma/client';
 import { Select } from '@xeo/ui/lib/Select/Select';
-import { BacklogWithMembersAndRestrictedUsers } from 'pages/api/backlog/[id]';
-import { UpdateBacklogMember } from 'pages/api/backlog/[id]/members/[memberId]';
-import { toast } from 'react-toastify';
-import { mutate } from 'swr';
-import { apiPut } from 'utils/api';
+import { useTeam } from 'hooks/useTeam';
+import { TeamWithSprintsAndMembers } from 'utils/db/team/adapter';
 
 interface Props {
-  backlog: BacklogWithMembersAndRestrictedUsers;
-  member: BacklogWithMembersAndRestrictedUsers['members'][0];
+  team: TeamWithSprintsAndMembers;
+  member: TeamWithSprintsAndMembers['members'][0];
   disabled: boolean;
 }
 
 type RoleOptionType = {
-  value: BacklogRole;
+  value: TeamRole;
   label: string;
 };
 
 export const BacklogSelectRole: React.FunctionComponent<Props> = ({
-  backlog,
+  team,
   member,
   disabled,
 }) => {
+  const { updateMember } = useTeam();
   const roleOptions: RoleOptionType[] = [
     {
       label: 'Admin',
-      value: BacklogRole.ADMIN,
+      value: TeamRole.ADMIN,
     },
     {
       label: 'Member',
-      value: BacklogRole.MEMBER,
+      value: TeamRole.MEMBER,
     },
   ];
 
@@ -38,17 +36,7 @@ export const BacklogSelectRole: React.FunctionComponent<Props> = ({
   );
 
   const handleSelectChange = async (value: RoleOptionType) => {
-    const { data, error } = await apiPut<UpdateBacklogMember>(
-      `/api/backlog/${backlog.id}/members/${member.userId}`,
-      { role: value.value }
-    );
-
-    if (error) {
-      return toast.error(error.body?.message || error.generic);
-    }
-
-    toast.success(data?.message);
-    mutate(`/api/backlog/${backlog.id}`);
+    await updateMember(team.id, member.userId, value.value);
   };
 
   return (
