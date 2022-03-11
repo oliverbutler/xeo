@@ -79,6 +79,9 @@ model UserMetadata {
   //
   createdAt     DateTime @default(now())
   updatedAt     DateTime @default(now()) @updatedAt
+
+  @@index([userId])
+  @@index([defaultTeamId])
 }
 
 model VerificationToken {
@@ -203,6 +206,8 @@ model NotionConnection {
   //
   createdAt           DateTime           @default(now())
   updatedAt           DateTime           @default(now()) @updatedAt
+
+  @@index([teamId])
 }
 
 enum BacklogStatus {
@@ -215,8 +220,8 @@ enum BacklogStatus {
 
 model NotionStatusLink {
   id                  String                @id @default(cuid())
-  teamId              String
-  team                NotionConnection      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  notionConnectionId  String
+  notionConnection    NotionConnection      @relation(fields: [notionConnectionId], references: [id], onDelete: Cascade)
   notionStatusName    String
   notionStatusColor   String
   status              BacklogStatus
@@ -225,5 +230,5 @@ model NotionStatusLink {
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @default(now()) @updatedAt
 
-  @@index([teamId])
+  @@index([notionConnectionId])
 }
