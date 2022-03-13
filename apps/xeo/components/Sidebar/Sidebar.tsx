@@ -7,7 +7,6 @@ import {
 } from '@heroicons/react/outline';
 import { Team } from '@prisma/client';
 import { UserMenu } from 'components/Sidebar/UserMenu/UserMenu';
-import { TeamSelector } from 'components/Team/TeamSelector/TeamSelector';
 import { useCurrentTeam } from 'hooks/useCurrentTeam';
 import { useCurrentUser } from 'hooks/useCurrentUser';
 import Image from 'next/image';
@@ -82,7 +81,7 @@ export const Sidebar: React.FunctionComponent = () => {
   const navbarOptions = team ? getNavbarOptions(team) : [];
 
   return (
-    <div className="h-screen bg-dark-900 dark:bg-dark-950 w-72 text-white flex flex-col">
+    <div className="bg-dark-900 dark:bg-dark-950 w-72 text-white flex flex-col">
       <div className="font-bold flex flex-rows items-center p-4">
         <Image src={xeoIcon} height={25} width={25} />
         <span className="ml-2">Xeo</span>

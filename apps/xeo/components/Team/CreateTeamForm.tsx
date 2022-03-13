@@ -14,7 +14,7 @@ type TeamCreationForm = {
   companyName: string;
 };
 
-export const NotionConnection: React.FunctionComponent<Props> = ({
+export const CreateTeamForm: React.FunctionComponent<Props> = ({
   closeModal,
 }) => {
   const { createTeam } = useTeam();

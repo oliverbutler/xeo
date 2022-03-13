@@ -18,12 +18,12 @@ const handleCallback = async (router: NextRouter) => {
 
   if (error) {
     toast.error(error.body?.message || error.generic);
-    router.push('/connections');
+    router.push('/');
     return;
   }
 
   toast.success(data?.successMessage);
-  router.push('/connections');
+  router.push('/');
 };
 
 export function Index() {

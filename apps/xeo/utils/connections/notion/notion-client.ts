@@ -3,7 +3,7 @@ import { GetDatabaseResponse } from '@notionhq/client/build/src/api-endpoints';
 import { isNotNullOrUndefined } from '@xeo/utils';
 import axios from 'axios';
 
-interface AvailableDatabasesFromNotion {
+export interface AvailableDatabasesFromNotion {
   databases: {
     id: string;
     title: string;

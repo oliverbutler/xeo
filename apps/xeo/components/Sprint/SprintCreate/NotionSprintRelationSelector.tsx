@@ -1,4 +1,4 @@
-import { GetBacklogSprintOptions } from 'pages/api/backlog/[id]/sprint-options';
+import { GetBacklogSprintOptions } from 'pages/api/backlog_deprecated/[id]/sprint-options';
 import { useController, UseFormReturn } from 'react-hook-form';
 import { apiGet } from 'utils/api';
 import { SprintCreateForm, SprintSelectOption } from './SprintCreate';

@@ -1,30 +1,32 @@
-import useSWR from 'swr';
 import { SelectStatusMapping } from './SelectStatusMapping';
 import { SelectColumns } from './SelectColumns';
 import { SelectDatabase } from './SelectDatabase';
 import { useCreateNotionBacklog } from './useCreateNotionBacklog';
-import { NotionConnection } from '@prisma/client';
-import { GetConnectionNotionDatabasesRequest } from 'pages/api/connections/[id]/notion/databases';
+import { NotionConnection, Team } from '@prisma/client';
 import { ModalFooter } from '@xeo/ui/lib/Modal/Modal';
+import { useQuery } from 'utils/api';
+import { GetConnectionNotionDatabasesRequest } from 'pages/api/team/[teamId]/notion/databases';
 
 export const fetcher = (input: any, init: any) =>
   fetch(input, init).then((res) => res.json());
 
 interface NotionBacklogProps {
+  team: Team;
   notionConnectionId: NotionConnection['id'];
   closeModal: () => void;
 }
 
 export const NotionBacklog: React.FunctionComponent<NotionBacklogProps> = ({
+  team,
   notionConnectionId,
   closeModal,
 }) => {
-  const { data, error } = useSWR<
-    GetConnectionNotionDatabasesRequest['responseBody'],
-    string
-  >(`/api/connections/${notionConnectionId}/notion/databases`, fetcher);
+  const { data, error } = useQuery<GetConnectionNotionDatabasesRequest>(
+    `/api/team/${team.id}/notion/databases`
+  );
 
   const { onSubmit, form } = useCreateNotionBacklog(
+    team.id,
     notionConnectionId,
     closeModal
   );
@@ -38,7 +40,7 @@ export const NotionBacklog: React.FunctionComponent<NotionBacklogProps> = ({
       <div className="m-10 flex max-w-none flex-col items-center justify-center">
         <h2>Add Backlog</h2>
         <form className="flex flex-col">
-          <SelectDatabase form={form} databaseQueryData={data} error={error} />
+          <SelectDatabase form={form} databases={data?.notionResponse} />
           <SelectColumns form={form} />
           <SelectStatusMapping form={form} />
         </form>

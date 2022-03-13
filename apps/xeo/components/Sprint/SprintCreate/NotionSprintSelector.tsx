@@ -1,7 +1,7 @@
 import { UseFormReturn } from 'react-hook-form';
 import { SprintCreateForm } from './SprintCreate';
 import { useEffect } from 'react';
-import { BacklogWithNotionStatusLinksAndOwner } from 'pages/api/backlog';
+import { BacklogWithNotionStatusLinksAndOwner } from 'pages/api/backlog_deprecated';
 import { NotionSprintRelationSelector } from './NotionSprintRelationSelector';
 import { NotionSprintSelectSelector } from './NotionSprintSelectSelector';
 

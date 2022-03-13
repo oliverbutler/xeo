@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { useSession } from 'next-auth/react';
-import { BacklogWithNotionStatusLinksAndOwner } from 'pages/api/backlog';
+import { BacklogWithNotionStatusLinksAndOwner } from 'pages/api/backlog_deprecated';
 import { useBacklog } from './useBacklog';
 import Image from 'next/image';
 import { CellProps } from 'react-table';

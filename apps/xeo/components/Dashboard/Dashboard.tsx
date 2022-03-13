@@ -21,7 +21,7 @@ export const Dashboard: React.FunctionComponent = () => {
       <h2>Current Sprint</h2>
       <SprintInfo sprintData={null} sprintId="" publicMode={false} />
     </div> */}
-        <div className="rounded-lg shadow-lg outline-dashed outline-8 col-span-3 flex items-center justify-center outline-dark-600/20 m-2">
+        <div className="rounded-lg outline-dashed outline-8 col-span-3 flex items-center justify-center outline-dark-600/20 m-2">
           <div className="my-24 flex flex-col items-center">
             <h3>No Current Sprint</h3>
             <div>

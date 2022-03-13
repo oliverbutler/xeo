@@ -1,6 +1,6 @@
 import { SelectField } from '@xeo/ui/lib/Select/SelectField';
-import { GetNotionDatabasesResponse } from 'pages/api/backlog/configure';
 import { UseFormReturn } from 'react-hook-form';
+import { AvailableDatabasesFromNotion } from 'utils/connections/notion/notion-client';
 import {
   DatabaseSelectionForm,
   DatabaseSelectionOption,
@@ -8,16 +8,14 @@ import {
 
 interface Props {
   form: UseFormReturn<DatabaseSelectionForm>;
-  databaseQueryData: GetNotionDatabasesResponse | undefined;
-  error: string | undefined;
+  databases: AvailableDatabasesFromNotion | undefined;
 }
 export const SelectDatabase: React.FunctionComponent<Props> = ({
   form: { control },
-  databaseQueryData,
-  error,
+  databases,
 }) => {
   const databaseOptions: DatabaseSelectionOption[] =
-    databaseQueryData?.databases?.map((database) => ({
+    databases?.databases?.map((database) => ({
       label: database.title,
       value: database.id,
       properties: database.properties,
@@ -28,10 +26,9 @@ export const SelectDatabase: React.FunctionComponent<Props> = ({
       label="Database"
       control={control}
       name="database"
-      // error={errors.database}
       options={databaseOptions}
       rules={{ required: true }}
-      isLoading={!databaseQueryData && !error}
+      isLoading={!databases}
       isClearable
     />
   );

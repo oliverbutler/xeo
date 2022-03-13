@@ -180,14 +180,15 @@ model Team {
   sprints                Sprint[]
   usersWithTeamAsDefault UserMetadata[]
   notionConnection       NotionConnection?
+  notionDatabase         NotionDatabase?
   //
   createdAt              DateTime          @default(now())
   updatedAt              DateTime          @default(now()) @updatedAt
 }
 
 model NotionConnection {
-  id                  String             @id @default(cuid())
-  team                Team               @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  id                  String          @id @default(cuid())
+  team                Team            @relation(fields: [teamId], references: [id], onDelete: Cascade)
   teamId              String
   // Notion Connection
   accessToken         String
@@ -195,18 +196,34 @@ model NotionConnection {
   notionWorkspaceIcon String
   notionWorkspaceName String
   notionBotId         String
-  // Notion Database Configuration
-  databaseId          String
-  databaseName        String
-  pointsColumnName    String
-  statusColumnName    String
-  sprintColumnName    String
-  notionColumnType    NotionColumnType
-  notionStatusLinks   NotionStatusLink[]
+  // Database
+  notionDatabase      NotionDatabase?
   //
-  createdAt           DateTime           @default(now())
-  updatedAt           DateTime           @default(now()) @updatedAt
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @default(now()) @updatedAt
 
+  @@index([teamId])
+}
+
+model NotionDatabase {
+  id                 String             @id @default(cuid())
+  databaseId         String
+  databaseName       String
+  pointsColumnName   String
+  statusColumnName   String
+  sprintColumnName   String
+  notionColumnType   NotionColumnType
+  notionStatusLinks  NotionStatusLink[]
+  // Relations
+  notionConnection   NotionConnection   @relation(fields: [notionConnectionId], references: [id], onDelete: Cascade)
+  notionConnectionId String
+  team               Team               @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId             String
+  //
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @default(now()) @updatedAt
+
+  @@index([notionConnectionId])
   @@index([teamId])
 }
 
@@ -220,8 +237,8 @@ enum BacklogStatus {
 
 model NotionStatusLink {
   id                  String                @id @default(cuid())
-  notionConnectionId  String
-  notionConnection    NotionConnection      @relation(fields: [notionConnectionId], references: [id], onDelete: Cascade)
+  notionDatabaseId    String
+  notionDatabase      NotionDatabase        @relation(fields: [notionDatabaseId], references: [id], onDelete: Cascade)
   notionStatusName    String
   notionStatusColor   String
   status              BacklogStatus
@@ -230,5 +247,5 @@ model NotionStatusLink {
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @default(now()) @updatedAt
 
-  @@index([notionConnectionId])
+  @@index([notionDatabaseId])
 }

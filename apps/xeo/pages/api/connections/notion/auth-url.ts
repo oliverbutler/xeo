@@ -5,6 +5,7 @@ import { apiError, APIGetRequest, apiResponse } from 'utils/api';
 
 export type NotionOAuthCallbackState = {
   requestedByUserId: string;
+  teamId: string;
 };
 
 export const isNotionAuthCallbackState = (
@@ -14,6 +15,9 @@ export const isNotionAuthCallbackState = (
     return false;
   }
   if ((state as NotionOAuthCallbackState)?.requestedByUserId === undefined) {
+    return false;
+  }
+  if ((state as NotionOAuthCallbackState)?.teamId === undefined) {
     return false;
   }
   return true;
@@ -28,7 +32,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return apiError(res, { message: 'Not authenticated' }, 401);
   }
 
-  const state: NotionOAuthCallbackState = { requestedByUserId: session.id };
+  const teamId = req.query.teamId as string;
+
+  if (!teamId) {
+    return apiError(res, { message: 'Missing teamId query parameter' }, 400);
+  }
+
+  const state: NotionOAuthCallbackState = {
+    requestedByUserId: session.id,
+    teamId,
+  };
 
   const notionOauthUrl = `https://api.notion.com/v1/oauth/authorize?client_id=${
     process.env.NOTION_CLIENT_ID

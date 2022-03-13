@@ -6,6 +6,8 @@ import { exchangeCodeForAccessToken } from 'utils/connections/notion/notion-clie
 import { NotionOAuthCallbackState } from './auth-url';
 import { getSession } from 'next-auth/react';
 import { prisma } from 'utils/db';
+import { getUserRoleInTeam } from 'utils/db/team/adapter';
+import { TeamRole } from '@prisma/client';
 
 export type PostNotionCallback = APIRequest<
   { code: string; state: NotionOAuthCallbackState },
@@ -16,6 +18,7 @@ const schema: PostNotionCallback['joiBodySchema'] = Joi.object({
   code: Joi.string().required(),
   state: Joi.object({
     requestedByUserId: Joi.string().required(),
+    teamId: Joi.string().required(),
   }),
 });
 
@@ -34,7 +37,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const {
     code,
-    state: { requestedByUserId },
+    state: { requestedByUserId, teamId },
   } = body;
 
   const notionAccessResponse = await exchangeCodeForAccessToken(code);
@@ -47,9 +50,27 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     );
   }
 
+  // Check the requestedByUser is the same as the user who is logged in
+  if (requestedByUserId !== session.id) {
+    return apiError(
+      res,
+      { message: 'You are not the user who requested the connection' },
+      400
+    );
+  }
+
+  // Check the user is the owner of the team
+  const userRole = await getUserRoleInTeam(session.id, teamId);
+
+  if (userRole !== TeamRole.OWNER) {
+    return apiError(res, { message: 'You are not the owner of the team' }, 400);
+  }
+
+  // TODO find out if we should make botIds unique
+
   // If the user already has the connection, update it
   const existingNotionConnection = await prisma.notionConnection.findFirst({
-    where: { notionBotId: notionAccessResponse.botId },
+    where: { teamId },
   });
 
   if (existingNotionConnection) {
@@ -61,8 +82,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         accessToken: notionAccessResponse.accessToken,
         notionBotId: notionAccessResponse.botId,
         notionWorkspaceId: notionAccessResponse.workspaceId,
-        notionWorkspaceName: notionAccessResponse.workspaceName,
-        notionWorkspaceIcon: notionAccessResponse.workspaceIcon,
+        notionWorkspaceName: notionAccessResponse.workspaceName ?? '',
+        notionWorkspaceIcon: notionAccessResponse.workspaceIcon ?? '',
       },
     });
 
@@ -76,9 +97,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       accessToken: notionAccessResponse.accessToken,
       notionBotId: notionAccessResponse.botId,
       notionWorkspaceId: notionAccessResponse.workspaceId,
-      notionWorkspaceName: notionAccessResponse.workspaceName,
-      notionWorkspaceIcon: notionAccessResponse.workspaceIcon,
-      createdByUserId: requestedByUserId,
+      notionWorkspaceName: notionAccessResponse.workspaceName ?? '',
+      notionWorkspaceIcon: notionAccessResponse.workspaceIcon ?? '',
+      teamId,
     },
   });
   return apiResponse<PostNotionCallback>(res, {

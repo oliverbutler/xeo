@@ -13,12 +13,12 @@ export const PrivateAppWrapper: React.FunctionComponent = ({ children }) => {
   }
 
   return (
-    <div className="min-h-screen flex flex-row">
+    <div className="h-screen flex flex-row">
       <Sidebar />
       <div className="grow overflow-y-auto">
         <div
           id="app-body-container"
-          className="h-full bg-dark-200 dark:bg-dark-900"
+          className="min-h-full bg-dark-200 dark:bg-dark-900 pb-12"
         >
           {children}
         </div>
