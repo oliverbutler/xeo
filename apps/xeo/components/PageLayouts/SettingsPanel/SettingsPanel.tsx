@@ -7,9 +7,11 @@ export const SettingsPanel: React.FunctionComponent<Props> = ({
   outline,
 }) => {
   if (outline) {
-    <div className="rounded-lg outline-dashed outline-8 col-span-3 flex items-center justify-center outline-dark-600/20 m-2 py-12 flex-col">
-      {children}
-    </div>;
+    return (
+      <div className="rounded-lg outline-dashed outline-8 col-span-3 flex items-center justify-center outline-dark-600/20 m-2 py-12 flex-col">
+        {children}
+      </div>
+    );
   }
 
   return (

@@ -1,24 +1,41 @@
-import { NotionColumnType } from '@prisma/client';
+import { NotionColumnType, NotionDatabase } from '@prisma/client';
 import { SelectField } from '@xeo/ui/lib/Select/SelectField';
 import { UseFormReturn } from 'react-hook-form';
+import { AvailableDatabasesFromNotion } from 'utils/connections/notion/notion-client';
 import {
   DatabasePropertyOption,
-  DatabaseSelectionForm,
+  DatabaseUpdateForm,
   DatabaseSprintFieldType,
-} from './CreateNotionDatabase/useCreateNotionBacklog';
+} from './useUpdateNotionDatabase';
 
 interface Props {
-  form: UseFormReturn<DatabaseSelectionForm>;
+  form: UseFormReturn<DatabaseUpdateForm>;
+  database: AvailableDatabasesFromNotion['databases'][0];
 }
+
+export const sprintSelectTypeOptions: DatabaseSprintFieldType[] = [
+  {
+    value: NotionColumnType.SELECT,
+    label: 'Select',
+  },
+  {
+    value: NotionColumnType.MULTI_SELECT,
+    label: 'Multi Select',
+  },
+  {
+    value: NotionColumnType.RELATIONSHIP_ID,
+    label: 'Relationship',
+  },
+];
 
 export const SelectColumns: React.FunctionComponent<Props> = ({
   form: { control, watch },
+  database,
 }) => {
-  const currentDatabaseSelected = watch('database');
   const currentSprintSelectType = watch('sprintSelectType');
 
-  const availableDatabaseProperties = currentDatabaseSelected
-    ? Object.values(currentDatabaseSelected.properties)
+  const availableDatabaseProperties = database
+    ? Object.values(database.properties)
     : [];
 
   const isNotionPropertyColumn = (
@@ -43,21 +60,6 @@ export const SelectColumns: React.FunctionComponent<Props> = ({
       type: property.type,
     }));
 
-  const sprintSelectTypeOptions: DatabaseSprintFieldType[] = [
-    {
-      value: NotionColumnType.SELECT,
-      label: 'Select',
-    },
-    {
-      value: NotionColumnType.MULTI_SELECT,
-      label: 'Multi Select',
-    },
-    {
-      value: NotionColumnType.RELATIONSHIP_ID,
-      label: 'Relationship',
-    },
-  ];
-
   return (
     <div>
       <h3>Select Columns</h3>
@@ -68,7 +70,7 @@ export const SelectColumns: React.FunctionComponent<Props> = ({
         // error={errors.storyPointsId}
         options={propertiesOptions.filter((o) => o.type === 'number')}
         rules={{ required: true }}
-        isDisabled={!currentDatabaseSelected}
+        isDisabled={!database}
       />
       <SelectField
         className="mt-2"
@@ -78,7 +80,7 @@ export const SelectColumns: React.FunctionComponent<Props> = ({
         // error={errors.ticketStatusId}
         options={propertiesOptions.filter((o) => o.type === 'select')}
         rules={{ required: true }}
-        isDisabled={!currentDatabaseSelected}
+        isDisabled={!database}
       />
       <div className="flex flex-col gap-2 sm:flex-row">
         <SelectField
@@ -87,7 +89,7 @@ export const SelectColumns: React.FunctionComponent<Props> = ({
           control={control}
           name="sprintSelectType"
           options={sprintSelectTypeOptions}
-          isDisabled={!currentDatabaseSelected}
+          isDisabled={!database}
           rules={{ required: true }}
         />
         <SelectField
@@ -100,7 +102,7 @@ export const SelectColumns: React.FunctionComponent<Props> = ({
             isNotionPropertyColumn(o, currentSprintSelectType?.value)
           )}
           rules={{ required: true }}
-          isDisabled={!currentDatabaseSelected || !currentSprintSelectType}
+          isDisabled={!database || !currentSprintSelectType}
         />
       </div>
     </div>

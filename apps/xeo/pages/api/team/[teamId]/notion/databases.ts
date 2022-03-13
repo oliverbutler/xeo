@@ -19,12 +19,36 @@ import {
   fetchAvailableDatabasesFromNotion,
 } from 'utils/connections/notion/notion-client';
 import { getNotionConnectionForTeam } from 'utils/db/notionConnection/adapter';
-import { createNotionDatabase } from 'utils/db/notionDatabase/adapter';
+import {
+  createNotionDatabase,
+  updateNotionDatabase,
+} from 'utils/db/notionDatabase/adapter';
 import { getUserRoleInTeam } from 'utils/db/team/adapter';
 
 export type GetConnectionNotionDatabasesRequest = APIGetRequest<{
   notionResponse: AvailableDatabasesFromNotion;
 }>;
+
+export type PutUpdateNotionDatabaseRequest = APIRequest<
+  {
+    notionConnectionId: string;
+    notionDatabaseId: string;
+    notionDatabaseName: string;
+    pointsColumnName: string;
+    statusColumnName: string;
+    sprintColumnType: NotionColumnType;
+    sprintColumnName: string;
+    updatedStatusMappings: {
+      notionStatusId: string;
+      notionStatusName: string;
+      notionStatusColor: string;
+      status: BacklogStatus;
+    }[];
+  },
+  {
+    success: boolean;
+  }
+>;
 
 export type PostCreateNotionDatabaseRequest = APIRequest<
   {
@@ -69,6 +93,28 @@ const postSchema: PostCreateNotionDatabaseRequest['joiBodySchema'] = Joi.object(
   }
 );
 
+const putSchema: PutUpdateNotionDatabaseRequest['joiBodySchema'] = Joi.object({
+  notionConnectionId: Joi.string().required(),
+  notionDatabaseId: Joi.string().required(),
+  notionDatabaseName: Joi.string().required(),
+  pointsColumnName: Joi.string().required(),
+  statusColumnName: Joi.string().required(),
+  sprintColumnType: Joi.string()
+    .valid(...Object.values(NotionColumnType))
+    .required(),
+  sprintColumnName: Joi.string().required(),
+  updatedStatusMappings: Joi.array().items(
+    Joi.object({
+      notionStatusId: Joi.string().required(),
+      notionStatusName: Joi.string().required(),
+      notionStatusColor: Joi.string().required(),
+      status: Joi.string()
+        .valid(...Object.values(BacklogStatus))
+        .required(),
+    })
+  ),
+});
+
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
 
@@ -100,6 +146,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return getHandler(req, res, teamId);
     case 'POST':
       return postHandler(req, res, teamId);
+    case 'PUT':
+      return putHandler(req, res, teamId);
   }
 
   return res.status(400).json({ message: 'Invalid request method' });
@@ -142,6 +190,24 @@ const postHandler = async (
 
   return apiResponse<PostCreateNotionDatabaseRequest>(res, {
     notionDatabase: newDatabase,
+  });
+};
+
+const putHandler = async (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  teamId: string
+) => {
+  const { body, error } = parseAPIRequest(req, putSchema);
+
+  if (error || !body) {
+    return apiError(res, { message: error?.message });
+  }
+
+  await updateNotionDatabase({ ...body, teamId });
+
+  return apiResponse<PutUpdateNotionDatabaseRequest>(res, {
+    success: true,
   });
 };
 

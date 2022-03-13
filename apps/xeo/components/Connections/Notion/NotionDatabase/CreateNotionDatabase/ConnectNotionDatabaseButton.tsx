@@ -14,9 +14,9 @@ export const ConnectNotionDatabaseButton: React.FunctionComponent<Props> = ({
 }) => {
   return (
     <Modal
-      mainText="Add Backlog"
+      mainText="Add Database"
       trigger={(setOpen) => (
-        <Button onClick={setOpen} variation={ButtonVariation.Secondary}>
+        <Button onClick={setOpen} variation={ButtonVariation.Primary}>
           Connect to Database
         </Button>
       )}

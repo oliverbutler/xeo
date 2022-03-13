@@ -1,6 +1,6 @@
-import { SelectStatusMapping } from '../SelectStatusMapping';
-import { SelectColumns } from '../SelectColumns';
-import { SelectDatabase } from '../SelectDatabase';
+import { SelectStatusMapping } from './SelectStatusMapping';
+import { SelectColumns } from './SelectColumns';
+import { SelectDatabase } from './SelectDatabase';
 import { useCreateNotionBacklog } from './useCreateNotionBacklog';
 import { NotionConnection, Team } from '@prisma/client';
 import { ModalFooter } from '@xeo/ui/lib/Modal/Modal';
@@ -36,7 +36,7 @@ export const CreateNotionDatabase: React.FunctionComponent<
   return (
     <>
       <div className="m-10 flex max-w-none flex-col items-center justify-center">
-        <h2>Add Backlog</h2>
+        <h2>Add Database</h2>
         <form className="flex flex-col">
           <SelectDatabase form={form} databases={data?.notionResponse} />
           <SelectColumns form={form} />
