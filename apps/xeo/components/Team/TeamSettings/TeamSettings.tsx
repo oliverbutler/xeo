@@ -2,6 +2,7 @@ import { CentredLoader } from '@xeo/ui/lib/Animate/CentredLoader/CentredLoader';
 import { Button } from '@xeo/ui/lib/Button/Button';
 import { Input } from '@xeo/ui/lib/Input/Input';
 import { Content } from 'components/Content';
+import { SettingsPanel } from 'components/PageLayouts/SettingsPanel/SettingsPanel';
 import { useCurrentTeam } from 'hooks/useCurrentTeam';
 import { GetNotionAuthURL } from 'pages/api/connections/notion/auth-url';
 import { GetTeamNotionConnectionInformation } from 'pages/api/team/[teamId]/notion';
@@ -34,25 +35,25 @@ export const TeamSettings: React.FunctionComponent<Props> = (props) => {
     <Content>
       <h2>General</h2>
       <p>General team settings</p>
-      <div className="space-y-4 bg-dark-950 p-4 mt-4 rounded-md">
+      <SettingsPanel>
         <Input label="Name" value={team.name} />
         <Input label="Short Name" value={team.shortName} />
         <Input label="Company" value={team.companyName} />
         <Button>Save</Button>
-      </div>
+      </SettingsPanel>
 
       <h2>Notion</h2>
       <p>Here you can configure the current connection to Notion</p>
 
       {data?.notionConnection ? (
-        <div className="space-y-4 bg-dark-950 p-4 mt-4 rounded-md">
+        <SettingsPanel>
           <NotionSettings connection={data.notionConnection} team={team} />
-        </div>
+        </SettingsPanel>
       ) : (
-        <div className="rounded-lg outline-dashed outline-8 col-span-3 flex items-center justify-center outline-dark-600/20 m-2 py-12 flex-col">
+        <SettingsPanel outline>
           No Notion Connection
           <ConnectToNotionButton />
-        </div>
+        </SettingsPanel>
       )}
     </Content>
   );

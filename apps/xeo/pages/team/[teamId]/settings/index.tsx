@@ -1,4 +1,4 @@
-import { BacklogMembers } from 'components/Backlog/BacklogMembers';
+import { TeamMembers } from 'components/Team/TeamMembers/TeamMembers';
 import { Content } from 'components/Content';
 import { PageHeader } from 'components/PageHeader/PageHeader';
 import { TabLayout } from 'components/PageLayouts/TabLayout/TabLayout';
@@ -23,11 +23,7 @@ export function Index() {
           { label: 'Settings', content: <TeamSettings /> },
           {
             label: 'Members',
-            content: (
-              <Content>
-                <BacklogMembers team={team} />
-              </Content>
-            ),
+            content: <TeamMembers team={team} />,
           },
         ]}
       />

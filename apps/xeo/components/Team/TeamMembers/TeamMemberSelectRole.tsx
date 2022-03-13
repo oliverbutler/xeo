@@ -14,7 +14,7 @@ type RoleOptionType = {
   label: string;
 };
 
-export const BacklogSelectRole: React.FunctionComponent<Props> = ({
+export const TeamMemberSelectRole: React.FunctionComponent<Props> = ({
   team,
   member,
   disabled,
