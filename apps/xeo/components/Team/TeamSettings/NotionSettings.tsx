@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { NotionConnectionInformation } from 'utils/db/notionConnection/adapter';
 import { TeamWithSprintsAndMembers } from 'utils/db/team/adapter';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
-import { ConnectNotionBacklogButton } from '../../Connections/Notion/NotionBacklog/ConnectNotionBacklogButton';
+import { ConnectNotionDatabaseButton } from '../../Connections/Notion/NotionDatabase/ConnectNotionDatabaseButton';
 import { useCurrentTeam } from 'hooks/useCurrentTeam';
 import { useQuery } from 'utils/api';
 import { GetNotionAuthURL } from 'pages/api/connections/notion/auth-url';
@@ -50,7 +50,7 @@ export const NotionSettings: React.FunctionComponent<Props> = ({
       {connection.notionDatabase ? (
         <p>Name: {connection.notionDatabase.databaseName}</p>
       ) : (
-        <ConnectNotionBacklogButton team={team} connection={connection} />
+        <ConnectNotionDatabaseButton team={team} connection={connection} />
       )}
     </div>
   );

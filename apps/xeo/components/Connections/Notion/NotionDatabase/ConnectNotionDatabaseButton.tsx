@@ -1,14 +1,14 @@
 import { NotionConnection, Team } from '@prisma/client';
 import { Button, ButtonVariation } from '@xeo/ui/lib/Button/Button';
 import { Modal } from '@xeo/ui/lib/Modal/Modal';
-import { NotionBacklog } from 'components/Connections/Notion/NotionBacklog/NotionBacklog';
+import { CreateNotionDatabase } from 'components/Connections/Notion/NotionDatabase/CreateNotionDatabase/CreateNotionDatabase';
 
 type Props = {
   team: Team;
   connection: NotionConnection;
 };
 
-export const ConnectNotionBacklogButton: React.FunctionComponent<Props> = ({
+export const ConnectNotionDatabaseButton: React.FunctionComponent<Props> = ({
   team,
   connection,
 }) => {
@@ -21,7 +21,7 @@ export const ConnectNotionBacklogButton: React.FunctionComponent<Props> = ({
         </Button>
       )}
       content={(setClose) => (
-        <NotionBacklog
+        <CreateNotionDatabase
           team={team}
           notionConnectionId={connection.id}
           closeModal={setClose}

@@ -5,7 +5,7 @@ import {
   DatabasePropertyOption,
   DatabaseSelectionForm,
   DatabaseSprintFieldType,
-} from './useCreateNotionBacklog';
+} from './CreateNotionDatabase/useCreateNotionBacklog';
 
 interface Props {
   form: UseFormReturn<DatabaseSelectionForm>;

@@ -1,6 +1,6 @@
-import { SelectStatusMapping } from './SelectStatusMapping';
-import { SelectColumns } from './SelectColumns';
-import { SelectDatabase } from './SelectDatabase';
+import { SelectStatusMapping } from '../SelectStatusMapping';
+import { SelectColumns } from '../SelectColumns';
+import { SelectDatabase } from '../SelectDatabase';
 import { useCreateNotionBacklog } from './useCreateNotionBacklog';
 import { NotionConnection, Team } from '@prisma/client';
 import { ModalFooter } from '@xeo/ui/lib/Modal/Modal';
@@ -16,11 +16,9 @@ interface NotionBacklogProps {
   closeModal: () => void;
 }
 
-export const NotionBacklog: React.FunctionComponent<NotionBacklogProps> = ({
-  team,
-  notionConnectionId,
-  closeModal,
-}) => {
+export const CreateNotionDatabase: React.FunctionComponent<
+  NotionBacklogProps
+> = ({ team, notionConnectionId, closeModal }) => {
   const { data, error } = useQuery<GetConnectionNotionDatabasesRequest>(
     `/api/team/${team.id}/notion/databases`
   );

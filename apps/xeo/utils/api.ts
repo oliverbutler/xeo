@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import axios, { AxiosError } from 'axios';
 import pino from 'pino';
 import useSWR, { SWRConfiguration } from 'swr';
-import { fetcher } from 'components/Connections/Notion/NotionBacklog/NotionBacklog';
+import { fetcher } from 'components/Connections/Notion/NotionDatabase/CreateNotionDatabase/CreateNotionDatabase';
 
 export type GenericAPIRequest<T> = {
   error: {
