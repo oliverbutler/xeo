@@ -34,10 +34,12 @@ export const SelectStatusMapping: React.FunctionComponent<
     <div>
       <h3>Select Status Mappings</h3>
       <Alert variation="warning">
-        <span>
-          Status Mappings are currently not editable, I would only change the
-          "Status" if you renamed it.
-        </span>
+        <div className="flex flex-col">
+          <span>
+            Status Mappings are currently not editable, I would only change the
+            "Status" if you renamed it. Contact dev@oliverbutler.uk for help.
+          </span>
+        </div>
       </Alert>
       {/* <SelectField
         label="Done"

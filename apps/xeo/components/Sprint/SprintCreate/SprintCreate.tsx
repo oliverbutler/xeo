@@ -10,13 +10,13 @@ import {
 import dayjs from 'dayjs';
 import { PostCreateSprintRequest } from 'pages/api/team/[teamId]/sprint';
 import { useRouter } from 'next/router';
-import { NotionSprintSelector } from './NotionSprintSelector';
 import { Input } from '@xeo/ui/lib/Input/Input';
 import { Button } from '@xeo/ui/lib/Button/Button';
-import { useCurrentTeam } from 'hooks/useCurrentTeam';
+import { SettingsPanel } from 'components/PageLayouts/SettingsPanel/SettingsPanel';
+import { NotionSprintSelector } from './NotionSprintSelector';
+import { NotionDatabase } from '@prisma/client';
 
 export interface SprintCreateForm {
-  backlog: BacklogSelectType;
   startDate: string;
   endDate: string;
   sprintName: string;
@@ -29,19 +29,16 @@ export interface SprintCreateForm {
 
 const DEFAULT_CAPACITY = 1;
 
-interface BacklogSelectType {
-  value: string;
-  label: string;
-}
-
 export type SprintSelectOption = {
   value: string;
   label: string;
 };
 
-export const SprintCreate: React.FunctionComponent = () => {
-  const { team } = useCurrentTeam();
+type Props = {
+  database: NotionDatabase;
+};
 
+export const SprintCreate: React.FunctionComponent<Props> = ({ database }) => {
   const { push } = useRouter();
 
   const form = useForm<SprintCreateForm>({
@@ -88,7 +85,6 @@ export const SprintCreate: React.FunctionComponent = () => {
           ),
         })),
       },
-      backlogId: data.backlog.value,
     };
 
     const result = await axios.post<PutUpdateSprintRequest['response']>(
@@ -107,48 +103,52 @@ export const SprintCreate: React.FunctionComponent = () => {
   return (
     <form className="gap-4" onSubmit={handleSubmit(createSprint)}>
       <h2>Notion Options</h2>
-      <div className="grid grid-cols-3 gap-4">
-        {/* <NotionSprintSelector form={form} backlogs={backlogs} /> */}
-      </div>
+      <SettingsPanel>
+        <div className="grid grid-cols-3 gap-4">
+          <NotionSprintSelector form={form} database={database} />
+        </div>
+      </SettingsPanel>
       <h2>Sprint Details</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <SettingsPanel>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <Input
+            label="Sprint Name"
+            {...register('sprintName', { required: true })}
+          />
+          <Input
+            label="Team Speed"
+            type="number"
+            step={0.1}
+            {...register('teamSpeed', { required: true })}
+          />
+        </div>
         <Input
-          label="Sprint Name"
-          {...register('sprintName', { required: true })}
+          className="mt-4"
+          label="Sprint Goal"
+          {...register('sprintGoal', { required: true })}
+          placeholder="AaU I can..."
         />
-        <Input
-          label="Team Speed"
-          type="number"
-          step={0.1}
-          {...register('teamSpeed', { required: true })}
-        />
-      </div>
-      <Input
-        className="mt-4"
-        label="Sprint Goal"
-        {...register('sprintGoal', { required: true })}
-        placeholder="AaU I can..."
-      />
 
-      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        <Input
-          className="row-span-2"
-          type="datetime-local"
-          label="Start Time"
-          {...register('startDate', { required: true })}
-        />
-        <Input
-          className="row-span-2"
-          type="datetime-local"
-          label="End Time"
-          {...register('endDate', { required: true })}
-        />
-        <Input
-          type="time"
-          label="Daily Start Time"
-          {...register('dayStartTime', { required: true })}
-        />
-      </div>
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          <Input
+            className="row-span-2"
+            type="datetime-local"
+            label="Start Date"
+            {...register('startDate', { required: true })}
+          />
+          <Input
+            className="row-span-2"
+            type="datetime-local"
+            label="End date"
+            {...register('endDate', { required: true })}
+          />
+          <Input
+            type="time"
+            label="Daily Start Time (time of your daily)"
+            {...register('dayStartTime', { required: true })}
+          />
+        </div>
+      </SettingsPanel>
 
       <SprintCapacityTable
         startDate={new Date(startDate)}
@@ -163,7 +163,9 @@ export const SprintCreate: React.FunctionComponent = () => {
         }
       />
 
-      <Button type="submit">Save</Button>
+      <Button type="submit" className="mt-4">
+        Save
+      </Button>
     </form>
   );
 };

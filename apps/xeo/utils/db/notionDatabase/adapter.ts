@@ -115,3 +115,13 @@ export const updateNotionDatabase = async (input: UpdateNotionDatabase) => {
     return false;
   }
 };
+
+export const getNotionDatabase = async (teamId: string) => {
+  const result = await prisma.notionDatabase.findUnique({
+    where: {
+      teamId,
+    },
+  });
+
+  return result;
+};

@@ -10,6 +10,7 @@ import { useCurrentTeam } from 'hooks/useCurrentTeam';
 import { GetNotionAuthURL } from 'pages/api/connections/notion/auth-url';
 import { GetTeamNotionConnectionInformation } from 'pages/api/team/[teamId]/notion';
 import { useQuery } from 'utils/api';
+import { BasicTeamInfoForm } from './BasicTeamInfoForm';
 
 interface Props {}
 
@@ -50,10 +51,7 @@ export const TeamSettings: React.FunctionComponent<Props> = (props) => {
       <h2>General</h2>
       <p>General team settings</p>
       <SettingsPanel>
-        <Input label="Name" value={team.name} />
-        <Input label="Short Name" value={team.shortName} />
-        <Input label="Company" value={team.companyName} />
-        <Button>Save</Button>
+        <BasicTeamInfoForm team={team} />
       </SettingsPanel>
 
       <h2>Notion</h2>

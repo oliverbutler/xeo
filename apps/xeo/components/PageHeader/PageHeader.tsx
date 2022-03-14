@@ -4,12 +4,14 @@ type PageHeaderProps = {
   title: string;
   subtitle?: string;
   border?: boolean;
+  rightContent?: React.ReactNode;
 };
 
 export const PageHeader: React.FunctionComponent<PageHeaderProps> = ({
   title,
   subtitle,
   border,
+  rightContent,
 }) => {
   return (
     <div
@@ -22,6 +24,7 @@ export const PageHeader: React.FunctionComponent<PageHeaderProps> = ({
           <h2 className="mb-0 mt-0">{title}</h2>
           <p className="mt-2 mb-0">{subtitle}</p>
         </div>
+        <div className="flex flex-row items-center">{rightContent}</div>
       </div>
     </div>
   );

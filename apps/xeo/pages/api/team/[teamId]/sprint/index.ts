@@ -15,7 +15,7 @@ export type SprintWithHistory = Sprint & {
 };
 
 export type PostCreateSprintRequest = APIRequest<
-  { input: CreateSprint; backlogId: string },
+  { input: CreateSprint },
   {
     sprint: Sprint;
   }
@@ -37,7 +37,6 @@ const postSchema: PostCreateSprintRequest['joiBodySchema'] = Joi.object({
       })
     ),
   }),
-  backlogId: Joi.string().required(),
 });
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {

@@ -25,7 +25,12 @@ export const Dashboard: React.FunctionComponent = () => {
           <div className="my-24 flex flex-col items-center">
             <h3>No Current Sprint</h3>
             <div>
-              <Button variation={ButtonVariation.Dark}>Create Sprint</Button>
+              <Button
+                variation={ButtonVariation.Dark}
+                href={`/team/${team.id}/sprint/create`}
+              >
+                Create Sprint
+              </Button>
             </div>
           </div>
         </div>

@@ -27,7 +27,7 @@ export type GetTeamWithMembersAndSprintsRequest = APIGetRequest<{
   team: TeamWithSprintsAndMembers;
 }>;
 
-export type UpdateTeamRequest = APIRequest<
+export type PutUpdateTeamRequest = APIRequest<
   { input: Partial<CreateTeam> },
   {
     team: Team;
@@ -102,7 +102,7 @@ const getHandler = async (
   return apiResponse<GetTeamWithMembersAndSprintsRequest>(res, { team });
 };
 
-const putSchema: UpdateTeamRequest['joiBodySchema'] = Joi.object({
+const putSchema: PutUpdateTeamRequest['joiBodySchema'] = Joi.object({
   input: Joi.object({
     name: Joi.string(),
     shortName: Joi.string(),
@@ -136,7 +136,7 @@ const putHandler = async (
     return apiError(res, { message: 'Failed to update team' }, 400);
   }
 
-  return apiResponse<UpdateTeamRequest>(res, { team });
+  return apiResponse<PutUpdateTeamRequest>(res, { team });
 };
 
 export default handler;

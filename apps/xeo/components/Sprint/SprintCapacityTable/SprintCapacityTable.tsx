@@ -1,6 +1,7 @@
 import { UserAddIcon } from '@heroicons/react/outline';
 import { Clickable } from '@xeo/ui/lib/Clickable/Clickable';
 import { Table } from '@xeo/ui/lib/Table/Table';
+import { SettingsPanel } from 'components/PageLayouts/SettingsPanel/SettingsPanel';
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
 import {
@@ -121,18 +122,20 @@ export const SprintCapacityTable = <T extends FieldValues>({
           <UserAddIcon height={25} width={25} />
         </Clickable>
       </div>
-      <div className="my-4">
-        <Table<SprintCapacityTableRow>
-          columns={columns}
-          data={sprintCapacityTableRows}
+      <SettingsPanel>
+        <div className="my-4">
+          <Table<SprintCapacityTableRow>
+            columns={columns}
+            data={sprintCapacityTableRows}
+          />
+        </div>
+        <SprintCapacityCalculation
+          startDate={startDate}
+          endDate={endDate}
+          devs={devs}
+          teamSpeed={teamSpeed}
         />
-      </div>
-      <SprintCapacityCalculation
-        startDate={startDate}
-        endDate={endDate}
-        devs={devs}
-        teamSpeed={teamSpeed}
-      />
+      </SettingsPanel>
     </div>
   );
 };

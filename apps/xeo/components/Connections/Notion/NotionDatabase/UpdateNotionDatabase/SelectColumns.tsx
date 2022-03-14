@@ -89,7 +89,7 @@ export const SelectColumns: React.FunctionComponent<Props> = ({
           control={control}
           name="sprintSelectType"
           options={sprintSelectTypeOptions}
-          isDisabled={!database}
+          isDisabled={true}
           rules={{ required: true }}
         />
         <SelectField

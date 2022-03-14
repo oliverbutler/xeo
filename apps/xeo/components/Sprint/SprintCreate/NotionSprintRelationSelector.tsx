@@ -4,12 +4,12 @@ import { apiGet } from 'utils/api';
 import { SprintCreateForm, SprintSelectOption } from './SprintCreate';
 import { toast } from 'react-toastify';
 import debounce from 'lodash/debounce';
-import { Backlog } from '@prisma/client';
+import { NotionDatabase } from '@prisma/client';
 import { AsyncSelect } from '@xeo/ui/lib/Select/AsyncSelect';
 
 interface Props {
   form: UseFormReturn<SprintCreateForm, unknown>;
-  backlog: Backlog;
+  database: NotionDatabase;
 }
 
 const loadSprintOptions = async (
@@ -34,10 +34,10 @@ const loadSprintOptions = async (
 
 export const NotionSprintRelationSelector: React.FunctionComponent<Props> = ({
   form,
-  backlog,
+  database,
 }) => {
   const debouncedFetch = debounce((searchTerm, callback) => {
-    loadSprintOptions(searchTerm, backlog.id, callback);
+    loadSprintOptions(searchTerm, database.id, callback);
   }, 500);
 
   const {
@@ -52,7 +52,6 @@ export const NotionSprintRelationSelector: React.FunctionComponent<Props> = ({
       label="Notion Sprint"
       name="notionSprintValue"
       placeholder={'Search...'}
-      isDisabled={!backlog}
       cacheOptions
       loadOptions={debouncedFetch}
       value={value}

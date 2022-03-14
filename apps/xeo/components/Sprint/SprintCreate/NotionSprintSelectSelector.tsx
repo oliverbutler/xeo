@@ -1,4 +1,4 @@
-import { Backlog } from '@prisma/client';
+import { NotionDatabase } from '@prisma/client';
 import { UseFormReturn } from 'react-hook-form';
 import { SprintCreateForm } from './SprintCreate';
 import { useQuery } from 'utils/api';
@@ -7,15 +7,14 @@ import { SelectField } from '@xeo/ui/lib/Select/SelectField';
 
 interface Props {
   form: UseFormReturn<SprintCreateForm, unknown>;
-  backlog: Backlog | undefined;
+  database: NotionDatabase;
 }
 export const NotionSprintSelectSelector: React.FunctionComponent<Props> = ({
   form,
-  backlog,
+  database,
 }) => {
   const { data, isLoading } = useQuery<GetBacklogSprintOptions>(
-    `/api/backlog/${backlog?.id}/sprint-options`,
-    !backlog
+    `/api/backlog/${database.id}/sprint-options`
   );
 
   const options = data?.options ?? [];
@@ -29,7 +28,6 @@ export const NotionSprintSelectSelector: React.FunctionComponent<Props> = ({
       isClearable
       isLoading={isLoading}
       placeholder={'Select...'}
-      isDisabled={!backlog}
     />
   );
 };
