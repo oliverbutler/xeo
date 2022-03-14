@@ -87,8 +87,8 @@ export const SprintCreate: React.FunctionComponent<Props> = ({ database }) => {
       },
     };
 
-    const result = await axios.post<PutUpdateSprintRequest['response']>(
-      `/api/sprint`,
+    const result = await axios.post<PostCreateSprintRequest['response']>(
+      `/api/team/${database.teamId}/sprint`,
       body
     );
 
@@ -97,7 +97,7 @@ export const SprintCreate: React.FunctionComponent<Props> = ({ database }) => {
     }
 
     toast.success('Sprint Created');
-    push(`/sprint/${result.data.sprint.id}`);
+    push(`/team/${database.teamId}`);
   };
 
   return (
