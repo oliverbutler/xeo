@@ -99,7 +99,7 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
   const [showPointsNotStarted, setShowPointsNotStarted] = useState(true);
 
   return (
-    <div className={classNames('w-full p-4', { 'p-4 sm:p-10': !publicMode })}>
+    <div className={classNames('w-full')}>
       <NextSeo
         title={`Sprint - ${sprint?.name}`}
         description={`View ${sprint?.name}`}

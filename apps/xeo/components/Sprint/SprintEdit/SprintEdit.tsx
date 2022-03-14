@@ -101,7 +101,7 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
     };
 
     const result = await axios.put<PutUpdateSprintRequest['response']>(
-      `/api/sprint/${sprint.id}`,
+      `/api/team/${sprint.teamId}/sprint/${sprint.id}`,
       body
     );
 
@@ -110,8 +110,8 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
     }
 
     toast.success('Sprint updated');
-    push(`/sprint/${sprint.id}`);
-    mutate(`/api/sprint/${sprint.id}`);
+    push(`/team/${sprint.teamId}`);
+    mutate(`/api/team/${sprint.teamId}/sprint/${sprint.id}`);
   };
 
   const startDate = watch('startDate');

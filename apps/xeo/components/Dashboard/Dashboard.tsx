@@ -1,5 +1,6 @@
 import { Button, ButtonVariation } from '@xeo/ui/lib/Button/Button';
 import { PageHeader } from 'components/PageHeader/PageHeader';
+import { SettingsPanel } from 'components/PageLayouts/SettingsPanel/SettingsPanel';
 import { useCurrentTeam } from 'hooks/useCurrentTeam';
 import { DashboardSprint } from './DashboardSprint';
 
@@ -21,9 +22,9 @@ export const Dashboard: React.FunctionComponent = () => {
       />
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 p-6">
         {latestSprint ? (
-          <div className="rounded-lg shadow-lg bg-white dark:bg-dark-950 col-span-3">
+          <SettingsPanel className="col-span-2">
             <DashboardSprint sprint={latestSprint} />
-          </div>
+          </SettingsPanel>
         ) : (
           <div className="rounded-lg outline-dashed outline-8 col-span-3 flex items-center justify-center outline-dark-600/20 m-2">
             <div className="my-24 flex flex-col items-center">
