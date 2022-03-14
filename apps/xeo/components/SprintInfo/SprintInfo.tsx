@@ -16,11 +16,14 @@ import { GraphControls } from './GraphControls/GraphControls';
 import classNames from 'classnames';
 import Button, { ButtonVariation } from '@xeo/ui/lib/Button/Button';
 import { SprintGraphDynamic } from './SprintGraph/SprintGraphDynamic';
+import { DataPlotType } from 'utils/sprint/chart';
+import { Sprint } from '@prisma/client';
 
 dayjs.extend(relativeTime);
 
 interface Props {
-  sprintData: GetSprintColumnPlotData['response'] | null;
+  sprint: Sprint;
+  plotData: DataPlotType[];
   publicMode: boolean;
   sprintId: string;
 }
@@ -46,7 +49,8 @@ const updateSprintHistory = async (
 };
 
 export const SprintInfo: React.FunctionComponent<Props> = ({
-  sprintData,
+  sprint,
+  plotData,
   publicMode,
   sprintId,
 }) => {
@@ -63,31 +67,25 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
   const { mutate } = useSWRConfig();
 
   const handleUpdateSprintHistory = useCallback(async () => {
-    if (sprintData?.sprint) {
-      if (!dayjs(sprintData.sprint.endDate).isBefore(dayjs(), 'minute')) {
+    if (sprint) {
+      if (!dayjs(sprint.endDate).isBefore(dayjs(), 'minute')) {
         setIsLoading(true);
-        await updateSprintHistory(sprintData.sprint.id, mutate);
+        await updateSprintHistory(sprint.id, mutate);
         setIsLoading(false);
       } else {
         toast.warn("You can't update a sprint that's in the past!");
       }
     }
-  }, [sprintData, mutate]);
+  }, [plotData, mutate]);
 
   useEffect(() => {
-    if (
-      sprintData &&
-      !dayjs(sprintData.sprint.endDate).isBefore(dayjs(), 'minute')
-    ) {
+    if (plotData && !dayjs(sprint.endDate).isBefore(dayjs(), 'minute')) {
       handleUpdateSprintHistory();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [showPointsNotStarted, setShowPointsNotStarted] = useState(true);
-
-  const sprint = sprintData?.sprint;
-  const sprintHistoryPlotData = sprintData?.sprintHistoryPlotData;
 
   return (
     <div className={classNames('w-full p-4', { 'p-4 sm:p-10': !publicMode })}>
@@ -102,10 +100,7 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
       </div>
       <div className="flex flex-col md:flex-row gap-4">
         <div className="md:w-1/3">
-          <SprintStats
-            sprintHistoryPlotData={sprintHistoryPlotData}
-            sprintId={sprintId}
-          />
+          <SprintStats sprintHistoryPlotData={plotData} sprintId={sprintId} />
         </div>
 
         <div className="md:w-2/3">
@@ -118,7 +113,7 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
           /> */}
           <SprintGraphDynamic
             sprint={sprint}
-            plotData={sprintHistoryPlotData}
+            plotData={plotData}
             showPointsNotStarted={showPointsNotStarted}
           />
         </div>

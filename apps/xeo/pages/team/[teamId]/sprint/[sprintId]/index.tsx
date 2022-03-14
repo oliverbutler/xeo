@@ -31,16 +31,16 @@ const PrivateSprintPage: React.FunctionComponent = () => {
 
   return (
     <div className="min-h-screen">
-      <ConditionalWrapper
+      {/* <ConditionalWrapper
         condition={!isEmbed}
         wrapper={(c) => <Content>{c}</Content>}
       >
         <SprintInfo
-          sprintData={data}
+          plotData={data}
           publicMode={isEmbed}
           sprintId={sprintId}
         />
-      </ConditionalWrapper>
+      </ConditionalWrapper> */}
     </div>
   );
 };

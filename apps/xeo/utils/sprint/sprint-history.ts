@@ -128,7 +128,8 @@ export const updateSprintHistoryIfChanged = async (
       team: {
         select: {
           sprints: true,
-          notionConnection: {
+          notionConnection: true,
+          notionDatabase: {
             include: {
               notionStatusLinks: true,
             },
@@ -142,15 +143,16 @@ export const updateSprintHistoryIfChanged = async (
     throw new Error('Sprint not found');
   }
 
-  if (!sprint.team?.notionConnection) {
-    throw new Error('Team has no Notion connection');
+  if (!sprint.team?.notionDatabase || !sprint.team?.notionConnection) {
+    throw new Error('Team has no Notion connection and Database');
   }
 
   const productBacklog = await getProductBacklogForSprint({
     notionConnection: sprint.team.notionConnection,
+    notionDatabase: sprint.team.notionDatabase,
     sprint,
     sprints: sprint.team.sprints,
-    notionStatusLinks: sprint.team.notionConnection.notionStatusLinks,
+    notionStatusLinks: sprint.team.notionDatabase.notionStatusLinks,
   });
 
   const updatedHistory = await saveSprintHistoryForBacklogIfChanged(
@@ -183,7 +185,7 @@ export const getSprintAndPlotDataForPage = async (
     include: {
       team: {
         select: {
-          notionConnection: {
+          notionDatabase: {
             select: {
               notionStatusLinks: true,
             },
@@ -198,14 +200,14 @@ export const getSprintAndPlotDataForPage = async (
     },
   });
 
-  if (!sprint || !sprint.team.notionConnection) {
+  if (!sprint || !sprint.team.notionDatabase) {
     return null;
   }
 
   const sprintHistoryPlotData = getDataForSprintChart(
     sprint,
     sprint.sprintHistory,
-    sprint.team.notionConnection.notionStatusLinks
+    sprint.team.notionDatabase.notionStatusLinks
   );
 
   // Remove backlog and sprintHistory from the response to avoid sending unnecessary data
