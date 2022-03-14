@@ -8,7 +8,7 @@ interface Props {
   sprint: Sprint;
 }
 
-export const LatestSprint: React.FunctionComponent<Props> = ({ sprint }) => {
+export const DashboardSprint: React.FunctionComponent<Props> = ({ sprint }) => {
   const { team } = useCurrentTeam();
 
   const { data } = useQuery<GetSprintColumnPlotData>(

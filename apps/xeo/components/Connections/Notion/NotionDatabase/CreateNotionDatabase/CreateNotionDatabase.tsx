@@ -7,9 +7,6 @@ import { ModalFooter } from '@xeo/ui/lib/Modal/Modal';
 import { useQuery } from 'utils/api';
 import { GetConnectionNotionDatabasesRequest } from 'pages/api/team/[teamId]/notion/databases';
 
-export const fetcher = (input: any, init: any) =>
-  fetch(input, init).then((res) => res.json());
-
 interface NotionBacklogProps {
   team: Team;
   notionConnectionId: NotionConnection['id'];

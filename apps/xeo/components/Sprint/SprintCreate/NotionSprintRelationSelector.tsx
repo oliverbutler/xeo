@@ -59,7 +59,7 @@ export const NotionSprintRelationSelector: React.FunctionComponent<Props> = ({
     <AsyncSelect
       label="Notion Sprint"
       name="notionSprintValue"
-      placeholder={'Search...'}
+      placeholder={'Type to Search...'}
       cacheOptions
       loadOptions={debouncedFetch}
       value={value}

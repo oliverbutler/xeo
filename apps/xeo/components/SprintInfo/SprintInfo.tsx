@@ -18,6 +18,7 @@ import Button, { ButtonVariation } from '@xeo/ui/lib/Button/Button';
 import { SprintGraphDynamic } from './SprintGraph/SprintGraphDynamic';
 import { DataPlotType } from 'utils/sprint/chart';
 import { Sprint } from '@prisma/client';
+import { useCurrentTeam } from 'hooks/useCurrentTeam';
 
 dayjs.extend(relativeTime);
 
@@ -28,20 +29,25 @@ interface Props {
   sprintId: string;
 }
 
-const updateSprintHistory = async (
-  sprintId: string,
-  mutate: ScopedMutator<unknown>
-) => {
+const updateSprintHistory = async ({
+  sprintId,
+  teamId,
+  mutate,
+}: {
+  sprintId: string;
+  teamId: string;
+  mutate: ScopedMutator<unknown>;
+}) => {
   const body: PostUpdateSprintHistory['request'] = { sprintId };
 
   try {
     const { data } = await axios.post<PostUpdateSprintHistory['response']>(
-      `/api/sprint/${sprintId}/update-history`,
+      `/api/team/${teamId}/sprint/${sprintId}/update-history`,
       body
     );
 
     if (data.updatedSprintPlotData) {
-      mutate(`/api/sprint/${sprintId}/column-plot-data`); // Tell SWR to update the data
+      mutate(`/api/team/${teamId}/sprint/${sprintId}/column-plot-data`);
     }
   } catch (error) {
     toast.error('Error fetching latest Sprint history, please try again later');
@@ -63,20 +69,25 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
   }, []);
 
   const [isLoading, setIsLoading] = useState(false);
+  const { team } = useCurrentTeam();
 
   const { mutate } = useSWRConfig();
 
   const handleUpdateSprintHistory = useCallback(async () => {
-    if (sprint) {
+    if (sprint && team) {
       if (!dayjs(sprint.endDate).isBefore(dayjs(), 'minute')) {
         setIsLoading(true);
-        await updateSprintHistory(sprint.id, mutate);
+        await updateSprintHistory({
+          sprintId: sprint.id,
+          teamId: team?.id,
+          mutate,
+        });
         setIsLoading(false);
       } else {
         toast.warn("You can't update a sprint that's in the past!");
       }
     }
-  }, [plotData, mutate]);
+  }, [plotData, mutate, team]);
 
   useEffect(() => {
     if (plotData && !dayjs(sprint.endDate).isBefore(dayjs(), 'minute')) {
@@ -94,30 +105,34 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
         description={`View ${sprint?.name}`}
       />
 
-      <div>
-        <h1 className="mb-0">{sprint?.name ?? <Skeleton width={160} />}</h1>
-        <p>{sprint?.sprintGoal ?? <Skeleton width={'70%'} count={1} />}</p>
-      </div>
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="md:w-1/3">
-          <SprintStats sprintHistoryPlotData={plotData} sprintId={sprintId} />
+      <div className="flex flex-row justify-between">
+        <div>
+          <h2 className="my-0">{sprint?.name ?? <Skeleton width={160} />}</h2>
+          <p>{sprint?.sprintGoal ?? <Skeleton width={'70%'} count={1} />}</p>
         </div>
+        <div>
+          <Button
+            href={`/team/${team?.id}/sprint/${sprint.id}/edit`}
+            variation={ButtonVariation.Dark}
+          >
+            Edit
+          </Button>
+        </div>
+      </div>
+      <SprintStats sprintHistoryPlotData={plotData} sprintId={sprintId} />
 
-        <div className="md:w-2/3">
-          {/* <GraphControls
-            publicMode={publicMode}
-            isLoading={isLoading}
-            setShowPointsNotStarted={setShowPointsNotStarted}
-            showPointsNotStarted={showPointsNotStarted}
-            handleUpdateSprintHistory={handleUpdateSprintHistory}
-          /> */}
-          <SprintGraphDynamic
-            sprint={sprint}
-            plotData={plotData}
-            showPointsNotStarted={showPointsNotStarted}
-          />
-        </div>
-      </div>
+      <GraphControls
+        publicMode={publicMode}
+        isLoading={isLoading}
+        setShowPointsNotStarted={setShowPointsNotStarted}
+        showPointsNotStarted={showPointsNotStarted}
+        handleUpdateSprintHistory={handleUpdateSprintHistory}
+      />
+      <SprintGraphDynamic
+        sprint={sprint}
+        plotData={plotData}
+        showPointsNotStarted={showPointsNotStarted}
+      />
       {/* {publicMode ? null : (
         <FeatureToggle>
           <SprintHistory sprintId={sprintId} />

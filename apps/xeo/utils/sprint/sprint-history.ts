@@ -127,7 +127,7 @@ export const updateSprintHistoryIfChanged = async (
     include: {
       team: {
         select: {
-          sprints: true,
+          sprints: true, // TODO remove this :(
           notionConnection: true,
           notionDatabase: {
             include: {
@@ -140,10 +140,14 @@ export const updateSprintHistoryIfChanged = async (
   });
 
   if (!sprint) {
+    logger.error('updateSprintHistoryIfChanged > Sprint not found');
     throw new Error('Sprint not found');
   }
 
   if (!sprint.team?.notionDatabase || !sprint.team?.notionConnection) {
+    logger.error(
+      'updateSprintHistoryIfChanged > Team has no Notion connection and Database'
+    );
     throw new Error('Team has no Notion connection and Database');
   }
 

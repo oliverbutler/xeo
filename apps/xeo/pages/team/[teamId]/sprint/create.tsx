@@ -1,3 +1,4 @@
+import { Alert } from '@xeo/ui/lib/Alert/Alert';
 import Button, { ButtonVariation } from '@xeo/ui/lib/Button/Button';
 import { Content } from 'components/Content';
 import { PageHeader } from 'components/PageHeader/PageHeader';
@@ -15,7 +16,17 @@ function Create() {
     !team
   );
 
-  if (!data || error) {
+  if (error) {
+    return (
+      <Content>
+        <Alert variation="danger">
+          Error loading Sprint, make sure you have a database connected...
+        </Alert>
+      </Content>
+    );
+  }
+
+  if (!data) {
     return <div>Loading...</div>;
   }
 

@@ -18,6 +18,7 @@ import dayjs from 'dayjs';
 import { UserAction, trackSprintAction } from 'utils/analytics';
 import Input from '@xeo/ui/lib/Input/Input';
 import Button from '@xeo/ui/lib/Button/Button';
+import { SettingsPanel } from 'components/PageLayouts/SettingsPanel/SettingsPanel';
 
 interface Props {
   sprint: Sprint;
@@ -122,54 +123,53 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
       <form className="gap-4" onSubmit={handleSubmit(updateSprint)}>
         <h2>Notion Options</h2>
         <p>These properties are not adjustable</p>
-        <div className="grid grid-cols-3 gap-4">
-          <Input
-            label="Backlog"
-            disabled={true}
-            defaultValue={sprint.backlogId}
-          />
-          <Input
-            label="Notion Sprint"
-            disabled={true}
-            defaultValue={sprint.notionSprintValue}
-          />
-        </div>
+        <SettingsPanel>
+          <div className="grid grid-cols-3 gap-4">
+            <Input
+              label="Notion Sprint"
+              disabled={true}
+              defaultValue={sprint.notionSprintValue}
+            />
+          </div>
+        </SettingsPanel>
         <h2>Sprint Details</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <SettingsPanel>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input
+              label="Sprint Name"
+              {...register('sprintName', { required: true })}
+            />
+            <Input
+              label="Team Speed"
+              type="number"
+              step={0.1}
+              {...register('teamSpeed', { required: true })}
+            />
+          </div>
           <Input
-            label="Sprint Name"
-            {...register('sprintName', { required: true })}
+            className="mt-4"
+            label="Sprint Goal"
+            {...register('sprintGoal', { required: true })}
+            placeholder="AaU I can..."
           />
-          <Input
-            label="Team Speed"
-            type="number"
-            step={0.1}
-            {...register('teamSpeed', { required: true })}
-          />
-        </div>
-        <Input
-          className="mt-4"
-          label="Sprint Goal"
-          {...register('sprintGoal', { required: true })}
-          placeholder="AaU I can..."
-        />
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Input
-            type="datetime-local"
-            label="Start Time"
-            {...register('startDate', { required: true })}
-          />
-          <Input
-            type="datetime-local"
-            label="End Time"
-            {...register('endDate', { required: true })}
-          />
-          <Input
-            type="time"
-            label="Daily Start Time"
-            {...register('dayStartTime', { required: true })}
-          />
-        </div>
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <Input
+              type="datetime-local"
+              label="Start Time"
+              {...register('startDate', { required: true })}
+            />
+            <Input
+              type="datetime-local"
+              label="End Time"
+              {...register('endDate', { required: true })}
+            />
+            <Input
+              type="time"
+              label="Daily Start Time"
+              {...register('dayStartTime', { required: true })}
+            />
+          </div>
+        </SettingsPanel>
         <SprintCapacityTable
           startDate={new Date(startDate)}
           endDate={new Date(endDate)}
@@ -182,7 +182,7 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
             `devs.${devIndex}.capacity.${capacityIndex}`
           }
         />
-        <div className="flex flex-row gap-2">
+        <div className="flex flex-row gap-2 mt-4">
           <DeleteSprint sprintId={sprint.id} />
           <Button type="submit">Save</Button>
         </div>

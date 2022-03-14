@@ -3,7 +3,6 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import axios, { AxiosError } from 'axios';
 import pino from 'pino';
 import useSWR, { SWRConfiguration } from 'swr';
-import { fetcher } from 'components/Connections/Notion/NotionDatabase/CreateNotionDatabase/CreateNotionDatabase';
 
 export type GenericAPIRequest<T> = {
   error: {
@@ -11,6 +10,15 @@ export type GenericAPIRequest<T> = {
   };
   response: T;
 };
+
+const fetcher = (input: any, init: any) =>
+  fetch(input, init).then((res) => {
+    if (!res.ok) {
+      throw new Error('An Error has Occurred');
+    } else {
+      return res.json();
+    }
+  });
 
 export type APIRequest<TRequest extends object, TResponse extends object> = {
   type: 'POST' | 'PUT';
