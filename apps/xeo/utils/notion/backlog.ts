@@ -14,12 +14,14 @@ import {
 import { logger } from 'utils/api';
 import { performance } from 'perf_hooks';
 import { isNotNullOrUndefined } from '@xeo/utils';
+import { prisma } from 'utils/db';
 
 export type Ticket = {
   notionId: string;
   title: string;
   points: number | null;
   notionStatusLink: NotionStatusLink | undefined;
+  parentTickets: string[] | undefined;
   sprints: {
     sprint: Sprint | undefined;
     notionSprintSelect: {
@@ -95,6 +97,9 @@ export const getTicketFromNotionObject = ({
   const pointsProperty = getPropertyByName(notionDatabase.pointsColumnName);
   const statusProperty = getPropertyByName(notionDatabase.statusColumnName);
   const sprintProperty = getPropertyByName(notionDatabase.sprintColumnName);
+  const parentRelationsProperty = notionDatabase.parentRelationColumnName
+    ? getPropertyByName(notionDatabase.parentRelationColumnName)
+    : null;
 
   const titleValue =
     titleProperty?.type === 'title'
@@ -117,6 +122,11 @@ export const getTicketFromNotionObject = ({
     ? sprintPropertyMultiSelect
     : [];
 
+  const parentTickets =
+    parentRelationsProperty?.type === 'relation'
+      ? parentRelationsProperty.relation?.map((relation) => relation.id)
+      : undefined;
+
   const matchingSprints = availableSprints.map((notionSprint) => {
     return {
       notionSprintSelect: notionSprint,
@@ -138,6 +148,7 @@ export const getTicketFromNotionObject = ({
     icon: getIconFromNotionPage(page),
     updatedAt: page.last_edited_time,
     notionUrl: page.url,
+    parentTickets,
   };
 };
 
@@ -339,4 +350,49 @@ export const getAvailableColumnOptions = async ({
     type: NotionColumnType.RELATIONSHIP_ID,
     options: relationColumn.filter(isNotNullOrUndefined),
   };
+};
+
+export const getAllTicketsInSprint = async (
+  sprintId: string
+): Promise<Ticket[]> => {
+  const sprint = await prisma.sprint.findUnique({
+    where: {
+      id: sprintId,
+    },
+    include: {
+      team: {
+        select: {
+          sprints: true, // TODO remove this :(
+          notionConnection: true,
+          notionDatabase: {
+            include: {
+              notionStatusLinks: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!sprint) {
+    logger.error('updateSprintHistoryIfChanged > Sprint not found');
+    throw new Error('Sprint not found');
+  }
+
+  if (!sprint.team?.notionDatabase || !sprint.team?.notionConnection) {
+    logger.error(
+      'updateSprintHistoryIfChanged > Team has no Notion connection and Database'
+    );
+    throw new Error('Team has no Notion connection and Database');
+  }
+
+  const { tickets } = await getProductBacklogForSprint({
+    notionConnection: sprint.team.notionConnection,
+    notionDatabase: sprint.team.notionDatabase,
+    sprint,
+    sprints: sprint.team.sprints,
+    notionStatusLinks: sprint.team.notionDatabase.notionStatusLinks,
+  });
+
+  return tickets;
 };

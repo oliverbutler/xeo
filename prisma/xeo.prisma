@@ -96,21 +96,23 @@ model VerificationToken {
 }
 
 model Sprint {
-  id                          String          @id @default(cuid())
+  id                          String           @id @default(cuid())
   name                        String
   startDate                   DateTime
   endDate                     DateTime
   notionSprintValue           String // ID of the Notion Sprint (select ID)
-  dailyStartTime              String          @default("09:00") // HH:mm 
+  dailyStartTime              String           @default("09:00") // HH:mm 
   teamId                      String
-  team                        Team            @relation(fields: [teamId], references: [id], onDelete: NoAction)
+  team                        Team             @relation(fields: [teamId], references: [id], onDelete: NoAction)
   sprintHistory               SprintHistory[]
   sprintGoal                  String
   sprintDevelopersAndCapacity Json
   teamSpeed                   Float
   //
-  createdAt                   DateTime        @default(now())
-  updatedAt                   DateTime        @default(now()) @updatedAt
+  createdAt                   DateTime         @default(now())
+  updatedAt                   DateTime         @default(now()) @updatedAt
+  // Relations
+  dependencyGraph             DependencyGraph?
 
   @@index([teamId])
 }
@@ -141,6 +143,13 @@ model SprintStatusHistory {
 
   @@index([sprintHistoryId])
   @@index([notionStatusLinkId])
+}
+
+model DependencyGraph {
+  id              String @id @default(cuid())
+  sprintId        String
+  sprint          Sprint @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+  ticketPositions Json
 }
 
 enum TeamRole {
@@ -206,22 +215,23 @@ model NotionConnection {
 }
 
 model NotionDatabase {
-  id                 String             @id @default(cuid())
-  databaseId         String
-  databaseName       String
-  pointsColumnName   String
-  statusColumnName   String
-  sprintColumnName   String
-  notionColumnType   NotionColumnType
-  notionStatusLinks  NotionStatusLink[]
+  id                       String             @id @default(cuid())
+  databaseId               String
+  databaseName             String
+  pointsColumnName         String
+  statusColumnName         String
+  sprintColumnName         String
+  parentRelationColumnName String?
+  notionColumnType         NotionColumnType
+  notionStatusLinks        NotionStatusLink[]
   // Relations
-  notionConnection   NotionConnection   @relation(fields: [notionConnectionId], references: [id], onDelete: Cascade)
-  notionConnectionId String
-  team               Team               @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  teamId             String
+  notionConnection         NotionConnection   @relation(fields: [notionConnectionId], references: [id], onDelete: Cascade)
+  notionConnectionId       String
+  team                     Team               @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId                   String
   //
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @default(now()) @updatedAt
+  createdAt                DateTime           @default(now())
+  updatedAt                DateTime           @default(now()) @updatedAt
 
   @@index([notionConnectionId])
   @@index([teamId])

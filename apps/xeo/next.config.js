@@ -1,5 +1,4 @@
 const withNx = require('@nrwl/next/plugins/with-nx');
-const withPWA = require('next-pwa');
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
@@ -26,4 +25,4 @@ const nextConfig = {
   ],
 };
 
-module.exports = withPWA(withNx(withBundleAnalyzer(nextConfig)));
+module.exports = withNx(withBundleAnalyzer(nextConfig));

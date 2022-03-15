@@ -1,4 +1,9 @@
-import { Sprint, SprintHistory, SprintStatusHistory } from '@prisma/client';
+import {
+  DependencyGraph,
+  Sprint,
+  SprintHistory,
+  SprintStatusHistory,
+} from '@prisma/client';
 import { prisma } from 'utils/db';
 import {
   DeveloperWithCapacity,
@@ -110,4 +115,44 @@ export const getSprintWithHistory = async (
     include: { sprintHistory: { include: { sprintStatusHistory: true } } },
   });
   return sprint;
+};
+
+export const getSprintDependencies = async (
+  sprintId: string
+): Promise<DependencyPosition[] | null> => {
+  const dependencies = await prisma.dependencyGraph.findUnique({
+    where: { sprintId },
+  });
+
+  if (!dependencies) {
+    return null;
+  }
+
+  return dependencies.ticketPositions as DependencyPosition[];
+};
+
+export type DependencyPosition = {
+  id: string;
+  position: {
+    x: number;
+    y: number;
+  };
+};
+
+export const updateSprintDependencies = async (
+  sprintId: string,
+  ticketPositions: DependencyPosition[]
+): Promise<DependencyGraph> => {
+  const dependencies = await prisma.dependencyGraph.upsert({
+    where: { sprintId },
+    create: {
+      sprintId,
+      ticketPositions,
+    },
+    update: {
+      ticketPositions,
+    },
+  });
+
+  return dependencies;
 };

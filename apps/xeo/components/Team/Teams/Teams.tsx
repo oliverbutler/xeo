@@ -18,6 +18,7 @@ import { TeamWithMemberAndBasicUserInfo } from 'utils/db/team/adapter';
 import { useCurrentUser } from 'hooks/useCurrentUser';
 import { GetTeamsForUserRequest } from 'pages/api/team';
 import { TeamAvatars } from './TeamAvatars';
+import { CellProps } from 'react-table';
 
 dayjs.extend(LocalizedFormat);
 
@@ -81,12 +82,20 @@ export const Teams: React.FunctionComponent = () => {
               },
               {
                 Header: 'Members',
-                Cell: (cell) => <TeamAvatars team={cell.row.original} />,
+                Cell: (
+                  cell: React.PropsWithChildren<
+                    CellProps<TeamWithMemberAndBasicUserInfo, unknown>
+                  >
+                ) => <TeamAvatars team={cell.row.original} />,
               },
 
               {
                 Header: 'Actions',
-                Cell: (cell) => (
+                Cell: (
+                  cell: React.PropsWithChildren<
+                    CellProps<TeamWithMemberAndBasicUserInfo, unknown>
+                  >
+                ) => (
                   <div>
                     <Link
                       href={`/team/${cell.row.original.id}/settings`}
