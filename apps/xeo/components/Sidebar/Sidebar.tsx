@@ -1,11 +1,13 @@
 import {
   CogIcon,
+  MailIcon,
   TemplateIcon,
   UserGroupIcon,
-  ViewBoardsIcon,
   ViewGridIcon,
 } from '@heroicons/react/outline';
 import { Team } from '@prisma/client';
+import { ConditionalWrapper } from '@xeo/ui/lib/ConditionalWrapper/ConditionalWrapper';
+import classNames from 'classnames';
 import { UserMenu } from 'components/Sidebar/UserMenu/UserMenu';
 import { useCurrentTeam } from 'hooks/useCurrentTeam';
 import { useCurrentUser } from 'hooks/useCurrentUser';
@@ -26,8 +28,18 @@ const getNavbarOptions = (team: Team) => [
   {
     title: 'Current Sprint',
     options: [
-      { title: 'Sprint', icon: ViewBoardsIcon, path: '/sprint' },
-      { title: 'Dependencies', icon: ViewGridIcon, path: '/dependencies' },
+      {
+        title: 'Dependencies',
+        icon: ViewGridIcon,
+        path: '/dependencies',
+        disabled: true,
+      },
+      {
+        title: 'Daily Mail',
+        icon: MailIcon,
+        path: '/daily-mail',
+        disabled: true,
+      },
     ],
   },
   {
@@ -42,7 +54,7 @@ const isCurrentPath = (path: string) => {
 
 const NavbarSection: React.FunctionComponent<{
   title: string;
-  options: { title: string; icon: any; path: string }[];
+  options: { title: string; icon: any; path: string; disabled?: boolean }[];
 }> = ({ title, options }) => {
   return (
     <div className="">
@@ -51,16 +63,27 @@ const NavbarSection: React.FunctionComponent<{
       </p>
       {options.map((option) => (
         <div
-          className={`${
-            isCurrentPath(option.path) ? 'border-white' : 'border-transparent'
-          } border-l-4 px-4`}
+          className={classNames(
+            `${
+              isCurrentPath(option.path) ? 'border-white' : 'border-transparent'
+            } border-l-4 px-4`,
+            { 'opacity-20': option.disabled }
+          )}
         >
-          <Link href={option.path}>
-            <li className="list-none hover:bg-dark-800 cursor-pointer p-2 rounded-xl pl-2 flex flex-row gap-2 items-center ">
+          <ConditionalWrapper
+            condition={!option.disabled}
+            wrapper={(c) => <Link href={option.path}>{c}</Link>}
+          >
+            <li
+              className={classNames(
+                'list-none  p-2 rounded-xl pl-2 flex flex-row gap-2 items-center',
+                { 'hover:bg-dark-800 cursor-pointer': !option.disabled }
+              )}
+            >
               <option.icon height={25} width={25} />
               {option.title}
             </li>
-          </Link>
+          </ConditionalWrapper>
         </div>
       ))}
     </div>

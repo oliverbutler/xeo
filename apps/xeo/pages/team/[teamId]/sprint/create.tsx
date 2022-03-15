@@ -1,3 +1,4 @@
+import { CentredLoader } from '@xeo/ui/lib/Animate/CentredLoader/CentredLoader';
 import { Alert } from '@xeo/ui/lib/Alert/Alert';
 import Button, { ButtonVariation } from '@xeo/ui/lib/Button/Button';
 import { Content } from 'components/Content';
@@ -27,7 +28,7 @@ function Create() {
   }
 
   if (!data) {
-    return <div>Loading...</div>;
+    return <CentredLoader />;
   }
 
   return (

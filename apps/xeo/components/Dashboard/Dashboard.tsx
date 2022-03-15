@@ -18,6 +18,14 @@ export const Dashboard: React.FunctionComponent = () => {
       <PageHeader
         title={`${team.name} (${team.shortName})`}
         subtitle="View the current progress of your team"
+        rightContent={
+          <Button
+            href={`/team/${team.id}/sprint/create`}
+            variation={ButtonVariation.Dark}
+          >
+            Create Sprint
+          </Button>
+        }
         border
       />
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 p-6">
