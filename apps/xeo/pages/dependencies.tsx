@@ -1,3 +1,4 @@
+import { useDebounce } from '@xeo/ui/hooks/useDebounce';
 import { Button, ButtonVariation } from '@xeo/ui/lib/Button/Button';
 import { PageHeader } from 'components/PageHeader/PageHeader';
 import { useCurrentTeam } from 'hooks/useCurrentTeam';
@@ -34,9 +35,16 @@ const dependencies: React.FunctionComponent<Props> = (props) => {
   const [nodes, setNodes] = useState<Node[]>(initialNodes);
   const [edges, setEdges] = useState<Edge[]>(initialEdges);
 
+  const debouncedNodes = useDebounce(nodes, 2000);
+
+  useEffect(() => {
+    saveNodesToState(debouncedNodes);
+  }, [debouncedNodes]);
+
   const { data, isLoading, error } = useQuery<GetSprintTickets>(
     `/api/team/${currentTeamId}/sprint/cl0r1eozi19314okjgxibapke/tickets`,
-    !currentTeamId
+    !currentTeamId,
+    { revalidateOnFocus: false } // this is a very expensive operation
   );
 
   const { data: dependencies } = useQuery<GetSprintDependencies>(
@@ -59,8 +67,6 @@ const dependencies: React.FunctionComponent<Props> = (props) => {
         toast.error(error.body?.message ?? error.generic);
         return;
       }
-
-      toast.success('Saved Graph');
     },
     [currentTeamId]
   );
