@@ -140,12 +140,37 @@ export const updateTeamMember = async (
   return member;
 };
 
-export const getTeamsForUser = async (userId: string): Promise<Team[]> => {
+export type TeamWithMemberAndBasicUserInfo = Team & {
+  members: (TeamMember & {
+    user: {
+      name: string | null;
+      email: string | null;
+      image: string | null;
+    };
+  })[];
+};
+
+export const getTeamsForUser = async (
+  userId: string
+): Promise<TeamWithMemberAndBasicUserInfo[]> => {
   const teams = await prisma.team.findMany({
     where: {
       members: {
         some: {
           userId: userId,
+        },
+      },
+    },
+    include: {
+      members: {
+        include: {
+          user: {
+            select: {
+              image: true,
+              name: true,
+              email: true,
+            },
+          },
         },
       },
     },

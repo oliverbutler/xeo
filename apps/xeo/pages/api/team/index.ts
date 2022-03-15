@@ -9,14 +9,21 @@ import {
   apiResponse,
   parseAPIRequest,
 } from 'utils/api';
-import { createTeam, CreateTeam, getTeamsForUser } from 'utils/db/team/adapter';
+import {
+  createTeam,
+  CreateTeam,
+  getTeamsForUser,
+  TeamWithMemberAndBasicUserInfo,
+} from 'utils/db/team/adapter';
 
 export type CreateTeamRequest = APIRequest<
   { input: CreateTeam },
   { team: Team }
 >;
 
-export type GetTeamsForUserRequest = APIGetRequest<{ teams: Team[] }>;
+export type GetTeamsForUserRequest = APIGetRequest<{
+  teams: TeamWithMemberAndBasicUserInfo[];
+}>;
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
