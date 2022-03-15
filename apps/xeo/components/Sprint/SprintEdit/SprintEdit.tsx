@@ -121,7 +121,7 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
   return (
     <div>
       <form className="gap-4" onSubmit={handleSubmit(updateSprint)}>
-        <h2>Notion Options</h2>
+        {/* <h2>Notion Options</h2>
         <p>These properties are not adjustable</p>
         <SettingsPanel>
           <div className="grid grid-cols-3 gap-4">
@@ -130,8 +130,8 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
               disabled={true}
               defaultValue={sprint.notionSprintValue}
             />
-          </div>
-        </SettingsPanel>
+          </div> */}
+        {/* </SettingsPanel> */}
         <h2>Sprint Details</h2>
         <SettingsPanel>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

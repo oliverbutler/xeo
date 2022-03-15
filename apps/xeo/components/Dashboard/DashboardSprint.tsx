@@ -1,5 +1,5 @@
 import { Sprint } from '@prisma/client';
-import { SprintInfo } from 'components/SprintInfo/SprintInfo';
+import { SprintInfo } from 'components/Sprint/SprintInfo/SprintInfo';
 import { useCurrentTeam } from 'hooks/useCurrentTeam';
 import { GetSprintColumnPlotData } from 'pages/api/team/[teamId]/sprint/[sprintId]/column-plot-data';
 import { useQuery } from 'utils/api';

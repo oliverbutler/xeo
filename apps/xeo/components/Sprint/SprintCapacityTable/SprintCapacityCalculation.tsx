@@ -1,5 +1,5 @@
 import { CalculatorIcon } from '@heroicons/react/outline';
-import { SprintStat } from 'components/SprintInfo/SprintStats/SprintStat';
+import { SprintStat } from 'components/Sprint/SprintInfo/SprintStats/SprintStat';
 import { getSprintCapacityPerDay } from 'utils/sprint/chart';
 import { DEFAULT_SPRINT_CAPACITY } from '../SprintEdit/SprintEdit';
 import { SprintCapacityDev } from './SprintCapacityTable';

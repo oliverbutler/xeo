@@ -1,6 +1,6 @@
 import { Sprint } from '@prisma/client';
 import { ConditionalWrapper } from '@xeo/ui/lib/ConditionalWrapper/ConditionalWrapper';
-import { SprintGraphDynamic } from 'components/SprintInfo/SprintGraph/SprintGraphDynamic';
+import { SprintGraphDynamic } from 'components/Sprint/SprintInfo/SprintGraph/SprintGraphDynamic';
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import Skeleton from 'react-loading-skeleton';

@@ -6,7 +6,6 @@ import { SprintEdit } from 'components/Sprint/SprintEdit/SprintEdit';
 import { NextSeo } from 'next-seo';
 import { useRouter } from 'next/router';
 import { GetSprintRequest } from 'pages/api/team/[teamId]/sprint/[sprintId]';
-import Skeleton from 'react-loading-skeleton';
 import { toast } from 'react-toastify';
 import { useQuery } from 'utils/api';
 

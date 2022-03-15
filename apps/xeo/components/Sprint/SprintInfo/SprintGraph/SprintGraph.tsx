@@ -9,7 +9,7 @@ import {
   CartesianGrid,
 } from 'recharts';
 import dayjs from 'dayjs';
-import { theme } from '../../../../../tailwind-workspace-preset';
+import { theme } from '../../../../../../tailwind-workspace-preset';
 import { DataPlotLine, DataPlotType } from 'utils/sprint/chart';
 import classNames from 'classnames';
 import { useTheme } from 'next-themes';

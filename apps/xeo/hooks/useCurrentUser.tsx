@@ -1,8 +1,9 @@
-import { UserMetadata } from '@prisma/client';
+import { TeamContext } from 'context/TeamContext';
 import { Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import { GetMeRequest } from 'pages/api/user/me';
 import { PutUpdateUserMetadata } from 'pages/api/user/me/metadata';
+import { useContext, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { apiPut, useQuery } from 'utils/api';
 import { UserWithMetadata } from 'utils/db/user/adapter';
@@ -19,6 +20,14 @@ type Output = {
 export const useCurrentUser = (): Output => {
   const sessionResponse = useSession();
   const meResponse = useQuery<GetMeRequest>('/api/user/me');
+
+  const { setCurrentTeamId } = useContext(TeamContext);
+
+  useEffect(() => {
+    if (meResponse.data?.user.metadata?.defaultTeamId) {
+      setCurrentTeamId(meResponse.data.user.metadata.defaultTeamId);
+    }
+  }, [meResponse]);
 
   const isLoading =
     sessionResponse.status === 'loading' || meResponse.isLoading;

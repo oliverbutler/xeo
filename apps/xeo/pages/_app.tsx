@@ -10,6 +10,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import { IntlWrapper } from '@xeo/ui/lib/Wrappers/IntlWrapper';
 import { PrivateRoute } from 'components/PrivateRoute';
 import { SkeletonWrapper } from 'components/SkeletonWrapper/SkeletonWrapper';
+import { TeamContextProvider } from 'context/TeamContext';
 
 declare global {
   interface Window {
@@ -37,13 +38,15 @@ function CustomApp({
       <main className="prose dark:prose-invert max-w-none">
         <IntlWrapper>
           <ThemeProvider attribute="class" defaultTheme="light">
-            <SkeletonWrapper>
-              <SessionProvider session={session}>
-                <PrivateRoute>
-                  <Component {...pageProps} />
-                </PrivateRoute>
-              </SessionProvider>
-            </SkeletonWrapper>
+            <TeamContextProvider>
+              <SkeletonWrapper>
+                <SessionProvider session={session}>
+                  <PrivateRoute>
+                    <Component {...pageProps} />
+                  </PrivateRoute>
+                </SessionProvider>
+              </SkeletonWrapper>
+            </TeamContextProvider>
           </ThemeProvider>
         </IntlWrapper>
       </main>

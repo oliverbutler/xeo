@@ -1,4 +1,4 @@
-import { SprintInfo } from 'components/SprintInfo/SprintInfo';
+import { SprintInfo } from 'components/Sprint/SprintInfo/SprintInfo';
 import { NextRouter, useRouter } from 'next/router';
 import { GetSprintColumnPlotData } from 'pages/api/team/[teamId]/sprint/[sprintId]/column-plot-data';
 import { useQuery } from 'utils/api';

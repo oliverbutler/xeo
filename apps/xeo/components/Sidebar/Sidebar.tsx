@@ -17,12 +17,12 @@ import { useRouter } from 'next/router';
 import xeoIcon from 'public/xeo.png';
 import React, { useEffect } from 'react';
 
-const getNavbarOptions = (team: Team) => [
+const getNavbarOptions = (team: Team | undefined) => [
   {
-    title: `Team (${team.shortName})`,
+    title: `Team (${team?.shortName})`,
     options: [
-      { title: 'Dashboard', icon: TemplateIcon, path: `/team/${team.id}` },
-      { title: 'Settings', icon: CogIcon, path: `/team/${team.id}/settings` },
+      { title: 'Dashboard', icon: TemplateIcon, path: `/team/${team?.id}` },
+      { title: 'Settings', icon: CogIcon, path: `/team/${team?.id}/settings` },
     ],
   },
   {
@@ -32,7 +32,6 @@ const getNavbarOptions = (team: Team) => [
         title: 'Dependencies',
         icon: ViewGridIcon,
         path: '/dependencies',
-        disabled: true,
       },
       {
         title: 'Daily Mail',
@@ -99,9 +98,9 @@ export const Sidebar: React.FunctionComponent = () => {
     if (pathname === '/' && me?.metadata?.defaultTeamId) {
       push(`/team/${me.metadata.defaultTeamId}`);
     }
-  });
+  }, [team, me]);
 
-  const navbarOptions = team ? getNavbarOptions(team) : [];
+  const navbarOptions = getNavbarOptions(team);
 
   return (
     <div className="bg-dark-900 dark:bg-dark-950 w-72 text-white flex flex-col">

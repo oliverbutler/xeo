@@ -88,7 +88,10 @@ export const Teams: React.FunctionComponent = () => {
                 Header: 'Actions',
                 Cell: (cell) => (
                   <div>
-                    <Link href={`/team/${cell.value}/settings`} passHref>
+                    <Link
+                      href={`/team/${cell.row.original.id}/settings`}
+                      passHref
+                    >
                       <Clickable>
                         <CogIcon height={25} width={25} />
                       </Clickable>

@@ -1,7 +1,6 @@
 import { useCurrentUser } from 'hooks/useCurrentUser';
 import { ToastContainer } from 'react-toastify';
 import { Footer } from './Footer/Footer';
-import { PageHeader } from './PageHeader/PageHeader';
 import { Onboarding } from './Onboarding/Onboarding';
 import { Sidebar } from './Sidebar/Sidebar';
 
