@@ -64,12 +64,16 @@ export const saveSprintHistoryForBacklogIfChanged = async (
   );
 
   const areStatusPointMapsEqual = Object.entries(
-    statusPointMapLastHistory
+    statusPointMapCurrentSprint
   ).every(([statusId, points]) => {
-    return points === statusPointMapCurrentSprint[statusId];
+    return points === statusPointMapLastHistory[statusId];
   });
 
-  if (!areStatusPointMapsEqual) {
+  const areTheNumberOfObjectKeysEqual =
+    Object.keys(statusPointMapLastHistory).length ===
+    Object.keys(statusPointMapCurrentSprint).length;
+
+  if (!areStatusPointMapsEqual || !areTheNumberOfObjectKeysEqual) {
     await saveSprintHistoryForBacklog(productBacklog, sprint);
     return true;
   }
