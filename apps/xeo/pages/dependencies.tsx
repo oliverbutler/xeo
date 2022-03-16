@@ -14,10 +14,12 @@ import ReactFlow, {
   Edge,
   EdgeChange,
   MiniMap,
+  Node,
   NodeChange,
 } from 'react-flow-renderer';
 import { toast } from 'react-toastify';
 import { apiPut, useQuery } from 'utils/api';
+import { isNotNullOrUndefined } from '../../../libs/utils/src/guards/type-guards';
 import {
   GetSprintDependencies,
   PutUpdateSprintDependencies,
@@ -99,7 +101,8 @@ const dependencies: React.FunctionComponent<Props> = (props) => {
             source: relation,
           }));
         })
-        .flat();
+        .flat()
+        .filter(isNotNullOrUndefined);
 
       setNodes(newNodes);
       setEdges(newEdges);
