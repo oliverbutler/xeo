@@ -3,15 +3,23 @@ import Image from 'next/image';
 import notionLogo from 'public/notion.png';
 interface Props {
   iconString: string | undefined | null;
+  size?: number;
 }
 
 export const NotionLogoRenderer: React.FunctionComponent<Props> = ({
   iconString,
+  size,
 }) => {
+  const renderSize = size || 50;
   if (!iconString) {
     return (
       <div>
-        <Image src={notionLogo} height={50} width={50} alt="Notion" />
+        <Image
+          src={notionLogo}
+          height={renderSize}
+          width={renderSize}
+          alt="Notion"
+        />
       </div>
     );
   }
@@ -19,9 +27,14 @@ export const NotionLogoRenderer: React.FunctionComponent<Props> = ({
   if (iconString.startsWith('http')) {
     return (
       <div>
-        <img src={iconString} alt="Notion logo" height={50} width={50} />
+        <img
+          src={iconString}
+          alt="Notion logo"
+          height={renderSize}
+          width={renderSize}
+        />
       </div>
     );
   }
-  return <span className="text-5xl">{iconString}</span>;
+  return <span className="text-4xl">{iconString}</span>;
 };

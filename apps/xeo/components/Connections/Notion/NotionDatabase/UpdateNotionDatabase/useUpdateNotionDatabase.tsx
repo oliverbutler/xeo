@@ -29,6 +29,11 @@ export type DatabaseStatusOptions = {
   color: string;
 };
 
+export type ParentRelationshipOption = {
+  label: string;
+  value: string;
+};
+
 interface Output {
   onSubmit: () => void;
   form: UseFormReturn<DatabaseUpdateForm>;
@@ -39,6 +44,7 @@ export interface DatabaseUpdateForm {
   sprintSelectType: DatabaseSprintFieldType | undefined;
   sprintId: DatabasePropertyOption | undefined;
   ticketStatusId: DatabasePropertyOption | undefined;
+  parentRelation: ParentRelationshipOption | undefined;
   statusMapping: {
     statusDoneId: DatabaseStatusOptions[];
     statusToValidateId: DatabaseStatusOptions[];
@@ -113,6 +119,7 @@ export const useUpdateNotionDatabase = (
       pointsColumnName: formData.storyPointsId.label,
       sprintColumnType: formData.sprintSelectType.value,
       sprintColumnName: formData.sprintId.label,
+      parentRelationColumnName: formData.parentRelation?.label,
       updatedStatusMappings: [], // TODO
     };
 

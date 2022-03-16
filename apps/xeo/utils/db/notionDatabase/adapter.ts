@@ -11,6 +11,7 @@ export type CreateNotionDatabase = {
   statusColumnName: string;
   sprintColumnType: NotionColumnType;
   sprintColumnName: string;
+  parentRelationColumnName: string | undefined;
   statusMapping: {
     notionStatusName: string;
     notionStatusColor: string;
@@ -27,6 +28,7 @@ export type UpdateNotionDatabase = {
   statusColumnName: string;
   sprintColumnType: NotionColumnType;
   sprintColumnName: string;
+  parentRelationColumnName: string | undefined;
   updatedStatusMappings: {
     notionStatusId: string;
     notionStatusName: string;
@@ -46,6 +48,7 @@ export const createNotionDatabase = async (input: CreateNotionDatabase) => {
       statusColumnName: input.statusColumnName,
       notionColumnType: input.sprintColumnType,
       sprintColumnName: input.sprintColumnName,
+      parentRelationColumnName: input.parentRelationColumnName,
       notionStatusLinks: {
         createMany: {
           data: input.statusMapping.map((mapping) => ({
@@ -107,6 +110,7 @@ export const updateNotionDatabase = async (input: UpdateNotionDatabase) => {
         statusColumnName: input.statusColumnName,
         notionColumnType: input.sprintColumnType,
         sprintColumnName: input.sprintColumnName,
+        parentRelationColumnName: input.parentRelationColumnName,
       },
     });
     return true;

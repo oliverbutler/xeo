@@ -1,5 +1,6 @@
 import { Team, TeamRole } from '@prisma/client';
 import { CreateTeamRequest } from 'pages/api/team';
+import { DeleteTeamRequest } from 'pages/api/team/[teamId]';
 import { PostCreateTeamMember } from 'pages/api/team/[teamId]/members';
 import {
   DeleteTeamMember,
@@ -72,7 +73,7 @@ export const useTeam = (): Output => {
   };
 
   const deleteTeam = async (teamId: string) => {
-    const { error } = await apiDelete<DeleteTeamMember>(`/api/team/${teamId}`);
+    const { error } = await apiDelete<DeleteTeamRequest>(`/api/team/${teamId}`);
 
     if (error) {
       toast.error(error.body?.message || error.generic);

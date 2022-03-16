@@ -22,28 +22,10 @@ export type Ticket = {
   points: number | null;
   notionStatusLink: NotionStatusLink | undefined;
   parentTickets: string[] | undefined;
-  sprints: {
-    sprint: Sprint | undefined;
-    notionSprintSelect: {
-      id: string;
-      name: string;
-      color: string;
-    };
-  }[];
-  icon: TicketIcon | null;
+  iconString: string | null;
   updatedAt: string;
   notionUrl: string;
 };
-
-export type TicketIcon =
-  | {
-      type: 'image';
-      url: string;
-    }
-  | {
-      type: 'emoji';
-      emoji: string;
-    };
 
 export type NotionDatabaseItem = Extract<
   QueryDatabaseResponse['results'][0],
@@ -116,25 +98,16 @@ export const getTicketFromNotionObject = ({
     sprintProperty?.type === 'multi_select'
       ? sprintProperty.multi_select
       : null;
-  const availableSprints = sprintPropertySelect
-    ? [sprintPropertySelect]
-    : sprintPropertyMultiSelect
-    ? sprintPropertyMultiSelect
-    : [];
+  // const availableSprints = sprintPropertySelect
+  //   ? [sprintPropertySelect]
+  //   : sprintPropertyMultiSelect
+  //   ? sprintPropertyMultiSelect
+  //   : [];
 
   const parentTickets =
     parentRelationsProperty?.type === 'relation'
       ? parentRelationsProperty.relation?.map((relation) => relation.id)
       : undefined;
-
-  const matchingSprints = availableSprints.map((notionSprint) => {
-    return {
-      notionSprintSelect: notionSprint,
-      sprint: sprints.find(
-        (sprint) => sprint.notionSprintValue === notionSprint.name
-      ),
-    };
-  });
 
   return {
     notionId: page.id,
@@ -144,35 +117,25 @@ export const getTicketFromNotionObject = ({
       links: notionStatusLinks,
       notionStatusName: notionStatusName,
     }),
-    sprints: matchingSprints,
-    icon: getIconFromNotionPage(page),
+    iconString: getIconFromNotionPage(page),
     updatedAt: page.last_edited_time,
     notionUrl: page.url,
     parentTickets,
   };
 };
 
-const getIconFromNotionPage = (page: NotionDatabaseItem): TicketIcon | null => {
+const getIconFromNotionPage = (page: NotionDatabaseItem): string | null => {
   if (!page.icon) {
     return null;
   }
 
   switch (page.icon.type) {
     case 'emoji':
-      return {
-        type: 'emoji',
-        emoji: page.icon.emoji,
-      };
+      return page.icon.emoji;
     case 'external':
-      return {
-        type: 'image',
-        url: page.icon.external.url,
-      };
+      return page.icon.external.url;
     case 'file':
-      return {
-        type: 'image',
-        url: page.icon.file.url,
-      };
+      return page.icon.file.url;
   }
 };
 

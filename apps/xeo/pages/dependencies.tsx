@@ -1,9 +1,10 @@
-import { useDebounce } from '@xeo/ui/hooks/useDebounce';
+import { Alert } from '@xeo/ui/lib/Alert/Alert';
 import { Button, ButtonVariation } from '@xeo/ui/lib/Button/Button';
+import { TicketNode } from 'components/Dependencies/TicketNode';
 import { PageHeader } from 'components/PageHeader/PageHeader';
 import { useCurrentTeam } from 'hooks/useCurrentTeam';
 import { useCurrentUser } from 'hooks/useCurrentUser';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import ReactFlow, {
   addEdge,
   applyEdgeChanges,
@@ -33,35 +34,35 @@ const initialNodes: Node[] = [];
 const initialEdges: Edge[] = [];
 
 const dependencies: React.FunctionComponent<Props> = (props) => {
-  const { currentTeamId } = useCurrentTeam();
+  const { currentTeamId, currentSprintId } = useCurrentTeam();
   const [nodes, setNodes] = useState<Node[]>(initialNodes);
   const [edges, setEdges] = useState<Edge[]>(initialEdges);
 
-  const debouncedNodes = useDebounce(nodes, 2000);
-
-  useEffect(() => {
-    saveNodesToState(debouncedNodes);
-  }, [debouncedNodes]);
+  const shouldSkipAPICall = !currentSprintId || !currentTeamId;
 
   const { data, isLoading, error } = useQuery<GetSprintTickets>(
-    `/api/team/${currentTeamId}/sprint/cl0r1eozi19314okjgxibapke/tickets`,
-    !currentTeamId,
+    `/api/team/${currentTeamId}/sprint/${currentSprintId}/tickets`,
+    shouldSkipAPICall,
     { revalidateOnFocus: false } // this is a very expensive operation
   );
 
   const { data: dependencies } = useQuery<GetSprintDependencies>(
-    `/api/team/${currentTeamId}/sprint/cl0r1eozi19314okjgxibapke/dependencies`,
-    !currentTeamId
+    `/api/team/${currentTeamId}/sprint/${currentSprintId}/dependencies`,
+    shouldSkipAPICall
   );
 
   const saveNodesToState = useCallback(
     async (nodes: Node[]) => {
+      if (shouldSkipAPICall) {
+        return;
+      }
+
       const dependencies = nodes.map((node) => ({
         id: node.id,
         position: node.position,
       }));
       const { data, error } = await apiPut<PutUpdateSprintDependencies>(
-        `/api/team/${currentTeamId}/sprint/cl0r1eozi19314okjgxibapke/dependencies`,
+        `/api/team/${currentTeamId}/sprint/${currentSprintId}/dependencies`,
         { dependencies }
       );
 
@@ -69,6 +70,8 @@ const dependencies: React.FunctionComponent<Props> = (props) => {
         toast.error(error.body?.message ?? error.generic);
         return;
       }
+
+      toast.success('Dependencies saved');
     },
     [currentTeamId]
   );
@@ -85,10 +88,9 @@ const dependencies: React.FunctionComponent<Props> = (props) => {
           : { x: Math.random() * 1000, y: Math.random() * 1000 };
 
         return {
+          type: 'ticket',
           id: ticket.notionId,
-          data: {
-            label: ticket.title,
-          },
+          data: ticket,
           position,
         };
       });
@@ -124,10 +126,13 @@ const dependencies: React.FunctionComponent<Props> = (props) => {
     [setEdges]
   );
 
+  const nodeTypes = useMemo(() => ({ ticket: TicketNode }), []);
+
   return (
-    <div className="h-screen">
+    <div className="flex flex-col h-screen">
       <PageHeader
         title="Dependency Graph"
+        subtitle="Here you can see your current sprint in a graph view!"
         rightContent={
           <Button
             onClick={() => saveNodesToState(nodes)}
@@ -137,16 +142,16 @@ const dependencies: React.FunctionComponent<Props> = (props) => {
           </Button>
         }
       />
-      <div className="w-full h-full">
+      <div className="w-full grow">
         <ReactFlow
           nodes={nodes}
           edges={edges}
+          nodeTypes={nodeTypes}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           fitView
         >
-          <MiniMap />
           <Controls />
           <Background />
         </ReactFlow>

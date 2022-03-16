@@ -38,6 +38,7 @@ export type PutUpdateNotionDatabaseRequest = APIRequest<
     statusColumnName: string;
     sprintColumnType: NotionColumnType;
     sprintColumnName: string;
+    parentRelationColumnName: string | undefined;
     updatedStatusMappings: {
       notionStatusId: string;
       notionStatusName: string;
@@ -59,6 +60,7 @@ export type PostCreateNotionDatabaseRequest = APIRequest<
     statusColumnName: string;
     sprintColumnType: NotionColumnType;
     sprintColumnName: string;
+    parentRelationColumnName: string | undefined;
     statusMapping: {
       notionStatusName: string;
       notionStatusColor: string;
@@ -81,6 +83,7 @@ const postSchema: PostCreateNotionDatabaseRequest['joiBodySchema'] = Joi.object(
       .valid(...Object.values(NotionColumnType))
       .required(),
     sprintColumnName: Joi.string().required(),
+    parentRelationColumnName: Joi.string(),
     statusMapping: Joi.array().items(
       Joi.object({
         notionStatusName: Joi.string().required(),
@@ -103,6 +106,7 @@ const putSchema: PutUpdateNotionDatabaseRequest['joiBodySchema'] = Joi.object({
     .valid(...Object.values(NotionColumnType))
     .required(),
   sprintColumnName: Joi.string().required(),
+  parentRelationColumnName: Joi.string(),
   updatedStatusMappings: Joi.array().items(
     Joi.object({
       notionStatusId: Joi.string().required(),

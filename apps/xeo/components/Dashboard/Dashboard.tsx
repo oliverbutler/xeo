@@ -8,26 +8,20 @@ import { useEffect, useState } from 'react';
 import { DashboardSprint } from './DashboardSprint';
 
 export const Dashboard: React.FunctionComponent = () => {
-  const { team } = useCurrentTeam();
+  const { team, currentSprintId } = useCurrentTeam();
   const [selectedSprintId, setSelectedSprintId] = useState<string | undefined>(
     undefined
   );
 
-  useEffect(() => {
-    const sprintsSortedByEndDate = team?.sprints.sort((a, b) => {
-      return dayjs(b.endDate).diff(dayjs(a.endDate));
-    });
-
-    if (sprintsSortedByEndDate && sprintsSortedByEndDate.length > 0) {
-      setSelectedSprintId(sprintsSortedByEndDate[0].id);
-    }
-  }, [team]);
+  const currentSprintToShowId = currentSprintId || selectedSprintId;
 
   if (!team) {
     return <div>Loading</div>;
   }
 
-  const selectedSprint = team.sprints.find((s) => s.id === selectedSprintId);
+  const selectedSprint = team.sprints.find(
+    (s) => s.id === currentSprintToShowId
+  );
 
   return (
     <div>
@@ -73,7 +67,7 @@ export const Dashboard: React.FunctionComponent = () => {
                 className={classNames(
                   'border-l-4 border-l-transparent pl-2 cursor-pointer hover:bg-dark-800',
                   {
-                    'border-l-dark-100': selectedSprintId === sprint.id,
+                    'border-l-dark-100': currentSprintToShowId === sprint.id,
                   }
                 )}
                 onClick={() => setSelectedSprintId(sprint.id)}

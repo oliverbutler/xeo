@@ -80,6 +80,16 @@ export const SelectColumns: React.FunctionComponent<Props> = ({
         rules={{ required: true }}
         isDisabled={!currentDatabaseSelected}
       />
+      <SelectField
+        className="mt-2"
+        label="Parents Relation (optional)"
+        control={control}
+        name="parentRelation"
+        // error={errors.ticketStatusId}
+        options={propertiesOptions.filter((o) => o.type === 'relation')}
+        rules={{ required: false }}
+        isDisabled={!currentDatabaseSelected}
+      />
       <div className="flex flex-col gap-2 sm:flex-row">
         <SelectField
           className="mt-2 w-full sm:w-1/2"

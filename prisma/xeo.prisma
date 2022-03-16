@@ -24,7 +24,7 @@ model Account {
   session_state      String?
   oauth_token_secret String?
   oauth_token        String?
-  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user               User     @relation(fields: [userId], references: [id], onDelete: NoAction)
   //
   createdAt          DateTime @default(now())
   updatedAt          DateTime @default(now()) @updatedAt
@@ -38,7 +38,7 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: NoAction)
   //
   createdAt    DateTime @default(now())
   updatedAt    DateTime @default(now()) @updatedAt
@@ -72,9 +72,9 @@ model UserMetadata {
   id            String   @id @default(cuid())
   role          UserRole
   preferredName String
+  user          User     @relation(fields: [userId], references: [id], onDelete: NoAction)
   userId        String
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  defaultTeam   Team?    @relation(fields: [defaultTeamId], references: [id], onDelete: Cascade)
+  defaultTeam   Team?    @relation(fields: [defaultTeamId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   defaultTeamId String?
   //
   createdAt     DateTime @default(now())
@@ -102,8 +102,8 @@ model Sprint {
   endDate                     DateTime
   notionSprintValue           String // ID of the Notion Sprint (select ID)
   dailyStartTime              String           @default("09:00") // HH:mm 
+  team                        Team             @relation(fields: [teamId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   teamId                      String
-  team                        Team             @relation(fields: [teamId], references: [id], onDelete: NoAction)
   sprintHistory               SprintHistory[]
   sprintGoal                  String
   sprintDevelopersAndCapacity Json
@@ -119,7 +119,7 @@ model Sprint {
 
 model SprintHistory {
   id                  String                @id @default(cuid())
-  sprint              Sprint                @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+  sprint              Sprint                @relation(fields: [sprintId], references: [id], onDelete: NoAction)
   sprintId            String
   timestamp           DateTime
   sprintStatusHistory SprintStatusHistory[]
@@ -134,7 +134,7 @@ model SprintStatusHistory {
   id                 String            @id @default(cuid())
   notionStatusLink   NotionStatusLink? @relation(fields: [notionStatusLinkId], references: [id])
   notionStatusLinkId String?
-  sprintHistory      SprintHistory     @relation(fields: [sprintHistoryId], references: [id], onDelete: Cascade)
+  sprintHistory      SprintHistory     @relation(fields: [sprintHistoryId], references: [id], onDelete: NoAction)
   sprintHistoryId    String
   pointsInStatus     Float
   //
@@ -148,7 +148,7 @@ model SprintStatusHistory {
 model DependencyGraph {
   id              String @id @default(cuid())
   sprintId        String
-  sprint          Sprint @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+  sprint          Sprint @relation(fields: [sprintId], references: [id], onDelete: NoAction)
   ticketPositions Json
 }
 
@@ -159,10 +159,10 @@ enum TeamRole {
 }
 
 model TeamMember {
+  user      User     @relation(fields: [userId], references: [id], onDelete: NoAction)
   userId    String
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   teamId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  backlog   Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
   role      TeamRole @default(MEMBER)
   //
   createdAt DateTime @default(now())
@@ -197,7 +197,7 @@ model Team {
 
 model NotionConnection {
   id                  String          @id @default(cuid())
-  team                Team            @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  team                Team            @relation(fields: [teamId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   teamId              String
   // Notion Connection
   accessToken         String
@@ -225,9 +225,9 @@ model NotionDatabase {
   notionColumnType         NotionColumnType
   notionStatusLinks        NotionStatusLink[]
   // Relations
-  notionConnection         NotionConnection   @relation(fields: [notionConnectionId], references: [id], onDelete: Cascade)
+  notionConnection         NotionConnection   @relation(fields: [notionConnectionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   notionConnectionId       String
-  team                     Team               @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  team                     Team               @relation(fields: [teamId], references: [id], onDelete: NoAction)
   teamId                   String
   //
   createdAt                DateTime           @default(now())
@@ -248,7 +248,7 @@ enum BacklogStatus {
 model NotionStatusLink {
   id                  String                @id @default(cuid())
   notionDatabaseId    String
-  notionDatabase      NotionDatabase        @relation(fields: [notionDatabaseId], references: [id], onDelete: Cascade)
+  notionDatabase      NotionDatabase        @relation(fields: [notionDatabaseId], references: [id], onDelete: NoAction)
   notionStatusName    String
   notionStatusColor   String
   status              BacklogStatus

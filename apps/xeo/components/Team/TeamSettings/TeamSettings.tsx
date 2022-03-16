@@ -7,6 +7,7 @@ import { UpdateNotionDatabaseButton } from 'components/Connections/Notion/Notion
 import { Content } from 'components/Content';
 import { SettingsPanel } from 'components/PageLayouts/SettingsPanel/SettingsPanel';
 import { useCurrentTeam } from 'hooks/useCurrentTeam';
+import { useTeam } from 'hooks/useTeam';
 import { GetNotionAuthURL } from 'pages/api/connections/notion/auth-url';
 import { GetTeamNotionConnectionInformation } from 'pages/api/team/[teamId]/notion';
 import { useQuery } from 'utils/api';
@@ -36,6 +37,7 @@ export const ReconnectToNotionButton = () => {
 
 export const TeamSettings: React.FunctionComponent<Props> = (props) => {
   const { team } = useCurrentTeam();
+  const { deleteTeam } = useTeam();
 
   const { data, error } = useQuery<GetTeamNotionConnectionInformation>(
     `/api/team/${team?.id}/notion`,
@@ -116,6 +118,13 @@ export const TeamSettings: React.FunctionComponent<Props> = (props) => {
           <ConnectToNotionButton />
         </SettingsPanel>
       )}
+      <h2>Actions</h2>
+      <Button
+        variation={ButtonVariation.Danger}
+        onClick={() => deleteTeam(team.id)}
+      >
+        Delete Team
+      </Button>
     </Content>
   );
 };
