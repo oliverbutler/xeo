@@ -6,6 +6,7 @@ import {
   QuestionMarkCircleIcon,
 } from '@heroicons/react/outline';
 import classNames from 'classnames';
+import { Tooltip } from 'components/Tooltip/Tooltip';
 import Skeleton from 'react-loading-skeleton';
 import { DataPlotType, roundToOneDecimal } from 'utils/sprint/chart';
 import { getSprintStats } from './getSprintStats';
@@ -23,91 +24,94 @@ export const SprintStats: React.FunctionComponent<Props> = ({
     ? getSprintStats(sprintHistoryPlotData)
     : undefined;
 
-  const { deltaPoints, pointsToValidate, percentDone, percentDoneValidated } =
-    stats || {};
+  const {
+    deltaPoints,
+    pointsToValidate,
+    totalPointsDone,
+    totalPointsInSprint,
+  } = stats || {};
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-4 my-2">
-      <SprintStat
-        icon={
-          <ChartBarIcon height={35} width={35} className="stroke-primary-300" />
-        }
-        title="Progress"
-        value={
-          percentDone !== undefined && percentDoneValidated !== undefined ? (
-            <p>
-              <span>{roundToOneDecimal(percentDone)}% D</span> -{' '}
-              <span>{roundToOneDecimal(percentDoneValidated)}% V</span>
-            </p>
-          ) : (
-            <p>
-              <Skeleton width={100} />
-            </p>
-          )
-        }
-      />
-      <SprintStat
-        icon={
-          deltaPoints !== undefined ? (
-            deltaPoints < 0 ? (
-              <ExclamationCircleIcon
-                height={35}
-                width={35}
-                className="stroke-red-400 dark:stroke-red-300"
-              />
+    <div className="flex gap-2 sm:gap-4">
+      <Tooltip
+        tooltip={`${
+          totalPointsDone ? roundToOneDecimal(totalPointsDone) : ''
+        } Points Done out of ${
+          totalPointsInSprint ? roundToOneDecimal(totalPointsInSprint) : ''
+        } (${
+          totalPointsDone && totalPointsInSprint
+            ? roundToOneDecimal((totalPointsDone / totalPointsInSprint) * 100)
+            : ''
+        }%)`}
+      >
+        <SprintStat
+          icon={
+            deltaPoints !== undefined ? (
+              deltaPoints < 0 ? (
+                <ExclamationCircleIcon
+                  height={25}
+                  width={25}
+                  className="stroke-red-400 dark:stroke-red-300"
+                />
+              ) : (
+                <CheckCircleIcon
+                  height={25}
+                  width={25}
+                  className="stroke-primary-300"
+                />
+              )
             ) : (
-              <CheckCircleIcon
-                height={35}
-                width={35}
-                className="stroke-primary-300"
+              <QuestionMarkCircleIcon
+                height={25}
+                width={25}
+                className="stroke-dark-300"
               />
             )
-          ) : (
-            <QuestionMarkCircleIcon
-              height={35}
-              width={35}
-              className="stroke-dark-300"
+          }
+          title="On Track"
+          value={
+            deltaPoints !== undefined ? (
+              <p
+                className={classNames(
+                  'my-0',
+                  { ' text-red-400 dark:text-red-300': deltaPoints < 0 },
+                  { 'text-green-400 dark:text-green-300': deltaPoints >= 0 }
+                )}
+              >
+                {roundToOneDecimal(deltaPoints)}{' '}
+                {roundToOneDecimal(deltaPoints) < 0 ? 'Behind' : 'Ahead'}
+              </p>
+            ) : (
+              <p>
+                <Skeleton width={100} />
+              </p>
+            )
+          }
+        />
+      </Tooltip>
+      <Tooltip tooltip={`${pointsToValidate} Points in "To Validate" column`}>
+        <SprintStat
+          icon={
+            <ClipboardCheckIcon
+              height={25}
+              width={25}
+              className="stroke-primary-300"
             />
-          )
-        }
-        title="On Track"
-        value={
-          deltaPoints !== undefined ? (
-            <p
-              className={classNames(
-                { 'text-red-400 dark:text-red-300': deltaPoints < 0 },
-                { 'text-green-400 dark:text-green-300': deltaPoints >= 0 }
-              )}
-            >
-              {roundToOneDecimal(deltaPoints)}{' '}
-              {roundToOneDecimal(deltaPoints) < 0 ? 'Behind' : 'Ahead'}
-            </p>
-          ) : (
-            <p>
-              <Skeleton width={100} />
-            </p>
-          )
-        }
-      />
-      <SprintStat
-        icon={
-          <ClipboardCheckIcon
-            height={35}
-            width={35}
-            className="stroke-primary-300"
-          />
-        }
-        title="Validation"
-        value={
-          pointsToValidate !== undefined ? (
-            <p>Remaining: {roundToOneDecimal(pointsToValidate)}</p>
-          ) : (
-            <p>
-              <Skeleton width={100} />
-            </p>
-          )
-        }
-      />
+          }
+          title="Validation"
+          value={
+            pointsToValidate !== undefined ? (
+              <p className="my-0">
+                {roundToOneDecimal(pointsToValidate)} Validate
+              </p>
+            ) : (
+              <p className="my-0">
+                <Skeleton width={100} />
+              </p>
+            )
+          }
+        />
+      </Tooltip>
     </div>
   );
 };

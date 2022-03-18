@@ -3,12 +3,14 @@ import {
   ClipboardCopyIcon,
   RefreshIcon,
 } from '@heroicons/react/outline';
+import { Sprint } from '@prisma/client';
 import { Clickable } from '@xeo/ui/lib/Clickable/Clickable';
 import { DarkModeButton } from '@xeo/ui/lib/DarkModeButton/DarkModeButton';
 import { Tooltip } from 'components/Tooltip/Tooltip';
 import { toast } from 'react-toastify';
 
 interface Props {
+  sprint: Sprint | undefined;
   publicMode: boolean;
   isLoading: boolean;
   setShowPointsNotStarted: (value: boolean) => void;
@@ -17,12 +19,15 @@ interface Props {
 }
 
 export const GraphControls: React.FunctionComponent<Props> = ({
+  sprint,
   publicMode,
   isLoading,
   setShowPointsNotStarted,
   showPointsNotStarted,
   handleUpdateSprintHistory,
 }) => {
+  const sprintLink = `${window.location.origin}/team/${sprint?.teamId}/sprint/${sprint?.id}?embed=1`;
+
   return (
     <div className="flex flex-row items-end justify-between">
       <div className="flex w-full flex-row justify-end gap-2">
@@ -30,7 +35,7 @@ export const GraphControls: React.FunctionComponent<Props> = ({
           <Tooltip tooltip="Copy Embeddable Link">
             <Clickable
               onClick={() => {
-                navigator.clipboard.writeText(`${window.location}?embed=1`);
+                navigator.clipboard.writeText(sprintLink);
                 toast.info('Embeddable link copied to Clipboard');
               }}
             >

@@ -1,4 +1,6 @@
 import { useCurrentUser } from 'hooks/useCurrentUser';
+import { useRouter } from 'next/router';
+import { isSprintEmbedded } from 'pages/team/[teamId]/sprint/[sprintId]';
 import { ToastContainer } from 'react-toastify';
 import { Footer } from './Footer/Footer';
 import { Onboarding } from './Onboarding/Onboarding';
@@ -6,6 +8,12 @@ import { Sidebar } from './Sidebar/Sidebar';
 
 export const PrivateAppWrapper: React.FunctionComponent = ({ children }) => {
   const { me, status } = useCurrentUser();
+  const router = useRouter();
+  const isEmbed = isSprintEmbedded(router);
+
+  if (isEmbed) {
+    return <>{children}</>;
+  }
 
   if (status !== 'loading' && !me?.metadata) {
     return <Onboarding />;

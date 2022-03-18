@@ -112,7 +112,10 @@ export const SprintCapacityTable = <T extends FieldValues>({
   return (
     <div>
       <div className="flex flex-row items-end justify-between">
-        <h2 className="mb-0">Sprint Speed</h2>
+        <div>
+          <h2 className="mb-0">Sprint Speed</h2>
+          <p>Click the slider to quickly change the points!</p>
+        </div>
         <Clickable
           className="mt-4 flex flex-row"
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment

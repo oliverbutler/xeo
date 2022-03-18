@@ -40,9 +40,6 @@ export const SprintGraph: React.FunctionComponent<SprintGraphProps> = ({
 
   const isSmallWindow = width <= smWidth;
 
-  const HEIGHT = smallGraph ? 200 : isSmallWindow ? 300 : 350;
-  const WIDTH = 1000;
-
   const nextTheme = useTheme();
 
   const isDark = nextTheme.theme === 'dark';
@@ -50,24 +47,9 @@ export const SprintGraph: React.FunctionComponent<SprintGraphProps> = ({
   const { xAxisTicks, yAxisTicks } = getChartData(plotData, smallGraph, sprint);
 
   return (
-    <div
-      key={plotData ? 'sprint-graph' : 'sprint-graph-loading'}
-      className={classNames('relative -ml-6 mt-4', {
-        'text-sm': smallGraph || isSmallWindow,
-      })}
-      style={{ height: HEIGHT }}
-    >
-      <ResponsiveContainer
-        width={'99%'}
-        height={HEIGHT}
-        className="h-full w-full select-none"
-      >
-        <LineChart
-          width={WIDTH}
-          height={HEIGHT}
-          data={plotData ?? []}
-          style={{ position: 'absolute' }}
-        >
+    <div className="grow w-full mt-2 -ml-4">
+      <ResponsiveContainer height="99%">
+        <LineChart data={plotData ?? []}>
           <CartesianGrid
             stroke={
               isDark

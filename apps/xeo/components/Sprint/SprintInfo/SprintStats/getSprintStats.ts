@@ -30,6 +30,9 @@ export const getSprintStats = (sprintHistoryPlotData: DataPlotType[]) => {
       ? pointsLeft - pointsLeftValidated
       : 0;
 
+  const totalPointsDone =
+    totalPointsInSprint && pointsLeft ? totalPointsInSprint - pointsLeft : 0;
+
   const pointsExpectedInLatestSprint =
     latestSprintHistoryWithPoints[DataPlotLine.EXPECTED_POINTS];
 
@@ -53,5 +56,12 @@ export const getSprintStats = (sprintHistoryPlotData: DataPlotType[]) => {
         )
       : 0;
 
-  return { deltaPoints, pointsToValidate, percentDone, percentDoneValidated };
+  return {
+    deltaPoints,
+    pointsToValidate,
+    percentDone,
+    percentDoneValidated,
+    totalPointsDone,
+    totalPointsInSprint,
+  };
 };

@@ -1,9 +1,11 @@
 import { Team } from '@prisma/client';
 import { useCurrentUser } from 'hooks/useCurrentUser';
-import { useRouter } from 'next/router';
 import { GetTeamsForUserRequest } from 'pages/api/team';
 import { useQuery } from 'utils/api';
 import { Listbox } from '@xeo/ui/lib/Listbox/Listbox';
+import { mutate } from 'swr';
+import { useContext } from 'react';
+import { TeamContext } from 'context/TeamContext';
 
 type TeamSelectOption = {
   value: Team;
@@ -13,7 +15,7 @@ type TeamSelectOption = {
 export const TeamSelector: React.FunctionComponent = () => {
   const { data } = useQuery<GetTeamsForUserRequest>('/api/team');
   const { me, updateUserMetadata } = useCurrentUser();
-  const { push } = useRouter();
+  const { setCurrentTeamId } = useContext(TeamContext);
 
   const teamOptions: TeamSelectOption[] =
     data?.teams.map((team) => ({
@@ -25,11 +27,15 @@ export const TeamSelector: React.FunctionComponent = () => {
     (option) => option.value.id === me?.metadata?.defaultTeamId
   );
 
-  const handleChange = (option: TeamSelectOption) => {
-    updateUserMetadata({
-      defaultTeamId: option.value.id,
+  const handleChange = async (option: TeamSelectOption) => {
+    const newTeamId = option.value.id;
+
+    await updateUserMetadata({
+      defaultTeamId: newTeamId,
     });
-    push(`/team/${option.value.id}`);
+
+    // Reload Window
+    window.location.reload();
   };
 
   return (

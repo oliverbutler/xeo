@@ -15,15 +15,15 @@ import Skeleton from 'react-loading-skeleton';
 import { GraphControls } from './GraphControls/GraphControls';
 import classNames from 'classnames';
 import Button, { ButtonVariation } from '@xeo/ui/lib/Button/Button';
-import { SprintGraphDynamic } from './SprintGraph/SprintGraphDynamic';
 import { DataPlotType } from 'utils/sprint/chart';
 import { Sprint } from '@prisma/client';
 import { useCurrentTeam } from 'hooks/useCurrentTeam';
+import { SprintGraph } from './SprintGraph/SprintGraph';
 
 dayjs.extend(relativeTime);
 
 interface Props {
-  sprint: Sprint;
+  sprint: Sprint | undefined;
   plotData: DataPlotType[];
   publicMode: boolean;
   sprintId: string;
@@ -92,36 +92,42 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
   const [showPointsNotStarted, setShowPointsNotStarted] = useState(true);
 
   return (
-    <div className={classNames('w-full')}>
-      <NextSeo
-        title={`Sprint - ${sprint?.name}`}
-        description={`View ${sprint?.name}`}
-      />
+    <div className="flex flex-col h-full">
+      <div>
+        <NextSeo
+          title={`Sprint - ${sprint?.name}`}
+          description={`View ${sprint?.name}`}
+        />
 
-      <div className="flex flex-row justify-between">
-        <div>
-          <h2 className="my-0">{sprint?.name ?? <Skeleton width={160} />}</h2>
-          <p>{sprint?.sprintGoal ?? <Skeleton width={'70%'} count={1} />}</p>
+        <div className="flex flex-row justify-between">
+          <div>
+            <h2 className="my-0">{sprint?.name ?? <Skeleton width={160} />}</h2>
+            <p className="mb-2">
+              {sprint?.sprintGoal ?? <Skeleton width={'70%'} count={1} />}
+            </p>
+          </div>
+          <div>
+            <Button
+              href={`/team/${team?.id}/sprint/${sprintId}/edit`}
+              variation={ButtonVariation.Dark}
+            >
+              Edit
+            </Button>
+          </div>
         </div>
-        <div>
-          <Button
-            href={`/team/${team?.id}/sprint/${sprint.id}/edit`}
-            variation={ButtonVariation.Dark}
-          >
-            Edit
-          </Button>
+        <div className="flex flex-row justify-between items-center">
+          <SprintStats sprintHistoryPlotData={plotData} sprintId={sprintId} />
+          <GraphControls
+            sprint={sprint}
+            publicMode={publicMode}
+            isLoading={isLoading}
+            setShowPointsNotStarted={setShowPointsNotStarted}
+            showPointsNotStarted={showPointsNotStarted}
+            handleUpdateSprintHistory={handleUpdateSprintHistory}
+          />
         </div>
       </div>
-      <SprintStats sprintHistoryPlotData={plotData} sprintId={sprintId} />
-
-      <GraphControls
-        publicMode={publicMode}
-        isLoading={isLoading}
-        setShowPointsNotStarted={setShowPointsNotStarted}
-        showPointsNotStarted={showPointsNotStarted}
-        handleUpdateSprintHistory={handleUpdateSprintHistory}
-      />
-      <SprintGraphDynamic
+      <SprintGraph
         sprint={sprint}
         plotData={plotData}
         showPointsNotStarted={showPointsNotStarted}

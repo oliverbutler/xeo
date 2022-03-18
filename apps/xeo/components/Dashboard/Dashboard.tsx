@@ -1,3 +1,4 @@
+import { CentredLoader } from '@xeo/ui/lib/Animate/CentredLoader/CentredLoader';
 import { Button, ButtonVariation } from '@xeo/ui/lib/Button/Button';
 import classNames from 'classnames';
 import { PageHeader } from 'components/PageHeader/PageHeader';
@@ -13,10 +14,10 @@ export const Dashboard: React.FunctionComponent = () => {
     undefined
   );
 
-  const currentSprintToShowId = currentSprintId || selectedSprintId;
+  const currentSprintToShowId = selectedSprintId || currentSprintId;
 
   if (!team) {
-    return <div>Loading</div>;
+    return <CentredLoader />;
   }
 
   const selectedSprint = team.sprints.find(

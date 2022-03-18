@@ -11,12 +11,12 @@ export const isSprintEmbedded = (router: NextRouter) =>
 
 const PrivateSprintPage: React.FunctionComponent = () => {
   const router = useRouter();
-  const { sprintId } = router.query;
+  const { sprintId, teamId } = router.query;
 
   const isEmbed = isSprintEmbedded(router);
 
   const { data, error } = useQuery<GetSprintColumnPlotData>(
-    `/api/sprint/${sprintId}/column-plot-data`
+    `/api/team/${teamId}/sprint/${sprintId}/column-plot-data`
   );
 
   if (!sprintId || typeof sprintId !== 'string') {
@@ -30,17 +30,13 @@ const PrivateSprintPage: React.FunctionComponent = () => {
   }
 
   return (
-    <div className="min-h-screen">
-      {/* <ConditionalWrapper
-        condition={!isEmbed}
-        wrapper={(c) => <Content>{c}</Content>}
-      >
-        <SprintInfo
-          plotData={data}
-          publicMode={isEmbed}
-          sprintId={sprintId}
-        />
-      </ConditionalWrapper> */}
+    <div className="h-screen w-screen bg-white dark:bg-dark-950 p-2 overflow-x-hidden">
+      <SprintInfo
+        sprint={data?.sprint}
+        plotData={data?.sprintHistoryPlotData ?? []}
+        publicMode={isEmbed}
+        sprintId={sprintId}
+      />
     </div>
   );
 };

@@ -19,6 +19,7 @@ import { UserAction, trackSprintAction } from 'utils/analytics';
 import Input from '@xeo/ui/lib/Input/Input';
 import Button from '@xeo/ui/lib/Button/Button';
 import { SettingsPanel } from 'components/PageLayouts/SettingsPanel/SettingsPanel';
+import { Tooltip } from 'components/Tooltip/Tooltip';
 
 interface Props {
   sprint: Sprint;
@@ -153,21 +154,27 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
             placeholder="AaU I can..."
           />
           <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <Input
-              type="datetime-local"
-              label="Start Time"
-              {...register('startDate', { required: true })}
-            />
-            <Input
-              type="datetime-local"
-              label="End Time"
-              {...register('endDate', { required: true })}
-            />
-            <Input
-              type="time"
-              label="Daily Start Time"
-              {...register('dayStartTime', { required: true })}
-            />
+            <Tooltip tooltip="Exactly when sprint starts">
+              <Input
+                type="datetime-local"
+                label="Start Time"
+                {...register('startDate', { required: true })}
+              />
+            </Tooltip>
+            <Tooltip tooltip="Exactly when sprint ends">
+              <Input
+                type="datetime-local"
+                label="End Time"
+                {...register('endDate', { required: true })}
+              />
+            </Tooltip>
+            <Tooltip tooltip="Before this time, points moved count towards yesterday">
+              <Input
+                type="time"
+                label="Daily Start Time"
+                {...register('dayStartTime', { required: true })}
+              />
+            </Tooltip>
           </div>
         </SettingsPanel>
         <SprintCapacityTable

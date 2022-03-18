@@ -17,11 +17,13 @@ export const DashboardSprint: React.FunctionComponent<Props> = ({ sprint }) => {
   );
 
   return (
-    <SprintInfo
-      publicMode={false}
-      sprint={sprint}
-      plotData={data?.sprintHistoryPlotData ?? []}
-      sprintId={sprint.id}
-    />
+    <div style={{ height: '50vh', minHeight: 300 }}>
+      <SprintInfo
+        publicMode={false}
+        sprint={sprint}
+        plotData={data?.sprintHistoryPlotData ?? []}
+        sprintId={sprint.id}
+      />
+    </div>
   );
 };

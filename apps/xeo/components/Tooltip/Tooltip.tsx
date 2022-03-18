@@ -23,25 +23,21 @@ export const Tooltip: React.FunctionComponent<Props> = ({
     setTooltipShow(false);
   };
   return (
-    <>
-      <div className="flex flex-wrap">
-        <div className="w-full text-center">
-          <div
-            onMouseEnter={openLeftTooltip}
-            onMouseLeave={closeLeftTooltip}
-            // @ts-ignore
-            ref={btnRef}
-          >
-            {children}
-          </div>
-          {/* @ts-ignore */}
-          <div className={tooltipShow ? '' : 'hidden '} ref={tooltipRef}>
-            <div className="bg-dark-700 shadow-2xl p-2 mb-2 rounded-lg">
-              {tooltip}
-            </div>
-          </div>
+    <div>
+      <div
+        onMouseEnter={openLeftTooltip}
+        onMouseLeave={closeLeftTooltip}
+        // @ts-ignore
+        ref={btnRef}
+      >
+        {children}
+      </div>
+      {/* @ts-ignore */}
+      <div className={tooltipShow ? '' : 'hidden '} ref={tooltipRef}>
+        <div className="bg-dark-700 shadow-2xl p-2 mb-2 rounded-lg">
+          {tooltip}
         </div>
       </div>
-    </>
+    </div>
   );
 };
