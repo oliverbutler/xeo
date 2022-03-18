@@ -89,13 +89,6 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
     }
   }, [plotData, mutate, team]);
 
-  useEffect(() => {
-    if (plotData && !dayjs(sprint.endDate).isBefore(dayjs(), 'minute')) {
-      handleUpdateSprintHistory();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const [showPointsNotStarted, setShowPointsNotStarted] = useState(true);
 
   return (

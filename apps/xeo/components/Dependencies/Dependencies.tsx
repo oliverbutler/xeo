@@ -23,9 +23,14 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 import { toast } from 'react-toastify';
 import { apiPut, useQuery } from 'utils/api';
+import { useTicketNodeLinks } from './useTicketNodeLinks';
 
 export const Dependencies: React.FunctionComponent = () => {
   const { currentTeamId, currentSprintId } = useCurrentTeam();
+  const { linkTickets, unlinkTickets } = useTicketNodeLinks(
+    currentTeamId,
+    currentSprintId
+  );
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
 
@@ -64,7 +69,7 @@ export const Dependencies: React.FunctionComponent = () => {
 
       toast.success('Dependencies saved');
     },
-    [currentTeamId]
+    [currentSprintId, currentTeamId]
   );
 
   useEffect(() => {
@@ -103,18 +108,40 @@ export const Dependencies: React.FunctionComponent = () => {
   }, [data]);
 
   const onNodesChange = useCallback(
-    (changes: NodeChange[]) =>
-      setNodes((nds) => applyNodeChanges(changes, nds)),
+    (changes: NodeChange[]) => {
+      setNodes((nds) => applyNodeChanges(changes, nds));
+    },
     [setNodes]
   );
+
   const onEdgesChange = useCallback(
     (changes: EdgeChange[]) =>
       setEdges((eds) => applyEdgeChanges(changes, eds)),
+
     [setEdges]
   );
+
+  const onEdgesDelete = useCallback(
+    (edges: Edge[]) => {
+      edges.forEach((edge) => {
+        // Source is the parent ticket, target is the child ticket
+        unlinkTickets(edge.target, edge.source);
+      });
+    },
+    [unlinkTickets, currentTeamId, currentSprintId]
+  );
+
   const onConnect = useCallback(
-    (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
-    [setEdges]
+    (connection: Connection) => {
+      if (connection.source && connection.target) {
+        // Source is the parent ticket, target is the child ticket
+        linkTickets(connection.target, connection.source);
+        setEdges((eds) => addEdge(connection, eds));
+      } else {
+        toast.warn('You can only link tickets to other tickets');
+      }
+    },
+    [setEdges, , currentTeamId, currentSprintId]
   );
 
   const nodeTypes = useMemo(() => ({ ticket: TicketNode }), []);
@@ -141,6 +168,7 @@ export const Dependencies: React.FunctionComponent = () => {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
+          onEdgesDelete={onEdgesDelete}
           fitView
         >
           <Controls />

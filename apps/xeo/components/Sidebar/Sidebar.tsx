@@ -23,13 +23,19 @@ const getNavbarOptions = (team: Team | undefined) => [
     options: [
       { title: 'Dashboard', icon: TemplateIcon, path: `/team/${team?.id}` },
       { title: 'Settings', icon: CogIcon, path: `/team/${team?.id}/settings` },
+      {
+        title: 'Epic Dependencies',
+        icon: ViewGridIcon,
+        path: `/team/${team?.id}/dependencies`,
+        disabled: true,
+      },
     ],
   },
   {
     title: 'Current Sprint',
     options: [
       {
-        title: 'Dependencies',
+        title: 'Sprint Dependencies',
         icon: ViewGridIcon,
         path: '/dependencies',
       },
@@ -62,6 +68,7 @@ const NavbarSection: React.FunctionComponent<{
       </p>
       {options.map((option) => (
         <div
+          key={option.title}
           className={classNames(
             `${
               isCurrentPath(option.path) ? 'border-white' : 'border-transparent'
@@ -110,7 +117,7 @@ export const Sidebar: React.FunctionComponent = () => {
       </div>
       <ul className="space-y-12 pl-0 grow">
         {navbarOptions.map((section) => (
-          <NavbarSection {...section} />
+          <NavbarSection key={section.title} {...section} />
         ))}
       </ul>
       <div className="mx-4 my-4">

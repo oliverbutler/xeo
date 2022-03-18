@@ -4,8 +4,8 @@ import { logger } from 'utils/api';
 import { isNotionDatabaseItem } from './backlog';
 
 export const createLinkBetweenTickets = async (
-  sourceTicketId: string,
-  targetTicketId: string,
+  childTicketId: string,
+  parentTicketId: string,
   notionDatabase: NotionDatabase,
   notionConnection: NotionConnection
 ) => {
@@ -18,7 +18,7 @@ export const createLinkBetweenTickets = async (
   }
 
   const currentNotionPage = await notion.pages.retrieve({
-    page_id: sourceTicketId,
+    page_id: childTicketId,
   });
 
   if (!isNotionDatabaseItem(currentNotionPage)) {
@@ -38,17 +38,19 @@ export const createLinkBetweenTickets = async (
     (relation) => relation.id
   );
 
-  if (existingTargetRelations.includes(targetTicketId)) {
+  if (existingTargetRelations.includes(parentTicketId)) {
     logger.warn(
-      `Ticket ${sourceTicketId} already has relation to ${targetTicketId}`
+      `Ticket ${childTicketId} already has relation to ${parentTicketId}`
     );
     return;
   }
 
-  const newTargetRelations = [...existingTargetRelations, targetTicketId];
+  const newTargetRelations = [...existingTargetRelations, parentTicketId];
+
+  logger.info(`Creating link between ${childTicketId} and ${parentTicketId}`);
 
   await notion.pages.update({
-    page_id: sourceTicketId,
+    page_id: childTicketId,
     properties: {
       [parentRelationColumnName]: {
         relation: newTargetRelations.map((id) => ({ id })),
@@ -58,8 +60,8 @@ export const createLinkBetweenTickets = async (
 };
 
 export const removeLinkBetweenTickets = async (
-  sourceTicketId: string,
-  targetTicketId: string,
+  childTicketId: string,
+  parentTicketId: string,
   notionDatabase: NotionDatabase,
   notionConnection: NotionConnection
 ) => {
@@ -72,7 +74,7 @@ export const removeLinkBetweenTickets = async (
   }
 
   const currentNotionPage = await notion.pages.retrieve({
-    page_id: sourceTicketId,
+    page_id: childTicketId,
   });
 
   if (!isNotionDatabaseItem(currentNotionPage)) {
@@ -92,18 +94,20 @@ export const removeLinkBetweenTickets = async (
     (relation) => relation.id
   );
 
-  if (!existingTargetRelations.includes(targetTicketId)) {
-    const error = `Ticket ${sourceTicketId} doesn't have relation to the requested ticket to delete ${targetTicketId}`;
+  if (!existingTargetRelations.includes(parentTicketId)) {
+    const error = `Ticket ${childTicketId} doesn't have relation to the requested ticket to delete ${parentTicketId}`;
     logger.warn(error);
     throw new Error(error);
   }
 
   const newTargetRelations = existingTargetRelations.filter(
-    (id) => id !== targetTicketId
+    (id) => id !== parentTicketId
   );
 
+  logger.info(`Removing link between ${childTicketId} and ${parentTicketId}`);
+
   await notion.pages.update({
-    page_id: sourceTicketId,
+    page_id: childTicketId,
     properties: {
       [parentRelationColumnName]: {
         relation: newTargetRelations.map((id) => ({ id })),

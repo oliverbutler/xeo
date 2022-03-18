@@ -7,9 +7,9 @@ import {
   SprintWithTeamAndConnectionAndDatabase,
 } from 'utils/db/sprint/adapter';
 import Joi from 'joi';
-import { createLinkBetweenTickets } from 'utils/notion/ticket';
+import { removeLinkBetweenTickets } from 'utils/notion/ticket';
 
-export type PostCreateNotionTicketLink = APIRequest<
+export type PostRemoveNotionTicketLink = APIRequest<
   {
     sourceTicketId: string;
     targetTicketId: string;
@@ -19,7 +19,7 @@ export type PostCreateNotionTicketLink = APIRequest<
   }
 >;
 
-const putSchema: PostCreateNotionTicketLink['joiBodySchema'] = Joi.object({
+const putSchema: PostRemoveNotionTicketLink['joiBodySchema'] = Joi.object({
   sourceTicketId: Joi.string().required(),
   targetTicketId: Joi.string().required(),
 });
@@ -70,19 +70,19 @@ const postHandler = async (
   }
 
   try {
-    await createLinkBetweenTickets(
+    await removeLinkBetweenTickets(
       body.sourceTicketId,
       body.targetTicketId,
       sprint.team.notionDatabase,
       sprint.team.notionConnection
     );
 
-    return apiResponse<PostCreateNotionTicketLink>(res, { success: true });
+    return apiResponse<PostRemoveNotionTicketLink>(res, { success: true });
   } catch (e) {
     return apiError(
       res,
       {
-        message: 'Error creating link between these tickets, please try again',
+        message: 'Error removing link between these tickets, please try again',
       },
       400
     );

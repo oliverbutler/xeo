@@ -19,6 +19,7 @@
     "@heroicons/react": "1.0.6",
     "@next-auth/prisma-adapter": "^1.0.1",
     "@notionhq/client": "1.0.3",
+    "@popperjs/core": "^2.11.4",
     "@prisma/client": "^3.11.0",
     "classnames": "2.3.1",
     "dayjs": "^1.11.0",
