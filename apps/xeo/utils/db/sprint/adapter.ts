@@ -1,8 +1,11 @@
 import {
   DependencyGraph,
+  NotionConnection,
+  NotionDatabase,
   Sprint,
   SprintHistory,
   SprintStatusHistory,
+  Team,
 } from '@prisma/client';
 import { prisma } from 'utils/db';
 import {
@@ -92,6 +95,41 @@ export const getSprintForTeam = async (
     where: { id: sprintId, teamId },
   });
   return sprint;
+};
+
+export type SprintWithTeamAndConnectionAndDatabase = Sprint & {
+  team: Team & {
+    notionConnection: NotionConnection;
+    notionDatabase: NotionDatabase;
+  };
+};
+
+export const getSprintForTeamWithDatabaseAndConnection = async (
+  sprintId: string,
+  teamId: string
+): Promise<SprintWithTeamAndConnectionAndDatabase | null> => {
+  const sprint = await prisma.sprint.findFirst({
+    where: { id: sprintId, teamId },
+    include: {
+      team: {
+        include: {
+          notionConnection: true,
+          notionDatabase: true,
+        },
+      },
+    },
+  });
+
+  if (
+    !sprint ||
+    !sprint.team ||
+    !sprint.team.notionConnection ||
+    !sprint.team.notionDatabase
+  ) {
+    return null;
+  }
+
+  return sprint as SprintWithTeamAndConnectionAndDatabase;
 };
 
 export const deleteSprint = async (sprintId: string): Promise<void> => {
