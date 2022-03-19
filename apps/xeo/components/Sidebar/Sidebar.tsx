@@ -37,7 +37,7 @@ const getNavbarOptions = (team: Team | undefined) => [
       {
         title: 'Sprint Dependencies',
         icon: ViewGridIcon,
-        path: '/dependencies',
+        path: `/team/${team?.id}/dependencies`,
       },
       {
         title: 'Daily Mail',

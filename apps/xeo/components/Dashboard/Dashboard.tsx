@@ -1,6 +1,7 @@
 import { CentredLoader } from '@xeo/ui/lib/Animate/CentredLoader/CentredLoader';
 import { Button, ButtonColour } from '@xeo/ui/lib/Button/Button';
 import classNames from 'classnames';
+import { Badge } from 'components/Badge/Badge';
 import { PageHeader } from 'components/PageHeader/PageHeader';
 import { SettingsPanel } from 'components/PageLayouts/SettingsPanel/SettingsPanel';
 import dayjs from 'dayjs';
@@ -66,15 +67,19 @@ export const Dashboard: React.FunctionComponent = () => {
             {team.sprints.reverse().map((sprint, index) => (
               <div
                 className={classNames(
-                  'border-l-4 border-l-transparent pl-2 cursor-pointer hover:bg-dark-800',
+                  'border-l-4 border-l-transparent pl-2 flex flex-row cursor-pointer hover:bg-dark-200 dark:hover:bg-dark-800',
                   {
                     'border-l-dark-100': currentSprintToShowId === sprint.id,
                   }
                 )}
                 onClick={() => setSelectedSprintId(sprint.id)}
               >
-                {sprint.name}{' '}
-                {currentSprintId === sprint.id ? ' (current)' : ''}
+                {sprint.name} - {dayjs(sprint.startDate).format('DD/MM')}
+                {sprint.id === currentSprintId ? (
+                  <div className="ml-2">
+                    <Badge text="Active Sprint" variant="primary" />
+                  </div>
+                ) : null}
               </div>
             ))}
           </SettingsPanel>
