@@ -87,7 +87,35 @@ const putHandler = async (
     );
   }
 
-  console.log('update');
+  const memberToUpdate = await prisma.teamMember.findUnique({
+    where: {
+      userId_teamId: {
+        userId: memberId,
+        teamId,
+      },
+    },
+  });
+
+  if (!memberToUpdate) {
+    return apiError(res, { message: 'Member not found' }, 404);
+  }
+
+  // if member to update is owner, cannot change role
+  if (memberToUpdate.role === TeamRole.OWNER) {
+    return apiError(res, { message: 'Cannot change owner role' }, 400);
+  }
+
+  // disallow updating role to owner if not owner
+  if (body.role === TeamRole.OWNER) {
+    return apiError(
+      res,
+      {
+        message:
+          'Cannot change owner role, to transfer ownership contact support',
+      },
+      400
+    );
+  }
 
   await prisma.teamMember.update({
     where: {
