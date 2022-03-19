@@ -63,6 +63,7 @@ export const Onboarding: React.FunctionComponent = () => {
     }
 
     toast.success('Saved - Welcome to Xeo!');
+    window.location.reload();
   };
 
   return (
