@@ -1,4 +1,4 @@
-import { ExternalLinkIcon } from '@heroicons/react/outline';
+import { ExternalLinkIcon, ShareIcon } from '@heroicons/react/outline';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { GetSprintColumnPlotData } from 'pages/api/team/[teamId]/sprint/[sprintId]/column-plot-data';
@@ -20,6 +20,7 @@ import { Sprint } from '@prisma/client';
 import { useCurrentTeam } from 'hooks/useCurrentTeam';
 import { SprintGraph } from './SprintGraph/SprintGraph';
 import { SprintStatusBadge } from 'components/Team/TeamSelector/TeamSelector';
+import { isSprintEmbedded } from 'pages/team/[teamId]/sprint/[sprintId]';
 
 dayjs.extend(relativeTime);
 
@@ -115,13 +116,23 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
             </p>
           </div>
           <div>
-            <Button
-              href={`/team/${team?.id}/sprint/${sprintId}/edit`}
-              colour={ButtonColour.Dark}
-              variation="tertiary"
-            >
-              Edit
-            </Button>
+            {publicMode ? (
+              <a
+                className="flex flex-row items-center gap-1"
+                href={`/team/${team?.id}/sprint/${sprintId}/edit`}
+                target="_blank"
+              >
+                Edit <ExternalLinkIcon height={25} width={25} />
+              </a>
+            ) : (
+              <Button
+                href={`/team/${team?.id}/sprint/${sprintId}/edit`}
+                colour={ButtonColour.Dark}
+                variation="tertiary"
+              >
+                Edit
+              </Button>
+            )}{' '}
           </div>
         </div>
         <div className="flex flex-row justify-between items-center">
