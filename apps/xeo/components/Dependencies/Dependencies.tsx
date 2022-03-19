@@ -1,4 +1,3 @@
-import { Alert } from '@xeo/ui/lib/Alert/Alert';
 import { CentredLoader } from '@xeo/ui/lib/Animate/CentredLoader/CentredLoader';
 import { Content } from 'components/Content';
 import { PageHeader } from 'components/PageHeader/PageHeader';
@@ -10,16 +9,16 @@ import { useQuery } from 'utils/api';
 import { DependencyGraph } from './DependencyGraph';
 
 export const Dependencies: React.FunctionComponent = () => {
-  const { currentTeamId, currentSprintId } = useCurrentTeam();
+  const { currentTeamId, currentSprint } = useCurrentTeam();
 
-  const shouldSkipAPICall = !currentSprintId || !currentTeamId;
+  const shouldSkipAPICall = !currentSprint || !currentTeamId;
 
   const {
     data: tickets,
     error,
     isLoading,
   } = useQuery<GetSprintTickets>(
-    `/api/team/${currentTeamId}/sprint/${currentSprintId}/tickets`,
+    `/api/team/${currentTeamId}/sprint/${currentSprint?.id}/tickets`,
     shouldSkipAPICall,
     { revalidateOnFocus: false } // this is a very expensive operation
   );
@@ -29,7 +28,7 @@ export const Dependencies: React.FunctionComponent = () => {
     error: depError,
     isLoading: depIsLoading,
   } = useQuery<GetSprintDependencies>(
-    `/api/team/${currentTeamId}/sprint/${currentSprintId}/dependencies`,
+    `/api/team/${currentTeamId}/sprint/${currentSprint?.id}/dependencies`,
     shouldSkipAPICall
   );
 
@@ -37,7 +36,7 @@ export const Dependencies: React.FunctionComponent = () => {
     return <CentredLoader />;
   }
 
-  if (!currentSprintId || !currentTeamId) {
+  if (!currentSprint?.id || !currentTeamId) {
     return (
       <>
         <PageHeader title="Sprint Dependencies" />

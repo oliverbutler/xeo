@@ -79,7 +79,7 @@ export const TicketNode = memo(({ data }: { data: Ticket }) => {
             <PointsBadge points={data.points} />
             <StatusBadge status={data.notionStatusLink} />
             <a href={data.notionUrl} target="_blank">
-              <ExternalLinkIcon height={25} width={25} />
+              <ExternalLinkIcon height={20} width={20} />
             </a>
           </div>
           <div className="max-w-md">{data.title}</div>

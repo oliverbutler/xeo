@@ -19,6 +19,7 @@ import { DataPlotType } from 'utils/sprint/chart';
 import { Sprint } from '@prisma/client';
 import { useCurrentTeam } from 'hooks/useCurrentTeam';
 import { SprintGraph } from './SprintGraph/SprintGraph';
+import { SprintStatusBadge } from 'components/Team/TeamSelector/TeamSelector';
 
 dayjs.extend(relativeTime);
 
@@ -101,7 +102,14 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
 
         <div className="flex flex-row justify-between">
           <div>
-            <h2 className="my-0">{sprint?.name ?? <Skeleton width={160} />}</h2>
+            <h2 className="my-0 flex flex-row items-center">
+              {sprint?.name ?? <Skeleton width={160} />}{' '}
+              {sprint ? (
+                <div className="ml-2">
+                  <SprintStatusBadge sprint={sprint} />
+                </div>
+              ) : null}
+            </h2>
             <p className="mb-2">
               {sprint?.sprintGoal ?? <Skeleton width={'70%'} count={1} />}
             </p>

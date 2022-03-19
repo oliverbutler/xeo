@@ -4,7 +4,7 @@ import { CheckIcon, SelectorIcon } from '@heroicons/react/solid';
 
 export type BaseListboxOption = {
   value: unknown;
-  label: string;
+  label: React.ReactNode;
 };
 
 export type Props<T extends BaseListboxOption> = {
@@ -22,7 +22,7 @@ export const Listbox = <T extends BaseListboxOption>({
     <ListboxHead value={value} onChange={onChange}>
       <div className="relative mt-1">
         <ListboxHead.Button className="w-full py-2 pl-3 pr-10 text-left bg-white dark:bg-dark-900 dark:ring-dark-800  ring-dark-200 focus:ring-primary-300 dark:focus:ring-dark-600 rounded-lg shadow-md cursor-pointer   sm:text-sm text-black dark:text-white">
-          <span className="block truncate">{value?.label}</span>
+          <span className="block truncate">{value?.label || '-'}</span>
           <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
             <SelectorIcon
               className="w-5 h-5 text-dark-400"

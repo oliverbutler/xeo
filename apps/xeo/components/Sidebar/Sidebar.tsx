@@ -5,7 +5,7 @@ import {
   UserGroupIcon,
   ViewGridIcon,
 } from '@heroicons/react/outline';
-import { Team } from '@prisma/client';
+import { Sprint, Team } from '@prisma/client';
 import { ConditionalWrapper } from '@xeo/ui/lib/ConditionalWrapper/ConditionalWrapper';
 import classNames from 'classnames';
 import { UserMenu } from 'components/Sidebar/UserMenu/UserMenu';
@@ -17,7 +17,10 @@ import { useRouter } from 'next/router';
 import xeoIcon from 'public/xeo.png';
 import React, { useEffect } from 'react';
 
-const getNavbarOptions = (team: Team | undefined) => [
+const getNavbarOptions = (
+  team: Team | undefined,
+  sprint: Sprint | undefined
+) => [
   {
     title: `Team (${team?.shortName})`,
     options: [
@@ -32,12 +35,13 @@ const getNavbarOptions = (team: Team | undefined) => [
     ],
   },
   {
-    title: 'Current Sprint',
+    title: `Sprint (${sprint?.name})`,
     options: [
       {
         title: 'Sprint Dependencies',
         icon: ViewGridIcon,
         path: `/team/${team?.id}/dependencies`,
+        disabled: !sprint,
       },
       {
         title: 'Daily Mail',
@@ -97,7 +101,7 @@ const NavbarSection: React.FunctionComponent<{
 };
 
 export const Sidebar: React.FunctionComponent = () => {
-  const { team } = useCurrentTeam();
+  const { team, currentSprint } = useCurrentTeam();
   const { me } = useCurrentUser();
   const { pathname, push } = useRouter();
 
@@ -107,7 +111,7 @@ export const Sidebar: React.FunctionComponent = () => {
     }
   }, [team, me]);
 
-  const navbarOptions = getNavbarOptions(team);
+  const navbarOptions = getNavbarOptions(team, currentSprint);
 
   return (
     <div className="bg-dark-900 dark:bg-dark-950 w-72 text-white flex flex-col">

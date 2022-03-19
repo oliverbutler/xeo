@@ -7,7 +7,12 @@ import { useQuery } from 'utils/api';
 
 export const useCurrentTeam = () => {
   const { query } = useRouter();
-  const { currentTeamId, setCurrentTeamId } = useContext(TeamContext);
+  const {
+    currentTeamId,
+    setCurrentTeamId,
+    setCurrentSprintId,
+    currentSprintId,
+  } = useContext(TeamContext);
 
   const teamId = query.teamId;
 
@@ -24,9 +29,13 @@ export const useCurrentTeam = () => {
     .reverse();
 
   // find the first sprint with an end date in the future
-  const currentSprintId = sprintsOldestFirst?.find((sprint) =>
+  const activeSprint = sprintsOldestFirst?.find((sprint) =>
     dayjs(sprint.endDate).isAfter(dayjs())
-  )?.id;
+  );
+
+  const currentSprint = sprintsOldestFirst?.find(
+    (sprint) => sprint.id === currentSprintId
+  );
 
   useEffect(() => {
     if (teamId && typeof teamId === 'string') {
@@ -34,7 +43,23 @@ export const useCurrentTeam = () => {
     }
   }, [teamId]);
 
+  useEffect(() => {
+    // If no sprint selected, default to the current active sprint
+    if (!currentSprint && activeSprint) {
+      setCurrentSprintId(activeSprint.id);
+    }
+  }, [currentSprint, currentTeamId, activeSprint]);
+
   const team = data?.team;
 
-  return { team, error, isLoading, currentTeamId, currentSprintId };
+  return {
+    team,
+    error,
+    isLoading,
+    currentTeamId,
+    currentSprint,
+    setCurrentSprintId,
+    activeSprint,
+    sprintsOldestFirst,
+  };
 };

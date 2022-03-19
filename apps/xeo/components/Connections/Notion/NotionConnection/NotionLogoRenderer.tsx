@@ -28,6 +28,7 @@ export const NotionLogoRenderer: React.FunctionComponent<Props> = ({
     return (
       <div>
         <img
+          className="select-none"
           src={iconString}
           alt="Notion logo"
           height={renderSize}

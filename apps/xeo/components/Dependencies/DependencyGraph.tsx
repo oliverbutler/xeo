@@ -32,10 +32,10 @@ export const DependencyGraph: React.FunctionComponent<Props> = ({
   tickets,
   positions,
 }) => {
-  const { currentTeamId, currentSprintId } = useCurrentTeam();
+  const { currentTeamId, currentSprint } = useCurrentTeam();
   const { linkTickets, unlinkTickets } = useTicketNodeLinks(
     currentTeamId,
-    currentSprintId
+    currentSprint?.id
   );
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
@@ -47,7 +47,7 @@ export const DependencyGraph: React.FunctionComponent<Props> = ({
         position: node.position,
       }));
       const { data, error } = await apiPut<PutUpdateSprintDependencies>(
-        `/api/team/${currentTeamId}/sprint/${currentSprintId}/dependencies`,
+        `/api/team/${currentTeamId}/sprint/${currentSprint?.id}/dependencies`,
         { dependencies }
       );
 
@@ -58,7 +58,7 @@ export const DependencyGraph: React.FunctionComponent<Props> = ({
 
       toast.success('Dependencies saved');
     },
-    [currentSprintId, currentTeamId]
+    [currentSprint, currentTeamId]
   );
 
   useEffect(() => {
@@ -115,7 +115,7 @@ export const DependencyGraph: React.FunctionComponent<Props> = ({
         unlinkTickets(edge.target, edge.source);
       });
     },
-    [unlinkTickets, currentTeamId, currentSprintId]
+    [unlinkTickets, currentTeamId, currentSprint]
   );
 
   const onConnect = useCallback(
@@ -128,15 +128,14 @@ export const DependencyGraph: React.FunctionComponent<Props> = ({
         toast.warn('You can only link tickets to other tickets');
       }
     },
-    [setEdges, , currentTeamId, currentSprintId]
+    [setEdges, , currentTeamId, currentSprint]
   );
 
   const nodeTypes = useMemo(() => ({ ticket: TicketNode }), []);
   return (
     <>
       <PageHeader
-        title="Dependency Graph"
-        subtitle="Here you can see your current sprint in a graph view!"
+        title={`Dependency Graph (${currentSprint?.name})`}
         rightContent={
           <Button
             onClick={() => saveNodesToState(nodes)}

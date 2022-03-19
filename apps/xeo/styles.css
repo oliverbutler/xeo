@@ -84,3 +84,7 @@
     @apply text-neutral-600 dark:text-neutral-200;
   }
 }
+
+path.react-flow__edge-path:hover {
+  stroke-width: 4;
+}
