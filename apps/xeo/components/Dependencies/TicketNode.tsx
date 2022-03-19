@@ -59,7 +59,12 @@ const PointsBadge: React.FunctionComponent<{ points: number | null }> = ({
 export const TicketNode = memo(({ data }: { data: Ticket }) => {
   return (
     <div>
-      <Handle type="target" position={Position.Top} id="a" />
+      <Handle
+        type="target"
+        position={Position.Top}
+        id="a"
+        className="w-3 h-3"
+      />
       <div
         className={classNames(
           'p-3 text-white flex flex-row',
@@ -80,7 +85,12 @@ export const TicketNode = memo(({ data }: { data: Ticket }) => {
           <div className="max-w-md">{data.title}</div>
         </div>
       </div>
-      <Handle type="source" position={Position.Bottom} id="b" />
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        id="b"
+        className="w-3 h-3"
+      />
     </div>
   );
 });

@@ -1,6 +1,6 @@
 import { CentredLoader } from '@xeo/ui/lib/Animate/CentredLoader/CentredLoader';
 import { Alert } from '@xeo/ui/lib/Alert/Alert';
-import Button, { ButtonVariation } from '@xeo/ui/lib/Button/Button';
+import Button, { ButtonColour } from '@xeo/ui/lib/Button/Button';
 import { Content } from 'components/Content';
 import { PageHeader } from 'components/PageHeader/PageHeader';
 import { SprintCreate } from 'components/Sprint/SprintCreate/SprintCreate';
@@ -37,10 +37,7 @@ function Create() {
         title={`Create Sprint`}
         subtitle={`Add a new sprint to team ${team?.name}`}
         rightContent={
-          <Button
-            href={`/team/${team?.id}`}
-            variation={ButtonVariation.Secondary}
-          >
+          <Button href={`/team/${team?.id}`} colour={ButtonColour.Secondary}>
             Back
           </Button>
         }

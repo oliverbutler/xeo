@@ -48,11 +48,6 @@ export const UserMenu: React.FunctionComponent = () => {
             direction="left"
             items={[
               {
-                title: 'Dashboard',
-                href: '/dashboard',
-                icon: <HomeIcon width={20} height={20} />,
-              },
-              {
                 title: 'Logout',
                 icon: <LogoutIcon width={20} height={20} />,
                 onClick: () => signOut().then(() => push('/login')),

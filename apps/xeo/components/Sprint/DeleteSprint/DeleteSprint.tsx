@@ -1,4 +1,4 @@
-import { Button, ButtonVariation } from '@xeo/ui/lib/Button/Button';
+import { Button, ButtonColour } from '@xeo/ui/lib/Button/Button';
 import { Modal, ModalFooter } from '@xeo/ui/lib/Modal/Modal';
 import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
@@ -38,7 +38,11 @@ export const DeleteSprint: React.FunctionComponent<Props> = ({ sprintId }) => {
     <Modal
       mainText="Delete"
       trigger={(setOpen) => (
-        <Button onClick={setOpen} variation={ButtonVariation.Danger}>
+        <Button
+          onClick={setOpen}
+          colour={ButtonColour.Danger}
+          variation="tertiary"
+        >
           Delete Sprint
         </Button>
       )}
@@ -52,7 +56,7 @@ export const DeleteSprint: React.FunctionComponent<Props> = ({ sprintId }) => {
           </div>
           <ModalFooter
             primaryText="Delete"
-            primaryVariation={ButtonVariation.Danger}
+            primaryVariation={ButtonColour.Danger}
             clickPrimary={() => deleteSprint(setClosed)}
             clickSecondary={setClosed}
             secondaryText="Cancel"

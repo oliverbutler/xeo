@@ -4,8 +4,9 @@ export const Footer: React.FunctionComponent = () => {
   return (
     <footer className="m-6">
       <div className="w-full flex justify-center items-center  flex-col text-center px-4">
-        <p>
-          Xeo is an open source project, created and developed by{' '}
+        <p className="mb-0">Xeo © {new Date().getFullYear()}</p>
+        <p className="mt-4">
+          Created and developed by{' '}
           <a href="https://oliverbutler.uk" className="text-primary-300">
             Oliver Butler 👋
           </a>

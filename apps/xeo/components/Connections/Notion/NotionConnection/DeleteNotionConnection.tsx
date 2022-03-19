@@ -1,5 +1,5 @@
 import { NotionConnection } from '@prisma/client';
-import { Button, ButtonVariation } from '@xeo/ui/lib/Button/Button';
+import { Button, ButtonColour } from '@xeo/ui/lib/Button/Button';
 import { Modal, ModalFooter } from '@xeo/ui/lib/Modal/Modal';
 import axios, { AxiosError } from 'axios';
 import { toast } from 'react-toastify';
@@ -35,7 +35,7 @@ export const DeleteNotionConnection: React.FunctionComponent<Props> = ({
     <Modal
       mainText="Delete"
       trigger={(setOpen) => (
-        <Button onClick={setOpen} variation={ButtonVariation.Danger}>
+        <Button onClick={setOpen} colour={ButtonColour.Danger}>
           Delete
         </Button>
       )}
@@ -52,7 +52,7 @@ export const DeleteNotionConnection: React.FunctionComponent<Props> = ({
           </div>
           <ModalFooter
             primaryText="Delete"
-            primaryVariation={ButtonVariation.Danger}
+            primaryVariation={ButtonColour.Danger}
             clickPrimary={() => deleteConnection(setClosed)}
             clickSecondary={setClosed}
             secondaryText="Cancel"

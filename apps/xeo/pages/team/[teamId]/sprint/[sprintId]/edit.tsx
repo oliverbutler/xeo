@@ -1,5 +1,5 @@
 import { CentredLoader } from '@xeo/ui/lib/Animate/CentredLoader/CentredLoader';
-import Button, { ButtonVariation } from '@xeo/ui/lib/Button/Button';
+import Button, { ButtonColour } from '@xeo/ui/lib/Button/Button';
 import { Content } from 'components/Content';
 import { PageHeader } from 'components/PageHeader/PageHeader';
 import { SprintEdit } from 'components/Sprint/SprintEdit/SprintEdit';
@@ -31,10 +31,7 @@ export const SprintEditPage: React.FunctionComponent = () => {
       <PageHeader
         title={`Update Sprint`}
         rightContent={
-          <Button
-            href={`/team/${teamId}`}
-            variation={ButtonVariation.Secondary}
-          >
+          <Button href={`/team/${teamId}`} colour={ButtonColour.Secondary}>
             Back
           </Button>
         }

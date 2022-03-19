@@ -29,6 +29,10 @@ export const TeamMemberSelectRole: React.FunctionComponent<Props> = ({
       label: 'Member',
       value: TeamRole.MEMBER,
     },
+    {
+      label: 'Owner',
+      value: TeamRole.OWNER,
+    },
   ];
 
   const defaultValue = roleOptions.find(

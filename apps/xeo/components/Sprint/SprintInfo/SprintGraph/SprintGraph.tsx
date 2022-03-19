@@ -53,7 +53,7 @@ export const SprintGraph: React.FunctionComponent<SprintGraphProps> = ({
           <CartesianGrid
             stroke={
               isDark
-                ? theme.extend.colors.dark[700]
+                ? theme.extend.colors.dark[800]
                 : theme.extend.colors.dark[200]
             }
             strokeDasharray="5 5"

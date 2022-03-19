@@ -82,8 +82,8 @@ export const SprintStats: React.FunctionComponent<Props> = ({
                 {roundToOneDecimal(deltaPoints) < 0 ? 'Behind' : 'Ahead'}
               </p>
             ) : (
-              <p>
-                <Skeleton width={100} />
+              <p className="my-0">
+                <Skeleton width={50} />
               </p>
             )
           }
@@ -106,7 +106,7 @@ export const SprintStats: React.FunctionComponent<Props> = ({
               </p>
             ) : (
               <p className="my-0">
-                <Skeleton width={100} />
+                <Skeleton width={50} />
               </p>
             )
           }

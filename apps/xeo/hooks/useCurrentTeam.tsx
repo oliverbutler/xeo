@@ -17,14 +17,16 @@ export const useCurrentTeam = () => {
       !currentTeamId
     );
 
-  const sprintsSortedByEndDate = data?.team?.sprints.sort((a, b) => {
-    return dayjs(b.endDate).diff(dayjs(a.endDate));
-  });
+  const sprintsOldestFirst = data?.team?.sprints
+    .sort((a, b) => {
+      return dayjs(b.endDate).diff(dayjs(a.endDate));
+    })
+    .reverse();
 
-  const currentSprintId =
-    sprintsSortedByEndDate && sprintsSortedByEndDate.length > 0
-      ? sprintsSortedByEndDate[0].id
-      : undefined;
+  // find the first sprint with an end date in the future
+  const currentSprintId = sprintsOldestFirst?.find((sprint) =>
+    dayjs(sprint.endDate).isAfter(dayjs())
+  )?.id;
 
   useEffect(() => {
     if (teamId && typeof teamId === 'string') {

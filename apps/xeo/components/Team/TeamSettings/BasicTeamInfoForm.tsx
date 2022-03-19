@@ -46,7 +46,9 @@ export const BasicTeamInfoForm: React.FunctionComponent<Props> = ({ team }) => {
       <Input label="Name" {...register('name')} />
       <Input label="Short Name" {...register('shortName')} />
       <Input label="Company" {...register('companyName')} />
-      <Button type="submit">Save</Button>
+      <Button type="submit" variation="tertiary">
+        Save
+      </Button>
     </form>
   );
 };

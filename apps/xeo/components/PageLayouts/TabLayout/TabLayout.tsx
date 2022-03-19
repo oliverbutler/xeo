@@ -6,12 +6,16 @@ type Props = {
     label: string;
     content: React.ReactNode;
   }[];
+  defaultIndex?: number;
 };
 
-export const TabLayout: React.FunctionComponent<Props> = ({ tabs }) => {
+export const TabLayout: React.FunctionComponent<Props> = ({
+  tabs,
+  defaultIndex = 0,
+}) => {
   return (
     <div className="w-full">
-      <Tab.Group>
+      <Tab.Group defaultIndex={defaultIndex}>
         <Tab.List className="flex space-x-1 bg-white dark:bg-dark-950 border-b-2 dark:border-b-dark-700 border-b-dark-200">
           {tabs.map((tab) => (
             <Tab

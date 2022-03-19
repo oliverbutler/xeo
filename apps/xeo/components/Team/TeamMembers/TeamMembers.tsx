@@ -9,13 +9,15 @@ import { TeamMemberSelectRole } from './TeamMemberSelectRole';
 import { useSession } from 'next-auth/react';
 import { apiGet } from 'utils/api';
 import { toast } from 'react-toastify';
-import { Button } from '@xeo/ui/lib/Button/Button';
+import { Button, ButtonColour } from '@xeo/ui/lib/Button/Button';
 import { Table } from '@xeo/ui/lib/Table/Table';
 import { Clickable } from '@xeo/ui/lib/Clickable/Clickable';
 import { TeamWithSprintsAndMembers } from 'utils/db/team/adapter';
 import { useTeam } from 'hooks/useTeam';
 import { SettingsPanel } from 'components/PageLayouts/SettingsPanel/SettingsPanel';
 import { Content } from 'components/Content';
+import { TeamMember, TeamRole } from '@prisma/client';
+import { useCurrentUser } from 'hooks/useCurrentUser';
 
 interface Props {
   team: TeamWithSprintsAndMembers;
@@ -53,7 +55,7 @@ const loadUserOptions = async (
 };
 
 export const TeamMembers: React.FunctionComponent<Props> = ({ team }) => {
-  const { data } = useSession();
+  const { me } = useCurrentUser();
   const { deleteMember, addMember } = useTeam();
 
   const [currentSearch, setCurrentSearch] = useState<
@@ -69,32 +71,45 @@ export const TeamMembers: React.FunctionComponent<Props> = ({ team }) => {
   };
 
   const currentUserMember = team.members.find(
-    (member) => member.userId === data?.id
+    (member) => member.userId === me?.id
   );
+
+  const isMemberEditable = (member: TeamMember) => {
+    return (
+      member.userId !== currentUserMember?.userId &&
+      member.role !== TeamRole.OWNER
+    );
+  };
 
   return (
     <Content>
       <h2>Edit Team Members</h2>
       <p>Configure the members of your team</p>
       <SettingsPanel>
-        <div className="flex flex-row gap-2 w-full">
-          <div>
-            <AsyncSelect<UserSelectOption>
-              cacheOptions
-              className="w-64"
-              label=""
-              loadOptions={debouncedFetch}
-              onChange={(e) => setCurrentSearch(e ?? undefined)}
-              isClearable
-            />
-          </div>
+        {currentUserMember?.role === TeamRole.MEMBER ? null : (
+          <div className="flex flex-row gap-2 w-full">
+            <div>
+              <AsyncSelect<UserSelectOption>
+                cacheOptions
+                className="w-64"
+                label=""
+                loadOptions={debouncedFetch}
+                onChange={(e) => setCurrentSearch(e ?? undefined)}
+                isClearable
+              />
+            </div>
 
-          <div className="mt-auto">
-            <Button disabled={!currentSearch} onClick={handleAddMemberClick}>
-              Invite
-            </Button>
+            <div className="mt-auto">
+              <Button
+                disabled={!currentSearch}
+                onClick={handleAddMemberClick}
+                variation="tertiary"
+              >
+                Invite
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
 
         <div>
           <Table<TeamWithSprintsAndMembers['members'][0]>
@@ -128,9 +143,7 @@ export const TeamMembers: React.FunctionComponent<Props> = ({ team }) => {
                   <TeamMemberSelectRole
                     team={team}
                     member={row.row.original}
-                    disabled={
-                      row.row.original.userId === currentUserMember?.userId
-                    }
+                    disabled={!isMemberEditable(row.row.original)}
                   />
                 ),
               },
@@ -138,8 +151,7 @@ export const TeamMembers: React.FunctionComponent<Props> = ({ team }) => {
                 Header: 'Actions',
                 accessor: 'userId',
                 Cell: (row) =>
-                  row.row.original.userId ===
-                  currentUserMember?.userId ? null : (
+                  isMemberEditable(row.row.original) ? (
                     <div className="flex flex-row items-center">
                       <Clickable
                         onClick={() => deleteMember(team.id, row.value)}
@@ -147,7 +159,7 @@ export const TeamMembers: React.FunctionComponent<Props> = ({ team }) => {
                         <TrashIcon width={25} height={25} />
                       </Clickable>
                     </div>
-                  ),
+                  ) : null,
               },
             ]}
           />

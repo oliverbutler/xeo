@@ -1,7 +1,7 @@
 import { Dialog, Transition } from '@headlessui/react';
 import classNames from 'classnames';
 import { Fragment, useRef, useState } from 'react';
-import { Button, ButtonProps, ButtonVariation } from '../Button/Button';
+import { Button, ButtonProps, ButtonColour } from '../Button/Button';
 
 export interface ModalContentProps {
   clickPrimary: () => void;
@@ -21,7 +21,7 @@ interface ModalFooterProps {
   clickSecondary?: () => void;
   primaryText: string;
   primaryButtonProps?: ButtonProps;
-  primaryVariation?: ButtonVariation;
+  primaryVariation?: ButtonColour;
   secondaryText?: string;
   className?: string;
 }
@@ -43,7 +43,7 @@ const ModalFooter: React.FunctionComponent<ModalFooterProps> = ({
       )}
     >
       <Button
-        variation={primaryVariation ?? ButtonVariation.Primary}
+        colour={primaryVariation ?? ButtonColour.Primary}
         onClick={clickPrimary}
         type="submit"
         {...primaryButtonProps}
@@ -51,7 +51,7 @@ const ModalFooter: React.FunctionComponent<ModalFooterProps> = ({
         {primaryText}
       </Button>
       {secondaryText ? (
-        <Button variation={ButtonVariation.Dark} onClick={clickSecondary}>
+        <Button colour={ButtonColour.Dark} onClick={clickSecondary}>
           {secondaryText}
         </Button>
       ) : null}

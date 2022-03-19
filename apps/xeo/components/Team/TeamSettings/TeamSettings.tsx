@@ -1,5 +1,5 @@
 import { CentredLoader } from '@xeo/ui/lib/Animate/CentredLoader/CentredLoader';
-import { Button, ButtonVariation } from '@xeo/ui/lib/Button/Button';
+import { Button, ButtonColour } from '@xeo/ui/lib/Button/Button';
 import { Input } from '@xeo/ui/lib/Input/Input';
 import { NotionLogoRenderer } from 'components/Connections/Notion/NotionConnection/NotionLogoRenderer';
 import { ConnectNotionDatabaseButton } from 'components/Connections/Notion/NotionDatabase/CreateNotionDatabase/ConnectNotionDatabaseButton';
@@ -29,7 +29,7 @@ export const ReconnectToNotionButton = () => {
     `/api/connections/notion/auth-url?teamId=${team?.id}`
   );
   return (
-    <Button variation={ButtonVariation.Dark} href={data?.url}>
+    <Button colour={ButtonColour.Dark} href={data?.url}>
       Reconnect
     </Button>
   );
@@ -120,8 +120,9 @@ export const TeamSettings: React.FunctionComponent<Props> = (props) => {
       )}
       <h2>Actions</h2>
       <Button
-        variation={ButtonVariation.Danger}
+        colour={ButtonColour.Danger}
         onClick={() => deleteTeam(team.id)}
+        variation="tertiary"
       >
         Delete Team
       </Button>

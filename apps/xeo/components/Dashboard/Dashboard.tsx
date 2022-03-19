@@ -1,5 +1,5 @@
 import { CentredLoader } from '@xeo/ui/lib/Animate/CentredLoader/CentredLoader';
-import { Button, ButtonVariation } from '@xeo/ui/lib/Button/Button';
+import { Button, ButtonColour } from '@xeo/ui/lib/Button/Button';
 import classNames from 'classnames';
 import { PageHeader } from 'components/PageHeader/PageHeader';
 import { SettingsPanel } from 'components/PageLayouts/SettingsPanel/SettingsPanel';
@@ -32,7 +32,7 @@ export const Dashboard: React.FunctionComponent = () => {
         rightContent={
           <Button
             href={`/team/${team.id}/sprint/create`}
-            variation={ButtonVariation.Dark}
+            colour={ButtonColour.Dark}
           >
             Create Sprint
           </Button>
@@ -50,7 +50,7 @@ export const Dashboard: React.FunctionComponent = () => {
               <h3>No Current Sprint</h3>
               <div>
                 <Button
-                  variation={ButtonVariation.Dark}
+                  colour={ButtonColour.Dark}
                   href={`/team/${team.id}/sprint/create`}
                 >
                   Create Sprint
@@ -63,7 +63,7 @@ export const Dashboard: React.FunctionComponent = () => {
           <SettingsPanel className="col-span-1">
             <h3 className="my-0">Sprints</h3>
 
-            {team.sprints.map((sprint, index) => (
+            {team.sprints.reverse().map((sprint, index) => (
               <div
                 className={classNames(
                   'border-l-4 border-l-transparent pl-2 cursor-pointer hover:bg-dark-800',
@@ -73,7 +73,8 @@ export const Dashboard: React.FunctionComponent = () => {
                 )}
                 onClick={() => setSelectedSprintId(sprint.id)}
               >
-                {sprint.name} {index === 0 ? ' (current)' : ''}
+                {sprint.name}{' '}
+                {currentSprintId === sprint.id ? ' (current)' : ''}
               </div>
             ))}
           </SettingsPanel>

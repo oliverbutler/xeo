@@ -1,5 +1,5 @@
 import { NotionConnection, Team } from '@prisma/client';
-import { Button, ButtonVariation } from '@xeo/ui/lib/Button/Button';
+import { Button, ButtonColour } from '@xeo/ui/lib/Button/Button';
 import { Modal } from '@xeo/ui/lib/Modal/Modal';
 import { CreateNotionDatabase } from 'components/Connections/Notion/NotionDatabase/CreateNotionDatabase/CreateNotionDatabase';
 
@@ -16,7 +16,7 @@ export const ConnectNotionDatabaseButton: React.FunctionComponent<Props> = ({
     <Modal
       mainText="Add Database"
       trigger={(setOpen) => (
-        <Button onClick={setOpen} variation={ButtonVariation.Primary}>
+        <Button onClick={setOpen} colour={ButtonColour.Primary}>
           Connect to Database
         </Button>
       )}

@@ -1,5 +1,5 @@
 import { Sprint as PrismaSprint } from '@prisma/client';
-import Button, { ButtonVariation } from '@xeo/ui/lib/Button/Button';
+import Button, { ButtonColour } from '@xeo/ui/lib/Button/Button';
 import dayjs from 'dayjs';
 import { useCurrentUser } from 'hooks/useCurrentUser';
 import { PreviousSprints } from './PreviousSprints/PreviousSprints';
@@ -27,7 +27,7 @@ export const Sprints: React.FunctionComponent<SprintsProps> = ({ sprints }) => {
         <div>
           <Button
             href={`/team/${currentTeam}/sprint/create`}
-            variation={ButtonVariation.Dark}
+            colour={ButtonColour.Dark}
           >
             Create Sprint
           </Button>

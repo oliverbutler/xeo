@@ -14,7 +14,7 @@ import { NextSeo } from 'next-seo';
 import Skeleton from 'react-loading-skeleton';
 import { GraphControls } from './GraphControls/GraphControls';
 import classNames from 'classnames';
-import Button, { ButtonVariation } from '@xeo/ui/lib/Button/Button';
+import Button, { ButtonColour } from '@xeo/ui/lib/Button/Button';
 import { DataPlotType } from 'utils/sprint/chart';
 import { Sprint } from '@prisma/client';
 import { useCurrentTeam } from 'hooks/useCurrentTeam';
@@ -109,7 +109,8 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
           <div>
             <Button
               href={`/team/${team?.id}/sprint/${sprintId}/edit`}
-              variation={ButtonVariation.Dark}
+              colour={ButtonColour.Dark}
+              variation="tertiary"
             >
               Edit
             </Button>

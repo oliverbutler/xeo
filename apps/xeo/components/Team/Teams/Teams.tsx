@@ -1,5 +1,5 @@
 import { Table } from '@xeo/ui/lib/Table/Table';
-import { Button, ButtonVariation } from '@xeo/ui/lib/Button/Button';
+import { Button, ButtonColour } from '@xeo/ui/lib/Button/Button';
 import { Modal } from '@xeo/ui/lib/Modal/Modal';
 import { CreateTeamForm } from 'components/Team/CreateTeamForm';
 import { NextSeo } from 'next-seo';
@@ -48,7 +48,7 @@ export const Teams: React.FunctionComponent = () => {
                   trackAction(UserAction.CLICK_CREATE_TEAM);
                   setOpen();
                 }}
-                variation={ButtonVariation.Dark}
+                colour={ButtonColour.Dark}
               >
                 Create a Team
               </Button>
