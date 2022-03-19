@@ -1,11 +1,15 @@
 import Input from '@xeo/ui/lib/Input/Input';
 import { ModalFooter } from '@xeo/ui/lib/Modal/Modal';
+import { useCurrentUser } from 'hooks/useCurrentUser';
 import { useTeam } from 'hooks/useTeam';
+import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
+import { mutate } from 'swr';
 
 interface Props {
   closeModal: () => void;
+  setAsDefault?: boolean;
 }
 
 type TeamCreationForm = {
@@ -16,8 +20,11 @@ type TeamCreationForm = {
 
 export const CreateTeamForm: React.FunctionComponent<Props> = ({
   closeModal,
+  setAsDefault,
 }) => {
   const { createTeam } = useTeam();
+  const { updateUserMetadata } = useCurrentUser();
+  const router = useRouter();
 
   const { handleSubmit, register } = useForm<TeamCreationForm>();
 
@@ -27,6 +34,14 @@ export const CreateTeamForm: React.FunctionComponent<Props> = ({
     if (team) {
       toast.success('Team created');
       closeModal();
+
+      if (setAsDefault) {
+        await updateUserMetadata({ defaultTeamId: team.id });
+      }
+
+      mutate('/api/user/me');
+      mutate('/api/team');
+      router.push(`/team/${team.id}`);
     }
   };
 

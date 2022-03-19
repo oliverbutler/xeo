@@ -1,13 +1,15 @@
+import { useCurrentTeam } from 'hooks/useCurrentTeam';
 import { useCurrentUser } from 'hooks/useCurrentUser';
 import { useRouter } from 'next/router';
 import { isSprintEmbedded } from 'pages/team/[teamId]/sprint/[sprintId]';
 import { ToastContainer } from 'react-toastify';
 import { Footer } from './Footer/Footer';
 import { Onboarding } from './Onboarding/Onboarding';
+import { TeamOnboarding } from './Onboarding/TeamOnboarding';
 import { Sidebar } from './Sidebar/Sidebar';
 
 export const PrivateAppWrapper: React.FunctionComponent = ({ children }) => {
-  const { me, status } = useCurrentUser();
+  const { me, status, availableTeams } = useCurrentUser();
   const router = useRouter();
   const isEmbed = isSprintEmbedded(router);
 
@@ -17,6 +19,11 @@ export const PrivateAppWrapper: React.FunctionComponent = ({ children }) => {
 
   if (status !== 'loading' && !me?.metadata) {
     return <Onboarding />;
+  }
+
+  // If a user doesn't have a team, redirect them to the onboarding page
+  if (availableTeams?.length === 0) {
+    return <TeamOnboarding />;
   }
 
   return (

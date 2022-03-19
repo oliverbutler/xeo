@@ -26,15 +26,13 @@ export const NotionLogoRenderer: React.FunctionComponent<Props> = ({
 
   if (iconString.startsWith('http')) {
     return (
-      <div>
-        <img
-          className="select-none"
-          src={iconString}
-          alt="Notion logo"
-          height={renderSize}
-          width={renderSize}
-        />
-      </div>
+      <img
+        className="select-none m-0"
+        src={iconString}
+        alt="Notion logo"
+        height={renderSize}
+        width={renderSize}
+      />
     );
   }
   return <span className="text-4xl">{iconString}</span>;

@@ -34,7 +34,7 @@ export const Tooltip: React.FunctionComponent<Props> = ({
       </div>
       {/* @ts-ignore */}
       <div className={tooltipShow ? '' : 'hidden '} ref={tooltipRef}>
-        <div className="bg-dark-700 shadow-2xl p-2 mb-2 rounded-lg">
+        <div className="bg-dark-200 dark:bg-dark-700 shadow-2xl p-2 mb-2 rounded-lg">
           {tooltip}
         </div>
       </div>

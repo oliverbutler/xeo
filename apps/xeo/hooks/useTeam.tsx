@@ -80,7 +80,7 @@ export const useTeam = (): Output => {
       return false;
     }
 
-    toast.success('Backlog deleted');
+    toast.success('Team deleted');
     return true;
   };
 

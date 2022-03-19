@@ -10,17 +10,17 @@ import { Ticket } from 'utils/notion/backlog';
 
 const mapStatusToColor = (status: NotionStatusLink | undefined) => {
   if (!status) {
-    return 'bg-red-700/20';
+    return 'bg-red-700/40 dark:bg-red-700/20';
   }
   switch (status.status) {
     case 'DONE':
-      return 'bg-secondary-700/20';
+      return 'bg-secondary-700/60 dark:bg-secondary-700/20';
     case 'TO_VALIDATE':
-      return 'bg-primary-700/20';
+      return 'bg-primary-700/60 dark:bg-primary-700/20';
     case 'IN_PROGRESS':
-      return 'bg-yellow-700/20';
+      return 'bg-yellow-700/60 dark:bg-yellow-700/20';
     case 'SPRINT_BACKLOG':
-      return 'bg-gray-700/20';
+      return 'bg-gray-700/60 dark:bg-gray-700/20';
   }
 };
 
@@ -67,15 +67,15 @@ export const TicketNode = memo(({ data }: { data: Ticket }) => {
       />
       <div
         className={classNames(
-          'p-3 text-white flex flex-row',
+          'px-2 py-4 text-white flex flex-row',
           mapStatusToColor(data.notionStatusLink)
         )}
       >
-        <div className="mr-2">
-          <NotionLogoRenderer iconString={data.iconString} size={40} />
+        <div className="mr-2 flex flex-col justify-center">
+          <NotionLogoRenderer iconString={data.iconString} size={30} />
         </div>
         <div>
-          <div className="mb-1 flex flex-row items-center">
+          <div className="mb-1 flex flex-row items-center gap-1">
             <PointsBadge points={data.points} />
             <StatusBadge status={data.notionStatusLink} />
             <a href={data.notionUrl} target="_blank">

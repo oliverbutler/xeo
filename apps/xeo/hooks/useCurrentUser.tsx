@@ -1,11 +1,13 @@
 import { TeamContext } from 'context/TeamContext';
 import { Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
+import { GetTeamsForUserRequest } from 'pages/api/team';
 import { GetMeRequest } from 'pages/api/user/me';
 import { PutUpdateUserMetadata } from 'pages/api/user/me/metadata';
 import { useContext, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { apiPut, useQuery } from 'utils/api';
+import { TeamWithMemberAndBasicUserInfo } from 'utils/db/team/adapter';
 import { UserWithMetadata } from 'utils/db/user/adapter';
 
 type Output = {
@@ -15,11 +17,13 @@ type Output = {
   updateUserMetadata: (
     input: PutUpdateUserMetadata['request']['input']
   ) => Promise<boolean>;
+  availableTeams: TeamWithMemberAndBasicUserInfo[] | undefined;
 };
 
 export const useCurrentUser = (): Output => {
   const sessionResponse = useSession();
   const meResponse = useQuery<GetMeRequest>('/api/user/me');
+  const { data } = useQuery<GetTeamsForUserRequest>('/api/team');
 
   const { setCurrentTeamId } = useContext(TeamContext);
 
@@ -55,5 +59,6 @@ export const useCurrentUser = (): Output => {
     me: meResponse?.data?.user ?? null,
     session: sessionResponse.data ?? null,
     updateUserMetadata,
+    availableTeams: data?.teams,
   };
 };

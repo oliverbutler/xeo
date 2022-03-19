@@ -69,7 +69,7 @@ export const Onboarding: React.FunctionComponent = () => {
     <div>
       <div className="flex items-center justify-center min-h-screen">
         <form
-          className="bg-dark-900 rounded-lg mx-4"
+          className="bg-dark-100 dark:bg-dark-900 rounded-lg m-10 shadow-xl transition-all hover:shadow-2xl"
           onSubmit={handleSubmit(onSubmit)}
         >
           <div className="p-6">
@@ -99,24 +99,6 @@ export const Onboarding: React.FunctionComponent = () => {
             clickSecondary={() => signOut()}
           />
         </form>
-        {/* <div>
-          <div className="rounded-lg shadow-lg bg-white dark:bg-dark-900 col-span-2 px-6 py-2">
-            <h3>Join a Team</h3>
-            <p>
-              If you are part of an existing Xeo Team, request access from your
-              Admin
-            </p>
-          </div>
-          <h2>Or</h2>
-          <div className="rounded-lg shadow-lg bg-white dark:bg-dark-900 col-span-2 px-6 py-2">
-            <h3>Create a new Team</h3>
-            <p>
-              If you are the Project Manager, Lead Developer or your team
-              leader, feel free to connect to Notion to make a new Xeo Team!
-            </p>
-           
-          </div>
-        </div> */}
       </div>
       <Footer />
     </div>

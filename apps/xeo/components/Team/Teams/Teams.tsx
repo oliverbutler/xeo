@@ -4,8 +4,7 @@ import { Modal } from '@xeo/ui/lib/Modal/Modal';
 import { CreateTeamForm } from 'components/Team/CreateTeamForm';
 import { NextSeo } from 'next-seo';
 import { trackAction, UserAction } from 'utils/analytics';
-import { useQuery } from 'utils/api';
-import { Team, TeamMember } from '@prisma/client';
+import { TeamMember } from '@prisma/client';
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import { Clickable } from '@xeo/ui/lib/Clickable/Clickable';
@@ -23,10 +22,7 @@ import { CellProps } from 'react-table';
 dayjs.extend(LocalizedFormat);
 
 export const Teams: React.FunctionComponent = () => {
-  const { me } = useCurrentUser();
-  const { data } = useQuery<GetTeamsForUserRequest>('/api/team');
-
-  const teams = data?.teams ?? [];
+  const { me, availableTeams } = useCurrentUser();
 
   const getMyRoleInTeam = (
     team: TeamWithMemberAndBasicUserInfo
@@ -109,7 +105,7 @@ export const Teams: React.FunctionComponent = () => {
                 ),
               },
             ]}
-            data={teams}
+            data={availableTeams ?? []}
           />
         </SettingsPanel>
       </Content>

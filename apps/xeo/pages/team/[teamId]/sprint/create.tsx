@@ -19,9 +19,10 @@ function Create() {
 
   if (error) {
     return (
-      <Content>
-        <Alert variation="danger">
-          Error loading Sprint, make sure you have a database connected...
+      <Content className="py-6">
+        <h2>Missing a Notion Connection</h2>
+        <Alert variation="warning">
+          Ask your Team leader to connect to a Notion database in "Settings"
         </Alert>
       </Content>
     );

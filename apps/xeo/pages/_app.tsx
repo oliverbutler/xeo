@@ -32,7 +32,7 @@ function CustomApp({
   return (
     <>
       <Head>
-        <title>Xeo Scrum</title>
+        <title>Xeo</title>
         <link rel="icon" href="/xeo.ico" />
       </Head>
       <main className="prose dark:prose-invert max-w-none">

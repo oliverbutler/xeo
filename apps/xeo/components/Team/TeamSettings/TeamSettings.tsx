@@ -1,6 +1,7 @@
 import { CentredLoader } from '@xeo/ui/lib/Animate/CentredLoader/CentredLoader';
 import { Button, ButtonColour } from '@xeo/ui/lib/Button/Button';
 import { Input } from '@xeo/ui/lib/Input/Input';
+import { Modal, ModalFooter } from '@xeo/ui/lib/Modal/Modal';
 import { NotionLogoRenderer } from 'components/Connections/Notion/NotionConnection/NotionLogoRenderer';
 import { ConnectNotionDatabaseButton } from 'components/Connections/Notion/NotionDatabase/CreateNotionDatabase/ConnectNotionDatabaseButton';
 import { UpdateNotionDatabaseButton } from 'components/Connections/Notion/NotionDatabase/UpdateNotionDatabase/UpdateNotionDatabaseButton';
@@ -67,7 +68,7 @@ export const TeamSettings: React.FunctionComponent<Props> = (props) => {
                 iconString={data.notionConnection.notionWorkspaceIcon}
               />
               <div className="ml-4">
-                <p>Name: {data.notionConnection.notionWorkspaceName}</p>
+                <p>{data.notionConnection.notionWorkspaceName}</p>
               </div>
               <div className="ml-auto">
                 <ReconnectToNotionButton />
@@ -114,18 +115,44 @@ export const TeamSettings: React.FunctionComponent<Props> = (props) => {
         </>
       ) : (
         <SettingsPanel outline>
-          No Notion Connection
           <ConnectToNotionButton />
         </SettingsPanel>
       )}
       <h2>Actions</h2>
-      <Button
-        colour={ButtonColour.Danger}
-        onClick={() => deleteTeam(team.id)}
-        variation="tertiary"
-      >
-        Delete Team
-      </Button>
+      <Modal
+        mainText="Delete Team"
+        trigger={(setOpen) => (
+          <Button
+            onClick={() => {
+              setOpen();
+            }}
+            colour={ButtonColour.Danger}
+            variation="tertiary"
+          >
+            Delete Team
+          </Button>
+        )}
+        content={(setClose) => (
+          <>
+            <div className="m-5 flex max-w-none flex-col items-center justify-center text-center">
+              <h2>
+                Delete <i>{team.name}</i>?
+              </h2>
+              <p>
+                This action is irreversible and will delete all associated
+                Notion connections, and sprints.
+              </p>
+            </div>
+            <ModalFooter
+              primaryText="Delete"
+              primaryVariation={ButtonColour.Danger}
+              clickPrimary={() => deleteTeam(team.id)}
+              clickSecondary={setClose}
+              secondaryText="Cancel"
+            />
+          </>
+        )}
+      />
     </Content>
   );
 };
