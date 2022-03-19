@@ -9,20 +9,20 @@ import {
 export const MainPanel: React.FunctionComponent = () => {
   const PANELS = [
     {
-      title: 'Open Source',
-      text: 'Xeo believes in the power of open source',
+      title: 'Notion Integration',
+      text: 'Xeo works closely with the Notion API to provide a seamless experience for your team.',
       icon: <CodeIcon width={50} height={50} className="text-dark-400" />,
     },
     {
-      title: 'Modern, Optimized',
-      text: 'Xeo is build on top of modern tech stacks like Prisma, Next.js, and Nest.js',
+      title: 'View and Monitor',
+      text: 'Xeo automatically constructs burn down charts and provides a dashboard for your team.',
       icon: (
         <LightningBoltIcon width={50} height={50} className="text-dark-400" />
       ),
     },
     {
       title: 'Designed for You',
-      text: 'Our tools are built from the ground up to support you, and your team.',
+      text: 'Xeo was designed to work with existing databases, no template needed!',
       icon: <UserGroupIcon width={50} height={50} className="text-dark-400" />,
     },
   ];

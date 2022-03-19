@@ -26,10 +26,10 @@ export const Showcase: React.FunctionComponent = () => {
           )}
         >
           <div className="flex flex-col w-full justify-center overflow-y-hidden my-8 md:my-16">
-            <h1 className="my-4">Xeo Studio</h1>
+            <h1 className="my-4">Xeo</h1>
             <p className="">
-              Xeo Studio is an Agile SCRUM tool which allows your to connect to
-              your project boards, plan sprints, and track progress.
+              Xeo is an Agile SCRUM tool which allows your to connect to your
+              project boards, plan sprints, and track progress.
             </p>
           </div>
           <div className="flex flex-col">
