@@ -41,7 +41,7 @@ const StatusBadge: React.FunctionComponent<{
         color
       )}
     >
-      {status?.status || 'Unknown Status'}
+      {status?.notionStatusName || 'Unknown Status'}
     </div>
   );
 };
