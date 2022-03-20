@@ -58,6 +58,7 @@ export const Dashboard: React.FunctionComponent = () => {
 
             {team.sprints.reverse().map((sprint, index) => (
               <div
+                key={sprint.id}
                 className={classNames(
                   'border-l-4 border-l-transparent pl-2 flex flex-row items-center cursor-pointer hover:bg-dark-200 dark:hover:bg-dark-800',
                   {

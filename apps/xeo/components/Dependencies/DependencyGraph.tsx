@@ -169,6 +169,7 @@ export const DependencyGraph: React.FunctionComponent<Props> = ({
           onConnect={onConnect}
           onEdgesDelete={onEdgesDelete}
           fitView
+          minZoom={0.1}
         >
           <Controls />
           <Background />
