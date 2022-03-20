@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
-import { useRouter } from 'next/router';
+import { NextRouter, useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import dynamic from 'next/dynamic';
 import { PublicAppWrapper } from './PublicAppWrapper';
-import { isSprintEmbedded } from 'pages/team/[teamId]/sprint/[sprintId]';
+
+export const isSprintEmbedded = (router: NextRouter) =>
+  router.query.embed === '1';
 
 const publicRoutes = ['/', '/login'];
 

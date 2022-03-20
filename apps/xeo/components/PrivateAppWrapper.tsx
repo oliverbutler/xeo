@@ -1,10 +1,10 @@
 import { useCurrentUser } from 'hooks/useCurrentUser';
 import { useRouter } from 'next/router';
-import { isSprintEmbedded } from 'pages/team/[teamId]/sprint/[sprintId]';
 import { ToastContainer } from 'react-toastify';
 import { Footer } from './Footer/Footer';
 import { Onboarding } from './Onboarding/Onboarding';
 import { TeamOnboarding } from './Onboarding/TeamOnboarding';
+import { isSprintEmbedded } from './PrivateRoute';
 import { Sidebar } from './Sidebar/Sidebar';
 
 export const PrivateAppWrapper: React.FunctionComponent = ({ children }) => {

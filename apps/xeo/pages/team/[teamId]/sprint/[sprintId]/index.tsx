@@ -3,11 +3,7 @@ import { NextRouter, useRouter } from 'next/router';
 import { GetSprintColumnPlotData } from 'pages/api/team/[teamId]/sprint/[sprintId]/column-plot-data';
 import { useQuery } from 'utils/api';
 import { Error } from 'components/Error/Error';
-import { Content } from 'components/Content';
-import { ConditionalWrapper } from '@xeo/ui/lib/ConditionalWrapper/ConditionalWrapper';
-
-export const isSprintEmbedded = (router: NextRouter) =>
-  router.query.embed === '1';
+import { isSprintEmbedded } from 'components/PrivateRoute';
 
 const PrivateSprintPage: React.FunctionComponent = () => {
   const router = useRouter();
