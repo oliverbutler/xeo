@@ -15,7 +15,12 @@ export const SprintStat: React.FunctionComponent<Props> = ({
   className,
 }) => {
   return (
-    <Clickable className={classNames(className, 'flex flex-row items-center')}>
+    <Clickable
+      className={classNames(
+        className,
+        'flex flex-row items-center cursor-default'
+      )}
+    >
       <div id="icon-container" className="mr-1 flex">
         {icon}
       </div>

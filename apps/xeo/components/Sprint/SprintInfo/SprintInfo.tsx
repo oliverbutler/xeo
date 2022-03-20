@@ -1,7 +1,6 @@
-import { ExternalLinkIcon, ShareIcon } from '@heroicons/react/outline';
+import { ExternalLinkIcon } from '@heroicons/react/outline';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { GetSprintColumnPlotData } from 'pages/api/team/[teamId]/sprint/[sprintId]/column-plot-data';
 import { useCallback, useEffect, useState } from 'react';
 import { useSWRConfig } from 'swr';
 import { SprintStats } from './SprintStats/SprintStats';
@@ -13,14 +12,13 @@ import { UserAction, trackSprintAction } from 'utils/analytics';
 import { NextSeo } from 'next-seo';
 import Skeleton from 'react-loading-skeleton';
 import { GraphControls } from './GraphControls/GraphControls';
-import classNames from 'classnames';
 import Button, { ButtonColour } from '@xeo/ui/lib/Button/Button';
 import { DataPlotType } from 'utils/sprint/chart';
 import { Sprint } from '@prisma/client';
 import { useCurrentTeam } from 'hooks/useCurrentTeam';
 import { SprintGraph } from './SprintGraph/SprintGraph';
 import { SprintStatusBadge } from 'components/Team/TeamSelector/TeamSelector';
-import { isSprintEmbedded } from 'pages/team/[teamId]/sprint/[sprintId]';
+import { Tooltip } from 'components/Tooltip/Tooltip';
 
 dayjs.extend(relativeTime);
 
@@ -106,9 +104,18 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
             <h2 className="my-0 flex flex-row items-center">
               {sprint?.name ?? <Skeleton width={160} />}{' '}
               {sprint ? (
-                <div className="ml-2">
-                  <SprintStatusBadge sprint={sprint} />
-                </div>
+                <Tooltip
+                  tooltip={
+                    <span className="text-sm">
+                      {dayjs(sprint.startDate).format('DD/MM  HH:mm')} -{' '}
+                      {dayjs(sprint.endDate).format('DD/MM HH:mm')}
+                    </span>
+                  }
+                >
+                  <div className="ml-2">
+                    <SprintStatusBadge sprint={sprint} />
+                  </div>
+                </Tooltip>
               ) : null}
             </h2>
             <p className="mb-2">
