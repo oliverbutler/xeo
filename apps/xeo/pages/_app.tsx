@@ -35,7 +35,7 @@ function CustomApp({
         <title>Xeo</title>
         <link rel="icon" href="/xeo.ico" />
       </Head>
-      <main className="prose dark:prose-invert max-w-none">
+      <main className="prose-sm sm:prose  dark:prose-invert max-w-none">
         <IntlWrapper>
           <ThemeProvider attribute="class" defaultTheme="light">
             <TeamContextProvider>

@@ -1,4 +1,3 @@
-import { useCurrentTeam } from 'hooks/useCurrentTeam';
 import { useCurrentUser } from 'hooks/useCurrentUser';
 import { useRouter } from 'next/router';
 import { isSprintEmbedded } from 'pages/team/[teamId]/sprint/[sprintId]';

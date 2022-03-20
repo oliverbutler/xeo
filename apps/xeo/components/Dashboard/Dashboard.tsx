@@ -53,7 +53,7 @@ export const Dashboard: React.FunctionComponent = () => {
           </div>
         )}
         {team.sprints.length === 0 ? null : (
-          <SettingsPanel className="col-span-1">
+          <SettingsPanel className="col-span-1 w-full">
             <h3 className="my-0">Sprints</h3>
 
             {team.sprints.reverse().map((sprint, index) => (

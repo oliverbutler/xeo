@@ -32,7 +32,7 @@ export const SprintStats: React.FunctionComponent<Props> = ({
   } = stats || {};
 
   return (
-    <div className="flex gap-2 sm:gap-4">
+    <div className="flex gap-2 sm:gap-4 flex-wrap">
       <Tooltip
         tooltip={`${
           totalPointsDone ? roundToOneDecimal(totalPointsDone) : ''

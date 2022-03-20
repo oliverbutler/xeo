@@ -101,7 +101,7 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
 
         <div className="flex flex-row justify-between">
           <div>
-            <h2 className="my-0 flex flex-row items-center">
+            <h2 className="my-0 flex flex-row items-center flex-wrap">
               {sprint?.name ?? <Skeleton width={160} />}{' '}
               {sprint ? (
                 <Tooltip
@@ -142,7 +142,7 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
             )}{' '}
           </div>
         </div>
-        <div className="flex flex-row justify-between items-center">
+        <div className="flex flex-row justify-between items-center flex-wrap">
           <SprintStats sprintHistoryPlotData={plotData} sprintId={sprintId} />
           <GraphControls
             sprint={sprint}
