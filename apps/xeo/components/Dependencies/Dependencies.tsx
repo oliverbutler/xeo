@@ -33,7 +33,9 @@ export const Dependencies: React.FunctionComponent = () => {
   );
 
   if (isLoading || depIsLoading) {
-    return <CentredLoader />;
+    return (
+      <CentredLoader text="Hold on while we get your tickets from Notion!" />
+    );
   }
 
   if (!currentSprint?.id || !currentTeamId) {

@@ -18,7 +18,8 @@ import ReactFlow, {
   NodeChange,
 } from 'react-flow-renderer';
 import { toast } from 'react-toastify';
-import { apiPut, useQuery } from 'utils/api';
+import { mutate } from 'swr';
+import { apiPut } from 'utils/api';
 import { DependencyPosition } from 'utils/db/sprint/adapter';
 import { Ticket } from 'utils/notion/backlog';
 import { useTicketNodeLinks } from './useTicketNodeLinks';
@@ -137,12 +138,25 @@ export const DependencyGraph: React.FunctionComponent<Props> = ({
       <PageHeader
         title={`Dependency Graph (${currentSprint?.name})`}
         rightContent={
-          <Button
-            onClick={() => saveNodesToState(nodes)}
-            variation={'tertiary'}
-          >
-            Save Positions
-          </Button>
+          <div className="flex flex-row items-center">
+            <Button
+              onClick={() =>
+                mutate(
+                  `/api/team/${currentTeamId}/sprint/${currentSprint?.id}/tickets`
+                )
+              }
+              colour={ButtonColour.Secondary}
+              variation={'tertiary'}
+            >
+              Update From Notion
+            </Button>
+            <Button
+              onClick={() => saveNodesToState(nodes)}
+              variation={'tertiary'}
+            >
+              Save Positions
+            </Button>
+          </div>
         }
       />
       <div className="grow w-full">
