@@ -29,7 +29,7 @@ const getNavbarOptions = (
       {
         title: 'Epic Dependencies',
         icon: ViewGridIcon,
-        path: `/team/${team?.id}/dependencies`,
+        path: `/team/${team?.id}/epic`,
         disabled: true,
       },
     ],
