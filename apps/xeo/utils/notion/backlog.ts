@@ -57,12 +57,10 @@ const getStatusOfTicket = ({
 
 // TODO why does this need ALL sprints for a team?
 export const getTicketFromNotionObject = ({
-  sprints,
   notionDatabase,
   notionStatusLinks,
   page,
 }: {
-  sprints: Sprint[];
   notionDatabase: NotionDatabase;
   notionStatusLinks: NotionStatusLink[];
   page: QueryDatabaseResponse['results'][0];
@@ -76,33 +74,25 @@ export const getTicketFromNotionObject = ({
   const titleProperty = Object.values(page.properties).find(
     (property) => property.id === 'title'
   );
+
   const pointsProperty = getPropertyByName(notionDatabase.pointsColumnName);
   const statusProperty = getPropertyByName(notionDatabase.statusColumnName);
-  const sprintProperty = getPropertyByName(notionDatabase.sprintColumnName);
   const parentRelationsProperty = notionDatabase.parentRelationColumnName
     ? getPropertyByName(notionDatabase.parentRelationColumnName)
     : null;
 
   const titleValue =
     titleProperty?.type === 'title'
-      ? titleProperty.title?.[0]?.plain_text || ''
+      ? titleProperty.title.reduce(
+          (acc, section) => acc + section.plain_text,
+          ''
+        )
       : '';
+
   const pointsValue =
     pointsProperty?.type === 'number' ? pointsProperty.number : null;
   const notionStatusName =
     statusProperty?.type === 'select' ? statusProperty.select?.name : undefined;
-
-  const sprintPropertySelect =
-    sprintProperty?.type === 'select' ? sprintProperty.select : null;
-  const sprintPropertyMultiSelect =
-    sprintProperty?.type === 'multi_select'
-      ? sprintProperty.multi_select
-      : null;
-  // const availableSprints = sprintPropertySelect
-  //   ? [sprintPropertySelect]
-  //   : sprintPropertyMultiSelect
-  //   ? sprintPropertyMultiSelect
-  //   : [];
 
   const parentTickets =
     parentRelationsProperty?.type === 'relation'
@@ -172,13 +162,11 @@ export const getProductBacklogForSprint = async ({
   notionDatabase,
   notionConnection,
   sprint,
-  sprints,
   notionStatusLinks,
 }: {
   notionDatabase: NotionDatabase;
   notionConnection: NotionConnection;
   sprint: Sprint;
-  sprints: Sprint[];
   notionStatusLinks: NotionStatusLink[];
 }): Promise<ProductBacklog> => {
   const notion = new Client({ auth: notionConnection.accessToken });
@@ -210,7 +198,6 @@ export const getProductBacklogForSprint = async ({
         notionDatabase,
         page: object,
         notionStatusLinks,
-        sprints,
       })
     );
 
@@ -325,7 +312,6 @@ export const getAllTicketsInSprint = async (
     include: {
       team: {
         select: {
-          sprints: true, // TODO remove this :(
           notionConnection: true,
           notionDatabase: {
             include: {
@@ -353,7 +339,6 @@ export const getAllTicketsInSprint = async (
     notionConnection: sprint.team.notionConnection,
     notionDatabase: sprint.team.notionDatabase,
     sprint,
-    sprints: sprint.team.sprints,
     notionStatusLinks: sprint.team.notionDatabase.notionStatusLinks,
   });
 
