@@ -131,7 +131,6 @@ export const updateSprintHistoryIfChanged = async (
     include: {
       team: {
         select: {
-          sprints: true, // TODO remove this :(
           notionConnection: true,
           notionDatabase: {
             include: {
@@ -159,7 +158,6 @@ export const updateSprintHistoryIfChanged = async (
     notionConnection: sprint.team.notionConnection,
     notionDatabase: sprint.team.notionDatabase,
     sprint,
-    sprints: sprint.team.sprints,
     notionStatusLinks: sprint.team.notionDatabase.notionStatusLinks,
   });
 
