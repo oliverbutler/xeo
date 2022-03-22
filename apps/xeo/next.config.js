@@ -22,6 +22,12 @@ const nextConfig = {
       destination: '/sprint/:id?embed=1',
       permanent: true,
     },
+    {
+      source: '/template',
+      destination:
+        'https://oliverbutler.notion.site/Team-Sprint-96738ffb80834b79abba21c5161fa42d',
+      permanent: true,
+    },
   ],
 };
 
