@@ -50,22 +50,23 @@ const getButtonStyles = (
   } else {
     return classNames(
       {
-        'text-primary-500 hover:bg-primary-700/10 ring-primary-500':
+        'ring text-primary-500 hover:bg-primary-700/10 ring-primary-500':
           colour === ButtonColour.Primary && !disabled,
       },
       {
-        'text-secondary-500 hover:bg-secondary-700/10 ring-secondary-500':
+        'ring text-secondary-500 hover:bg-secondary-700/10 ring-secondary-500':
           colour === ButtonColour.Secondary && !disabled,
       },
       {
-        'text-red-500 ring-red-500 hover:bg-red-700/10':
+        'ring text-red-500 ring-red-500 hover:bg-red-700/10':
           colour === ButtonColour.Danger && !disabled,
       },
       {
-        'text-dark-500 ring-dark-500': colour === ButtonColour.Dark || disabled,
+        'ring text-dark-500 ring-dark-500':
+          colour === ButtonColour.Dark || disabled,
       },
       {
-        'hover:bg-dark-700/10': colour === ButtonColour.Dark && !disabled,
+        'ring hover:bg-dark-700/10': colour === ButtonColour.Dark && !disabled,
       }
     );
   }

@@ -190,7 +190,7 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
           }
         />
         <div className="flex flex-row gap-2 mt-4">
-          <DeleteSprint sprintId={sprint.id} />
+          <DeleteSprint sprint={sprint} />
           <Button type="submit">Save</Button>
         </div>
       </form>

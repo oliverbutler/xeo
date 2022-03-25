@@ -1,3 +1,4 @@
+import { Sprint } from '@prisma/client';
 import { Button, ButtonColour } from '@xeo/ui/lib/Button/Button';
 import { Modal, ModalFooter } from '@xeo/ui/lib/Modal/Modal';
 import axios, { AxiosError } from 'axios';
@@ -7,16 +8,19 @@ import { mutate } from 'swr';
 import { UserAction, trackSprintAction } from 'utils/analytics';
 
 interface Props {
-  sprintId: string;
+  sprint: Sprint;
 }
 
-export const DeleteSprint: React.FunctionComponent<Props> = ({ sprintId }) => {
+export const DeleteSprint: React.FunctionComponent<Props> = ({ sprint }) => {
   const router = useRouter();
 
   const deleteSprint = async (callback: () => void) => {
-    trackSprintAction({ action: UserAction.SPRINT_DELETE, sprintId: sprintId });
+    trackSprintAction({
+      action: UserAction.SPRINT_DELETE,
+      sprintId: sprint.id,
+    });
     await axios
-      .delete(`/api/sprint/${sprintId}`)
+      .delete(`/api/team/${sprint.teamId}/sprint/${sprint.id}`)
       .then((res) => {
         if (res.status === 200) {
           toast.success('Sprint Deleted!');

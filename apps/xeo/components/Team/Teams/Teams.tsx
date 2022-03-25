@@ -84,26 +84,6 @@ export const Teams: React.FunctionComponent = () => {
                   >
                 ) => <TeamAvatars team={cell.row.original} />,
               },
-
-              {
-                Header: 'Actions',
-                Cell: (
-                  cell: React.PropsWithChildren<
-                    CellProps<TeamWithMemberAndBasicUserInfo, unknown>
-                  >
-                ) => (
-                  <div>
-                    <Link
-                      href={`/team/${cell.row.original.id}/settings`}
-                      passHref
-                    >
-                      <Clickable>
-                        <CogIcon height={25} width={25} />
-                      </Clickable>
-                    </Link>
-                  </div>
-                ),
-              },
             ]}
             data={availableTeams ?? []}
           />

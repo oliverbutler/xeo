@@ -1,4 +1,5 @@
 import { TeamContext } from 'context/TeamContext';
+import { update } from 'lodash';
 import { Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import { GetTeamsForUserRequest } from 'pages/api/team';
@@ -30,6 +31,13 @@ export const useCurrentUser = (): Output => {
   useEffect(() => {
     if (meResponse.data?.user.metadata?.defaultTeamId) {
       setCurrentTeamId(meResponse.data.user.metadata.defaultTeamId);
+    } else {
+      if (data?.teams[0]) {
+        updateUserMetadata({
+          defaultTeamId: data.teams[0].id,
+        });
+        setCurrentTeamId(data?.teams[0].id);
+      }
     }
   }, [meResponse]);
 

@@ -22,7 +22,7 @@ const getNavbarOptions = (
   sprint: Sprint | undefined
 ) => [
   {
-    title: `Team (${team?.shortName})`,
+    title: `Team (${team?.shortName ?? 'Missing'})`,
     options: [
       { title: 'Dashboard', icon: TemplateIcon, path: `/team/${team?.id}` },
       { title: 'Settings', icon: CogIcon, path: `/team/${team?.id}/settings` },
@@ -35,7 +35,7 @@ const getNavbarOptions = (
     ],
   },
   {
-    title: `Sprint (${sprint?.name})`,
+    title: `Sprint (${sprint?.name ?? 'Missing'})`,
     options: [
       {
         title: 'Sprint Dependencies',
@@ -151,13 +151,21 @@ export const NavbarButton: React.FunctionComponent<{
 
 export const Sidebar: React.FunctionComponent = () => {
   const { menuShow, onMenuToggle } = useToggleMenu();
-  const { team, currentSprint } = useCurrentTeam();
+  const { team, currentSprint, currentTeamId } = useCurrentTeam();
   const { me } = useCurrentUser();
-  const { pathname, push } = useRouter();
+  const { pathname, push, query } = useRouter();
+
+  const { teamId } = query;
+
+  const pathsToRedirect = ['/', '/team', '/team/[teamId]'];
 
   useEffect(() => {
-    if (pathname === '/' && me?.metadata?.defaultTeamId) {
-      push(`/team/${me.metadata.defaultTeamId}`);
+    if (teamId === 'undefined') {
+      push(`/`);
+    }
+
+    if (pathsToRedirect.includes(pathname) && currentTeamId) {
+      push(`/team/${currentTeamId}`);
     }
   }, [team, me]);
 
