@@ -16,10 +16,10 @@ export const CustomTooltip = ({
 }) => {
   if (active && payload && payload.length) {
     const pointsNotDone = payload.find(
-      ({ dataKey }) => dataKey === DataPlotLine.POINTS_LEFT
+      ({ dataKey }) => dataKey === DataPlotLine.PENDING_POINTS_LEFT
     );
     const pointsValidateOrDone = payload.find(
-      ({ dataKey }) => dataKey === DataPlotLine.POINTS_DONE_INC_VALIDATE
+      ({ dataKey }) => dataKey === DataPlotLine.PENDING_POINTS_DONE_INC_VALIDATE
     );
     const pointsExpectedNotDone = payload.find(
       ({ dataKey }) => dataKey === DataPlotLine.EXPECTED_POINTS
@@ -48,6 +48,7 @@ export const CustomTooltip = ({
               )} (${roundToOneDecimal(deltaDoneExpected)})`}
             </p>
           ) : null}
+
           {deltaDoneValidate && pointsValidateOrDone ? (
             <p
               className="label"
