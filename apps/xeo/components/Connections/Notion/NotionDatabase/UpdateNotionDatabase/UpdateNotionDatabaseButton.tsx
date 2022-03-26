@@ -19,7 +19,11 @@ export const UpdateNotionDatabaseButton: React.FunctionComponent<Props> = ({
     <Modal
       mainText="Update Database"
       trigger={(setOpen) => (
-        <Button onClick={setOpen} colour={ButtonColour.Dark}>
+        <Button
+          onClick={setOpen}
+          variation="tertiary"
+          colour={ButtonColour.Dark}
+        >
           Update Database
         </Button>
       )}

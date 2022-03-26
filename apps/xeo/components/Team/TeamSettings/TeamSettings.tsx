@@ -32,7 +32,7 @@ export const ReconnectToNotionButton = () => {
     `/api/connections/notion/auth-url?teamId=${team?.id}`
   );
   return (
-    <Button colour={ButtonColour.Dark} href={data?.url}>
+    <Button colour={ButtonColour.Dark} variation="tertiary" href={data?.url}>
       Reconnect
     </Button>
   );

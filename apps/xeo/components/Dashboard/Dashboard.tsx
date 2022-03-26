@@ -25,7 +25,7 @@ export const Dashboard: React.FunctionComponent = () => {
         rightContent={
           <Button
             href={`/team/${team.id}/sprint/create`}
-            colour={ButtonColour.Dark}
+            colour={ButtonColour.Primary}
           >
             Create Sprint
           </Button>
@@ -43,7 +43,7 @@ export const Dashboard: React.FunctionComponent = () => {
               <h3>No Current Sprint</h3>
               <div>
                 <Button
-                  colour={ButtonColour.Dark}
+                  colour={ButtonColour.Primary}
                   href={`/team/${team.id}/sprint/create`}
                 >
                   Create Sprint
