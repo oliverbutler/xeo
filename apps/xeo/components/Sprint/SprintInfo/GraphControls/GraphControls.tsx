@@ -7,6 +7,7 @@ import { Sprint } from '@prisma/client';
 import { Clickable } from '@xeo/ui/lib/Clickable/Clickable';
 import { DarkModeButton } from '@xeo/ui/lib/DarkModeButton/DarkModeButton';
 import { Tooltip } from 'components/Tooltip/Tooltip';
+import dayjs from 'dayjs';
 import { toast } from 'react-toastify';
 
 interface Props {
@@ -43,7 +44,11 @@ export const GraphControls: React.FunctionComponent<Props> = ({
             </Clickable>
           </Tooltip>
         )}
-        <Tooltip tooltip="Sync with Notion">
+        <Tooltip
+          tooltip={`Last updated ${dayjs(
+            sprint?.lastSynchronisedAt
+          ).fromNow()}`}
+        >
           <Clickable
             showActiveLabel={isLoading}
             onClick={isLoading ? undefined : handleUpdateSprintHistory}

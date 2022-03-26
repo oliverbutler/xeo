@@ -1,6 +1,7 @@
 import Joi from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { apiError, APIRequest, apiResponse, parseAPIRequest } from 'utils/api';
+import { prisma } from 'utils/db';
 import { updateSprintHistoryIfChanged } from 'utils/sprint/sprint-history';
 
 export type PostUpdateSprintHistory = APIRequest<
@@ -27,6 +28,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const sprintId = req.query.sprintId as string;
 
   try {
+    await prisma.sprint.update({
+      where: {
+        id: sprintId,
+      },
+      data: {
+        lastSynchronisedAt: new Date(),
+      },
+    });
+
     const updatedHistory = await updateSprintHistoryIfChanged(sprintId);
 
     return apiResponse<PostUpdateSprintHistory>(res, {

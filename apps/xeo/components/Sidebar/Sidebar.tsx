@@ -26,12 +26,12 @@ const getNavbarOptions = (
     options: [
       { title: 'Dashboard', icon: TemplateIcon, path: `/team/${team?.id}` },
       { title: 'Settings', icon: CogIcon, path: `/team/${team?.id}/settings` },
-      {
-        title: 'Epic Dependencies',
-        icon: ViewGridIcon,
-        path: `/team/${team?.id}/epic`,
-        disabled: true,
-      },
+      // {
+      //   title: 'Epic Dependencies',
+      //   icon: ViewGridIcon,
+      //   path: `/team/${team?.id}/epic`,
+      //   disabled: true,
+      // },
     ],
   },
   {
@@ -43,12 +43,12 @@ const getNavbarOptions = (
         path: `/team/${team?.id}/dependencies`,
         disabled: !sprint,
       },
-      {
-        title: 'Daily Mail',
-        icon: MailIcon,
-        path: '/daily-mail',
-        disabled: true,
-      },
+      // {
+      //   title: 'Daily Mail',
+      //   icon: MailIcon,
+      //   path: '/daily-mail',
+      //   disabled: true,
+      // },
     ],
   },
   {

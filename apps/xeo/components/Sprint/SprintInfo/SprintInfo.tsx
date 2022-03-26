@@ -68,6 +68,18 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (
+      plotData &&
+      sprint &&
+      dayjs(sprint.lastSynchronisedAt).diff(dayjs(), 'minute') < -5 &&
+      !dayjs(sprint.endDate).isBefore(dayjs(), 'minute')
+    ) {
+      handleUpdateSprintHistory();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sprint]);
+
   const [isLoading, setIsLoading] = useState(false);
   const { team } = useCurrentTeam();
 

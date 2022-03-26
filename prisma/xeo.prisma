@@ -109,6 +109,7 @@ model Sprint {
   sprintDevelopersAndCapacity Json
   teamSpeed                   Float
   //
+  lastSynchronisedAt          DateTime         @default(now())
   createdAt                   DateTime         @default(now())
   updatedAt                   DateTime         @default(now()) @updatedAt
   // Relations
