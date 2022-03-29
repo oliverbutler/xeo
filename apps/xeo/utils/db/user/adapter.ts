@@ -22,8 +22,6 @@ export const createUserMetadata = async (
   userId: string,
   metadata: CreateUserMetadata
 ): Promise<UserMetadata | null> => {
-  console.log(userId, metadata);
-
   const created = await prisma.userMetadata.create({
     data: {
       userId: userId,
