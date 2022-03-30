@@ -1,4 +1,4 @@
-import { createPopper } from '@popperjs/core';
+import { Hover } from '@xeo/ui/lib/Hover/Hover';
 import React from 'react';
 
 interface Props {
@@ -9,35 +9,15 @@ export const Tooltip: React.FunctionComponent<Props> = ({
   children,
   tooltip,
 }) => {
-  const [tooltipShow, setTooltipShow] = React.useState(false);
-  const btnRef = React.createRef();
-  const tooltipRef = React.createRef();
-  const openLeftTooltip = () => {
-    // @ts-ignore
-    createPopper(btnRef.current, tooltipRef.current, {
-      placement: 'top',
-    });
-    setTooltipShow(true);
-  };
-  const closeLeftTooltip = () => {
-    setTooltipShow(false);
-  };
   return (
-    <div>
-      <div
-        onMouseEnter={openLeftTooltip}
-        onMouseLeave={closeLeftTooltip}
-        // @ts-ignore
-        ref={btnRef}
-      >
-        {children}
-      </div>
-      {/* @ts-ignore */}
-      <div className={tooltipShow ? '' : 'hidden '} ref={tooltipRef}>
+    <Hover
+      hoverContent={
         <div className="bg-dark-200 dark:bg-dark-700 shadow-2xl p-2 mb-2 rounded-lg">
           {tooltip}
         </div>
-      </div>
-    </div>
+      }
+    >
+      {children}
+    </Hover>
   );
 };

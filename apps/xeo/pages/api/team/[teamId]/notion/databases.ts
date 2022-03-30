@@ -25,7 +25,7 @@ import {
   createNotionDatabase,
   updateNotionDatabase,
 } from 'utils/db/notionDatabase/adapter';
-import { getTeam, getUserRoleInTeam } from 'utils/db/team/adapter';
+import { getUserRoleInTeam } from 'utils/db/team/adapter';
 
 export type GetConnectionNotionDatabasesRequest = APIGetRequest<{
   notionResponse: AvailableDatabasesFromNotion;

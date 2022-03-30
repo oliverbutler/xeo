@@ -45,9 +45,16 @@ export const SelectStatusMapping: React.FunctionComponent<
 
   return (
     <div>
-      <h3>Update Status Mappings</h3>
-      <p>Change Database → re-map the columns</p>
-      <p>Deleted a Column → re-map or archive</p>
+      <Tooltip
+        tooltip={
+          <div>
+            <p>Remap when you change/replace a column</p>
+            <p>Archive if you want to remove a column</p>
+          </div>
+        }
+      >
+        <h3>Update Status Mappings</h3>
+      </Tooltip>
 
       <Table<DatabaseUpdateForm['updatedStatusMappings'][0]>
         data={fields}

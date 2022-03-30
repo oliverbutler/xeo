@@ -19,6 +19,7 @@ import { useCurrentTeam } from 'hooks/useCurrentTeam';
 import { SprintGraph } from './SprintGraph/SprintGraph';
 import { SprintStatusBadge } from 'components/Team/TeamSelector/TeamSelector';
 import { Tooltip } from 'components/Tooltip/Tooltip';
+import { Clickable } from '@xeo/ui/lib/Clickable/Clickable';
 
 dayjs.extend(relativeTime);
 
@@ -137,11 +138,14 @@ export const SprintInfo: React.FunctionComponent<Props> = ({
           <div>
             {publicMode ? (
               <a
-                className="flex flex-row items-center gap-1"
                 href={`/team/${team?.id}/sprint/${sprintId}/edit`}
                 target="_blank"
               >
-                Edit <ExternalLinkIcon height={25} width={25} />
+                <Clickable>
+                  <div className="flex flex-row items-center gap-2 px-2">
+                    Edit <ExternalLinkIcon height={25} width={25} />
+                  </div>
+                </Clickable>
               </a>
             ) : (
               <Button
