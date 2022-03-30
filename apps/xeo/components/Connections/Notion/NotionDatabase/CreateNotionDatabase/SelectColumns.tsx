@@ -61,6 +61,7 @@ export const SelectColumns: React.FunctionComponent<Props> = ({
   return (
     <div>
       <h3>Select Columns</h3>
+      <p>These are the columns in your Notion database selected above</p>
       <SelectField
         label="Story Points (number field)"
         control={control}
@@ -82,7 +83,7 @@ export const SelectColumns: React.FunctionComponent<Props> = ({
       />
       <SelectField
         className="mt-2"
-        label="Parents Relation (optional)"
+        label="Parents Relation (relationship field, optional)"
         control={control}
         name="parentRelation"
         // error={errors.ticketStatusId}

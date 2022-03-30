@@ -1,5 +1,5 @@
 import { NotionColumnType, NotionDatabase } from '@prisma/client';
-import { SelectField } from '@xeo/ui/lib/Select/SelectField';
+import { ListboxField } from '@xeo/ui/lib/Listbox/ListboxField';
 import { UseFormReturn } from 'react-hook-form';
 import { AvailableDatabasesFromNotion } from 'utils/connections/notion/notion-client';
 import {
@@ -61,40 +61,28 @@ export const SelectColumns: React.FunctionComponent<Props> = ({
     }));
 
   return (
-    <div>
+    <div className="space-y-2">
       <h3>Select Columns</h3>
-      <SelectField
+      <ListboxField
         label="Story Points (number field)"
         control={control}
-        name="storyPointsId"
-        // error={errors.storyPointsId}
+        name="pointsColumnName"
         options={propertiesOptions.filter((o) => o.type === 'number')}
         rules={{ required: true }}
         isDisabled={!database}
       />
-      <SelectField
-        className="mt-2"
-        label="Status (select field)"
-        control={control}
-        name="ticketStatusId"
-        // error={errors.ticketStatusId}
-        options={propertiesOptions.filter((o) => o.type === 'select')}
-        rules={{ required: true }}
-        isDisabled={!database}
-      />
-      <SelectField
-        className="mt-2"
+
+      <ListboxField
         label="Parents Relation (optional)"
         control={control}
-        name="parentRelation"
-        // error={errors.ticketStatusId}
+        name="parentRelationColumnName"
         options={propertiesOptions.filter((o) => o.type === 'relation')}
         rules={{ required: false }}
         isDisabled={!database}
       />
-      <div className="flex flex-col gap-2 sm:flex-row">
-        <SelectField
-          className="mt-2 w-full sm:w-1/2"
+      <div className="flex flex-col space-x-4 sm:flex-row">
+        <ListboxField
+          className="w-full sm:w-1/2"
           label="Sprint Field Type"
           control={control}
           name="sprintSelectType"
@@ -102,14 +90,13 @@ export const SelectColumns: React.FunctionComponent<Props> = ({
           isDisabled={true}
           rules={{ required: true }}
         />
-        <SelectField
-          className="mt-2 w-full sm:w-1/2"
+        <ListboxField
+          className="w-full sm:w-1/2"
           label="Sprint"
           control={control}
-          name="sprintId"
-          // error={errors.sprintId}
+          name="sprintColumnName"
           options={propertiesOptions.filter((o) =>
-            isNotionPropertyColumn(o, currentSprintSelectType?.value)
+            isNotionPropertyColumn(o, currentSprintSelectType)
           )}
           rules={{ required: true }}
           isDisabled={!database || !currentSprintSelectType}

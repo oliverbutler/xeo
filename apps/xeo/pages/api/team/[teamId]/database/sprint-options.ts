@@ -63,7 +63,7 @@ const getHandler = async (
   const availableColumnOptions = await getAvailableColumnOptions({
     accessToken: notionDatabaseWithAccessToken.notionConnection.accessToken,
     databaseId: notionDatabaseWithAccessToken.databaseId,
-    columnName: notionDatabaseWithAccessToken.sprintColumnName,
+    columnIdOrName: notionDatabaseWithAccessToken.sprintColumnName,
     searchString: searchString || '',
   });
 

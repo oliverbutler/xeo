@@ -1,13 +1,13 @@
 import { NotionConnection, NotionDatabase, Team } from '@prisma/client';
 import { Button, ButtonColour } from '@xeo/ui/lib/Button/Button';
 import { Modal } from '@xeo/ui/lib/Modal/Modal';
-import { CreateNotionDatabase } from 'components/Connections/Notion/NotionDatabase/CreateNotionDatabase/CreateNotionDatabase';
+import { NotionDatabaseWithStatusLinks } from 'pages/api/team/[teamId]/notion';
 import { UpdateNotionDatabase } from './UpdateNotionDatabase';
 
 type Props = {
   team: Team;
   connection: NotionConnection;
-  database: NotionDatabase;
+  database: NotionDatabaseWithStatusLinks;
 };
 
 export const UpdateNotionDatabaseButton: React.FunctionComponent<Props> = ({

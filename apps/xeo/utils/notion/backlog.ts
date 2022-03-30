@@ -15,6 +15,11 @@ import { logger } from 'utils/api';
 import { performance } from 'perf_hooks';
 import { isNotNullOrUndefined } from '@xeo/utils';
 import { prisma } from 'utils/db';
+import {
+  getNotionDatabaseItemPropertyByIdOrName,
+  getNotionDatabasePropertyByIdOrName,
+  NotionDatabaseItemProperty,
+} from './notionTicket';
 
 export type Ticket = {
   notionId: string;
@@ -42,20 +47,24 @@ export type ProductBacklog = {
   tickets: Ticket[];
 };
 
+// TODO as we have a mix of names and IDs right now, this is a bit of a hack
 const getStatusOfTicket = ({
   links,
   notionStatusName,
 }: {
   links: NotionStatusLink[];
-  notionStatusName: string | undefined;
+  notionStatusName:
+    | { id: string | undefined; name: string | undefined }
+    | undefined;
 }): NotionStatusLink | undefined => {
   const statusLink = links.find(
-    (link) => link.notionStatusName === notionStatusName
+    (link) =>
+      link.notionStatusName === notionStatusName?.name ||
+      link.id === notionStatusName?.id
   );
   return statusLink;
 };
 
-// TODO why does this need ALL sprints for a team?
 export const getTicketFromNotionObject = ({
   notionDatabase,
   notionStatusLinks,
@@ -69,16 +78,23 @@ export const getTicketFromNotionObject = ({
     throw new Error('Not a notion database item');
   }
 
-  const getPropertyByName = (id: string) => page.properties[id];
-
   const titleProperty = Object.values(page.properties).find(
     (property) => property.id === 'title'
   );
 
-  const pointsProperty = getPropertyByName(notionDatabase.pointsColumnName);
-  const statusProperty = getPropertyByName(notionDatabase.statusColumnName);
+  const pointsProperty = getNotionDatabaseItemPropertyByIdOrName(
+    page.properties,
+    notionDatabase.pointsColumnName
+  );
+  const statusProperty = getNotionDatabaseItemPropertyByIdOrName(
+    page.properties,
+    notionDatabase.statusColumnName
+  );
   const parentRelationsProperty = notionDatabase.parentRelationColumnName
-    ? getPropertyByName(notionDatabase.parentRelationColumnName)
+    ? getNotionDatabaseItemPropertyByIdOrName(
+        page.properties,
+        notionDatabase.parentRelationColumnName
+      )
     : null;
 
   const titleValue =
@@ -91,8 +107,11 @@ export const getTicketFromNotionObject = ({
 
   const pointsValue =
     pointsProperty?.type === 'number' ? pointsProperty.number : null;
-  const notionStatusName =
-    statusProperty?.type === 'select' ? statusProperty.select?.name : undefined;
+
+  const notionStatusOption =
+    statusProperty?.type === 'select'
+      ? { id: statusProperty.select?.id, name: statusProperty.select?.name }
+      : undefined;
 
   const parentTickets =
     parentRelationsProperty?.type === 'relation'
@@ -105,7 +124,7 @@ export const getTicketFromNotionObject = ({
     points: pointsValue,
     notionStatusLink: getStatusOfTicket({
       links: notionStatusLinks,
-      notionStatusName: notionStatusName,
+      notionStatusName: notionStatusOption,
     }),
     iconString: getIconFromNotionPage(page),
     updatedAt: page.last_edited_time,
@@ -220,12 +239,12 @@ export type NotionAPIColumnType = GetDatabaseResponse['properties'][0]['type'];
 export const getAvailableColumnOptions = async ({
   accessToken,
   databaseId,
-  columnName,
+  columnIdOrName,
   searchString,
 }: {
   accessToken: string;
   databaseId: string;
-  columnName: string;
+  columnIdOrName: string;
   searchString: string;
 }): Promise<{
   type: NotionColumnType;
@@ -237,11 +256,14 @@ export const getAvailableColumnOptions = async ({
     database_id: databaseId,
   });
 
-  const column = databaseResponse.properties[columnName];
+  const column = getNotionDatabasePropertyByIdOrName(
+    databaseResponse.properties,
+    columnIdOrName
+  );
 
   if (!column) {
     throw new Error(
-      `Could not find column ${columnName} in database ${databaseId}`
+      `Could not find column ${columnIdOrName} in database ${databaseId}`
     );
   }
 
@@ -267,7 +289,7 @@ export const getAvailableColumnOptions = async ({
 
   if (column.type !== 'relation') {
     throw new Error(
-      `Column ${columnName} in database ${databaseId}, ${column.type} is not supported`
+      `Column ${columnIdOrName} in database ${databaseId}, ${column.type} is not supported`
     );
   }
 

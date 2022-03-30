@@ -25,6 +25,7 @@ export const SelectStatusMapping: React.FunctionComponent<
       ? ticketStatusColumnProperty.select.options.map((option) => ({
           label: option.name,
           value: option.name,
+          notionId: option.id,
           color: option.color ?? 'gray',
         }))
       : [];
@@ -32,7 +33,10 @@ export const SelectStatusMapping: React.FunctionComponent<
   return (
     <div>
       <h3>Select Status Mappings</h3>
-      <p>To Validate is a column used by some SCRUM teams, it is optional.</p>
+      <p>
+        Add mappings between the available statuses in Notion with Xeo statuses,
+        you can have <b>multiple per input</b>
+      </p>
       <SelectField
         label="Done"
         control={control}
@@ -40,10 +44,11 @@ export const SelectStatusMapping: React.FunctionComponent<
         options={availableStatusOptions}
         isDisabled={!currentDatabaseSelected}
         isMulti
+        rules={{ required: true }}
       />
       <SelectField
         className="mt-2"
-        label="To Validate"
+        label="To Validate (Optional)"
         control={control}
         name="statusMapping.statusToValidateId"
         options={availableStatusOptions}
@@ -58,6 +63,7 @@ export const SelectStatusMapping: React.FunctionComponent<
         options={availableStatusOptions}
         isDisabled={!currentDatabaseSelected}
         isMulti
+        rules={{ required: true }}
       />
       <SelectField
         className="mt-2"
@@ -67,6 +73,7 @@ export const SelectStatusMapping: React.FunctionComponent<
         options={availableStatusOptions}
         isDisabled={!currentDatabaseSelected}
         isMulti
+        rules={{ required: true }}
       />
     </div>
   );

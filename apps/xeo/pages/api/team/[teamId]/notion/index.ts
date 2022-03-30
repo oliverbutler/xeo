@@ -1,3 +1,4 @@
+import { NotionDatabase, NotionStatusLink } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
 import { apiError, APIGetRequest, apiResponse } from 'utils/api';
@@ -10,6 +11,10 @@ import { getUserRoleInTeam } from 'utils/db/team/adapter';
 export type GetTeamNotionConnectionInformation = APIGetRequest<{
   notionConnection: NotionConnectionInformation;
 }>;
+
+export type NotionDatabaseWithStatusLinks = NotionDatabase & {
+  notionStatusLinks: NotionStatusLink[];
+};
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });

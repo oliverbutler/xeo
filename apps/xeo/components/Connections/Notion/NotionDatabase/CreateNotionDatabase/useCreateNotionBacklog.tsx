@@ -29,6 +29,7 @@ export type DatabaseSprintFieldType = {
 
 export type DatabaseStatusOptions = {
   value: string;
+  notionId: string;
   label: string;
   color: string;
 };
@@ -63,7 +64,14 @@ export const useCreateNotionBacklog = (
   notionConnectionId: NotionConnection['id'],
   successCallback: () => void
 ): Output => {
-  const form = useForm<DatabaseSelectionForm>({});
+  const form = useForm<DatabaseSelectionForm>({
+    defaultValues: {
+      sprintSelectType: {
+        value: 'RELATIONSHIP_ID',
+        label: 'Relationship',
+      },
+    },
+  });
 
   const onSubmit = async (formData: DatabaseSelectionForm) => {
     if (
@@ -89,21 +97,25 @@ export const useCreateNotionBacklog = (
       statusMapping: [
         ...formData.statusMapping.statusDoneId.map((status) => ({
           notionStatusName: status.value,
+          notionStatusId: status.notionId,
           notionStatusColor: status.color,
           status: BacklogStatus.DONE,
         })),
         ...formData.statusMapping.statusInProgressId.map((status) => ({
           notionStatusName: status.value,
+          notionStatusId: status.notionId,
           notionStatusColor: status.color,
           status: BacklogStatus.IN_PROGRESS,
         })),
         ...formData.statusMapping.statusSprintBacklogId.map((status) => ({
           notionStatusName: status.value,
+          notionStatusId: status.notionId,
           notionStatusColor: status.color,
           status: BacklogStatus.SPRINT_BACKLOG,
         })),
         ...(formData.statusMapping.statusToValidateId ?? []).map((status) => ({
           notionStatusName: status.value,
+          notionStatusId: status.notionId,
           notionStatusColor: status.color,
           status: BacklogStatus.TO_VALIDATE,
         })),

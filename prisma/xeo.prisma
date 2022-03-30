@@ -251,10 +251,12 @@ model NotionStatusLink {
   notionDatabaseId    String
   notionDatabase      NotionDatabase        @relation(fields: [notionDatabaseId], references: [id], onDelete: NoAction)
   notionStatusName    String
+  notionStatusId      String                @default("")
   notionStatusColor   String
   status              BacklogStatus
   SprintStatusHistory SprintStatusHistory[]
   //
+  deletedAt           DateTime?
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @default(now()) @updatedAt
 

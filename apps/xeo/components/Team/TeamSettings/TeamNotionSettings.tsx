@@ -1,4 +1,5 @@
 import { Team } from '@prisma/client';
+import { CentredLoader } from '@xeo/ui/lib/Animate/CentredLoader/CentredLoader';
 import { Button, ButtonColour } from '@xeo/ui/lib/Button/Button';
 import { Modal, ModalFooter } from '@xeo/ui/lib/Modal/Modal';
 import { NotionLogoRenderer } from 'components/Connections/Notion/NotionConnection/NotionLogoRenderer';
@@ -19,7 +20,7 @@ export const TeamNotionSettings: React.FunctionComponent<Props> = ({
 }) => {
   const { deleteTeam } = useTeam();
 
-  const { data, error } = useQuery<GetTeamNotionConnectionInformation>(
+  const { data, isLoading } = useQuery<GetTeamNotionConnectionInformation>(
     `/api/team/${team?.id}/notion`,
     !team
   );
@@ -28,6 +29,8 @@ export const TeamNotionSettings: React.FunctionComponent<Props> = ({
     <div>
       <h2>Notion</h2>
       <p>Here you can configure the current connection to Notion</p>
+
+      {isLoading ? <CentredLoader /> : null}
 
       {data?.notionConnection ? (
         <>

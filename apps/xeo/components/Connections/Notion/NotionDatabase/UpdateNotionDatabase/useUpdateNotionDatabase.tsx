@@ -1,15 +1,17 @@
 import {
+  BacklogStatus,
   NotionColumnType,
   NotionConnection,
-  NotionDatabase,
+  NotionStatusLink,
 } from '@prisma/client';
+import { NotionDatabaseWithStatusLinks } from 'pages/api/team/[teamId]/notion';
 import { PutUpdateNotionDatabaseRequest } from 'pages/api/team/[teamId]/notion/databases';
-import { useForm, UseFormReturn } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { mutate } from 'swr';
 import { apiPut } from 'utils/api';
 import { AvailableDatabasesFromNotion } from 'utils/connections/notion/notion-client';
-import { sprintSelectTypeOptions } from './SelectColumns';
+import { getNotionDatabasePropertyByIdOrName } from 'utils/notion/notionTicket';
 import { DatabaseFromNotion } from './UpdateNotionDatabase';
 
 export type DatabasePropertyOption = {
@@ -29,98 +31,157 @@ export type DatabaseStatusOptions = {
   color: string;
 };
 
-export type ParentRelationshipOption = {
-  label: string;
-  value: string;
-};
-
-interface Output {
-  onSubmit: () => void;
-  form: UseFormReturn<DatabaseUpdateForm>;
-}
-
 export interface DatabaseUpdateForm {
-  storyPointsId: DatabasePropertyOption | undefined;
-  sprintSelectType: DatabaseSprintFieldType | undefined;
-  sprintId: DatabasePropertyOption | undefined;
-  ticketStatusId: DatabasePropertyOption | undefined;
-  parentRelation: ParentRelationshipOption | undefined;
-  statusMapping: {
-    statusDoneId: DatabaseStatusOptions[];
-    statusToValidateId: DatabaseStatusOptions[];
-    statusInProgressId: DatabaseStatusOptions[];
-    statusSprintBacklogId: DatabaseStatusOptions[];
-  };
+  sprintColumnName: string | undefined;
+  pointsColumnName: string | undefined;
+  sprintSelectType: NotionColumnType | undefined;
+  statusColumnName: string | undefined;
+  parentRelationColumnName: string | undefined;
+  updatedStatusMappings: {
+    statusLinkId: string;
+    notionSelectId: string | null;
+    originalLink: NotionStatusLink;
+    notionSelectName: string;
+    status: BacklogStatus;
+    state: 'new' | 'updated' | 'deleted';
+  }[];
 }
-
-const capitalize = (str: string) =>
-  str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 
 export const useUpdateNotionDatabase = (
   teamId: string,
   connection: NotionConnection,
-  currentDatabase: NotionDatabase,
+  currentDatabase: NotionDatabaseWithStatusLinks,
   successCallback: () => void,
   databaseFromNotion: DatabaseFromNotion
-): Output => {
-  const availableDatabaseProperties = databaseFromNotion
-    ? Object.values(databaseFromNotion.properties)
-    : [];
-
-  const propertiesOptions: DatabasePropertyOption[] =
-    availableDatabaseProperties.map((property) => ({
-      label: property.name,
-      value: property.id,
-      type: property.type,
-    }));
-
-  const statusColumnOption = propertiesOptions.find(
-    (property) => property.label === currentDatabase.statusColumnName
+) => {
+  const ticketStatusColumnProperty = getNotionDatabasePropertyByIdOrName(
+    databaseFromNotion.properties,
+    currentDatabase.statusColumnName
   );
 
-  const pointsColumnOption = propertiesOptions.find(
-    (property) => property.label === currentDatabase.pointsColumnName
+  const availableStatusOptions: DatabaseStatusOptions[] =
+    ticketStatusColumnProperty?.type === 'select'
+      ? ticketStatusColumnProperty.select.options.map((option) => ({
+          label: option.name,
+          value: option.id ?? '',
+          color: option.color ?? 'gray',
+        }))
+      : [];
+
+  const getAvailableStatusOptionIdFromIdOrName = (idOrName: string) =>
+    availableStatusOptions.find(
+      (option) => option.value === idOrName || option.label === idOrName
+    )?.value;
+
+  const statusColumnOption = getNotionDatabasePropertyByIdOrName(
+    databaseFromNotion.properties,
+    currentDatabase.statusColumnName
   );
 
-  const sprintColumnOption = propertiesOptions.find(
-    (property) => property.label === currentDatabase.sprintColumnName
+  const pointsColumnOption = getNotionDatabasePropertyByIdOrName(
+    databaseFromNotion.properties,
+    currentDatabase.pointsColumnName
   );
 
-  const sprintOptionType = sprintSelectTypeOptions.find(
-    (sprintSelectType) =>
-      sprintSelectType.value === currentDatabase.notionColumnType
+  const sprintColumnOption = getNotionDatabasePropertyByIdOrName(
+    databaseFromNotion.properties,
+    currentDatabase.sprintColumnName
   );
+
+  const parentRelationOption = getNotionDatabasePropertyByIdOrName(
+    databaseFromNotion.properties,
+    currentDatabase.parentRelationColumnName
+  );
+
+  const defaultUpdatedStatusMappings: DatabaseUpdateForm['updatedStatusMappings'] =
+    currentDatabase.notionStatusLinks.map((link) => {
+      const notionSelectId =
+        getAvailableStatusOptionIdFromIdOrName(
+          link.notionStatusId || link.notionStatusName
+        ) ?? null;
+      return {
+        statusLinkId: link.id,
+        notionSelectId,
+        notionSelectName: link.notionStatusName,
+        notionStatusColor: link.notionStatusColor,
+        status: link.status,
+        state: link.deletedAt ? 'deleted' : 'updated',
+        originalLink: link,
+      };
+    }) ?? [];
 
   const form = useForm<DatabaseUpdateForm>({
     defaultValues: {
-      ticketStatusId: statusColumnOption,
-      storyPointsId: pointsColumnOption,
-      sprintId: sprintColumnOption,
-      sprintSelectType: sprintOptionType,
+      statusColumnName: statusColumnOption?.id,
+      pointsColumnName: pointsColumnOption?.id,
+      sprintColumnName: sprintColumnOption?.id,
+      sprintSelectType: currentDatabase.notionColumnType,
+      parentRelationColumnName: parentRelationOption?.id,
+      updatedStatusMappings: defaultUpdatedStatusMappings,
     },
   });
 
   const onSubmit = async (formData: DatabaseUpdateForm) => {
     if (
-      !formData.ticketStatusId ||
-      !formData.storyPointsId ||
+      !formData.statusColumnName ||
+      !formData.pointsColumnName ||
       !formData.sprintSelectType ||
-      !formData.sprintId
+      !formData.sprintColumnName
     ) {
       toast.error('Some Fields Missing');
       return;
     }
 
+    const updatedStatusMappings: PutUpdateNotionDatabaseRequest['request']['updatedStatusMappings'] =
+      formData.updatedStatusMappings
+        .filter(
+          (status) => status.state === 'updated' || status.state === 'deleted'
+        )
+        .map((status) => {
+          const notionStatusOption = availableStatusOptions.find(
+            (option) => option.value === status.notionSelectId
+          );
+          return {
+            notionStatusLinkId: status.statusLinkId,
+            notionStatusId:
+              status.notionSelectId ?? status.originalLink.notionStatusId,
+            notionStatusName:
+              notionStatusOption?.label ?? status.originalLink.notionStatusName,
+            notionStatusColor: notionStatusOption?.color ?? 'gray',
+            status: status.status,
+            deleted: status.state === 'deleted',
+          };
+        });
+
+    const newStatusMappings: PutUpdateNotionDatabaseRequest['request']['newStatusMappings'] =
+      formData.updatedStatusMappings
+        .filter((status) => status.state === 'new')
+        .map((status) => {
+          const notionStatusOption = availableStatusOptions.find(
+            (option) => option.value === status.notionSelectId
+          );
+
+          if (!notionStatusOption || !status.notionSelectId) {
+            toast.error('Missing Notion Column');
+            throw new TypeError('Notion status option not found');
+          }
+
+          return {
+            notionStatusId: status.notionSelectId,
+            notionStatusName: notionStatusOption.label,
+            notionStatusColor: notionStatusOption.color,
+            status: status.status,
+          };
+        });
+
     const body: PutUpdateNotionDatabaseRequest['request'] = {
-      notionConnectionId: connection.id,
-      notionDatabaseId: currentDatabase.databaseId,
-      notionDatabaseName: currentDatabase.databaseName,
-      statusColumnName: formData.ticketStatusId.label,
-      pointsColumnName: formData.storyPointsId.label,
-      sprintColumnType: formData.sprintSelectType.value,
-      sprintColumnName: formData.sprintId.label,
-      parentRelationColumnName: formData.parentRelation?.label,
-      updatedStatusMappings: [], // TODO
+      statusColumnName: formData.statusColumnName,
+      pointsColumnName: formData.pointsColumnName,
+      sprintColumnType: formData.sprintSelectType,
+      sprintColumnName: formData.sprintColumnName,
+      parentRelationColumnName: formData.parentRelationColumnName,
+      updatedStatusMappings,
+      newStatusMappings,
     };
 
     const { error } = await apiPut<PutUpdateNotionDatabaseRequest>(
@@ -140,5 +201,6 @@ export const useUpdateNotionDatabase = (
   return {
     onSubmit: form.handleSubmit(onSubmit),
     form,
+    availableStatusOptions,
   };
 };

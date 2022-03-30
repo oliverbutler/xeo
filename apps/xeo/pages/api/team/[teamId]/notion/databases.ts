@@ -3,6 +3,7 @@ import {
   NotionColumnType,
   NotionConnection,
   NotionDatabase,
+  NotionStatusLink,
 } from '@prisma/client';
 import Joi from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -18,6 +19,7 @@ import {
   AvailableDatabasesFromNotion,
   fetchAvailableDatabasesFromNotion,
 } from 'utils/connections/notion/notion-client';
+import { prisma } from 'utils/db';
 import { getNotionConnectionForTeam } from 'utils/db/notionConnection/adapter';
 import {
   createNotionDatabase,
@@ -31,19 +33,24 @@ export type GetConnectionNotionDatabasesRequest = APIGetRequest<{
 
 export type PutUpdateNotionDatabaseRequest = APIRequest<
   {
-    notionConnectionId: string;
-    notionDatabaseId: string;
-    notionDatabaseName: string;
     pointsColumnName: string;
     statusColumnName: string;
     sprintColumnType: NotionColumnType;
     sprintColumnName: string;
     parentRelationColumnName: string | undefined;
     updatedStatusMappings: {
-      notionStatusId: string;
+      notionStatusLinkId: NotionStatusLink['id'];
       notionStatusName: string;
+      notionStatusId: string;
       notionStatusColor: string;
       status: BacklogStatus;
+      deleted: boolean;
+    }[];
+    newStatusMappings: {
+      status: BacklogStatus;
+      notionStatusName: string;
+      notionStatusId: string;
+      notionStatusColor: string;
     }[];
   },
   {
@@ -63,6 +70,7 @@ export type PostCreateNotionDatabaseRequest = APIRequest<
     parentRelationColumnName: string | undefined;
     statusMapping: {
       notionStatusName: string;
+      notionStatusId: string;
       notionStatusColor: string;
       status: BacklogStatus;
     }[];
@@ -87,6 +95,7 @@ const postSchema: PostCreateNotionDatabaseRequest['joiBodySchema'] = Joi.object(
     statusMapping: Joi.array().items(
       Joi.object({
         notionStatusName: Joi.string().required(),
+        notionStatusId: Joi.string().required(),
         notionStatusColor: Joi.string().required(),
         status: Joi.string()
           .valid(...Object.values(BacklogStatus))
@@ -97,9 +106,6 @@ const postSchema: PostCreateNotionDatabaseRequest['joiBodySchema'] = Joi.object(
 );
 
 const putSchema: PutUpdateNotionDatabaseRequest['joiBodySchema'] = Joi.object({
-  notionConnectionId: Joi.string().required(),
-  notionDatabaseId: Joi.string().required(),
-  notionDatabaseName: Joi.string().required(),
   pointsColumnName: Joi.string().required(),
   statusColumnName: Joi.string().required(),
   sprintColumnType: Joi.string()
@@ -109,12 +115,25 @@ const putSchema: PutUpdateNotionDatabaseRequest['joiBodySchema'] = Joi.object({
   parentRelationColumnName: Joi.string(),
   updatedStatusMappings: Joi.array().items(
     Joi.object({
-      notionStatusId: Joi.string().required(),
+      notionStatusLinkId: Joi.string().required(),
       notionStatusName: Joi.string().required(),
+      notionStatusId: Joi.string().required(),
       notionStatusColor: Joi.string().required(),
       status: Joi.string()
         .valid(...Object.values(BacklogStatus))
         .required(),
+      deleted: Joi.boolean().required(),
+    })
+  ),
+  newStatusMappings: Joi.array().items(
+    Joi.object({
+      status: Joi.string()
+
+        .valid(...Object.values(BacklogStatus))
+        .required(),
+      notionStatusName: Joi.string().required(),
+      notionStatusId: Joi.string().required(),
+      notionStatusColor: Joi.string().required(),
     })
   ),
 });
@@ -168,8 +187,6 @@ const getHandler = async (
     return apiError(res, { message: 'Notion connection not found' });
   }
 
-  // Now get the databases from Notion
-
   const databases = await fetchAvailableDatabasesFromNotion(
     notionConnection.accessToken
   );
@@ -208,7 +225,27 @@ const putHandler = async (
     return apiError(res, { message: error?.message });
   }
 
-  await updateNotionDatabase({ ...body, teamId });
+  const team = await prisma.team.findUnique({
+    where: { id: teamId },
+    include: {
+      notionDatabase: true,
+    },
+  });
+
+  if (!team) {
+    return apiError(res, { message: 'Team not found' });
+  }
+
+  if (!team.notionDatabase) {
+    return apiError(res, {
+      message: 'Notion database connection not found',
+    });
+  }
+
+  await updateNotionDatabase({
+    input: body,
+    notionDatabase: team.notionDatabase,
+  });
 
   return apiResponse<PutUpdateNotionDatabaseRequest>(res, {
     success: true,
