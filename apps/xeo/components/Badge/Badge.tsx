@@ -59,3 +59,25 @@ export const Badge: React.FunctionComponent<Props> = ({ variant, text }) => {
     </div>
   );
 };
+
+export const InlineBadge: React.FunctionComponent<Props> = ({
+  variant,
+  text,
+}) => {
+  const color = mapStatusToColor(variant);
+
+  return (
+    <span
+      className={classNames(
+        'rounded-full',
+        'px-2',
+        'py-1',
+        'font-semibold',
+        'w-fit',
+        color
+      )}
+    >
+      {text}
+    </span>
+  );
+};

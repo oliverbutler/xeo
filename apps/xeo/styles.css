@@ -7,6 +7,7 @@
   body {
     @apply dark:bg-dark-950;
     @apply accent-primary-300;
+    @apply scroll-smooth;
   }
 }
 

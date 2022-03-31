@@ -1,29 +1,29 @@
 import { Content } from 'components/Content';
 
 import {
-  CodeIcon,
+  SparklesIcon,
   LightningBoltIcon,
-  UserGroupIcon,
+  ChartBarIcon,
 } from '@heroicons/react/outline';
 
 export const MainPanel: React.FunctionComponent = () => {
   const PANELS = [
     {
-      title: 'Notion Integration',
-      text: 'Xeo works closely with the Notion API to provide a seamless experience for your team.',
-      icon: <CodeIcon width={50} height={50} className="text-dark-400" />,
+      title: 'Plan',
+      text: 'Plan sprints to give realistic estimates',
+      icon: <SparklesIcon width={50} height={50} className="text-dark-400" />,
     },
     {
-      title: 'View and Monitor',
-      text: 'Xeo automatically constructs burn down charts and provides a dashboard for your team.',
+      title: 'React to Problems',
+      text: 'React to ticket dependencies, and staff absences',
       icon: (
         <LightningBoltIcon width={50} height={50} className="text-dark-400" />
       ),
     },
     {
-      title: 'Designed for You',
-      text: 'Xeo was designed to work with existing databases, no template needed!',
-      icon: <UserGroupIcon width={50} height={50} className="text-dark-400" />,
+      title: 'Monitor Progress',
+      text: 'Track progress and velocity over time',
+      icon: <ChartBarIcon width={50} height={50} className="text-dark-400" />,
     },
   ];
 
