@@ -185,9 +185,6 @@ export const Sidebar: React.FunctionComponent = () => {
         <NavbarButton onClick={onMenuToggle} isOpened={menuShow} />
       </div>
       <nav className="bg-dark-900 dark:bg-dark-950 hidden md:flex w-72 text-white flex-col">
-        <div className="font-bold p-2 h-16 w-16">
-          <Logo className="text-white fill-white stroke-white" />
-        </div>
         <ul className="space-y-12 pl-0 grow">
           {navbarOptions.map((section) => (
             <NavbarSection key={section.title} {...section} />

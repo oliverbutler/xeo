@@ -11,6 +11,7 @@ import { IntlWrapper } from '@xeo/ui/lib/Wrappers/IntlWrapper';
 import { PrivateRoute } from 'components/PrivateRoute';
 import { SkeletonWrapper } from 'components/SkeletonWrapper/SkeletonWrapper';
 import { TeamContextProvider } from 'context/TeamContext';
+import { DefaultSeo } from 'next-seo';
 
 declare global {
   interface Window {
@@ -35,6 +36,32 @@ function CustomApp({
         <title>Xeo</title>
         <link rel="icon" href="/xeo.ico" />
       </Head>
+      <DefaultSeo
+        title={`Xeo`}
+        description={`Xeo (_zee-oh_) is a platform for agile teams using Notion to plan, track, and monitor team progress.`}
+        openGraph={{
+          title: 'Xeo',
+          description:
+            'Xeo (_zee-oh_) is a platform for agile teams using Notion to plan, track, and monitor team progress.',
+          images: [
+            {
+              url: 'https://xeo.sh/twitter_card.jpeg',
+              width: 800,
+              height: 418,
+              alt: 'Xeo Logo',
+              type: 'image/jpeg',
+            },
+          ],
+          type: 'website',
+          locale: 'en_GB',
+          url: 'https://xeo.sh',
+          site_name: 'Xeo',
+        }}
+        twitter={{
+          handle: '@_oliverbutler',
+          cardType: 'summary_large_image',
+        }}
+      />
       <main className="prose dark:prose-invert max-w-none">
         <IntlWrapper>
           <ThemeProvider attribute="class" defaultTheme="light">

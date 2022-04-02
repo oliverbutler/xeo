@@ -40,7 +40,7 @@ export const Showcase: React.FunctionComponent = () => {
               <Image
                 className="shadow-lg rounded-lg"
                 src={isDarkTheme ? xeoCapacityDark : xeoCapacity}
-                alt="Xeo Home Screen"
+                alt="Xeo Capacity SCreen"
                 placeholder="blur"
               />
             </div>
@@ -92,7 +92,7 @@ export const Showcase: React.FunctionComponent = () => {
               <Image
                 className="shadow-lg rounded-lg"
                 src={isDarkTheme ? xeoTeamDark : xeoTeam}
-                alt="Xeo Home Screen"
+                alt="Xeo Team Members"
                 placeholder="blur"
               />
             </div>

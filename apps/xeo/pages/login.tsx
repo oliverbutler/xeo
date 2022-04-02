@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { NextSeo } from 'next-seo';
 import Link from 'next/link';
 import Button from '@xeo/ui/lib/Button/Button';
+import { Logo } from 'components/Logo/Logo';
 
 export function Index() {
   const { push, query } = useRouter();
@@ -27,6 +28,9 @@ export function Index() {
     <div className="flex h-screen w-full items-center justify-center">
       <NextSeo title="Login" description="Login to Xeo" />
       <div className="dark:bg-dark-900 rounded-lg p-10 shadow-xl transition-all hover:shadow-2xl text-center">
+        <div className="w-48 h-48 mx-auto">
+          <Logo />
+        </div>
         <h1 className="mt-6">Sign in</h1>
 
         <p>
