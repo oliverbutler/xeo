@@ -109,7 +109,7 @@ export const Showcase: React.FunctionComponent = () => {
           Notion (with Xeo) for a teams from 3 to 15 members.
         </p>
 
-        <div className="max-w-full overflow-x-scroll">
+        <div className="max-w-full overflow-x-auto">
           <table className="my-12">
             <thead>
               <tr>
@@ -117,7 +117,7 @@ export const Showcase: React.FunctionComponent = () => {
                 <th className="text-2xl">Jira</th>
                 <th className="text-2xl">Trello</th>
                 <th className="text-2xl">Notion</th>
-                <th className="text-2xl">Notion (with Xeo)</th>
+                <th className="text-2xl">Xeo</th>
               </tr>
             </thead>
             <tbody>
