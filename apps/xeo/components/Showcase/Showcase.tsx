@@ -121,9 +121,16 @@ export const Showcase: React.FunctionComponent = () => {
           </thead>
           <tbody>
             <tr>
-              <td>Burn Down Charts</td>
-              <td>❌</td>
+              <td>Basic Down Charts</td>
               <td>✅</td>
+              <td>❌</td>
+              <td>❌</td>
+              <td>🌟</td>
+            </tr>
+            <tr>
+              <td>Advanced Burn Down Chart</td>
+              <td>❌</td>
+              <td>❌</td>
               <td>❌</td>
               <td>🌟</td>
             </tr>
@@ -168,6 +175,20 @@ export const Showcase: React.FunctionComponent = () => {
               <td>❌</td>
               <td>✅</td>
               <td>✅</td>
+            </tr>
+            <tr>
+              <td>User Interface</td>
+              <td>❌</td>
+              <td>✅</td>
+              <td>✅</td>
+              <td>✅</td>
+            </tr>
+            <tr>
+              <td>Self Hostable</td>
+              <td>✅</td>
+              <td>❌</td>
+              <td>❌</td>
+              <td>❌</td>
             </tr>
           </tbody>
           <tfoot>
