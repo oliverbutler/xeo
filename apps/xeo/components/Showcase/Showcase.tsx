@@ -109,95 +109,97 @@ export const Showcase: React.FunctionComponent = () => {
           Notion (with Xeo) for a teams from 3 to 15 members.
         </p>
 
-        <table className="my-12">
-          <thead>
-            <tr>
-              <th></th>
-              <th className="text-2xl">Jira</th>
-              <th className="text-2xl">Trello</th>
-              <th className="text-2xl">Notion</th>
-              <th className="text-2xl">Notion (with Xeo)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Basic Down Charts</td>
-              <td>✅</td>
-              <td>❌</td>
-              <td>❌</td>
-              <td>🌟</td>
-            </tr>
-            <tr>
-              <td>Advanced Burn Down Chart</td>
-              <td>❌</td>
-              <td>❌</td>
-              <td>❌</td>
-              <td>🌟</td>
-            </tr>
-            <tr>
-              <td>Team Documentation</td>
-              <td>❌</td>
-              <td>❌</td>
-              <td>🌟</td>
-              <td>🌟</td>
-            </tr>
-            <tr>
-              <td>Team Customisation</td>
-              <td>✅</td>
-              <td>❌</td>
-              <td>🌟</td>
-              <td>🌟</td>
-            </tr>
-            <tr>
-              <td>Sprint Planning (e.g. Developer Capacity Planning)</td>
-              <td>✅</td>
-              <td>❌</td>
-              <td>❌</td>
-              <td>🌟</td>
-            </tr>
-            <tr>
-              <td>Dependency Visualization</td>
-              <td>❌</td>
-              <td>❌</td>
-              <td>❌</td>
-              <td>🌟</td>
-            </tr>
-            <tr>
-              <td>Extensions/ Integrations</td>
-              <td>✅</td>
-              <td>✅</td>
-              <td>✅</td>
-              <td>✅</td>
-            </tr>
-            <tr>
-              <td>Project Visibility</td>
-              <td>✅</td>
-              <td>❌</td>
-              <td>✅</td>
-              <td>✅</td>
-            </tr>
-            <tr>
-              <td>User Interface</td>
-              <td>❌</td>
-              <td>✅</td>
-              <td>✅</td>
-              <td>✅</td>
-            </tr>
-            <tr>
-              <td>Self Hostable</td>
-              <td>✅</td>
-              <td>❌</td>
-              <td>❌</td>
-              <td>❌</td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <p className="text-sm text-dark-800 dark:text-dark-500 ">
-              This table is my own opinions having used all tools (as of March
-              2022)
-            </p>
-          </tfoot>
-        </table>
+        <div className="max-w-full overflow-x-scroll">
+          <table className="my-12">
+            <thead>
+              <tr>
+                <th></th>
+                <th className="text-2xl">Jira</th>
+                <th className="text-2xl">Trello</th>
+                <th className="text-2xl">Notion</th>
+                <th className="text-2xl">Notion (with Xeo)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Basic Down Charts</td>
+                <td>✅</td>
+                <td>❌</td>
+                <td>❌</td>
+                <td>🌟</td>
+              </tr>
+              <tr>
+                <td>Advanced Burn Down Chart</td>
+                <td>❌</td>
+                <td>❌</td>
+                <td>❌</td>
+                <td>🌟</td>
+              </tr>
+              <tr>
+                <td>Team Documentation</td>
+                <td>❌</td>
+                <td>❌</td>
+                <td>🌟</td>
+                <td>🌟</td>
+              </tr>
+              <tr>
+                <td>Team Customisation</td>
+                <td>✅</td>
+                <td>❌</td>
+                <td>🌟</td>
+                <td>🌟</td>
+              </tr>
+              <tr>
+                <td>Sprint Planning (e.g. Developer Capacity Planning)</td>
+                <td>✅</td>
+                <td>❌</td>
+                <td>❌</td>
+                <td>🌟</td>
+              </tr>
+              <tr>
+                <td>Dependency Visualization</td>
+                <td>❌</td>
+                <td>❌</td>
+                <td>❌</td>
+                <td>🌟</td>
+              </tr>
+              <tr>
+                <td>Extensions/ Integrations</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅</td>
+              </tr>
+              <tr>
+                <td>Project Visibility</td>
+                <td>✅</td>
+                <td>❌</td>
+                <td>✅</td>
+                <td>✅</td>
+              </tr>
+              <tr>
+                <td>User Interface</td>
+                <td>❌</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅</td>
+              </tr>
+              <tr>
+                <td>Self Hostable</td>
+                <td>✅</td>
+                <td>❌</td>
+                <td>❌</td>
+                <td>❌</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <p className="text-sm text-dark-800 dark:text-dark-500 ">
+                This table is my own opinions having used all tools (as of March
+                2022)
+              </p>
+            </tfoot>
+          </table>
+        </div>
       </div>
 
       <hr />
