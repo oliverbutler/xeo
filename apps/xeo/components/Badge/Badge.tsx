@@ -70,7 +70,7 @@ export const InlineBadge: React.FunctionComponent<Props> = ({
     <span
       className={classNames(
         'rounded-full',
-        'px-2',
+        'px-4',
         'py-1',
         'font-semibold',
         'w-fit',

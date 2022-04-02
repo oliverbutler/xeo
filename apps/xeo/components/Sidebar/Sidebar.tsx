@@ -8,6 +8,7 @@ import {
 import { Sprint, Team } from '@prisma/client';
 import { ConditionalWrapper } from '@xeo/ui/lib/ConditionalWrapper/ConditionalWrapper';
 import classNames from 'classnames';
+import { Logo } from 'components/Logo/Logo';
 import { UserMenu } from 'components/Sidebar/UserMenu/UserMenu';
 import { useCurrentTeam } from 'hooks/useCurrentTeam';
 import { useCurrentUser } from 'hooks/useCurrentUser';
@@ -184,9 +185,8 @@ export const Sidebar: React.FunctionComponent = () => {
         <NavbarButton onClick={onMenuToggle} isOpened={menuShow} />
       </div>
       <nav className="bg-dark-900 dark:bg-dark-950 hidden md:flex w-72 text-white flex-col">
-        <div className="font-bold flex flex-rows items-center p-4">
-          <Image src={xeoIcon} height={25} width={25} />
-          <span className="ml-2">Xeo</span>
+        <div className="font-bold p-2 h-16 w-16">
+          <Logo className="text-white fill-white stroke-white" />
         </div>
         <ul className="space-y-12 pl-0 grow">
           {navbarOptions.map((section) => (
