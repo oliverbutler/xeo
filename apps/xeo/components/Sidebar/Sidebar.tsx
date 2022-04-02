@@ -198,6 +198,7 @@ export const Sidebar: React.FunctionComponent = () => {
         </div>
       </nav>
       <div
+        style={{ zIndex: 100000 }}
         className={`fixed left-0 h-screen w-full transform overflow-auto bg-white duration-500 ease-in-out dark:bg-black md:hidden ${
           menuShow ? 'translate-x-0' : '-translate-x-full'
         } firefox:bg-opacity-100 dark:firefox:bg-opacity-100 bg-opacity-30 backdrop-blur-lg backdrop-saturate-150 backdrop-filter dark:bg-opacity-30`}
