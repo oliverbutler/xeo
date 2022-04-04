@@ -8,6 +8,8 @@ import xeoDep from 'public/xeo-dep.png';
 import xeoDepDark from 'public/xeo-dep-dark.png';
 import xeoTeam from 'public/xeo-team.png';
 import xeoTeamDark from 'public/xeo-team-dark.png';
+import xeoBdc from 'public/xeo-bdc.png';
+import xeoBdcDark from 'public/xeo-bdc-dark.png';
 import { Content } from 'components/Content';
 import { Button, ButtonColour } from '@xeo/ui/lib/Button/Button';
 import { InlineBadge } from 'components/Badge/Badge';
@@ -23,6 +25,37 @@ export const Showcase: React.FunctionComponent = () => {
       <div className="py-24">
         <div
           className={classNames(
+            'flex  mt-0 items-center gap-24 text-center md:text-left flex-col-reverse md:flex-row'
+          )}
+        >
+          <div className="flex flex-col">
+            <div className="relative">
+              <div className="absolute -inset-1 bg-gradient-to-r to-secondary-400 from-primary-400 rounded-lg blur-2xl opacity-30"></div>
+              <Image
+                className="shadow-lg rounded-lg"
+                src={isDarkTheme ? xeoBdcDark : xeoBdc}
+                alt="Xeo Home Screen"
+                placeholder="blur"
+              />
+            </div>
+          </div>
+          <div className="flex flex-col w-full justify-center overflow-y-hidden my-8 md:my-16">
+            <h1 className="my-4">Monitor and React to Problems</h1>
+            <p className="">
+              Xeo automatically generates an interactive Burn Down Chart which
+              is a visual representation of the teams progress.
+            </p>
+            <p>
+              Each day, teams can then discuss their progress, and react to
+              delays by solving problems and unblocking dependencies
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="py-24">
+        <div
+          className={classNames(
             'flex  mt-0 items-center gap-24 text-center md:text-left flex-col md:flex-row'
           )}
         >
@@ -30,8 +63,9 @@ export const Showcase: React.FunctionComponent = () => {
             <h1 className="my-4">Adapts to your Team</h1>
             <p className="">
               S*** happens, we get it. So we made Xeo flexible enough to adjust
-              to your team - you are able to adjust the speed of each developer
-              every day, and see this affect your burn down chart.
+              to your agile scrum team - you are able to adjust the speed of
+              each developer every day, and see this affect your burn down
+              chart.
             </p>
           </div>
           <div className="flex flex-col">
@@ -70,6 +104,11 @@ export const Showcase: React.FunctionComponent = () => {
               A recurring issue some teams face is tracking ticket dependencies,
               with Xeo we let you automate the process in a visual pleasing way.
             </p>
+            <p>
+              During planning your team can analyse the dependencies of tickets,
+              ensuring that there are enough parallel tracks of work for the
+              developers.
+            </p>
           </div>
         </div>
       </div>
@@ -80,10 +119,19 @@ export const Showcase: React.FunctionComponent = () => {
           )}
         >
           <div className="flex flex-col w-full justify-center overflow-y-hidden my-8 md:my-16">
-            <h1 className="my-4">Everyone is Welcome</h1>
-            <p className="">
-              Xeo was made to not just give visibility to your team, but also
-              any external developers or stakeholders.
+            <h1 className="my-4">All Teams Welcome</h1>
+
+            <p>
+              Xeo and the provided template give a great starting point for
+              teams wishing to utilise agile principles to improve productivity
+              and reduce waste and risk.
+            </p>
+            <p>
+              If you're new to Scrum I'd recommend reading the{' '}
+              <a href="https://www.scrum.org/resources/scrum-guide">
+                Scrum Guide{' '}
+              </a>{' '}
+              and reading below about the other tools you can utilise.
             </p>
           </div>
           <div className="flex flex-col">
@@ -104,9 +152,10 @@ export const Showcase: React.FunctionComponent = () => {
 
       <div className="flex flex-col items-center mt-24">
         <h1>Comparing Jira, Trello, and Xeo</h1>
-        <p>
-          Below is a comparison from my findings of using Jira, Trello, and
-          Notion (with Xeo) for a teams from 3 to 15 members.
+        <p className="text-center">
+          I've used lots of Scrum tools, some I've loved, some I've hated. Below
+          is a summary table of the gap Xeo fills in the battle between Jira,
+          Trello, and Notion as agile Scrum tools.
         </p>
 
         <div className="max-w-full overflow-x-auto">
@@ -150,7 +199,7 @@ export const Showcase: React.FunctionComponent = () => {
                 <td>🌟</td>
               </tr>
               <tr>
-                <td>Sprint Planning (e.g. Developer Capacity Planning)</td>
+                <td>Sprint/Capacity Planning</td>
                 <td>✅</td>
                 <td>❌</td>
                 <td>❌</td>
@@ -192,13 +241,11 @@ export const Showcase: React.FunctionComponent = () => {
                 <td>❌</td>
               </tr>
             </tbody>
-            <tfoot>
-              <p className="text-sm text-dark-800 dark:text-dark-500 ">
-                This table is my own opinions having used all tools (as of March
-                2022)
-              </p>
-            </tfoot>
           </table>
+          <p className="text-sm text-dark-800 dark:text-dark-500 ">
+            This table is my own opinions having used all tools (as of March
+            2022)
+          </p>
         </div>
       </div>
 
@@ -206,19 +253,21 @@ export const Showcase: React.FunctionComponent = () => {
 
       <div className="flex flex-col items-center mt-24">
         <h1 id="read-more">
-          Get the Notion Template <InlineBadge variant="success" text="FREE" />
+          Get the Notion Template <InlineBadge variant="success" text="Free" />
         </h1>
-        <p>
-          You can use Xeo with (almost) any Notion project board, we made our
-          own template you can use to get going instantly.
+        <p className="text-center">
+          At Xeo we believe good templates should be available to everyone,
+          we've designed a starter agile Scrum template to get your teams
+          started with Notion Project boards, while giving advanced features and
+          giving all product stakeholders visibility.
         </p>
-        <ul>
-          <li>Sprint View (Kanban View)</li>
-          <li>Backlog View</li>
-          <li>Technical and Backlog Refinement View</li>
-          <li>Milestone and Epic View</li>
-          <li>Sprint Planning View</li>
-        </ul>
+        <p>
+          Some features of the template are as follows:{' '}
+          <b>Sprint/Kanban View</b>, <b>Backlog View</b>,{' '}
+          <b>Technical and Backlog Refinement Views</b>, <b>Milestones</b>,{' '}
+          <b>Epics</b>, <b>Sprint Planning Views</b>.
+        </p>
+
         <Button
           href="https://xeo.sh/template"
           className="my-12"
@@ -258,9 +307,11 @@ export const Showcase: React.FunctionComponent = () => {
 
       <div className="flex flex-col items-center my-24">
         <h1>Convinced Yet?</h1>
-        <p>
-          Give the template a shot, see what your team thinks, then sign up for
-          Xeo!
+        <p className="text-center">
+          We've used Xeo on 25+ teams across 3+ companies so far, this is a
+          product we're proud of and hopefully it will help your team. If you're
+          interested in using Xeo, please get get started or get in touch with
+          me.
         </p>
         <Button
           className="mx-auto "

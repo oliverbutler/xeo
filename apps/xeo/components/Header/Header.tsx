@@ -32,7 +32,8 @@ export const Header: React.FunctionComponent = () => {
             </h1>
             <p className="leading-normal text-base lg:text-xl mb-8dark:text-white">
               Xeo (_zee-oh_) is a platform which integrates with Notion for
-              agile scrum teams to plan, track, and monitor team progress.
+              agile Scrum teams to improve productivity and reduce delays
+              through providing planning, monitoring, and analysis tools.
             </p>
             <div className="flex flex-row mx-auto lg:mx-0 gap-4">
               <Button
