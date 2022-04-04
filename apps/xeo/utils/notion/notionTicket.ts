@@ -34,6 +34,7 @@ export const getNotionDatabasePropertyByIdOrName = (
 
 export type NotionDatabaseItemProperty = NotionDatabaseItem['properties'][0];
 
+// One without name
 export const getNotionDatabaseItemPropertyByIdOrName = (
   properties:
     | NotionDatabaseItemProperty[]

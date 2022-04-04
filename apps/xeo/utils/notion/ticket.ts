@@ -2,6 +2,10 @@ import { Client } from '@notionhq/client';
 import { NotionConnection, NotionDatabase, Sprint } from '@prisma/client';
 import { logger } from 'utils/api';
 import { isNotionDatabaseItem } from './backlog';
+import {
+  getNotionDatabaseItemPropertyByIdOrName,
+  getNotionDatabasePropertyByIdOrName,
+} from './notionTicket';
 
 export const createLinkBetweenTickets = async (
   childTicketId: string,
@@ -25,10 +29,12 @@ export const createLinkBetweenTickets = async (
     throw new Error('Not a notion database item');
   }
 
-  const parentRelationProperty =
-    currentNotionPage.properties[parentRelationColumnName];
+  const parentRelationProperty = getNotionDatabaseItemPropertyByIdOrName(
+    currentNotionPage.properties,
+    parentRelationColumnName
+  );
 
-  if (parentRelationProperty.type !== 'relation') {
+  if (!parentRelationProperty || parentRelationProperty.type !== 'relation') {
     throw new Error(
       `Parent relation column "${parentRelationColumnName}" is not a relation`
     );
@@ -81,10 +87,12 @@ export const removeLinkBetweenTickets = async (
     throw new Error('Not a notion database item');
   }
 
-  const parentRelationProperty =
-    currentNotionPage.properties[parentRelationColumnName];
+  const parentRelationProperty = getNotionDatabaseItemPropertyByIdOrName(
+    currentNotionPage.properties,
+    parentRelationColumnName
+  );
 
-  if (parentRelationProperty.type !== 'relation') {
+  if (!parentRelationProperty || parentRelationProperty.type !== 'relation') {
     throw new Error(
       `Parent relation column "${parentRelationColumnName}" is not a relation`
     );
