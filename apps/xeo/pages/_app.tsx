@@ -37,12 +37,9 @@ function CustomApp({
         <link rel="icon" href="/xeo.ico" />
       </Head>
       <DefaultSeo
-        title={`Xeo`}
-        description={`Xeo (_zee-oh_) is a platform for agile teams using Notion to plan, track, and monitor team progress.`}
         openGraph={{
-          title: 'Xeo',
-          description:
-            'Xeo (_zee-oh_) is a platform for agile teams using Notion to plan, track, and monitor team progress.',
+          title: `Xeo - Notion Integration For Agile Scrum Teams`,
+          description: `Xeo enables agile scrum teams to: plan sprints, create embeddable burn down charts, and ticket dependency graphs. Notion Integration with your teams.`,
           images: [
             {
               url: 'https://xeo.sh/twitter_card.jpeg',
@@ -55,10 +52,9 @@ function CustomApp({
           type: 'website',
           locale: 'en_GB',
           url: 'https://xeo.sh',
-          site_name: 'Xeo',
         }}
         twitter={{
-          handle: '@_oliverbutler',
+          handle: '@xeo_scrum',
           cardType: 'summary_large_image',
         }}
       />
