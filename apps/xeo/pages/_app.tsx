@@ -37,6 +37,8 @@ function CustomApp({
         <link rel="icon" href="/xeo.ico" />
       </Head>
       <DefaultSeo
+        title={`Xeo - Notion Integration For Agile Scrum Teams`}
+        description={`Xeo enables agile scrum teams to: plan sprints, create embeddable burn down charts, and ticket dependency graphs. Notion Integration with your teams.`}
         openGraph={{
           title: `Xeo - Notion Integration For Agile Scrum Teams`,
           description: `Xeo enables agile scrum teams to: plan sprints, create embeddable burn down charts, and ticket dependency graphs. Notion Integration with your teams.`,
