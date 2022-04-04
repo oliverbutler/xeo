@@ -31,9 +31,8 @@ export const Header: React.FunctionComponent = () => {
               Redefine Scrum - with Xeo and Notion
             </h1>
             <p className="leading-normal text-base lg:text-xl mb-8dark:text-white">
-              Xeo (_zee-oh_) enables agile scrum teams to: plan sprints, create
-              embeddable burn down charts, and ticket dependency graphs. Notion
-              Integration with your teams.
+              Xeo (_zee-oh_) is a platform which integrates with Notion for
+              agile scrum teams to plan, track, and monitor team progress.
             </p>
             <div className="flex flex-row mx-auto lg:mx-0 gap-4">
               <Button
