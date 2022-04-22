@@ -73,7 +73,7 @@ model UserMetadata {
   role          UserRole
   preferredName String
   user          User     @relation(fields: [userId], references: [id], onDelete: NoAction)
-  userId        String
+  userId        String   @unique
   defaultTeam   Team?    @relation(fields: [defaultTeamId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   defaultTeamId String?
   //
@@ -148,7 +148,7 @@ model SprintStatusHistory {
 
 model DependencyGraph {
   id              String @id @default(cuid())
-  sprintId        String
+  sprintId        String @unique
   sprint          Sprint @relation(fields: [sprintId], references: [id], onDelete: NoAction)
   ticketPositions Json
 }
@@ -199,7 +199,7 @@ model Team {
 model NotionConnection {
   id                  String          @id @default(cuid())
   team                Team            @relation(fields: [teamId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  teamId              String
+  teamId              String          @unique
   // Notion Connection
   accessToken         String
   notionWorkspaceId   String
@@ -223,19 +223,35 @@ model NotionDatabase {
   statusColumnName         String
   sprintColumnName         String
   parentRelationColumnName String?
+  epicRelationColumnId     String?
   notionColumnType         NotionColumnType
   notionStatusLinks        NotionStatusLink[]
+  notionEpics              NotionEpic[]
   // Relations
   notionConnection         NotionConnection   @relation(fields: [notionConnectionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  notionConnectionId       String
+  notionConnectionId       String             @unique
   team                     Team               @relation(fields: [teamId], references: [id], onDelete: NoAction)
-  teamId                   String
+  teamId                   String             @unique
   //
   createdAt                DateTime           @default(now())
   updatedAt                DateTime           @default(now()) @updatedAt
 
   @@index([notionConnectionId])
   @@index([teamId])
+}
+
+model NotionEpic {
+  id               String         @id @default(cuid())
+  notionEpicIcon   String
+  notionEpicName   String
+  notionEpicId     String
+  notionDatabase   NotionDatabase @relation(fields: [notionDatabaseId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  notionDatabaseId String
+  //
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @default(now()) @updatedAt
+
+  @@index([notionDatabaseId])
 }
 
 enum BacklogStatus {

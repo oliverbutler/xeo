@@ -31,6 +31,7 @@ export type UpdateNotionDatabase = {
   sprintColumnType: NotionColumnType;
   sprintColumnName: string;
   parentRelationColumnName: string | undefined;
+  epicRelationColumnId: string | undefined;
   updatedStatusMappings: {
     notionStatusLinkId: NotionStatusLink['id'];
     notionStatusName: string;
@@ -122,6 +123,7 @@ export const updateNotionDatabase = async ({
         notionColumnType: input.sprintColumnType,
         sprintColumnName: input.sprintColumnName,
         parentRelationColumnName: input.parentRelationColumnName,
+        epicRelationColumnId: input.epicRelationColumnId,
       },
     });
     return true;

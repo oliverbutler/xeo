@@ -34,7 +34,7 @@ export const UpdateNotionDatabaseForm: React.FunctionComponent<Props> = ({
     <form onSubmit={onSubmit}>
       <div className="m-10 flex max-w-none flex-col items-center justify-center">
         <div className="flex flex-col">
-          <h2>Update Database</h2>
+          <h2>Update {database.databaseName}</h2>
           <SelectColumns form={form} database={databaseFromNotion} />
           <SelectStatusMapping
             availableStatusOptions={availableStatusOptions}

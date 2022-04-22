@@ -39,6 +39,10 @@ export function Index() {
             ),
           },
           {
+            label: 'Notion',
+            content: <></>,
+          },
+          {
             label: 'Members',
             content: <TeamMembers team={team} />,
           },
