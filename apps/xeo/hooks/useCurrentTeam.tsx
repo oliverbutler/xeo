@@ -3,7 +3,10 @@ import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 import { GetTeamWithMembersAndSprintsRequest } from 'pages/api/team/[teamId]';
 import { useContext, useEffect } from 'react';
+import { mutate } from 'swr';
 import { useQuery } from 'utils/api';
+
+export const refetchTeam = (teamId: string) => mutate(`/api/team/${teamId}`);
 
 export const useCurrentTeam = () => {
   const { query } = useRouter();
@@ -52,6 +55,10 @@ export const useCurrentTeam = () => {
 
   const team = data?.team;
 
+  const refetchCurrentTeam = async () => {
+    currentTeamId && refetchTeam(currentTeamId);
+  };
+
   return {
     team,
     error,
@@ -61,5 +68,6 @@ export const useCurrentTeam = () => {
     setCurrentSprintId,
     activeSprint,
     sprintsOldestFirst,
+    refetchCurrentTeam,
   };
 };

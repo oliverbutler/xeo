@@ -6,6 +6,13 @@ interface Props {
   size?: number;
 }
 
+export const notionLogoToString = (iconString: string | undefined | null) => {
+  if (!iconString || iconString.startsWith('http')) {
+    return '';
+  }
+  return iconString;
+};
+
 export const NotionLogoRenderer: React.FunctionComponent<Props> = ({
   iconString,
   size,

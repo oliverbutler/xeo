@@ -6,6 +6,7 @@ import { BaseListboxOption, Listbox } from '@xeo/ui/lib/Listbox/Listbox';
 import { useCurrentTeam } from 'hooks/useCurrentTeam';
 import { Badge } from 'components/Badge/Badge';
 import dayjs from 'dayjs';
+import { useRouter } from 'next/router';
 
 var isBetween = require('dayjs/plugin/isBetween');
 dayjs.extend(isBetween);
@@ -49,6 +50,7 @@ export const TeamSelector: React.FunctionComponent = () => {
   const { me, updateUserMetadata } = useCurrentUser();
   const { currentSprint, setCurrentSprintId, sprintsOldestFirst } =
     useCurrentTeam();
+  const router = useRouter();
 
   const teamOptions: TeamSelectOption[] =
     data?.teams.map((team) => ({
@@ -80,7 +82,7 @@ export const TeamSelector: React.FunctionComponent = () => {
       defaultTeamId: option.value.id,
     });
 
-    window.location.reload();
+    router.push('/');
   };
 
   const handleSprintChange = async (option: SprintSelectOption) => {

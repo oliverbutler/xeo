@@ -242,11 +242,12 @@ model NotionDatabase {
 
 model NotionEpic {
   id               String         @id @default(cuid())
-  notionEpicIcon   String
+  notionEpicIcon   String?
   notionEpicName   String
   notionEpicId     String
   notionDatabase   NotionDatabase @relation(fields: [notionDatabaseId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   notionDatabaseId String
+  active           Boolean        @default(true)
   //
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @default(now()) @updatedAt

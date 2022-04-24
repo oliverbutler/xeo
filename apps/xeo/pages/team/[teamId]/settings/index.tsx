@@ -6,6 +6,7 @@ import { useCurrentTeam } from 'hooks/useCurrentTeam';
 import { useCurrentUser } from 'hooks/useCurrentUser';
 import { TeamMember } from '@prisma/client';
 import { TeamSettingsMember } from 'components/Team/TeamSettings/TeamSettingsMember';
+import { EpicSettings } from 'components/Epic/EpicSettings';
 
 export function Index() {
   const { team } = useCurrentTeam();
@@ -40,7 +41,7 @@ export function Index() {
           },
           {
             label: 'Notion',
-            content: <></>,
+            content: <EpicSettings />,
           },
           {
             label: 'Members',

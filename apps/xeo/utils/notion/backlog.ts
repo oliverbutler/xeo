@@ -248,7 +248,7 @@ export const getAvailableColumnOptions = async ({
   searchString: string;
 }): Promise<{
   type: NotionColumnType;
-  options: { label: string; value: string }[];
+  options: { label: string; value: string; icon: string | null }[];
 }> => {
   const notion = new Client({ auth: accessToken });
 
@@ -273,6 +273,7 @@ export const getAvailableColumnOptions = async ({
       options: column.select.options.map((option) => ({
         label: option.name,
         value: option.name, // Notion uses the name "PEX 22-04" as the properties key
+        icon: null,
       })),
     };
   }
@@ -283,6 +284,7 @@ export const getAvailableColumnOptions = async ({
       options: column.multi_select.options.map((option) => ({
         label: option.name,
         value: option.name, // Notion uses the name "PEX 22-04" as the properties key
+        icon: null,
       })),
     };
   }
@@ -313,9 +315,19 @@ export const getAvailableColumnOptions = async ({
       (p) => p.type === 'title'
     );
 
-    return titleColumn?.type === 'title' && titleColumn.title.length > 0
-      ? { label: titleColumn.title[0].plain_text, value: result.id }
-      : null;
+    const titleValue =
+      titleColumn?.type === 'title'
+        ? titleColumn.title.reduce(
+            (acc, section) => acc + section.plain_text,
+            ''
+          )
+        : '';
+
+    return {
+      label: titleValue,
+      value: result.id,
+      icon: getIconFromNotionPage(result),
+    };
   });
 
   return {
