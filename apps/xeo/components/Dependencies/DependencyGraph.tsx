@@ -1,9 +1,10 @@
+import { Loader } from '@xeo/ui/lib/Animate/Loader/Loader';
+import { useDebounce } from '@xeo/ui/hooks/useDebounce';
 import Button, { ButtonColour } from '@xeo/ui/lib/Button/Button';
 import { isNotNullOrUndefined } from '@xeo/utils';
 import { TicketNode } from 'components/Dependencies/TicketNode';
 import { PageHeader } from 'components/PageHeader/PageHeader';
 import { useCurrentTeam } from 'hooks/useCurrentTeam';
-import { PutUpdateSprintDependencies } from 'pages/api/team/[teamId]/sprint/[sprintId]/dependencies';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import ReactFlow, {
   addEdge,
@@ -18,8 +19,6 @@ import ReactFlow, {
   NodeChange,
 } from 'react-flow-renderer';
 import { toast } from 'react-toastify';
-import { mutate } from 'swr';
-import { apiPut } from 'utils/api';
 import { DependencyPosition } from 'utils/db/sprint/adapter';
 import { Ticket } from 'utils/notion/backlog';
 import { useTicketNodeLinks } from './useTicketNodeLinks';
@@ -27,11 +26,15 @@ import { useTicketNodeLinks } from './useTicketNodeLinks';
 interface Props {
   tickets: Ticket[];
   positions: DependencyPosition[];
+  saveCallback: ({ nodes }: { nodes: Node[] }) => void;
+  refreshTicketsCallback: () => void;
 }
 
 export const DependencyGraph: React.FunctionComponent<Props> = ({
   tickets,
   positions,
+  saveCallback,
+  refreshTicketsCallback,
 }) => {
   const { currentTeamId, currentSprint } = useCurrentTeam();
   const { linkTickets, unlinkTickets } = useTicketNodeLinks(
@@ -42,25 +45,27 @@ export const DependencyGraph: React.FunctionComponent<Props> = ({
   const [edges, setEdges] = useState<Edge[]>([]);
 
   const saveNodesToState = useCallback(
-    async (nodes: Node[]) => {
-      const dependencies = nodes.map((node) => ({
-        id: node.id,
-        position: node.position,
-      }));
-      const { data, error } = await apiPut<PutUpdateSprintDependencies>(
-        `/api/team/${currentTeamId}/sprint/${currentSprint?.id}/dependencies`,
-        { dependencies }
-      );
-
-      if (error) {
-        toast.error(error.body?.message ?? error.generic);
-        return;
-      }
-
-      toast.success('Dependencies saved');
-    },
+    async (nodes: Node[]) => saveCallback({ nodes }),
     [currentSprint, currentTeamId]
   );
+
+  const debouncedNodes = useDebounce(nodes, 500);
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [hasUserTouchedANode, setHasUserTouchedANode] = useState(false);
+
+  const handleOnNodeChange = async () => {
+    setIsLoading(true);
+    await saveNodesToState(debouncedNodes);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    if (debouncedNodes && hasUserTouchedANode) {
+      handleOnNodeChange();
+    }
+  }, [debouncedNodes]);
 
   useEffect(() => {
     const newNodes: Node[] = tickets.map((ticket) => {
@@ -136,25 +141,17 @@ export const DependencyGraph: React.FunctionComponent<Props> = ({
   return (
     <>
       <PageHeader
-        title={`Dependency Graph (${currentSprint?.name})`}
+        title={`Dependency Graph`}
+        subtitle="Click refresh to fetch tickets from Notion"
         rightContent={
           <div className="flex flex-row items-center space-x-2">
+            {isLoading ? <Loader /> : null}
             <Button
-              onClick={() =>
-                mutate(
-                  `/api/team/${currentTeamId}/sprint/${currentSprint?.id}/tickets`
-                )
-              }
+              onClick={refreshTicketsCallback}
               colour={ButtonColour.Secondary}
               variation={'tertiary'}
             >
-              Update From Notion
-            </Button>
-            <Button
-              onClick={() => saveNodesToState(nodes)}
-              variation={'tertiary'}
-            >
-              Save Positions
+              Refresh
             </Button>
           </div>
         }
@@ -168,6 +165,7 @@ export const DependencyGraph: React.FunctionComponent<Props> = ({
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           onEdgesDelete={onEdgesDelete}
+          onNodeDragStart={() => setHasUserTouchedANode(true)}
           fitView
           minZoom={0.1}
         >

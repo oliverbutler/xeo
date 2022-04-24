@@ -10,6 +10,7 @@ import {
   NotionStatusLink,
   Sprint,
   NotionDatabase,
+  NotionEpic,
 } from '@prisma/client';
 import { logger } from 'utils/api';
 import { performance } from 'perf_hooks';
@@ -177,7 +178,7 @@ const getNotionFilterForNotionColumnType = (
   }
 };
 
-export const getProductBacklogForSprint = async ({
+export const getNotionTicketsForSprint = async ({
   notionDatabase,
   notionConnection,
   sprint,
@@ -234,6 +235,72 @@ export const getProductBacklogForSprint = async ({
   }
 };
 
+export const getNotionTicketsInEpic = async ({
+  notionDatabase,
+  notionConnection,
+  notionEpic: notionEpic,
+  notionStatusLinks,
+}: {
+  notionDatabase: NotionDatabase;
+  notionConnection: NotionConnection;
+  notionEpic: NotionEpic;
+  notionStatusLinks: NotionStatusLink[];
+}): Promise<ProductBacklog> => {
+  const notion = new Client({ auth: notionConnection.accessToken });
+
+  const startTime = performance.now();
+  logger.info(
+    `getNotionTicketsInEpic > Query Notion for epic "${notionEpic.notionEpicId}" in db ${notionDatabase.databaseName}`
+  );
+
+  if (!notionDatabase.epicRelationColumnId) {
+    throw new Error('No Epic relation column found in Database');
+  }
+
+  const filter = {
+    property: notionDatabase.epicRelationColumnId,
+    relation: {
+      contains: notionEpic.notionEpicId,
+    },
+  };
+
+  try {
+    const databaseResponse = await notion.databases.query({
+      database_id: notionDatabase.databaseId,
+      filter,
+    });
+
+    const endTime = performance.now();
+    logger.info(
+      `getNotionTicketsInEpic > Successfully queried (${
+        endTime - startTime
+      }ms) Notion for "${notionEpic.notionEpicId}" in db ${
+        notionDatabase.databaseName
+      }`
+    );
+
+    const tickets = databaseResponse.results.map((object) =>
+      getTicketFromNotionObject({
+        notionDatabase,
+        page: object,
+        notionStatusLinks,
+      })
+    );
+
+    return {
+      tickets,
+    };
+  } catch (error) {
+    logger.error(
+      `getNotionTicketsInEpic > Failed to query Notion for "${notionEpic.notionEpicId}" in db ${notionDatabase.databaseName}`,
+      error
+    );
+    throw new Error(
+      'Failed to query Notion for your Backlog, please try again later'
+    );
+  }
+};
+
 export type NotionAPIColumnType = GetDatabaseResponse['properties'][0]['type'];
 
 export const getAvailableColumnOptions = async ({
@@ -248,7 +315,7 @@ export const getAvailableColumnOptions = async ({
   searchString: string;
 }): Promise<{
   type: NotionColumnType;
-  options: { label: string; value: string }[];
+  options: { label: string; value: string; icon: string | null }[];
 }> => {
   const notion = new Client({ auth: accessToken });
 
@@ -273,6 +340,7 @@ export const getAvailableColumnOptions = async ({
       options: column.select.options.map((option) => ({
         label: option.name,
         value: option.name, // Notion uses the name "PEX 22-04" as the properties key
+        icon: null,
       })),
     };
   }
@@ -283,6 +351,7 @@ export const getAvailableColumnOptions = async ({
       options: column.multi_select.options.map((option) => ({
         label: option.name,
         value: option.name, // Notion uses the name "PEX 22-04" as the properties key
+        icon: null,
       })),
     };
   }
@@ -313,9 +382,19 @@ export const getAvailableColumnOptions = async ({
       (p) => p.type === 'title'
     );
 
-    return titleColumn?.type === 'title' && titleColumn.title.length > 0
-      ? { label: titleColumn.title[0].plain_text, value: result.id }
-      : null;
+    const titleValue =
+      titleColumn?.type === 'title'
+        ? titleColumn.title.reduce(
+            (acc, section) => acc + section.plain_text,
+            ''
+          )
+        : '';
+
+    return {
+      label: titleValue,
+      value: result.id,
+      icon: getIconFromNotionPage(result),
+    };
   });
 
   return {
@@ -357,11 +436,63 @@ export const getAllTicketsInSprint = async (
     throw new Error('Team has no Notion connection and Database');
   }
 
-  const { tickets } = await getProductBacklogForSprint({
+  const { tickets } = await getNotionTicketsForSprint({
     notionConnection: sprint.team.notionConnection,
     notionDatabase: sprint.team.notionDatabase,
     sprint,
     notionStatusLinks: sprint.team.notionDatabase.notionStatusLinks,
+  });
+
+  return tickets;
+};
+
+export const getAllTicketsInEpic = async (
+  epicId: string
+): Promise<Ticket[]> => {
+  const notionEpic = await prisma.notionEpic.findUnique({
+    where: {
+      id: epicId,
+    },
+    include: {
+      notionDatabase: {
+        include: {
+          team: {
+            select: {
+              notionConnection: true,
+              notionDatabase: {
+                include: {
+                  notionStatusLinks: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!notionEpic) {
+    logger.error('updateEpicHistoryIfChanged > Epic not found');
+    throw new Error('Epic not found');
+  }
+
+  if (
+    !notionEpic?.notionDatabase ||
+    !notionEpic.notionDatabase?.team?.notionConnection ||
+    !notionEpic.notionDatabase.team.notionDatabase?.notionStatusLinks
+  ) {
+    logger.error(
+      'updateEpicHistoryIfChanged > Team has no Notion connection and Database'
+    );
+    throw new Error('Team has no Notion connection and Database');
+  }
+
+  const { tickets } = await getNotionTicketsInEpic({
+    notionConnection: notionEpic.notionDatabase.team.notionConnection,
+    notionDatabase: notionEpic.notionDatabase.team.notionDatabase,
+    notionEpic,
+    notionStatusLinks:
+      notionEpic.notionDatabase.team.notionDatabase.notionStatusLinks,
   });
 
   return tickets;

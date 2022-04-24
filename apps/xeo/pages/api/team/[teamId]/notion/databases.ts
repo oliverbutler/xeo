@@ -38,6 +38,7 @@ export type PutUpdateNotionDatabaseRequest = APIRequest<
     sprintColumnType: NotionColumnType;
     sprintColumnName: string;
     parentRelationColumnName: string | undefined;
+    epicRelationColumnId: string | undefined;
     updatedStatusMappings: {
       notionStatusLinkId: NotionStatusLink['id'];
       notionStatusName: string;
@@ -113,6 +114,7 @@ const putSchema: PutUpdateNotionDatabaseRequest['joiBodySchema'] = Joi.object({
     .required(),
   sprintColumnName: Joi.string().required(),
   parentRelationColumnName: Joi.string(),
+  epicRelationColumnId: Joi.string(),
   updatedStatusMappings: Joi.array().items(
     Joi.object({
       notionStatusLinkId: Joi.string().required(),

@@ -4,8 +4,8 @@ import { TabLayout } from 'components/PageLayouts/TabLayout/TabLayout';
 import { TeamSettings } from 'components/Team/TeamSettings/TeamSettings';
 import { useCurrentTeam } from 'hooks/useCurrentTeam';
 import { useCurrentUser } from 'hooks/useCurrentUser';
-import { TeamMember } from '@prisma/client';
-import { TeamSettingsMember } from 'components/Team/TeamSettings/TeamSettingsMember';
+import { TeamNotionSettings } from 'components/Team/TeamSettings/TeamNotionSettings';
+import { CentredLoader } from '@xeo/ui/lib/Animate/CentredLoader/CentredLoader';
 
 export function Index() {
   const { team } = useCurrentTeam();
@@ -16,7 +16,7 @@ export function Index() {
   );
 
   if (!team) {
-    return <div>Loading</div>;
+    return <CentredLoader />;
   }
 
   const isUserOnlyMember = currentUserMember?.role === 'MEMBER';
@@ -28,15 +28,17 @@ export function Index() {
         subtitle="Add members, connect to Notion, and update your database properties"
       />
       <TabLayout
-        defaultIndex={isUserOnlyMember ? 1 : 0}
+        defaultIndex={isUserOnlyMember ? 2 : 0}
         tabs={[
           {
             label: 'Settings',
-            content: isUserOnlyMember ? (
-              <TeamSettingsMember />
-            ) : (
-              <TeamSettings />
-            ),
+            isDisabled: isUserOnlyMember,
+            content: <TeamSettings />,
+          },
+          {
+            label: 'Notion',
+            isDisabled: isUserOnlyMember,
+            content: <TeamNotionSettings />,
           },
           {
             label: 'Members',

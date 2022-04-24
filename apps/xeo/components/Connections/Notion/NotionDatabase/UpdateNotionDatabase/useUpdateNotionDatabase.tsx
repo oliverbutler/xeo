@@ -37,6 +37,7 @@ export interface DatabaseUpdateForm {
   sprintSelectType: NotionColumnType | undefined;
   statusColumnName: string | undefined;
   parentRelationColumnName: string | undefined;
+  epicRelationColumnId: string | undefined;
   updatedStatusMappings: {
     statusLinkId: string;
     notionSelectId: string | null;
@@ -93,6 +94,11 @@ export const useUpdateNotionDatabase = (
     currentDatabase.parentRelationColumnName
   );
 
+  const epicRelationOption = getNotionDatabasePropertyByIdOrName(
+    databaseFromNotion.properties,
+    currentDatabase.epicRelationColumnId
+  );
+
   const defaultUpdatedStatusMappings: DatabaseUpdateForm['updatedStatusMappings'] =
     currentDatabase.notionStatusLinks.map((link) => {
       const notionSelectId =
@@ -117,6 +123,7 @@ export const useUpdateNotionDatabase = (
       sprintColumnName: sprintColumnOption?.id,
       sprintSelectType: currentDatabase.notionColumnType,
       parentRelationColumnName: parentRelationOption?.id,
+      epicRelationColumnId: epicRelationOption?.id,
       updatedStatusMappings: defaultUpdatedStatusMappings,
     },
   });
@@ -180,6 +187,7 @@ export const useUpdateNotionDatabase = (
       sprintColumnType: formData.sprintSelectType,
       sprintColumnName: formData.sprintColumnName,
       parentRelationColumnName: formData.parentRelationColumnName,
+      epicRelationColumnId: formData.epicRelationColumnId,
       updatedStatusMappings,
       newStatusMappings,
     };

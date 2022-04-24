@@ -5,6 +5,7 @@ export * from './lib/Select/Select';
 export * from './lib/Select/SelectField';
 export * from './lib/Animate/Loader/Loader';
 export * from './lib/Button/Button';
+export * from './lib/Button/ConfirmButton';
 export * from './hooks/useLocalStorage';
 export * from './lib/Wrappers/IntlWrapper';
 export * from './lib/Resize/Resize';

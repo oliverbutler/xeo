@@ -31,11 +31,10 @@ export const PrivateAppWrapper: React.FunctionComponent = ({ children }) => {
       <div className="grow overflow-y-auto">
         <div
           id="app-body-container"
-          className="min-h-full bg-dark-200 dark:bg-dark-900 pb-12"
+          className="min-h-full bg-dark-200 dark:bg-dark-900"
         >
           {children}
         </div>
-        <Footer />
         <ToastContainer />
       </div>
     </div>

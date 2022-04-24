@@ -1,4 +1,4 @@
-import { Sprint, Team, TeamMember, TeamRole } from '@prisma/client';
+import { NotionEpic, Sprint, Team, TeamMember, TeamRole } from '@prisma/client';
 import { prisma } from 'utils/db';
 
 export type CreateTeam = {
@@ -54,6 +54,9 @@ export const getTeam = async (teamId: string): Promise<Team | null> => {
 
 export type TeamWithSprintsAndMembers = Team & {
   sprints: Sprint[];
+  notionDatabase: {
+    notionEpics: NotionEpic[];
+  } | null;
   members: (TeamMember & {
     user: {
       image: string | null;
@@ -96,6 +99,23 @@ export const getTeamWithSprintsAndMembers = async (
           },
         },
       },
+      notionDatabase: {
+        select: {
+          notionEpics: true,
+        },
+      },
+    },
+  });
+
+  return team;
+};
+
+export const getTeamWithConnection = async (teamId: string) => {
+  const team = await prisma.team.findUnique({
+    where: { id: teamId },
+    include: {
+      notionConnection: true,
+      notionDatabase: true,
     },
   });
 

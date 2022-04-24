@@ -73,9 +73,17 @@ export const SelectColumns: React.FunctionComponent<Props> = ({
       />
 
       <ListboxField
-        label="Parents Relation (optional)"
+        label="Parent Tickets Relation (optional)"
         control={control}
         name="parentRelationColumnName"
+        options={propertiesOptions.filter((o) => o.type === 'relation')}
+        rules={{ required: false }}
+        isDisabled={!database}
+      />
+      <ListboxField
+        label="Epic Relation (optional)"
+        control={control}
+        name="epicRelationColumnId"
         options={propertiesOptions.filter((o) => o.type === 'relation')}
         rules={{ required: false }}
         isDisabled={!database}

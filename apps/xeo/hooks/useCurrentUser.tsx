@@ -19,6 +19,7 @@ type Output = {
     input: PutUpdateUserMetadata['request']['input']
   ) => Promise<boolean>;
   availableTeams: TeamWithMemberAndBasicUserInfo[] | undefined;
+  updateUserDefaultTeam: (teamId: string) => Promise<void>;
 };
 
 export const useCurrentUser = (): Output => {
@@ -62,11 +63,20 @@ export const useCurrentUser = (): Output => {
     return true;
   };
 
+  const updateUserDefaultTeam = async (teamId: string) => {
+    setCurrentTeamId(teamId);
+
+    await updateUserMetadata({
+      defaultTeamId: teamId,
+    });
+  };
+
   return {
     status: status,
     me: meResponse?.data?.user ?? null,
     session: sessionResponse.data ?? null,
     updateUserMetadata,
     availableTeams: data?.teams,
+    updateUserDefaultTeam,
   };
 };
