@@ -18,8 +18,6 @@ interface Props {
 export const TeamNotionSettings: React.FunctionComponent<Props> = ({
   team,
 }) => {
-  const { deleteTeam } = useTeam();
-
   const { data, isLoading } = useQuery<GetTeamNotionConnectionInformation>(
     `/api/team/${team?.id}/notion`,
     !team
@@ -90,41 +88,6 @@ export const TeamNotionSettings: React.FunctionComponent<Props> = ({
           <ReconnectToNotionButton />
         </SettingsPanel>
       )}
-      <h2>Actions</h2>
-      <Modal
-        mainText="Delete Team"
-        trigger={(setOpen) => (
-          <Button
-            onClick={() => {
-              setOpen();
-            }}
-            colour={ButtonColour.Danger}
-            variation="tertiary"
-          >
-            Delete Team
-          </Button>
-        )}
-        content={(setClose) => (
-          <>
-            <div className="m-5 flex max-w-none flex-col items-center justify-center text-center">
-              <h2>
-                Delete <i>{team.name}</i>?
-              </h2>
-              <p>
-                This action is irreversible and will delete all associated
-                Notion connections, and sprints.
-              </p>
-            </div>
-            <ModalFooter
-              primaryText="Delete"
-              primaryVariation={ButtonColour.Danger}
-              clickPrimary={() => deleteTeam(team.id)}
-              clickSecondary={setClose}
-              secondaryText="Cancel"
-            />
-          </>
-        )}
-      />
     </div>
   );
 };

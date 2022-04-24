@@ -8,31 +8,32 @@ import {
 import { Sprint, Team } from '@prisma/client';
 import { ConditionalWrapper } from '@xeo/ui/lib/ConditionalWrapper/ConditionalWrapper';
 import classNames from 'classnames';
-import { Logo } from 'components/Logo/Logo';
+import { NotionLogoRenderer } from 'components/Connections/Notion/NotionConnection/NotionLogoRenderer';
 import { UserMenu } from 'components/Sidebar/UserMenu/UserMenu';
 import { useCurrentTeam } from 'hooks/useCurrentTeam';
 import { useCurrentUser } from 'hooks/useCurrentUser';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import xeoIcon from 'public/xeo.png';
 import React, { useEffect, useState } from 'react';
+import { TeamWithSprintsAndMembers } from 'utils/db/team/adapter';
 
 const getNavbarOptions = (
-  team: Team | undefined,
+  team: TeamWithSprintsAndMembers | undefined,
   sprint: Sprint | undefined
 ) => [
   {
     title: `Team (${team?.shortName ?? 'Missing'})`,
     options: [
-      { title: 'Dashboard', icon: TemplateIcon, path: `/team/${team?.id}` },
-      { title: 'Settings', icon: CogIcon, path: `/team/${team?.id}/settings` },
-      // {
-      //   title: 'Epic Dependencies',
-      //   icon: ViewGridIcon,
-      //   path: `/team/${team?.id}/epic`,
-      //   disabled: true,
-      // },
+      {
+        title: 'Dashboard',
+        icon: <TemplateIcon height={25} width={25} />,
+        path: `/team/${team?.id}`,
+      },
+      {
+        title: 'Settings',
+        icon: <CogIcon height={25} width={25} />,
+        path: `/team/${team?.id}/settings`,
+      },
     ],
   },
   {
@@ -40,21 +41,34 @@ const getNavbarOptions = (
     options: [
       {
         title: 'Sprint Dependencies',
-        icon: ViewGridIcon,
+        icon: <ViewGridIcon height={25} width={25} />,
         path: `/team/${team?.id}/dependencies`,
         disabled: !sprint,
       },
-      // {
-      //   title: 'Daily Mail',
-      //   icon: MailIcon,
-      //   path: '/daily-mail',
-      //   disabled: true,
-      // },
     ],
   },
   {
+    title: 'Epics',
+    options:
+      team?.notionDatabase?.notionEpics
+        .filter((epic) => epic.active)
+        .map((epic) => ({
+          title: epic.notionEpicName,
+          icon: (
+            <NotionLogoRenderer size={35} iconString={epic.notionEpicIcon} />
+          ),
+          path: `/team/${team?.id}/epic/${epic.id}`,
+        })) ?? [],
+  },
+  {
     title: 'Teams',
-    options: [{ title: 'Manage Teams', icon: UserGroupIcon, path: '/teams' }],
+    options: [
+      {
+        title: 'Manage Teams',
+        icon: <UserGroupIcon height={25} width={25} />,
+        path: '/teams',
+      },
+    ],
   },
 ];
 
@@ -91,7 +105,7 @@ const NavbarSection: React.FunctionComponent<{
                 { 'hover:bg-dark-800 cursor-pointer': !option.disabled }
               )}
             >
-              <option.icon height={25} width={25} />
+              {option.icon}
               {option.title}
             </li>
           </ConditionalWrapper>

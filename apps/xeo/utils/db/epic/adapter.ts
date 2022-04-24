@@ -55,6 +55,22 @@ export const getNotionEpic = async (id: NotionEpic['id']) => {
   return result;
 };
 
+export const getNotionEpicForTeam = async (
+  id: NotionEpic['id'],
+  teamId: string
+) => {
+  const result = await prisma.notionEpic.findFirst({
+    where: {
+      id,
+      notionDatabase: {
+        teamId,
+      },
+    },
+  });
+
+  return result;
+};
+
 export const getNotionEpicsForDatabase = async (
   databaseId: NotionDatabase['id']
 ) => {

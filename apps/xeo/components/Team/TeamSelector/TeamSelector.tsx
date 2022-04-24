@@ -47,7 +47,7 @@ export const SprintStatusBadge: React.FunctionComponent<{
 
 export const TeamSelector: React.FunctionComponent = () => {
   const { data } = useQuery<GetTeamsForUserRequest>('/api/team');
-  const { me, updateUserMetadata } = useCurrentUser();
+  const { me, updateUserDefaultTeam } = useCurrentUser();
   const { currentSprint, setCurrentSprintId, sprintsOldestFirst } =
     useCurrentTeam();
   const router = useRouter();
@@ -78,11 +78,11 @@ export const TeamSelector: React.FunctionComponent = () => {
   );
 
   const handleChange = async (option: TeamSelectOption) => {
-    await updateUserMetadata({
-      defaultTeamId: option.value.id,
-    });
+    await updateUserDefaultTeam(option.value.id);
 
-    router.push('/');
+    router.push(`/team/${option.value.id}`);
+
+    console.log(option.value.id);
   };
 
   const handleSprintChange = async (option: SprintSelectOption) => {

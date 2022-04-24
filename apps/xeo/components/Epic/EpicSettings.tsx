@@ -10,6 +10,7 @@ import {
 } from 'components/Connections/Notion/NotionConnection/NotionLogoRenderer';
 import { Content } from 'components/Content';
 import { SettingsPanel } from 'components/PageLayouts/SettingsPanel/SettingsPanel';
+import { TeamNotionSettings } from 'components/Team/TeamSettings/TeamNotionSettings';
 import { useCurrentTeam } from 'hooks/useCurrentTeam';
 import { useEpic } from 'hooks/useEpic';
 import { debounce } from 'lodash';
@@ -82,6 +83,7 @@ export const EpicSettings: React.FunctionComponent<Props> = (props) => {
 
   return (
     <Content>
+      <TeamNotionSettings team={team} />
       <h2>Epics</h2>
       <p>
         Add and update epics linked to Xeo, active epics are shown under the

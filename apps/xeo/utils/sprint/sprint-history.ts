@@ -3,7 +3,7 @@ import { groupBy } from '@xeo/utils';
 import { logger } from 'utils/api';
 import { prisma } from 'utils/db';
 import {
-  getProductBacklogForSprint,
+  getNotionTicketsForSprint,
   ProductBacklog,
   Ticket,
 } from 'utils/notion/backlog';
@@ -154,7 +154,7 @@ export const updateSprintHistoryIfChanged = async (
     throw new Error('Team has no Notion connection and Database');
   }
 
-  const productBacklog = await getProductBacklogForSprint({
+  const productBacklog = await getNotionTicketsForSprint({
     notionConnection: sprint.team.notionConnection,
     notionDatabase: sprint.team.notionDatabase,
     sprint,

@@ -136,7 +136,7 @@ export const DependencyGraph: React.FunctionComponent<Props> = ({
   return (
     <>
       <PageHeader
-        title={`Dependency Graph (${currentSprint?.name})`}
+        title={`Dependency Graph`}
         rightContent={
           <div className="flex flex-row items-center space-x-2">
             <Button
