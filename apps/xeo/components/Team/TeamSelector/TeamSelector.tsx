@@ -82,7 +82,8 @@ export const TeamSelector: React.FunctionComponent = () => {
 
     router.push(`/team/${option.value.id}`);
 
-    console.log(option.value.id);
+    // reload window
+    window.location.reload();
   };
 
   const handleSprintChange = async (option: SprintSelectOption) => {

@@ -5,6 +5,7 @@ type Props = {
   tabs: {
     label: string;
     content: React.ReactNode;
+    isDisabled?: boolean;
   }[];
   defaultIndex?: number;
 };
@@ -23,13 +24,16 @@ export const TabLayout: React.FunctionComponent<Props> = ({
               className={({ selected }) =>
                 classNames('border-b-2 border-b-transparent', {
                   'dark:border-b-white border-b-dark-400': selected,
+                  'opacity-50': tab.isDisabled,
                 })
               }
+              disabled={tab.isDisabled}
             >
               <div
-                className={classNames(
-                  'max-w-lg w-32 dark:hover:bg-dark-800 hover:bg-dark-100 cursor-pointer p-1.5 m-2 rounded-lg '
-                )}
+                className={classNames('max-w-lg w-32  p-1.5 m-2 rounded-lg ', {
+                  'dark:hover:bg-dark-800 hover:bg-dark-100 cursor-pointer':
+                    !tab.isDisabled,
+                })}
               >
                 {tab.label}
               </div>

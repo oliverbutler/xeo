@@ -4,12 +4,10 @@ import { Modal, ModalFooter } from '@xeo/ui/lib/Modal/Modal';
 import { Content } from 'components/Content';
 import { SettingsPanel } from 'components/PageLayouts/SettingsPanel/SettingsPanel';
 import { useCurrentTeam } from 'hooks/useCurrentTeam';
-import { useCurrentUser } from 'hooks/useCurrentUser';
 import { useTeam } from 'hooks/useTeam';
 import { GetNotionAuthURL } from 'pages/api/connections/notion/auth-url';
 import { useQuery } from 'utils/api';
 import { BasicTeamInfoForm } from './BasicTeamInfoForm';
-import { TeamNotionSettings } from './TeamNotionSettings';
 
 interface Props {}
 

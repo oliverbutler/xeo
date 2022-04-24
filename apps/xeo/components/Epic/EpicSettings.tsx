@@ -8,9 +8,7 @@ import {
   NotionLogoRenderer,
   notionLogoToString,
 } from 'components/Connections/Notion/NotionConnection/NotionLogoRenderer';
-import { Content } from 'components/Content';
 import { SettingsPanel } from 'components/PageLayouts/SettingsPanel/SettingsPanel';
-import { TeamNotionSettings } from 'components/Team/TeamSettings/TeamNotionSettings';
 import { useCurrentTeam } from 'hooks/useCurrentTeam';
 import { useEpic } from 'hooks/useEpic';
 import { debounce } from 'lodash';
@@ -18,7 +16,6 @@ import { GetTeamDatabaseEpicOptions } from 'pages/api/team/[teamId]/database/epi
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { apiGet } from 'utils/api';
-import { TeamWithSprintsAndMembers } from 'utils/db/team/adapter';
 
 type EpicSelectOption = {
   value: string;
@@ -82,8 +79,7 @@ export const EpicSettings: React.FunctionComponent<Props> = (props) => {
   };
 
   return (
-    <Content>
-      <TeamNotionSettings team={team} />
+    <div>
       <h2>Epics</h2>
       <p>
         Add and update epics linked to Xeo, active epics are shown under the
@@ -157,6 +153,6 @@ export const EpicSettings: React.FunctionComponent<Props> = (props) => {
           ]}
         />
       </SettingsPanel>
-    </Content>
+    </div>
   );
 };
