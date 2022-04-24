@@ -1,45 +1,16 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import {
-  apiError,
-  APIGetRequest,
-  APIRequest,
-  apiResponse,
-  parseAPIRequest,
-} from 'utils/api';
+import { apiError, APIGetRequest, apiResponse } from 'utils/api';
 import { getSession } from 'next-auth/react';
 import { getUserRoleInTeam } from 'utils/db/team/adapter';
 import {
   DependencyPosition,
   getSprintDependencies,
   getSprintForTeam,
-  updateSprintDependencies,
 } from 'utils/db/sprint/adapter';
-import Joi from 'joi';
 
 export type GetSprintDependencies = APIGetRequest<{
   dependencies: DependencyPosition[];
 }>;
-
-export type PutUpdateSprintDependencies = APIRequest<
-  {
-    dependencies: DependencyPosition[];
-  },
-  {
-    success: boolean;
-  }
->;
-
-const putSchema: PutUpdateSprintDependencies['joiBodySchema'] = Joi.object({
-  dependencies: Joi.array().items(
-    Joi.object({
-      id: Joi.string().required(),
-      position: Joi.object({
-        x: Joi.number().required(),
-        y: Joi.number().required(),
-      }).required(),
-    })
-  ),
-});
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
@@ -68,8 +39,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     case 'GET':
       return await getHandler(req, res, sprintId);
-    case 'PUT':
-      return await putHandler(req, res, sprintId);
   }
 
   return apiError(res, { message: 'Not implemented' }, 501);
@@ -83,22 +52,6 @@ const getHandler = async (
   const dependencies = (await getSprintDependencies(sprintId)) ?? [];
 
   return apiResponse<GetSprintDependencies>(res, { dependencies });
-};
-
-const putHandler = async (
-  req: NextApiRequest,
-  res: NextApiResponse,
-  sprintId: string
-) => {
-  const { body, error } = parseAPIRequest(req, putSchema);
-
-  if (error) {
-    return apiError(res, { message: error.message }, 400);
-  }
-
-  await updateSprintDependencies(sprintId, body.dependencies);
-
-  return apiResponse<PutUpdateSprintDependencies>(res, { success: true });
 };
 
 export default handler;

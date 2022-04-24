@@ -147,10 +147,11 @@ model SprintStatusHistory {
 }
 
 model DependencyGraph {
-  id              String @id @default(cuid())
-  sprintId        String @unique
-  sprint          Sprint @relation(fields: [sprintId], references: [id], onDelete: NoAction)
+  id              String       @id @default(cuid())
+  sprintId        String?      @unique
+  sprint          Sprint?      @relation(fields: [sprintId], references: [id], onDelete: NoAction)
   ticketPositions Json
+  notionEpic      NotionEpic[]
 }
 
 enum TeamRole {
@@ -241,16 +242,19 @@ model NotionDatabase {
 }
 
 model NotionEpic {
-  id               String         @id @default(cuid())
-  notionEpicIcon   String?
-  notionEpicName   String
-  notionEpicId     String
-  notionDatabase   NotionDatabase @relation(fields: [notionDatabaseId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  notionDatabaseId String
-  active           Boolean        @default(true)
+  id                String           @id @default(cuid())
+  notionEpicIcon    String?
+  notionEpicName    String
+  notionEpicId      String
+  notionDatabase    NotionDatabase   @relation(fields: [notionDatabaseId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  notionDatabaseId  String
+  active            Boolean          @default(true)
+  // Relations
+  dependencyGraph   DependencyGraph? @relation(fields: [dependencyGraphId], references: [id])
+  dependencyGraphId String?
   //
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @default(now()) @updatedAt
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @default(now()) @updatedAt
 
   @@index([notionDatabaseId])
 }

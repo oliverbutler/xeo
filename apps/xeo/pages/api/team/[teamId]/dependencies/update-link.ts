@@ -1,15 +1,15 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { apiError, APIRequest, apiResponse, parseAPIRequest } from 'utils/api';
 import { getSession } from 'next-auth/react';
-import { getUserRoleInTeam } from 'utils/db/team/adapter';
 import {
-  getSprintForTeamWithDatabaseAndConnection,
-  SprintWithTeamAndConnectionAndDatabase,
-} from 'utils/db/sprint/adapter';
+  getTeamWithConnection,
+  getUserRoleInTeam,
+} from 'utils/db/team/adapter';
 import Joi from 'joi';
-import { removeLinkBetweenTickets } from 'utils/notion/ticket';
+import { createLinkBetweenTickets } from 'utils/notion/ticket';
+import { NotionConnection, NotionDatabase } from '@prisma/client';
 
-export type PostRemoveNotionTicketLink = APIRequest<
+export type PostCreateNotionTicketLink = APIRequest<
   {
     sourceTicketId: string;
     targetTicketId: string;
@@ -19,7 +19,7 @@ export type PostRemoveNotionTicketLink = APIRequest<
   }
 >;
 
-const putSchema: PostRemoveNotionTicketLink['joiBodySchema'] = Joi.object({
+const putSchema: PostCreateNotionTicketLink['joiBodySchema'] = Joi.object({
   sourceTicketId: Joi.string().required(),
   targetTicketId: Joi.string().required(),
 });
@@ -31,28 +31,33 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return apiError(res, { message: 'Not authenticated' }, 401);
   }
 
-  const sprintId = req.query.sprintId as string;
   const teamId = req.query.teamId as string;
   const userId = session.id;
 
   const userRole = await getUserRoleInTeam(userId, teamId);
 
-  if (!userRole) {
+  const team = await getTeamWithConnection(teamId);
+
+  if (!userRole || !team) {
     return apiError(res, { message: 'User is not a member of this team' }, 403);
   }
 
-  const sprint = await getSprintForTeamWithDatabaseAndConnection(
-    sprintId,
-    teamId
-  );
-
-  if (!sprint) {
-    return apiError(res, { message: 'Sprint not found' }, 404);
+  if (!team.notionDatabase || !team.notionConnection) {
+    return apiError(
+      res,
+      { message: 'Team does not have a Notion connection' },
+      403
+    );
   }
 
   switch (req.method) {
     case 'POST':
-      return await postHandler(req, res, sprint);
+      return await postHandler(
+        req,
+        res,
+        team.notionDatabase,
+        team.notionConnection
+      );
   }
 
   return apiError(res, { message: 'Not implemented' }, 501);
@@ -61,7 +66,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 const postHandler = async (
   req: NextApiRequest,
   res: NextApiResponse,
-  sprint: SprintWithTeamAndConnectionAndDatabase
+  notionDatabase: NotionDatabase,
+  notionConnection: NotionConnection
 ) => {
   const { body, error } = parseAPIRequest(req, putSchema);
 
@@ -70,19 +76,19 @@ const postHandler = async (
   }
 
   try {
-    await removeLinkBetweenTickets(
+    await createLinkBetweenTickets(
       body.sourceTicketId,
       body.targetTicketId,
-      sprint.team.notionDatabase,
-      sprint.team.notionConnection
+      notionDatabase,
+      notionConnection
     );
 
-    return apiResponse<PostRemoveNotionTicketLink>(res, { success: true });
+    return apiResponse<PostCreateNotionTicketLink>(res, { success: true });
   } catch (e) {
     return apiError(
       res,
       {
-        message: 'Error removing link between these tickets, please try again',
+        message: 'Error creating link between these tickets, please try again',
       },
       400
     );

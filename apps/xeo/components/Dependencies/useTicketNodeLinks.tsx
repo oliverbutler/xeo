@@ -1,6 +1,5 @@
-import { Sprint, Team } from '@prisma/client';
-import { PostRemoveNotionTicketLink } from 'pages/api/team/[teamId]/sprint/[sprintId]/dependencies/remove-link';
-import { PostCreateNotionTicketLink } from 'pages/api/team/[teamId]/sprint/[sprintId]/dependencies/update-link';
+import { PostRemoveNotionTicketLink } from 'pages/api/team/[teamId]/dependencies/remove-link';
+import { PostCreateNotionTicketLink } from 'pages/api/team/[teamId]/dependencies/update-link';
 import { toast } from 'react-toastify';
 import { apiPost } from 'utils/api';
 
@@ -20,7 +19,7 @@ export const useTicketNodeLinks = (
     }
 
     const { error } = await apiPost<PostCreateNotionTicketLink>(
-      `/api/team/${teamId}/sprint/${sprintId}/dependencies/update-link`,
+      `/api/team/${teamId}/dependencies/update-link`,
       { sourceTicketId: childId, targetTicketId: parentId }
     );
 
@@ -36,7 +35,7 @@ export const useTicketNodeLinks = (
     }
 
     const { error } = await apiPost<PostRemoveNotionTicketLink>(
-      `/api/team/${teamId}/sprint/${sprintId}/dependencies/remove-link`,
+      `/api/team/${teamId}/dependencies/remove-link`,
       { sourceTicketId: childId, targetTicketId: parentId }
     );
 

@@ -169,6 +169,23 @@ export const getSprintDependencies = async (
   return dependencies.ticketPositions as DependencyPosition[];
 };
 
+export const getEpicDependencies = async (
+  epicId: string
+): Promise<DependencyPosition[] | null> => {
+  const epic = await prisma.notionEpic.findUnique({
+    where: { id: epicId },
+    include: {
+      dependencyGraph: true,
+    },
+  });
+
+  if (!epic?.dependencyGraph) {
+    return null;
+  }
+
+  return epic.dependencyGraph.ticketPositions as DependencyPosition[];
+};
+
 export type DependencyPosition = {
   id: string;
   position: {
@@ -180,17 +197,45 @@ export type DependencyPosition = {
 export const updateSprintDependencies = async (
   sprintId: string,
   ticketPositions: DependencyPosition[]
-): Promise<DependencyGraph> => {
-  const dependencies = await prisma.dependencyGraph.upsert({
-    where: { sprintId },
-    create: {
-      sprintId,
-      ticketPositions,
+) => {
+  await prisma.sprint.update({
+    where: {
+      id: sprintId,
     },
-    update: {
-      ticketPositions,
+    data: {
+      dependencyGraph: {
+        upsert: {
+          create: {
+            ticketPositions,
+          },
+          update: {
+            ticketPositions,
+          },
+        },
+      },
     },
   });
+};
 
-  return dependencies;
+export const updateNotionEpicDependencies = async (
+  epicId: string,
+  ticketPositions: DependencyPosition[]
+) => {
+  await prisma.notionEpic.update({
+    where: {
+      id: epicId,
+    },
+    data: {
+      dependencyGraph: {
+        upsert: {
+          update: {
+            ticketPositions,
+          },
+          create: {
+            ticketPositions,
+          },
+        },
+      },
+    },
+  });
 };

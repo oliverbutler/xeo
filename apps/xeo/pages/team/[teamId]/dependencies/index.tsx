@@ -4,9 +4,12 @@ import { DependencyGraph } from 'components/Dependencies/DependencyGraph';
 import { PageHeader } from 'components/PageHeader/PageHeader';
 import { SettingsPanel } from 'components/PageLayouts/SettingsPanel/SettingsPanel';
 import { useCurrentTeam } from 'hooks/useCurrentTeam';
+import { PutUpdateSprintDependencies } from 'pages/api/team/[teamId]/dependencies';
 import { GetSprintDependencies } from 'pages/api/team/[teamId]/sprint/[sprintId]/dependencies';
 import { GetSprintTickets } from 'pages/api/team/[teamId]/sprint/[sprintId]/tickets';
-import { useQuery } from 'utils/api';
+import { toast } from 'react-toastify';
+import { mutate } from 'swr';
+import { apiPut, useQuery } from 'utils/api';
 
 const dependencies: React.FunctionComponent = () => {
   const { currentTeamId, currentSprint } = useCurrentTeam();
@@ -70,8 +73,29 @@ const dependencies: React.FunctionComponent = () => {
   return (
     <div className="flex flex-col h-screen">
       <DependencyGraph
+        key={currentSprint.id}
         tickets={tickets.tickets}
         positions={dependencies.dependencies}
+        refreshTicketsCallback={() => {
+          mutate(
+            `/api/team/${currentTeamId}/sprint/${currentSprint?.id}/tickets`
+          );
+        }}
+        saveCallback={async ({ nodes }) => {
+          const dependencies = nodes.map((node) => ({
+            id: node.id,
+            position: node.position,
+          }));
+          const { error } = await apiPut<PutUpdateSprintDependencies>(
+            `/api/team/${currentTeamId}/dependencies`,
+            { type: 'sprintId', id: currentSprint.id, dependencies }
+          );
+
+          if (error) {
+            toast.error(error.body?.message ?? error.generic);
+            return;
+          }
+        }}
       />
     </div>
   );

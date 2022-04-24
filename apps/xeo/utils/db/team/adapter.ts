@@ -110,6 +110,18 @@ export const getTeamWithSprintsAndMembers = async (
   return team;
 };
 
+export const getTeamWithConnection = async (teamId: string) => {
+  const team = await prisma.team.findUnique({
+    where: { id: teamId },
+    include: {
+      notionConnection: true,
+      notionDatabase: true,
+    },
+  });
+
+  return team;
+};
+
 export const addMemberToTeam = async (
   teamId: string,
   userId: string

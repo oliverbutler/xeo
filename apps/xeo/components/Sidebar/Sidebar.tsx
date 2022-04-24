@@ -29,21 +29,17 @@ const getNavbarOptions = (
         icon: <TemplateIcon height={25} width={25} />,
         path: `/team/${team?.id}`,
       },
-      {
-        title: 'Settings',
-        icon: <CogIcon height={25} width={25} />,
-        path: `/team/${team?.id}/settings`,
-      },
-    ],
-  },
-  {
-    title: `Sprint (${sprint?.name ?? 'Missing'})`,
-    options: [
+
       {
         title: 'Sprint Dependencies',
         icon: <ViewGridIcon height={25} width={25} />,
         path: `/team/${team?.id}/dependencies`,
         disabled: !sprint,
+      },
+      {
+        title: 'Settings',
+        icon: <CogIcon height={25} width={25} />,
+        path: `/team/${team?.id}/settings`,
       },
     ],
   },
