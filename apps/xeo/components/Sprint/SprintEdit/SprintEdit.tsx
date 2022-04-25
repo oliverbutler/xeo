@@ -143,7 +143,7 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
             <Input
               label="Team Speed"
               type="number"
-              step={0.1}
+              step={0.05}
               {...register('teamSpeed', { required: true })}
             />
           </div>

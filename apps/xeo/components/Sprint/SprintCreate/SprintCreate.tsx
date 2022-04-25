@@ -117,7 +117,7 @@ export const SprintCreate: React.FunctionComponent<Props> = ({ database }) => {
           <Input
             label="Team Speed"
             type="number"
-            step={0.1}
+            step={0.05}
             {...register('teamSpeed', { required: true })}
           />
         </div>
