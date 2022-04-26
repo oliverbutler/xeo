@@ -78,11 +78,10 @@ export const TeamSelector: React.FunctionComponent = () => {
   );
 
   const handleChange = async (option: TeamSelectOption) => {
-    await updateUserDefaultTeam(option.value.id);
+    const newTeamId = option.value.id;
+    await updateUserDefaultTeam(newTeamId);
 
-    router.push(`/team/${option.value.id}`);
-
-    // reload window
+    router.push(`/team/${newTeamId}`);
     window.location.reload();
   };
 

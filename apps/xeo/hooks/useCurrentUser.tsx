@@ -32,13 +32,13 @@ export const useCurrentUser = (): Output => {
   useEffect(() => {
     if (meResponse.data?.user.metadata?.defaultTeamId) {
       setCurrentTeamId(meResponse.data.user.metadata.defaultTeamId);
-    } else {
-      if (data?.teams[0]) {
-        updateUserMetadata({
-          defaultTeamId: data.teams[0].id,
-        });
-        setCurrentTeamId(data?.teams[0].id);
-      }
+    } else if (meResponse.data?.user.metadata && data?.teams[0]) {
+      const newDefaultTeam = data.teams[0];
+
+      setCurrentTeamId(newDefaultTeam.id);
+      updateUserMetadata({
+        defaultTeamId: newDefaultTeam.id,
+      });
     }
   }, [meResponse]);
 
