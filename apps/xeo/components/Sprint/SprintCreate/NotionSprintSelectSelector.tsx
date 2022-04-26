@@ -28,6 +28,7 @@ export const NotionSprintSelectSelector: React.FunctionComponent<Props> = ({
       isClearable
       isLoading={isLoading}
       placeholder={'Select...'}
+      rules={{ required: true }}
     />
   );
 };

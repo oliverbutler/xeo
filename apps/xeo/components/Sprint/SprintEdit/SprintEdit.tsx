@@ -1,4 +1,4 @@
-import { Sprint } from '@prisma/client';
+import { NotionDatabase, Sprint } from '@prisma/client';
 import { useForm } from 'react-hook-form';
 import { v4 } from 'uuid';
 import React, { useEffect } from 'react';
@@ -20,16 +20,19 @@ import Input from '@xeo/ui/lib/Input/Input';
 import Button from '@xeo/ui/lib/Button/Button';
 import { SettingsPanel } from 'components/PageLayouts/SettingsPanel/SettingsPanel';
 import { Tooltip } from 'components/Tooltip/Tooltip';
+import { NotionSprintSelector } from '../SprintCreate/NotionSprintSelector';
+import { SprintSelectOption } from '../SprintCreate/SprintCreate';
 
 interface Props {
   sprint: Sprint;
+  database: NotionDatabase;
 }
 
 interface SprintEditForm {
   startDate: string;
   endDate: string;
   sprintName: string;
-  notionSprintValue: string;
+  notionSprintValue: SprintSelectOption;
   sprintGoal: string;
   teamSpeed: number;
   dayStartTime: string;
@@ -38,7 +41,10 @@ interface SprintEditForm {
 
 export const DEFAULT_SPRINT_CAPACITY = 1;
 
-export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
+export const SprintEdit: React.FunctionComponent<Props> = ({
+  sprint,
+  database,
+}) => {
   const { push } = useRouter();
 
   useEffect(() => {
@@ -57,7 +63,10 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
     defaultValues: {
       startDate: dayjs(sprint.startDate).format('YYYY-MM-DDTHH:mm'), // datetime-local requires this format
       endDate: dayjs(sprint.endDate).format('YYYY-MM-DDTHH:mm'), // datetime-local requires this format
-      notionSprintValue: sprint.notionSprintValue,
+      notionSprintValue: {
+        value: sprint.notionSprintValue,
+        label: sprint.notionSprintValue,
+      },
       dayStartTime: sprint.dailyStartTime,
       sprintName: sprint.name,
       sprintGoal: sprint.sprintGoal,
@@ -86,7 +95,7 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
         startDate: dayjs(data.startDate).toISOString(),
         endDate: dayjs(data.endDate).toISOString(),
         teamSpeed: data.teamSpeed,
-        notionSprintValue: data.notionSprintValue,
+        notionSprintValue: data.notionSprintValue.value,
         dayStartTime: data.dayStartTime,
         developers: data.devs.map((dev) => ({
           name: dev.name,
@@ -122,17 +131,13 @@ export const SprintEdit: React.FunctionComponent<Props> = ({ sprint }) => {
   return (
     <div>
       <form className="gap-4" onSubmit={handleSubmit(updateSprint)}>
-        {/* <h2>Notion Options</h2>
-        <p>These properties are not adjustable</p>
+        <h2>Notion Options</h2>
         <SettingsPanel>
           <div className="grid grid-cols-3 gap-4">
-            <Input
-              label="Notion Sprint"
-              disabled={true}
-              defaultValue={sprint.notionSprintValue}
-            />
-          </div> */}
-        {/* </SettingsPanel> */}
+            {/* @ts-ignore */}
+            <NotionSprintSelector form={form} database={database} />
+          </div>
+        </SettingsPanel>
         <h2>Sprint Details</h2>
         <SettingsPanel>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

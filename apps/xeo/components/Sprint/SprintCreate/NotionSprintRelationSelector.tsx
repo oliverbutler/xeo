@@ -53,6 +53,7 @@ export const NotionSprintRelationSelector: React.FunctionComponent<Props> = ({
   } = useController({
     control: form.control,
     name: 'notionSprintValue',
+    rules: { required: true },
   });
 
   return (
