@@ -92,6 +92,7 @@ export const EpicSettings: React.FunctionComponent<Props> = (props) => {
               cacheOptions
               className="w-64"
               label=""
+              placeholder="Type to Search..."
               loadOptions={debouncedFetch}
               onChange={(e) => setCurrentSearch(e ?? null)}
               isClearable
