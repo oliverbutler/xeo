@@ -32,9 +32,10 @@ export const useCurrentTeam = () => {
     .reverse();
 
   // find the first sprint with an end date in the future
-  const activeSprint = sprintsOldestFirst?.find((sprint) =>
-    dayjs(sprint.endDate).isAfter(dayjs())
-  );
+  const activeSprint =
+    sprintsOldestFirst?.find((sprint) =>
+      dayjs(sprint.endDate).isAfter(dayjs())
+    ) ?? sprintsOldestFirst?.[sprintsOldestFirst.length - 1];
 
   const currentSprint = sprintsOldestFirst?.find(
     (sprint) => sprint.id === currentSprintId

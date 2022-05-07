@@ -31,7 +31,7 @@ export const UserMenu: React.FunctionComponent = () => {
 
   return (
     <div>
-      <div className="flex mb-2 items-center">
+      <div className="flex mb-1 items-center">
         <Image
           src={userImage}
           alt="Your Profile Picture"
@@ -41,7 +41,7 @@ export const UserMenu: React.FunctionComponent = () => {
         />
         <div className="ml-2">
           <p className="font-bold my-0">{me?.name}</p>
-          <small className="text-dark-400">{me?.email}</small>
+          <small className="text-dark-400 my-0">{me?.email}</small>
         </div>
         <div className="grow">
           <Popover

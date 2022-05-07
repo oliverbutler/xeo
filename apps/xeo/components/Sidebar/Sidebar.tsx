@@ -51,7 +51,7 @@ const getNavbarOptions = (
         .map((epic) => ({
           title: epic.notionEpicName,
           icon: (
-            <NotionLogoRenderer size={35} iconString={epic.notionEpicIcon} />
+            <NotionLogoRenderer size={25} iconString={epic.notionEpicIcon} />
           ),
           path: `/team/${team?.id}/epic/${epic.id}`,
         })) ?? [],
@@ -97,7 +97,7 @@ const NavbarSection: React.FunctionComponent<{
           >
             <li
               className={classNames(
-                'list-none  p-2 rounded-xl pl-2 flex flex-row gap-2 items-center',
+                'list-none text-sm p-1 rounded-xl pl-2 flex flex-row gap-2 items-center truncate',
                 { 'hover:bg-dark-800 cursor-pointer': !option.disabled }
               )}
             >
@@ -210,8 +210,8 @@ export const Sidebar: React.FunctionComponent = () => {
           menuShow ? 'translate-x-0' : '-translate-x-full'
         } firefox:bg-opacity-100 dark:firefox:bg-opacity-100 bg-opacity-30 backdrop-blur-lg backdrop-saturate-150 backdrop-filter dark:bg-opacity-30`}
       >
-        <nav className="mt-12 h-full space-y-8">
-          <ul className="space-y-12 pl-0 grow">
+        <nav className="mt-12 h-full space-y-2">
+          <ul className="pl-0 grow">
             {navbarOptions.map((section) => (
               <NavbarSection key={section.title} {...section} />
             ))}

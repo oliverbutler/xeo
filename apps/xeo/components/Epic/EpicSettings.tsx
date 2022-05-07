@@ -115,7 +115,9 @@ export const EpicSettings: React.FunctionComponent<Props> = (props) => {
             {
               Header: 'Icon',
               accessor: 'notionEpicIcon',
-              Cell: ({ value }) => <NotionLogoRenderer iconString={value} />,
+              Cell: ({ value }) => (
+                <NotionLogoRenderer size={30} iconString={value} />
+              ),
             },
             {
               Header: 'Epic',
