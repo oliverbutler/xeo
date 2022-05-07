@@ -42,5 +42,9 @@ export const NotionLogoRenderer: React.FunctionComponent<Props> = ({
       />
     );
   }
-  return <span className="text-4xl">{iconString}</span>;
+  return (
+    <span style={{ fontSize: renderSize, height: renderSize }}>
+      {iconString}
+    </span>
+  );
 };
