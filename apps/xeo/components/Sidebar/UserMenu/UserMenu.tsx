@@ -13,7 +13,9 @@ import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
-export const UserMenu: React.FunctionComponent = () => {
+export const UserMenu: React.FunctionComponent<{ isMobile: boolean }> = ({
+  isMobile,
+}) => {
   const { me } = useCurrentUser();
   const session = useSession();
   const { pathname, push } = useRouter();
@@ -76,7 +78,7 @@ export const UserMenu: React.FunctionComponent = () => {
           />
         </div>
       </div>
-      <TeamSelector />
+      <TeamSelector isMobile={isMobile} />
     </div>
   );
 };

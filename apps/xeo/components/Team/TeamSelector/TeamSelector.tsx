@@ -7,6 +7,7 @@ import { useCurrentTeam } from 'hooks/useCurrentTeam';
 import { Badge } from 'components/Badge/Badge';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
+import classNames from 'classnames';
 
 var isBetween = require('dayjs/plugin/isBetween');
 dayjs.extend(isBetween);
@@ -45,7 +46,9 @@ export const SprintStatusBadge: React.FunctionComponent<{
   return <Badge variant="warning" text="Upcoming" />;
 };
 
-export const TeamSelector: React.FunctionComponent = () => {
+export const TeamSelector: React.FunctionComponent<{ isMobile: boolean }> = ({
+  isMobile,
+}) => {
   const { data } = useQuery<GetTeamsForUserRequest>('/api/team');
   const { me, updateUserDefaultTeam } = useCurrentUser();
   const { currentSprint, setCurrentSprintId, sprintsOldestFirst } =
@@ -90,7 +93,7 @@ export const TeamSelector: React.FunctionComponent = () => {
   };
 
   return (
-    <div className="flex flex-col dark">
+    <div className={classNames('flex flex-col', { dark: !isMobile })}>
       <Listbox
         options={sprintOptions}
         value={currentSprintOptionSelected}

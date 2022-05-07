@@ -75,7 +75,8 @@ const isCurrentPath = (path: string) => {
 const NavbarSection: React.FunctionComponent<{
   title: string;
   options: { title: string; icon: any; path: string; disabled?: boolean }[];
-}> = ({ title, options }) => {
+  isMobile: boolean;
+}> = ({ title, options, isMobile }) => {
   return (
     <div className="">
       <p className="uppercase font-bold text-sm text-dark-500 mb-1 pl-6">
@@ -98,7 +99,9 @@ const NavbarSection: React.FunctionComponent<{
             <li
               className={classNames(
                 'list-none text-sm p-1 rounded-xl pl-2 flex flex-row gap-2 items-center truncate',
-                { 'hover:bg-dark-800 cursor-pointer': !option.disabled }
+                { 'cursor-pointer': !option.disabled },
+                { 'hover:bg-dark-200': !option.disabled && isMobile },
+                { 'hover:bg-dark-800': !option.disabled && !isMobile }
               )}
             >
               {option.icon}
@@ -197,11 +200,11 @@ export const Sidebar: React.FunctionComponent = () => {
       <nav className="bg-dark-900 dark:bg-dark-950 hidden md:flex w-72 text-white flex-col">
         <ul className="space-y-12 pl-0 grow">
           {navbarOptions.map((section) => (
-            <NavbarSection key={section.title} {...section} />
+            <NavbarSection key={section.title} isMobile={false} {...section} />
           ))}
         </ul>
         <div className="mx-4 my-4">
-          <UserMenu />
+          <UserMenu isMobile={false} />
         </div>
       </nav>
       <div
@@ -213,11 +216,11 @@ export const Sidebar: React.FunctionComponent = () => {
         <nav className="mt-12 h-full space-y-2">
           <ul className="pl-0 grow">
             {navbarOptions.map((section) => (
-              <NavbarSection key={section.title} {...section} />
+              <NavbarSection key={section.title} isMobile={true} {...section} />
             ))}
           </ul>
           <div className="mx-4 my-4">
-            <UserMenu />
+            <UserMenu isMobile={true} />
           </div>
         </nav>
       </div>
