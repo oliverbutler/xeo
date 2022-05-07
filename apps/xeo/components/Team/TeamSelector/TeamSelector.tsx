@@ -90,7 +90,7 @@ export const TeamSelector: React.FunctionComponent = () => {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col dark">
       <Listbox
         options={sprintOptions}
         value={currentSprintOptionSelected}
