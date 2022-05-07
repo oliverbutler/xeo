@@ -85,6 +85,19 @@ export const TeamMembers: React.FunctionComponent<Props> = ({ team }) => {
     <Content>
       <h2>Edit Team Members</h2>
       <p>Configure the members of your team</p>
+      <ul>
+        <li>
+          <b>Owners</b> connect to the Notion board
+        </li>
+        <li>
+          <b>Admins</b> can do everything owners can, but they don't control the
+          connection
+        </li>
+        <li>
+          <b>Members</b> can add and view sprints (devs and external people)
+        </li>
+      </ul>
+
       <SettingsPanel>
         {currentUserMember?.role === TeamRole.MEMBER ? null : (
           <div className="flex flex-row gap-2 w-full">
