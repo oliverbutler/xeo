@@ -14,6 +14,7 @@ import { Button } from '@xeo/ui/lib/Button/Button';
 import { SettingsPanel } from 'components/PageLayouts/SettingsPanel/SettingsPanel';
 import { NotionSprintSelector } from './NotionSprintSelector';
 import { NotionDatabase } from '@prisma/client';
+import { getUTCTimeFromTime, Time } from 'utils/date/date';
 
 export interface SprintCreateForm {
   startDate: string;
@@ -22,7 +23,7 @@ export interface SprintCreateForm {
   notionSprintValue: SprintSelectOption | null | undefined;
   sprintGoal: string;
   teamSpeed: number;
-  dayStartTime: string;
+  dayStartTime: Time;
   devs: SprintCapacityDev[];
 }
 
@@ -74,7 +75,7 @@ export const SprintCreate: React.FunctionComponent<Props> = ({ database }) => {
         endDate: dayjs(data.endDate).toISOString(),
         teamSpeed: data.teamSpeed,
         notionSprintValue: data.notionSprintValue.value,
-        dayStartTime: data.dayStartTime,
+        dayStartTime: getUTCTimeFromTime(data.dayStartTime),
         developers: data.devs.map((dev) => ({
           name: dev.name,
           capacity: dev.capacity.map((capacity) =>

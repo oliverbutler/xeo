@@ -22,6 +22,7 @@ import { SettingsPanel } from 'components/PageLayouts/SettingsPanel/SettingsPane
 import { Tooltip } from 'components/Tooltip/Tooltip';
 import { NotionSprintSelector } from '../SprintCreate/NotionSprintSelector';
 import { SprintSelectOption } from '../SprintCreate/SprintCreate';
+import { getTimeFromUTCTime, getUTCTimeFromTime, Time } from 'utils/date/date';
 
 interface Props {
   sprint: Sprint;
@@ -35,7 +36,7 @@ interface SprintEditForm {
   notionSprintValue: SprintSelectOption;
   sprintGoal: string;
   teamSpeed: number;
-  dayStartTime: string;
+  dayStartTime: Time;
   devs: SprintCapacityDev[];
 }
 
@@ -67,7 +68,7 @@ export const SprintEdit: React.FunctionComponent<Props> = ({
         value: sprint.notionSprintValue,
         label: sprint.notionSprintValue,
       },
-      dayStartTime: sprint.dailyStartTime,
+      dayStartTime: getTimeFromUTCTime(sprint.dailyStartTime as Time),
       sprintName: sprint.name,
       sprintGoal: sprint.sprintGoal,
       teamSpeed: sprint.teamSpeed,
@@ -96,7 +97,7 @@ export const SprintEdit: React.FunctionComponent<Props> = ({
         endDate: dayjs(data.endDate).toISOString(),
         teamSpeed: data.teamSpeed,
         notionSprintValue: data.notionSprintValue.value,
-        dayStartTime: data.dayStartTime,
+        dayStartTime: getUTCTimeFromTime(data.dayStartTime),
         developers: data.devs.map((dev) => ({
           name: dev.name,
           capacity: dev.capacity
