@@ -76,19 +76,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (existingNotionConnection) {
     // if the new connection is different workspace id error
 
-    if (
-      notionAccessResponse.workspaceId !==
-      existingNotionConnection.notionWorkspaceId
-    ) {
-      return apiError(
-        res,
-        {
-          message:
-            'You cant change the Workspace associated with your Xeo Team',
-        },
-        400
-      );
-    }
+    // TODO: Remove this check to allow transferring of Workspace
+    // if (
+    //   notionAccessResponse.workspaceId !==
+    //   existingNotionConnection.notionWorkspaceId
+    // ) {
+    //   return apiError(
+    //     res,
+    //     {
+    //       message:
+    //         'You cant change the Workspace associated with your Xeo Team',
+    //     },
+    //     400
+    //   );
+    // }
 
     await prisma.notionConnection.update({
       where: {
