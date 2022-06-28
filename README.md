@@ -1,6 +1,5 @@
 <p align="center">
   <a href="https://xeo.sh">
-    <img src="https://avatars.githubusercontent.com/u/84088102?s=200&v=4" height="160">
     <h1 align="center">Xeo</h1>
   </a>
 </p>
@@ -33,7 +32,7 @@ Checkout the [contributing and setup docs](CONTRIBUTING.md)
 
 # Contact
 
-For all enquiries please contact dev@oliverbutler.uk, help@xeo.sh will be available soon.
+For all enquiries please contact dev@oliverbutler.uk will be available soon.
 
 <a href="https://vercel.com?utm_source=xeo&utm_campaign=oss" style="display:block;text-align:center;margin-top:50px">
     <img width="200px" height="auto" src="./assets/powered-by-vercel.svg" alt="vercel logo" />
