@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://xeo.sh">
+  <a href="https://xeo-sh.vercel.app">
     <h1 align="center">Xeo</h1>
   </a>
 </p>

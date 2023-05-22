@@ -269,7 +269,7 @@ export const Showcase: React.FunctionComponent = () => {
         </p>
 
         <Button
-          href="https://xeo.sh/template"
+          href="https://xeo-sh.vercel.app/template"
           className="my-12"
           variation="tertiary"
           colour={ButtonColour.Secondary}

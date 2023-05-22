@@ -44,7 +44,7 @@ function CustomApp({
           description: `Xeo enables agile scrum teams to: plan sprints, create embeddable burn down charts, and ticket dependency graphs. Notion Integration with your teams.`,
           images: [
             {
-              url: 'https://xeo.sh/twitter_card.jpeg',
+              url: 'https://xeo-sh.vercel.app/twitter_card.jpeg',
               width: 800,
               height: 418,
               alt: 'Xeo Logo',
@@ -53,7 +53,7 @@ function CustomApp({
           ],
           type: 'website',
           locale: 'en_GB',
-          url: 'https://xeo.sh',
+          url: 'https://xeo-sh.vercel.app',
         }}
         twitter={{
           handle: '@xeo_scrum',

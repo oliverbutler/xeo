@@ -99,8 +99,12 @@ export function Index() {
           <li>
             <p>
               <strong>Website</strong> refers to Xeo, accessible from{' '}
-              <a href="https://xeo.sh" target="_blank" rel="noreferrer">
-                https://xeo.sh
+              <a
+                href="https://xeo-sh.vercel.app"
+                target="_blank"
+                rel="noreferrer"
+              >
+                https://xeo-sh.vercel.app
               </a>
             </p>
           </li>
